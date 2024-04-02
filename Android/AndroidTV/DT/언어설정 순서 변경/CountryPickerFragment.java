@@ -78,8 +78,16 @@ public class CountryPickerFragment extends SettingsPreferenceFragment{
 		final Context themedContext = getPreferenceManager().getContext();
 		LocaleStore.LocaleInfo parentLocale = (LocaleStore.LocaleInfo) getArguments().getSerializable(EXTRA_PARENT_LOCALE);
 		final PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(themedContext);
-		boolean neddSort = false;
-		
+		boolean neddSort = false; //innopia
+		if(parentLocale != null){
+			screen.setTitle(parentLocale.getFullNameNative());
+		}
+		Locale currentLocale = LocaleDataViewModel.getCurrentLocale();
+		ArrayList<LocaleStore.LocaleInfo> localeInfoCountryList = mLocaleDataViewModel.getLocaleInfoList(parentLocale);
+		Preference activePref = null;
+		if(localeInfoCountryList != null){
+			
+		}
 	}
 
 
