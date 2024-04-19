@@ -84,7 +84,7 @@
  /*CONFIG_INNOPIATECH*/
  import java.io.BufferedReader;
  import java.io.InputStreamReader;
- //ik
+ // INNOPIA ik
  import pt.multiverso.tech4homesoftwaredemo.IT4HService;
  import pt.multiverso.tech4homesoftwaredemo.IT4HDeviceClearUDBCodeRequestCallback;
  import pt.multiverso.tech4homesoftwaredemo.IT4HDeviceFactoryResetRequestCallback;
@@ -97,6 +97,7 @@
  import android.bluetooth.BluetoothDevice;
  import java.util.Set;
  import android.content.ServiceConnection;
+ // INNOPIA ik end
  /*endif*/
  
  /**
@@ -109,9 +110,9 @@
  
 	 private static final String ENABLE_DEVELOPER = "development_settings_enable";
 	 private static final String ENABLE_ADB = "enable_adb";
-	 /*CONFIG_INNOPIATECH*/
+ /*CONFIG_INNOPIATECH*/
 	 private static final String USB_DEVICE_STATUS = "usb_device_status";
-	 //ik
+	 // INNOPIA ik
 	 private static final String KEY_INFRARED_CONTROL_SWITCH = "key_infrared_control_switch";
 	 private static final String KEY_GLOBAL_POWER_KEY_LOCK = "key_global_power_key_lock";
 	 private static final String KEY_WAIT_RCU_LEARN_WHEN_POWER_KEY_LOCK_CHANGE_ON = "key_wait_rcu_learn_when_power_key_lock_change_on";
@@ -124,7 +125,9 @@
 	 private static final String DAS_OVER  = "de.telekom.rcusetup.das_over";
 	 private static final String DAS_START = "de.telekom.rcusetup.start_das";
 	 private static final String INTENT_RCU_FACTORY_RESET_COMPLETE = "innopia.intent.action.RCU_FACTORY_RESET_COMPLETE";
-	 /*endif*/
+	 private final boolean DEBUG = true;
+	 // INNOPIA ik end
+ /*endif*/
 	 private static final String CLEAR_ADB_KEYS = "clear_adb_keys";
 	 private static final String ENABLE_TERMINAL = "enable_terminal";
 	 private static final String KEEP_SCREEN_ON = "keep_screen_on";
@@ -251,16 +254,17 @@
 	 private SwitchPreference mShowHwScreenUpdates;
 	 private SwitchPreference mShowHwLayersUpdates;
 	 private SwitchPreference mDebugLayout;
-	 /*CONFIG_INNOPIATECH*/
+ /*CONFIG_INNOPIATECH*/
 	 private SwitchPreference mUsbDeviceStatus;
+	 // INNOPIA ik
 	 public SwitchPreference mPowerKeyLock;
 	 public SwitchPreference mHostPref;
 	 private Preference mResetRcuIrConfig;
-	 //ik
 	 private IT4HService mRemoteService = null;
 	 private String mRCUAddress;
 	 private DasBroadcastReceiver mReceiver;
-	 /*endif*/
+	 // INNOPIA ik end
+ /*endif*/
 	 private SwitchPreference mForceRtlLayout;
 	 private SwitchPreference mWindowBlurs;
 	 private ListPreference mDebugHwOverdraw;
@@ -310,6 +314,7 @@
 	 public static DevelopmentFragment newInstance() {
 		 return new DevelopmentFragment();
 	 }
+ 
 	 // INNOPIA ik
 	 private ServiceConnection mConnection = new ServiceConnection(){
 		 public void onServiceConnected(ComponentName className, IBinder service){
@@ -334,7 +339,7 @@
  
 	 @Override
 	 public void onCreate(Bundle icicle) {
-		 Log.d(TAG, "innopia :: onCreate");
+ 
 		 if (icicle != null) {
 			 // Don't show this in onCreate since we might be on the back stack
 			 mPendingDialogKey = icicle.getString(STATE_SHOWING_DIALOG_KEY);
@@ -362,7 +367,7 @@
 		 mLogdSizeController = new LogdSizePreferenceController(getActivity());
 		 mLogpersistController = new LogpersistPreferenceController(getActivity(),
 				 getSettingsLifecycle());
-		 Log.d(TAG, "innopia :: onCreatePreferences");
+ 
 		 if (!mUm.isAdminUser()
 				 || mUm.hasUserRestriction(UserManager.DISALLOW_DEBUGGING_FEATURES)
 				 || Settings.Global.getInt(mContentResolver,
@@ -383,9 +388,9 @@
 		 final PreferenceGroup debugDebuggingCategory = (PreferenceGroup)
 				 findPreference(DEBUG_DEBUGGING_CATEGORY_KEY);
 		 mEnableAdb = findAndInitSwitchPref(ENABLE_ADB);
-		 /*CONFIG_INNOPIATECH*/
+ /*CONFIG_INNOPIATECH*/
 		 mUsbDeviceStatus = findAndInitSwitchPref(USB_DEVICE_STATUS);
-		 /*endif*/
+ /*endif*/
 		 mClearAdbKeys = findPreference(CLEAR_ADB_KEYS);
 		 if (!AdbProperties.secure().orElse(false)) {
 			 if (debugDebuggingCategory != null) {
@@ -508,7 +513,7 @@
  
 		 // TODO: implement UI for TV
 		 removePreference(KEY_CONVERT_FBE);
-		 /*
+ /*
 		 // Please import android.sysprop.CryptoProperties when you uncomment this block.
 		 PreferenceScreen convertFbePreference =
 				 (PreferenceScreen) findPreference(KEY_CONVERT_FBE);
@@ -527,7 +532,8 @@
 		 } catch(RemoteException e) {
 			 removePreference(KEY_CONVERT_FBE);
 		 }
-		 */
+ */
+ 
 		 mColorModePreference = (ColorModePreference) findPreference(KEY_COLOR_MODE);
 		 mColorModePreference.updateCurrentAndSupported();
 		 if (mColorModePreference.getColorModeCount() < 2) {
@@ -536,13 +542,12 @@
 		 }
  
 		 // INNOPIA ik
+		 if(DEBUG){Log.d(TAG, "innopia :: onCreatePreferences");}
 		 // T4H Service Connect 
 		 // connectRemoteService();
 		 // 초기 설정 화면 생성
-		 Log.d(TAG, "innopia :: mPowerKeyLock Preference");
 		 mPowerKeyLock = findAndInitSwitchPref(KEY_DEV_POWER_KEY_LOCK); // dev_power_key_lock
 		 mPowerKeyLock.setChecked(getPowerLockStatus(getContext()));
-		 Log.d(TAG, "innopia :: mResetRcuIrConfig Preference");
 		 mResetRcuIrConfig = findPreference(KEY_RESET_RCU_IR_CONFIG);
 		 mAllPrefs.add(mResetRcuIrConfig);
 		 Log.d(TAG, "innopia :: DasBroadcastReceiver register ....");
@@ -558,32 +563,36 @@
  
 	 public void connectT4HService(){
 		 // INNOPIA ik - service binder in
-		 Log.d(TAG, "innopia :: connectT4HService() ");
-		 Log.d(TAG, "innopia :: T4HService Connection ....");
+		 if(DEBUG){
+			 Log.d(TAG, "innopia :: connectT4HService() ");
+			 Log.d(TAG, "innopia :: T4HService Connection ....");
+		 }
+ 
 		 Intent intent = new Intent();
 		 intent.setAction("pt.multiverso.tech4homesoftwaredemo.t4hservice");
 		 PackageManager pm = getContext().getPackageManager();
 		 List<ResolveInfo> resolveInfoList = pm.queryIntentServices(intent, 0);
+ 
 		 if (resolveInfoList == null || resolveInfoList.size() != 1){
-			 Log.d(TAG, "innopia :: T4HService resolveInfoList is NULL ....");
+			 if(DEBUG){Log.d(TAG, "innopia :: T4HService resolveInfoList is NULL ....");}
 		 }
 		 ResolveInfo serviceInfo = resolveInfoList.get(0);
 		 ComponentName component = new ComponentName(serviceInfo.serviceInfo.packageName, serviceInfo.serviceInfo.name);
 		 Intent explicitIntent = new Intent(intent);
 		 explicitIntent.setComponent(component);
 		 boolean res = getContext().bindService(explicitIntent, mConnection, Context.BIND_AUTO_CREATE);
-		 Log.d(TAG, "innopia :: T4HService Connection Result = "+ res);
+		 if(DEBUG){Log.d(TAG, "innopia :: T4HService Connection Result = "+ res);}
 		 // INNOPIA ik end
 	 }
  
 	 /* INNOPIA ik access modifiers changed from: private */
 	 // 현재 power key lock 상태를 settings에서 읽어들이는 함수.
 	 public boolean getPowerLockStatus(Context context) {
-		 Log.d(TAG, "innopia :: getPowerLockStatus()");
+		 if(DEBUG){Log.d(TAG, "innopia :: getPowerLockStatus()");}
 		 int a = Settings.Global.getInt(getContext().getContentResolver(), Global.HDMI_CONTROL_AUTO_WAKEUP_ENABLED, 0);
 		 int b = Settings.Global.getInt(getContext().getContentResolver(), Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED, 0);
 		 // int c = Settings.Global.getInt(getContext().getContentResolver(), HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED, 0);
-		 Log.d(TAG, "innopia :: status : autoWakeup="+a+" audoDeviceOff="+b);
+		 if(DEBUG){Log.d(TAG, "innopia :: status : autoWakeup="+a+" audoDeviceOff="+b);}
 		 if(a+b==2){
 			 return false;
 		 }
@@ -669,9 +678,7 @@
 	 @Override
 	 public void onResume() {
 		 super.onResume();
-		 Log.d(TAG, "innopia :: onResume");
- 
- 
+		 if(DEBUG){Log.d(TAG, "innopia :: onResume");}
  
 		 if (mUnavailable) {
 			 return;
@@ -779,7 +786,7 @@
 		 mHaveDebugSettings |= value;
 	 }
  
-	 /*CONFIG_INNOPIATECH*/
+ /*CONFIG_INNOPIATECH*/
 	  public String getProperty(String cmd) {
 			 StringBuffer output = new StringBuffer();
 			 Process p;
@@ -806,7 +813,7 @@
 					 e.printStackTrace();
 			 }
 	  }
-	 /*endif*/
+ /*endif*/
  
 	 private void updateAllOptions() {
 		 final Context context = getActivity();
@@ -849,9 +856,9 @@
 		 updateAppProcessLimitOptions();
 		 updateShowAllANRsOptions();
 		 updateVerifyAppsOverUsbOptions();
-		 /*CONFIG_INNOPIATECH*/
+ /*CONFIG_INNOPIATECH*/
 		updateUsbDeviceStatus();
-		 /*endif*/
+ /*endif*/
 		 updateBugreportOptions();
 		 updateForceRtlOptions();
 		 updateWindowBlursOptions();
@@ -1065,12 +1072,12 @@
 		 mVerifyAppsOverUsb.setEnabled(enableVerifierSetting());
 	 }
  
-	 /*CONFIG_INNOPIATECH*/
+ /*CONFIG_INNOPIATECH*/
 	 private void updateUsbDeviceStatus() {
 		if(getProperty("persist.sys.usb.configfs").equals("0"))  updateSwitchPreference(mUsbDeviceStatus, false);
 		else  updateSwitchPreference(mUsbDeviceStatus, true);
 	 }
-	 /*endif*/
+ /*endif*/
  
 	 private void writeVerifyAppsOverUsbOptions() {
 		 Settings.Global.putInt(mContentResolver, Settings.Global.PACKAGE_VERIFIER_INCLUDE_ADB,
@@ -1820,7 +1827,7 @@
 				 mVerifyAppsOverUsb.setChecked(false);
 			 }
 		 }
-		 /*CONFIG_INNOPIATECH*/
+ /*CONFIG_INNOPIATECH*/
 		 else if (preference == mUsbDeviceStatus){
 			if(getProperty("persist.sys.usb.configfs").equals("0")){
 				setProperty("persist.sys.usb.configfs 1");
@@ -1830,7 +1837,7 @@
 				updateSwitchPreference(mUsbDeviceStatus, false);
 			}
 		 }
-		 /*endif*/
+ /*endif*/
 		 else if (preference == mEnableTerminal) {
 			 final PackageManager pm = getActivity().getPackageManager();
 			 pm.setApplicationEnabledSetting(TERMINAL_APP_PACKAGE,
@@ -1943,17 +1950,21 @@
 		 // } 
 		 
 		 else if (preference == mPowerKeyLock) {
-			 Log.d(TAG, "innopia :: =================================================== ");
-			 Log.d(TAG, "innopia :: PowerKeyLock preference ");
+			 if(DEBUG){
+				 Log.d(TAG, "innopia :: =================================================== ");
+				 Log.d(TAG, "innopia :: PowerKeyLock preference ");
+			 }
 			 Settings.Global.putInt(getContext().getContentResolver(), Settings.Global.HDMI_CONTROL_AUTO_WAKEUP_ENABLED, mPowerKeyLock.isChecked()? 0:1);
 			 Settings.Global.putInt(getContext().getContentResolver(), Settings.Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED, mPowerKeyLock.isChecked()? 0:1);
 			 // Settings.Global.putInt(getContext().getContentResolver(), Settings.Global.HDMI_CONTROL_AUTO_WAKEUP_DISABLED,mPowerKeyLock.isChecked()? 1:0);
 			 // Settings.Global.putInt(getContext().getContentResolver(), Settings.Global.HDMI_CONTROL_AUTO_DEVICE_OFF_DISABLED,mPowerKeyLock.isChecked()? 1:0);
 			 // Settings.Global.putInt(getContext().getContentResolver(), HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED, mPowerKeyLock.isChecked()? 0:1);
-			 Log.d(TAG, "innopia :: HDMI_CONTROL_AUTO_WAKEUP_ENABLED = "+ Settings.Global.getInt(getContext().getContentResolver(), Global.HDMI_CONTROL_AUTO_WAKEUP_ENABLED, 0));
-			 Log.d(TAG, "innopia :: HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED = "+ Settings.Global.getInt(getContext().getContentResolver(), Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED, 0));
-			 // Log.d(TAG, "innopia :: HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED = "+ Settings.Global.getInt(getContext().getContentResolver(), HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED, 0));
-			 Log.d(TAG, "innopia :: =================================================== ");
+			 if(DEBUG){
+				 Log.d(TAG, "innopia :: HDMI_CONTROL_AUTO_WAKEUP_ENABLED = "+ Settings.Global.getInt(getContext().getContentResolver(), Global.HDMI_CONTROL_AUTO_WAKEUP_ENABLED, 0));
+				 Log.d(TAG, "innopia :: HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED = "+ Settings.Global.getInt(getContext().getContentResolver(), Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED, 0));
+				 // Log.d(TAG, "innopia :: HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED = "+ Settings.Global.getInt(getContext().getContentResolver(), HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED, 0));
+				 Log.d(TAG, "innopia :: =================================================== ");
+			 }
  
  
 			 T4HKeyLockType tv = T4HKeyLockType.T4HKeyLockTV;
@@ -1961,27 +1972,26 @@
 			 T4HKeyLockType both = T4HKeyLockType.T4HKeyLockBoth;
  
 			 if(mPowerKeyLock.isChecked()){
-				 Log.d(TAG, "innopia :: PowerKeyLock ON");
-				 // void setKeyLock(String address, inout T4HKeyLockType type, boolean volup, boolean voldown, boolean power, 
-				 //                   boolean mute, boolean input, in IT4HDeviceSetKeyLockRequestCallback callback);
-				 // void getKeyLock(String address, inout T4HKeyLockType type, in IT4HDeviceGetKeyLockRequestCallback callback);
+				 if(DEBUG){Log.d(TAG, "innopia :: PowerKeyLock ON");}
 				 if(!getRcuSetupState(getContext())){
-					 Log.d(TAG, "innopia :: startRcuSetup()  ");
+					 if(DEBUG){Log.d(TAG, "innopia :: startRcuSetup()  ");}
 					 startRcuSetup(getContext(), "de.telekom.rcusetup");
 				 }else{
-					 Log.d(TAG, "innopia :: setup complete change setKeyLock >>>");
+					 if(DEBUG){Log.d(TAG, "innopia :: setup complete change setKeyLock >>>");}
 					 try{
 						 if ( mRemoteService != null && mRCUAddress != null ) {
 							 mRemoteService.setKeyLock(mRCUAddress, stb, false, false, false, false, false, new IT4HDeviceSetKeyLockRequestCallback.Stub(){
 								 @Override
 								 public void callback(boolean success, int status) throws RemoteException {
-									 Log.d(TAG, "innopia :: ********************** ");
-									 Log.d(TAG, "innopia :: setKeyLock T4HKeyLockSTB " + success + " status = " + status);
-									 Log.d(TAG, "innopia :: ********************** ");
+									 if(DEBUG){
+										 Log.d(TAG, "innopia :: ********************** ");
+										 Log.d(TAG, "innopia :: setKeyLock T4HKeyLockSTB " + success + " status = " + status);
+										 Log.d(TAG, "innopia :: ********************** ");
+									 }
 								 }
 							 });
 						 }else{
-							 Log.d(TAG, "innopia :: T4HService DisConnect!!!");
+							 if(DEBUG){Log.d(TAG, "innopia :: T4HService DisConnect!!!");}
 						 }
 					 }catch ( RemoteException e ) { 
 						 e.printStackTrace();
@@ -1991,13 +2001,15 @@
 							 mRemoteService.setKeyLock(mRCUAddress, both, false, false, true, false, false, new IT4HDeviceSetKeyLockRequestCallback.Stub(){
 								 @Override
 								 public void callback(boolean success, int status) throws RemoteException {
-									 Log.d(TAG, "innopia :: ********************** ");
-									 Log.d(TAG, "innopia :: setKeyLock T4HKeyLockBoth " + success + " status = " + status);
-									 Log.d(TAG, "innopia :: ********************** ");
+									 if(DEBUG){
+										 Log.d(TAG, "innopia :: ********************** ");
+										 Log.d(TAG, "innopia :: setKeyLock T4HKeyLockBoth " + success + " status = " + status);
+										 Log.d(TAG, "innopia :: ********************** ");
+									 }
 								 }
 							 });
 						 }else{
-							 Log.d(TAG, "innopia :: T4HService DisConnect!!!");
+							 if(DEBUG){Log.d(TAG, "innopia :: T4HService DisConnect!!!");}
 						 }
 					 }catch ( RemoteException e ) { 
 						 e.printStackTrace();
@@ -2007,19 +2019,21 @@
 			 }
  
 			 if(!mPowerKeyLock.isChecked()){
-				 Log.d(TAG, "innopia :: PowerKeyLock OFF");
+				 if(DEBUG) {Log.d(TAG, "innopia :: PowerKeyLock OFF");}
 				 try{
 					 if ( mRemoteService != null && mRCUAddress != null ) {
 						 mRemoteService.setKeyLock(mRCUAddress, stb, false, false, true, false, false, new IT4HDeviceSetKeyLockRequestCallback.Stub(){
 							 @Override
 							 public void callback(boolean success, int status) throws RemoteException {
-								 Log.d(TAG, "innopia :: ********************** ");
-								 Log.d(TAG, "innopia :: setKeyLock T4HKeyLockSTB " + success + " status = " + status);
-								 Log.d(TAG, "innopia :: ********************** ");
+								 if(DEBUG){
+									 Log.d(TAG, "innopia :: ********************** ");
+									 Log.d(TAG, "innopia :: setKeyLock T4HKeyLockSTB " + success + " status = " + status);
+									 Log.d(TAG, "innopia :: ********************** ");
+								 }
 							 }
 						 });
 					 }else{
-						 Log.d(TAG, "innopia :: T4HService DisConnect!!!");
+						 if(DEBUG){Log.d(TAG, "innopia :: T4HService DisConnect!!!");}
 					 }
 				 }catch ( RemoteException e ) { 
 					 e.printStackTrace();
@@ -2029,13 +2043,15 @@
 						 mRemoteService.setKeyLock(mRCUAddress, both, false, false, false, false, false, new IT4HDeviceSetKeyLockRequestCallback.Stub(){
 							 @Override
 							 public void callback(boolean success, int status) throws RemoteException {
-								 Log.d(TAG, "innopia :: ********************** ");
-								 Log.d(TAG, "innopia :: setKeyLock T4HKeyLockBoth " + success + " status = " + status);
-								 Log.d(TAG, "innopia :: ********************** ");
+								 if(DEBUG){
+									 Log.d(TAG, "innopia :: ********************** ");
+									 Log.d(TAG, "innopia :: setKeyLock T4HKeyLockBoth " + success + " status = " + status);
+									 Log.d(TAG, "innopia :: ********************** ");
+								 }
 							 }
 						 });
 					 }else{
-						 Log.d(TAG, "innopia :: T4HService DisConnect!!!");
+						 if(DEBUG){Log.d(TAG, "innopia :: T4HService DisConnect!!!");}
 					 }
 				 }catch ( RemoteException e ) { 
 					 e.printStackTrace();
@@ -2045,17 +2061,19 @@
 		 }
  
 		 else if (preference == mResetRcuIrConfig) {
-			 Log.d(TAG, "innopia :: reset_rcu_ir_config preference Click");
+			 if(DEBUG) {Log.d(TAG, "innopia :: RESET RCU IR Config Click");}
 			 try {
 				 if ( mRemoteService != null && mRCUAddress != null ) {
 					 mRemoteService.clearUDBCode(mRCUAddress, new IT4HDeviceClearUDBCodeRequestCallback.Stub() {
 							 @Override
 							 public void callback(boolean success, int status) throws RemoteException {
-								 Log.d(TAG, "innopia :: clearUDBCode " + success);
+								 if(DEBUG){
+									 Log.d(TAG, "innopia :: clearUDBCode " + success);
+								 }
 							 }
 						 });
 				 }else{
-					 Log.d(TAG, "innopia :: T4HService DisConnect!!!");                    
+					 if(DEBUG){Log.d(TAG, "innopia :: T4HService DisConnect!!!");}
 				 }
 			 } catch ( RemoteException e ) { 
 				 e.printStackTrace();
@@ -2069,16 +2087,22 @@
  
 	 //INNOPIA ik
 	 private boolean getRcuSetupState(Context context) {
-		 Log.d(TAG, "innopia :: ===================================================");
-		 Log.d(TAG, "innopia :: getRcuSetupState()");
+		 if(DEBUG){
+			 Log.d(TAG, "innopia :: ===================================================");
+			 Log.d(TAG, "innopia :: getRcuSetupState()");
+		 }
 		 boolean check = ON.equals(Settings.Global.getString(context.getContentResolver(), KEY_INFRARED_CONTROL_SWITCH));
-		 if(check){
+		 if(DEBUG){
+			 if(check){
 			 Log.d(TAG, "innopia :: get RcuSetupState = ON");
 			 Log.d(TAG, "innopia :: ===================================================");
+		 }
 			 return true;
 		 }
-		 Log.d(TAG, "innopia :: get RcuSetupState = OFF");
-		 Log.d(TAG, "innopia :: ===================================================");
+		 if(DEBUG){
+			 Log.d(TAG, "innopia :: get RcuSetupState = OFF");
+			 Log.d(TAG, "innopia :: ===================================================");
+		 }
 		 return false;
 	 }
 	 //INNOPIA ik end
@@ -2306,3 +2330,39 @@
 		 }
 	 }
  }
+
+ // 최초에 구현했던 코드 내용이다. Global setting의 값을 변경하여 적용했었다. HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED 는 필수는 아니다. 
+ // else if (preference == mPowerKeyLock) {
+        //     Log.d(TAG, "innopia :: ======================= ");
+        //     Log.d(TAG, "innopia :: PowerKeyLock preference ");
+        //     Settings.Global.putInt(getContext().getContentResolver(), Settings.Global.HDMI_CONTROL_AUTO_WAKEUP_ENABLED, mPowerKeyLock.isChecked()? 1:0);
+        //     Settings.Global.putInt(getContext().getContentResolver(), Settings.Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED, mPowerKeyLock.isChecked()? 1:0);
+        //     Settings.Global.putInt(getContext().getContentResolver(), HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED, mPowerKeyLock.isChecked()? 1:0);
+        //     if(!mPowerKeyLock.isChecked()){
+        //         try {
+    	// 			if ( mRemoteService != null && mRCUAddress != null ) {
+    	// 				mRemoteService.clearUDBCode(mRCUAddress, new IT4HDeviceClearUDBCodeRequestCallback.Stub() {
+    	// 						@Override
+    	// 						public void callback(boolean success, int status) throws RemoteException {
+    	// 							Log.d(TAG, "innopia :: clearUDBCode " + success);
+    	// 						}
+    	// 					});            
+		// 			    }
+    	// 			}
+    	// 		} catch ( RemoteException e ) {
+    	// 			e.printStackTrace();
+		// 	    }
+        //     }
+        //     if(!getRcuSetupState(getContext())){
+        //         startRcuSetup(getContext(), "de.telekom.rcusetup");
+        //     }
+        //     Log.d(TAG, "innopia :: HDMI_CONTROL_AUTO_WAKEUP_ENABLED = "+ Settings.Global.getInt(getContext().getContentResolver(), Global.HDMI_CONTROL_AUTO_WAKEUP_ENABLED, 0));
+        //     Log.d(TAG, "innopia :: HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED = "+ Settings.Global.getInt(getContext().getContentResolver(), Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED, 0));
+        //     Log.d(TAG, "innopia :: HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED = "+ Settings.Global.getInt(getContext().getContentResolver(), HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED, 0));
+        //     // Settings.Global.putInt(getContext().getContentResolver(), Settings.Global.HDMI_CONTROL_AUTO_WAKEUP_ENABLED,0);
+        //     // Settings.Global.putInt(getContext().getContentResolver(), Settings.Global.HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED,0);
+        //     // Settings.Global.putInt(getContext().getContentResolver(), HDMI_CONTROL_ONE_TOUCH_PLAY_ENABLED,0);
+        //     // Settings.Global.putString(getContext().getContentResolver(), KEY_INFRARED_CONTROL_SWITCH, OFF);
+        //     // mPowerKeyLock.setChecked(false);
+        // } 
+ 
