@@ -1,0 +1,598 @@
+console:/ $ logcat | grep -E "innopia|BTPairingService"
+
+
+>> Reset RCU IR Config
+
+04-01 16:58:35.999  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.ACL_CONNECTED
+04-01 16:58:35.999  1949  1949 D BTPairingService: ACTION_ACL_CONNECTED
+04-01 16:58:36.008  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 16:58:36.011  1949  1949 D BTPairingService: ACTION_ACL_CONNECTED connected devices : 1
+04-01 16:58:36.015  1949  1949 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 16:58:36.028  1949  4349 D BTPairingService: onConnected : 30:D9:7F:1E:67:FC
+04-01 16:58:36.106  2039  2063 E pt.multiverso.tech4home: com.innopia.btpairingservice - onServicesDiscovered
+04-01 16:58:36.106  1949  4349 D BTPairingService: startCheckBatteryTimer 30:D9:7F:1E:67:FC
+04-01 16:58:36.106  1949  4349 D BTPairingService: onServicesDiscovered : 30:D9:7F:1E:67:FC
+04-01 16:58:36.320  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:58:36.390  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+04-01 16:58:36.396  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+04-01 16:58:36.427  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:58:36.600  3875  3875 D DevelopmentSettings: innopia :: RESET RCU IR Config Click
+04-01 16:58:36.611  3875  3875 D DevelopmentSettings: innopia :: getKeyLockState() 
+04-01 16:58:36.631  3875  3888 D DevelopmentSettings: innopia :: clearUDBCode true
+04-01 16:58:36.632  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:58:36.632  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:36.632  3875  3888 D DevelopmentSettings: innopia :: IN = T4HKeyLockTV
+04-01 16:58:36.632  3875  3888 D DevelopmentSettings: innopia :: OUT = T4HKeyLockTV
+04-01 16:58:36.632  3875  3888 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:58:36.632  3875  3888 D DevelopmentSettings: innopia :: false | false | false | false | false
+04-01 16:58:36.632  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:36.633  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:58:36.642  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:36.642  3875  3888 D DevelopmentSettings: innopia :: IN = T4HKeyLockSTB
+04-01 16:58:36.642  3875  3888 D DevelopmentSettings: innopia :: OUT = T4HKeyLockSTB
+04-01 16:58:36.642  3875  3888 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:58:36.642  3875  3888 D DevelopmentSettings: innopia :: true | true | true | true | true
+04-01 16:58:36.642  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:36.643  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:58:36.653  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:36.653  3875  3888 D DevelopmentSettings: innopia :: IN = T4HKeyLockBoth
+04-01 16:58:36.653  3875  3888 D DevelopmentSettings: innopia :: OUT = T4HKeyLockBoth
+04-01 16:58:36.653  3875  3888 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:58:36.653  3875  3888 D DevelopmentSettings: innopia :: false | false | false | false | false
+04-01 16:58:36.653  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:36.654  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:58:37.109  1949  4979 V BTPairingService: BTDevices.size(): 1
+04-01 16:58:37.114  1949  4979 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 16:58:37.120  1949  4979 V BTPairingService: connect, dev name: MagentaTV Remote 2 status 2
+04-01 16:58:37.120  1949  4979 V BTPairingService: call connectGatt
+04-01 16:58:37.124  1949  4349 V BTPairingService: onConnectionStateChange status 0 newStatus 2
+04-01 16:58:37.135  1949  4349 V BTPairingService: onServicesDiscovered status 0
+04-01 16:58:37.225  1949  4349 V BTPairingService: onCharacteristicRead status 0, uuid: 00002a19-0000-1000-8000-00805f9b34fb
+04-01 16:58:37.225  1949  4349 V BTPairingService: Battery : 48
+04-01 16:58:37.323  1949  4979 V BTPairingService: call close gatt service
+04-01 16:58:39.110  1949  1949 D BTPairingService: MSG_UPDATE_VERSION
+04-01 16:58:39.117  1949  1949 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 16:58:39.230  1949  4349 D BTPairingService: FWVersion: 0320.01.15
+04-01 16:58:39.230  1949  4349 V BTPairingService: >>> send broadcast com.innopia.btpairingservice.CHECK_FW_UP
+04-01 16:58:39.232  1949  4349 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1817 android.content.ContextWrapper.startService:776 com.innopia.btpairingservice.BTPairingService.g0:29 com.innopia.btpairingservice.BTPairingService.H:0 com.innopia.btpairingservice.o.v:102 
+04-01 16:58:39.243  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:58:39.245  4399  4399 D BTOADService: onStartCommand() com.innopia.btpairingservice.CHECK_FW_UP
+04-01 16:58:39.262  1949  4349 D BTPairingService: UDBVersion: 23020201
+04-01 16:58:39.262  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+
+
+
+
+>> Power Key Lock On >> Rcu setup start
+
+
+
+
+04-01 16:58:51.468  3875  3875 D DevelopmentSettings: innopia :: PowerKeyLock =================================================== 
+04-01 16:58:51.473  3875  3875 D DevelopmentSettings: innopia :: HDMI_CONTROL_AUTO_WAKEUP_ENABLED = 0
+04-01 16:58:51.475  3875  3875 D DevelopmentSettings: innopia :: HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED = 0
+04-01 16:58:51.475  3875  3875 D DevelopmentSettings: innopia :: =================================================== 
+04-01 16:58:51.475  3875  3875 D DevelopmentSettings: innopia :: PowerKeyLock ON
+04-01 16:58:51.475  3875  3875 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:51.475  3875  3875 D DevelopmentSettings: innopia :: getRcuSetupState()
+04-01 16:58:51.476  3875  3875 D DevelopmentSettings: innopia :: get RcuSetupState = OFF
+04-01 16:58:51.476  3875  3875 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:51.476  3875  3875 D DevelopmentSettings: innopia :: startRcuSetup()
+04-01 16:58:51.476  3875  3875 D DevelopmentSettings: innopia :: start RCU Setup.
+04-01 16:58:51.529  3875  3875 D DevelopmentSettings: innopia :: getKeyLockState() 
+04-01 16:58:51.635  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:51.635  3875  3888 D DevelopmentSettings: innopia :: IN = T4HKeyLockTV
+04-01 16:58:51.635  3875  3888 D DevelopmentSettings: innopia :: OUT = T4HKeyLockTV
+04-01 16:58:51.635  3875  3888 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:58:51.635  3875  3888 D DevelopmentSettings: innopia :: false | false | false | false | false
+04-01 16:58:51.635  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:51.636  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:58:51.637  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:51.637  3875  3888 D DevelopmentSettings: innopia :: IN = T4HKeyLockSTB
+04-01 16:58:51.637  3875  3888 D DevelopmentSettings: innopia :: OUT = T4HKeyLockSTB
+04-01 16:58:51.637  3875  3888 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:58:51.637  3875  3888 D DevelopmentSettings: innopia :: true | true | true | true | true
+04-01 16:58:51.637  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:51.637  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:58:51.638  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:51.638  3875  3888 D DevelopmentSettings: innopia :: IN = T4HKeyLockBoth
+04-01 16:58:51.638  3875  3888 D DevelopmentSettings: innopia :: OUT = T4HKeyLockBoth
+04-01 16:58:51.638  3875  3888 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:58:51.638  3875  3888 D DevelopmentSettings: innopia :: false | false | false | false | false
+04-01 16:58:51.638  3875  3888 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:58:51.639  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:58:52.662  3875  3875 D DevelopmentSettings: innopia :: onStop()
+
+
+
+04-01 16:59:02.052  1949  4349 D BTPairingService: onDisconnected : 30:D9:7F:1E:67:FC
+04-01 16:59:02.053  1949  4349 D BTPairingService: stopCheckBatteryTimer 30:D9:7F:1E:67:FC
+04-01 16:59:02.055  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.ACL_DISCONNECTED
+04-01 16:59:02.060  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 16:59:02.065  1949  1949 D BTPairingService: ACL Disconnected
+04-01 16:59:02.115  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+
+
+>> Rcu Setup ^HComplete 
+>> Power KeyLock ON
+
+04-01 16:59:10.266  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.ACL_CONNECTED
+04-01 16:59:10.266  1949  1949 D BTPairingService: ACTION_ACL_CONNECTED
+04-01 16:59:10.274  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 16:59:10.282  1949  4349 D BTPairingService: onConnected : 30:D9:7F:1E:67:FC
+04-01 16:59:10.282  1949  1949 D BTPairingService: ACTION_ACL_CONNECTED connected devices : 1
+04-01 16:59:10.285  1949  1949 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 16:59:10.341  2039  4996 E pt.multiverso.tech4home: com.innopia.btpairingservice - onServicesDiscovered
+04-01 16:59:10.341  1949  4349 D BTPairingService: startCheckBatteryTimer 30:D9:7F:1E:67:FC
+04-01 16:59:10.342  1949  4349 D BTPairingService: onServicesDiscovered : 30:D9:7F:1E:67:FC
+04-01 16:59:10.591  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:10.670  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+04-01 16:59:10.677  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+04-01 16:59:10.702  1949  4349 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:11.152  1949  4349 D BTPairingService: onConnected : 30:D9:7F:1E:67:FC
+04-01 16:59:11.344  1949  5045 V BTPairingService: BTDevices.size(): 1
+04-01 16:59:11.348  1949  5045 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 16:59:11.352  1949  5045 V BTPairingService: connect, dev name: MagentaTV Remote 2 status 2
+04-01 16:59:11.352  1949  5045 V BTPairingService: call connectGatt
+04-01 16:59:11.357  1949  5052 V BTPairingService: onConnectionStateChange status 0 newStatus 2
+04-01 16:59:11.361  1949  5052 V BTPairingService: onServicesDiscovered status 0
+04-01 16:59:11.444  1949  5052 V BTPairingService: onCharacteristicRead status 0, uuid: 00002a19-0000-1000-8000-00805f9b34fb
+04-01 16:59:11.444  1949  5052 V BTPairingService: Battery : 48
+04-01 16:59:11.455  1949  5045 V BTPairingService: call close gatt service
+04-01 16:59:11.469  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:11.501  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:11.545  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:13.345  1949  1949 D BTPairingService: MSG_UPDATE_VERSION
+04-01 16:59:13.350  1949  1949 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 16:59:13.436  1949  5052 D BTPairingService: FWVersion: 0320.01.15
+04-01 16:59:13.436  1949  5052 V BTPairingService: >>> send broadcast com.innopia.btpairingservice.CHECK_FW_UP
+04-01 16:59:13.437  1949  5052 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1817 android.content.ContextWrapper.startService:776 com.innopia.btpairingservice.BTPairingService.g0:29 com.innopia.btpairingservice.BTPairingService.H:0 com.innopia.btpairingservice.o.v:102 
+04-01 16:59:13.445  4399  4399 D BTOADService: onStartCommand() com.innopia.btpairingservice.CHECK_FW_UP
+04-01 16:59:13.446  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:13.470  1949  5052 D BTPairingService: UDBVersion: 23020201
+04-01 16:59:13.471  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:14.848  3875  3875 D DevelopmentSettings: innopia :: Receive Action = de.telekom.rcusetup.das_over
+04-01 16:59:14.850  3875  3875 D DevelopmentSettings: innopia :: address = 30:D9:7F:1E:67:FC
+04-01 16:59:14.850  3875  3875 D DevelopmentSettings: innopia :: result  = true
+04-01 16:59:14.852  3875  3875 D DevelopmentSettings: innopia :: =============================================================
+04-01 16:59:14.852  3875  3875 D DevelopmentSettings: innopia :: KEY_INFRARED_CONTROL_SWITCH = ON : RCU Setup Complete
+04-01 16:59:14.852  3875  3875 D DevelopmentSettings: innopia :: =============================================================
+04-01 16:59:14.852  3875  3875 D DevelopmentSettings: innopia :: code    = 151
+04-01 16:59:14.852  3875  3875 D DevelopmentSettings: innopia :: status  = 0
+04-01 16:59:16.322  3875  3875 D DevelopmentSettings: innopia :: onStart()
+04-01 16:59:16.328  3875  3875 D DevelopmentSettings: innopia :: onResume()
+04-01 16:59:16.780  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:16.780  3875  5053 D DevelopmentSettings: innopia :: IN = T4HKeyLockSTB
+04-01 16:59:16.780  3875  5053 D DevelopmentSettings: innopia :: OUT = T4HKeyLockSTB
+04-01 16:59:16.780  3875  5053 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:59:16.780  3875  5053 D DevelopmentSettings: innopia :: false | false | false | false | true
+04-01 16:59:16.780  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:16.782  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:17.439  3875  3875 D DevelopmentSettings: innopia :: Receive Action = de.telekom.rcusetup.das_over
+04-01 16:59:17.439  3875  3875 D DevelopmentSettings: innopia :: address = 30:D9:7F:1E:67:FC
+04-01 16:59:17.439  3875  3875 D DevelopmentSettings: innopia :: result  = false
+04-01 16:59:17.439  3875  3875 D DevelopmentSettings: innopia :: code    = 65535
+04-01 16:59:17.439  3875  3875 D DevelopmentSettings: innopia :: status  = 2
+04-01 16:59:17.974  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+
+
+04-01 16:59:28.883  1949  5052 D BTPairingService: onDisconnected : 30:D9:7F:1E:67:FC
+04-01 16:59:28.883  1949  5052 D BTPairingService: stopCheckBatteryTimer 30:D9:7F:1E:67:FC
+04-01 16:59:28.901  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.ACL_DISCONNECTED
+04-01 16:59:28.906  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 16:59:28.909  1949  1949 D BTPairingService: ACL Disconnected
+04-01 16:59:28.968  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+
+
+
+>> Power Key Lock Off
+
+
+04-01 16:59:36.842  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.ACL_CONNECTED
+04-01 16:59:36.842  1949  1949 D BTPairingService: ACTION_ACL_CONNECTED
+04-01 16:59:36.856  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 16:59:36.865  1949  5052 D BTPairingService: onConnected : 30:D9:7F:1E:67:FC
+04-01 16:59:36.865  1949  1949 D BTPairingService: ACTION_ACL_CONNECTED connected devices : 1
+04-01 16:59:36.867  1949  1949 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 16:59:36.911  2039  4996 E pt.multiverso.tech4home: com.innopia.btpairingservice - onServicesDiscovered
+04-01 16:59:36.912  1949  5052 D BTPairingService: startCheckBatteryTimer 30:D9:7F:1E:67:FC
+04-01 16:59:36.913  1949  5052 D BTPairingService: onServicesDiscovered : 30:D9:7F:1E:67:FC
+04-01 16:59:37.170  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:37.248  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+04-01 16:59:37.254  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+04-01 16:59:37.282  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:37.914  1949  5197 V BTPairingService: BTDevices.size(): 1
+04-01 16:59:37.916  1949  5197 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 16:59:37.924  1949  5197 V BTPairingService: connect, dev name: MagentaTV Remote 2 status 2
+04-01 16:59:37.924  1949  5197 V BTPairingService: call connectGatt
+04-01 16:59:37.930  1949  5052 V BTPairingService: onConnectionStateChange status 0 newStatus 2
+04-01 16:59:37.933  1949  1966 V BTPairingService: onServicesDiscovered status 0
+04-01 16:59:38.034  1949  1966 V BTPairingService: onCharacteristicRead status 0, uuid: 00002a19-0000-1000-8000-00805f9b34fb
+04-01 16:59:38.034  1949  1966 V BTPairingService: Battery : 48
+04-01 16:59:38.128  1949  5197 V BTPairingService: call close gatt service
+04-01 16:59:38.767  3875  3875 D DevelopmentSettings: innopia :: PowerKeyLock =================================================== 
+04-01 16:59:38.771  3875  3875 D DevelopmentSettings: innopia :: HDMI_CONTROL_AUTO_WAKEUP_ENABLED = 1
+04-01 16:59:38.772  3875  3875 D DevelopmentSettings: innopia :: HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED = 1
+04-01 16:59:38.772  3875  3875 D DevelopmentSettings: innopia :: =================================================== 
+04-01 16:59:38.774  3875  3875 D DevelopmentSettings: innopia :: PowerKeyLock OFF
+04-01 16:59:38.794  3875  3875 D DevelopmentSettings: innopia :: getKeyLockState() 
+04-01 16:59:38.801  3875  5053 D DevelopmentSettings: innopia :: ********************** 
+04-01 16:59:38.801  3875  5053 D DevelopmentSettings: innopia :: setKeyLock T4HKeyLockSTB true status = 0
+04-01 16:59:38.801  3875  5053 D DevelopmentSettings: innopia :: ********************** 
+04-01 16:59:38.804  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:38.812  3875  5053 D DevelopmentSettings: innopia :: ********************** 
+04-01 16:59:38.812  3875  5053 D DevelopmentSettings: innopia :: setKeyLock T4HKeyLockBoth false status = 2
+04-01 16:59:38.812  3875  5053 D DevelopmentSettings: innopia :: ********************** 
+04-01 16:59:38.813  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:38.823  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:38.823  3875  5053 D DevelopmentSettings: innopia :: IN = T4HKeyLockTV
+04-01 16:59:38.823  3875  5053 D DevelopmentSettings: innopia :: OUT = T4HKeyLockTV
+04-01 16:59:38.823  3875  5053 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:59:38.824  3875  5053 D DevelopmentSettings: innopia :: true | true | false | true | false
+04-01 16:59:38.824  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:38.827  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:38.827  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:38.827  3875  5053 D DevelopmentSettings: innopia :: IN = T4HKeyLockSTB
+04-01 16:59:38.827  3875  5053 D DevelopmentSettings: innopia :: OUT = T4HKeyLockSTB
+04-01 16:59:38.827  3875  5053 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:59:38.827  3875  5053 D DevelopmentSettings: innopia :: false | false | true | false | true
+04-01 16:59:38.827  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:38.828  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+
+
+
+04-01 16:59:39.915  1949  1949 D BTPairingService: MSG_UPDATE_VERSION
+04-01 16:59:39.923  1949  1949 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+
+04-01 16:59:40.037  1949  1966 D BTPairingService: FWVersion: 0320.01.15
+04-01 16:59:40.037  1949  1966 V BTPairingService: >>> send broadcast com.innopia.btpairingservice.CHECK_FW_UP
+04-01 16:59:40.038  1949  1966 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1817 android.content.ContextWrapper.startService:776 com.innopia.btpairingservice.BTPairingService.g0:29 com.innopia.btpairingservice.BTPairingService.H:0 com.innopia.btpairingservice.o.v:102 
+04-01 16:59:40.049  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:40.051  4399  4399 D BTOADService: onStartCommand() com.innopia.btpairingservice.CHECK_FW_UP
+04-01 16:59:40.071  1949  1966 D BTPairingService: UDBVersion: 23020201
+04-01 16:59:40.072  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+
+
+
+
+
+
+
+
+>> Power Key Lock ON 
+
+
+04-01 16:59:49.343  3875  3875 D DevelopmentSettings: innopia :: PowerKeyLock =================================================== 
+04-01 16:59:49.350  3875  3875 D DevelopmentSettings: innopia :: HDMI_CONTROL_AUTO_WAKEUP_ENABLED = 0
+04-01 16:59:49.350  3875  3875 D DevelopmentSettings: innopia :: HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED = 0
+04-01 16:59:49.350  3875  3875 D DevelopmentSettings: innopia :: =================================================== 
+04-01 16:59:49.350  3875  3875 D DevelopmentSettings: innopia :: PowerKeyLock ON
+04-01 16:59:49.350  3875  3875 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:49.350  3875  3875 D DevelopmentSettings: innopia :: getRcuSetupState()
+04-01 16:59:49.352  3875  3875 D DevelopmentSettings: innopia :: get RcuSetupState = ON
+04-01 16:59:49.352  3875  3875 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:49.352  3875  3875 D DevelopmentSettings: innopia :: setup complete change setKeyLock >>>
+04-01 16:59:49.358  3875  3875 D DevelopmentSettings: innopia :: getKeyLockState() 
+04-01 16:59:49.377  3875  5053 D DevelopmentSettings: innopia :: ********************** 
+04-01 16:59:49.377  3875  5053 D DevelopmentSettings: innopia :: setKeyLock T4HKeyLockTV false status = 2
+04-01 16:59:49.377  3875  5053 D DevelopmentSettings: innopia :: ********************** 
+04-01 16:59:49.378  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:49.379  3875  5053 D DevelopmentSettings: innopia :: ********************** 
+04-01 16:59:49.379  3875  5053 D DevelopmentSettings: innopia :: setKeyLock T4HKeyLockSTB true status = 0
+04-01 16:59:49.379  3875  5053 D DevelopmentSettings: innopia :: ********************** 
+04-01 16:59:49.379  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:49.387  3875  5053 D DevelopmentSettings: innopia :: ********************** 
+04-01 16:59:49.388  3875  5053 D DevelopmentSettings: innopia :: setKeyLock T4HKeyLockBoth false status = 2
+04-01 16:59:49.388  3875  5053 D DevelopmentSettings: innopia :: ********************** 
+04-01 16:59:49.390  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:49.391  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:49.391  3875  5053 D DevelopmentSettings: innopia :: IN = T4HKeyLockBoth
+04-01 16:59:49.391  3875  5053 D DevelopmentSettings: innopia :: OUT = T4HKeyLockTV
+04-01 16:59:49.391  3875  5053 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:59:49.391  3875  5053 D DevelopmentSettings: innopia :: true | true | false | true | false
+04-01 16:59:49.391  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:49.392  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:49.393  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:49.393  3875  5053 D DevelopmentSettings: innopia :: IN = T4HKeyLockTV
+04-01 16:59:49.393  3875  5053 D DevelopmentSettings: innopia :: OUT = T4HKeyLockSTB
+04-01 16:59:49.393  3875  5053 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:59:49.393  3875  5053 D DevelopmentSettings: innopia :: false | false | true | false | true
+04-01 16:59:49.393  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:49.394  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 16:59:49.398  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:49.398  3875  5053 D DevelopmentSettings: innopia :: IN = T4HKeyLockSTB
+04-01 16:59:49.398  3875  5053 D DevelopmentSettings: innopia :: OUT = T4HKeyLockBoth
+04-01 16:59:49.398  3875  5053 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 16:59:49.398  3875  5053 D DevelopmentSettings: innopia :: false | false | false | false | false
+04-01 16:59:49.398  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 16:59:49.398  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+
+
+04-01 16:59:59.677  1949  1966 D BTPairingService: onDisconnected : 30:D9:7F:1E:67:FC
+04-01 16:59:59.677  1949  1966 D BTPairingService: stopCheckBatteryTimer 30:D9:7F:1E:67:FC
+04-01 16:59:59.681  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.ACL_DISCONNECTED
+04-01 16:59:59.690  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+
+
+
+
+
+>> RCU Factory Reset 
+
+
+
+04-01 17:16:44.687  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.ACL_CONNECTED
+04-01 17:16:44.687  1949  1949 D BTPairingService: ACTION_ACL_CONNECTED
+04-01 17:16:44.692  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 17:16:44.694  1949  1949 D BTPairingService: ACTION_ACL_CONNECTED connected devices : 1
+04-01 17:16:44.699  1949  1949 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 17:16:44.708  1949  5052 D BTPairingService: onConnected : 30:D9:7F:1E:67:FC
+04-01 17:16:44.720  2039  2061 E pt.multiverso.tech4home: com.innopia.btpairingservice - onServicesDiscovered
+04-01 17:16:44.721  1949  5052 D BTPairingService: startCheckBatteryTimer 30:D9:7F:1E:67:FC
+04-01 17:16:45.022  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:16:45.094  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+04-01 17:16:45.097  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+04-01 17:16:45.133  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:16:45.768  1949  6491 V BTPairingService: BTDevices.size(): 1
+04-01 17:16:45.773  1949  6491 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 17:16:45.778  1949  6491 V BTPairingService: connect, dev name: MagentaTV Remote 2 status 2
+04-01 17:16:45.778  1949  6491 V BTPairingService: call connectGatt
+04-01 17:16:45.781  1949  5052 V BTPairingService: onConnectionStateChange status 0 newStatus 2
+04-01 17:16:45.785  1949  5052 V BTPairingService: onServicesDiscovered status 0
+04-01 17:16:45.887  1949  5052 V BTPairingService: onCharacteristicRead status 0, uuid: 00002a19-0000-1000-8000-00805f9b34fb
+04-01 17:16:45.887  1949  5052 V BTPairingService: Battery : 48
+04-01 17:16:45.981  1949  6491 V BTPairingService: call close gatt service
+04-01 17:16:47.766  1949  1949 D BTPairingService: MSG_UPDATE_VERSION
+04-01 17:16:47.771  1949  1949 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 17:16:47.891  1949  5052 D BTPairingService: FWVersion: 0320.01.15
+04-01 17:16:47.891  1949  5052 V BTPairingService: >>> send broadcast com.innopia.btpairingservice.CHECK_FW_UP
+04-01 17:16:47.891  1949  5052 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1817 android.content.ContextWrapper.startService:776 com.innopia.btpairingservice.BTPairingService.g0:29 com.innopia.btpairingservice.BTPairingService.H:0 com.innopia.btpairingservice.o.v:102 
+04-01 17:16:47.897  4399  4399 D BTOADService: onStartCommand() com.innopia.btpairingservice.CHECK_FW_UP
+04-01 17:16:47.898  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:16:47.922  1949  5052 D BTPairingService: UDBVersion: 23020201
+04-01 17:16:47.923  1949  5052 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:16:51.147  1949  5052 D BTPairingService: stopCheckBatteryTimer 30:D9:7F:1E:67:FC
+04-01 17:16:51.147  1949  5052 D BTPairingService: onFactoryReset : 30:D9:7F:1E:67:FC
+04-01 17:16:51.149  1949  5052 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 17:16:51.150  1949  5052 D BTPairingService: remove bonding info of 30:D9:7F:1E:67:FC
+04-01 17:16:51.150  1949  5052 D BTPairingService: unpairDevice
+04-01 17:16:51.161  1949  5052 D BTPairingService: Bluetooth device successfully unpaired: MagentaTV Remote 2
+04-01 17:16:51.161  1949  5052 D BTPairingService: setPairGuideActivity show true intro
+04-01 17:16:51.162  1949  5052 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startActivity:1055 android.content.ContextWrapper.startActivity:411 com.innopia.btpairingservice.BTPairingService.f0:34 com.innopia.btpairingservice.BTPairingService.h0:134 com.innopia.btpairingservice.BTPairingService.f:0 
+04-01 17:16:51.163  1949  5052 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startActivity:1067 android.app.ContextImpl.startActivity:1056 android.content.ContextWrapper.startActivity:411 com.innopia.btpairingservice.BTPairingService.f0:34 com.innopia.btpairingservice.BTPairingService.h0:134 
+04-01 17:16:51.164   639  1658 I ActivityTaskManager: START u0 {flg=0x30000000 cmp=com.innopia.btpairingservice/.BTPairingView (has extras)} from uid 1000
+04-01 17:16:51.179  1949  5052 D BTPairingService: sendIntentToView intro
+04-01 17:16:51.179  1949  5052 D BTPairingService: Pairing Activity shows immediately
+04-01 17:16:51.180  1949  5052 D BTPairingService: onFactoryReset DISCOVER START
+04-01 17:16:51.180  1949  5052 D BTPairingService: doDiscovery()
+04-01 17:16:51.267  1949  1991 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:16:51.269  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.ACL_DISCONNECTED
+04-01 17:16:51.280  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 17:16:51.283  1949  1949 D BTPairingService: ACL Disconnected
+04-01 17:16:51.283  1949  1991 D BTPairingService: onDisconnected : 30:D9:7F:1E:67:FC
+04-01 17:16:51.283  1949  1991 D BTPairingService: stopCheckBatteryTimer 30:D9:7F:1E:67:FC
+04-01 17:16:51.283  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+04-01 17:16:51.283  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.BOND_STATE_CHANGED
+04-01 17:16:51.290  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 17:16:51.292  1949  1949 D BTPairingService: Bond State Changed
+04-01 17:16:51.294  1949  1949 D BTPairingService: RCU Bond State Changed
+04-01 17:16:51.294  1949  1949 D BTPairingService: Unpaired!!! priv 12 current 10
+04-01 17:16:51.295  1949  1949 D BTPairingService: setPairGuideActivity show true intro
+04-01 17:16:51.295  1949  1949 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startActivity:1055 android.content.ContextWrapper.startActivity:411 com.innopia.btpairingservice.BTPairingService.f0:34 com.innopia.btpairingservice.BTPairingService.h0:134 com.innopia.btpairingservice.BTPairingService.f:0 
+04-01 17:16:51.296  1949  1949 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startActivity:1067 android.app.ContextImpl.startActivity:1056 android.content.ContextWrapper.startActivity:411 com.innopia.btpairingservice.BTPairingService.f0:34 com.innopia.btpairingservice.BTPairingService.h0:134 
+04-01 17:16:51.296   639  3928 I ActivityTaskManager: START u0 {flg=0x30000000 cmp=com.innopia.btpairingservice/.BTPairingView (has extras)} from uid 1000
+04-01 17:16:51.301  1949  1949 D BTPairingService: sendIntentToView intro
+04-01 17:16:51.301  1949  1949 D BTPairingService: Pairing Activity shows immediately
+04-01 17:16:51.301  1949  1949 D BTPairingService: ACTION_BOND_STATE_CHANGED DISCOVER START
+04-01 17:16:51.301  1949  1949 D BTPairingService: already discovering
+04-01 17:16:51.374   639   661 I ActivityTaskManager: Displayed com.innopia.btpairingservice/.BTPairingView: +190ms
+04-01 17:16:51.385  1163  1163 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1899 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=com.innopia.btpairingservice fieldId=0 fieldName=null extras=null hintLocales=[]}, false)
+04-01 17:16:51.772  3875  3875 D DevelopmentSettings: innopia :: onStop()
+
+
+
+
+
+
+
+
+
+
+
+04-01 17:16:58.141  1949  1949 D BTPairingService: processResult Action Found
+04-01 17:16:58.141  1949  1949 D BTPairingService: setPairGuideActivity show true connection
+04-01 17:16:58.142  1949  1949 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startActivity:1055 android.content.ContextWrapper.startActivity:411 com.innopia.btpairingservice.BTPairingService.f0:34 com.innopia.btpairingservice.BTPairingService.h0:134 com.innopia.btpairingservice.BTPairingService.f:0 
+04-01 17:16:58.142  1949  1949 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startActivity:1067 android.app.ContextImpl.startActivity:1056 android.content.ContextWrapper.startActivity:411 com.innopia.btpairingservice.BTPairingService.f0:34 com.innopia.btpairingservice.BTPairingService.h0:134 
+04-01 17:16:58.143   639  5823 I ActivityTaskManager: START u0 {flg=0x30000000 cmp=com.innopia.btpairingservice/.BTPairingView (has extras)} from uid 1000
+04-01 17:16:58.149  1949  1949 D BTPairingService: sendIntentToView connection
+04-01 17:16:58.149  1949  1949 D BTPairingService: Pairing Activity shows immediately
+04-01 17:16:58.151  1949  1949 D BTPairingService: NO BONED DEVICE!
+04-01 17:16:58.223  1949  5052 D BTPairingService: onConnected : 30:D9:7F:1E:67:FC
+04-01 17:16:59.156  1949  1949 D BTPairingService: Remote Device has no bond!
+04-01 17:16:59.786  2039  2061 E pt.multiverso.tech4home: com.innopia.btpairingservice - onServicesDiscovered
+04-01 17:16:59.786  1949  5052 D BTPairingService: startCheckBatteryTimer 30:D9:7F:1E:67:FC
+04-01 17:16:59.786  1949  5052 D BTPairingService: onServicesDiscovered : 30:D9:7F:1E:67:FC
+04-01 17:17:00.160  1949  1949 D BTPairingService: waitting BT bond...
+04-01 17:17:00.160  1949  1949 D BTPairingService: processResult PAIRED
+04-01 17:17:00.160  1949  1949 D BTPairingService: setPairGuideActivity show true connected
+04-01 17:17:00.161  1949  1949 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startActivity:1055 android.content.ContextWrapper.startActivity:411 com.innopia.btpairingservice.BTPairingService.f0:34 com.innopia.btpairingservice.BTPairingService.h0:134 com.innopia.btpairingservice.BTPairingService.f:0 
+04-01 17:17:00.161  1949  1949 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startActivity:1067 android.app.ContextImpl.startActivity:1056 android.content.ContextWrapper.startActivity:411 com.innopia.btpairingservice.BTPairingService.f0:34 com.innopia.btpairingservice.BTPairingService.h0:134 
+04-01 17:17:00.163   639  3928 I ActivityTaskManager: START u0 {flg=0x30000000 cmp=com.innopia.btpairingservice/.BTPairingView (has extras)} from uid 1000
+04-01 17:17:00.166  1949  1949 D BTPairingService: sendIntentToView connected
+04-01 17:17:00.166  1949  1949 D BTPairingService: Pairing Activity shows immediately
+04-01 17:17:00.166  1949  1949 D BTPairingService: apply_state_handle_to_aidl[30:D9:7F:1E:67:FC]
+04-01 17:17:00.168  2039  2061 E T4HDevice: Adding device listener: com.innopia.btpairingservice
+04-01 17:17:00.169  1949  1949 D BTPairingService: onConnected : 30:D9:7F:1E:67:FC
+04-01 17:17:00.169  1949  1949 D BTPairingService: Stop Scanning.
+04-01 17:17:00.175  1949  1949 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startActivity:1055 android.content.ContextWrapper.startActivity:411 com.innopia.btpairingservice.BTPairingService.f0:34 com.innopia.btpairingservice.BTPairingService.h0:146 com.innopia.btpairingservice.BTPairingService.f:0 
+04-01 17:17:00.176  1949  1949 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startActivity:1067 android.app.ContextImpl.startActivity:1056 android.content.ContextWrapper.startActivity:411 com.innopia.btpairingservice.BTPairingService.f0:34 com.innopia.btpairingservice.BTPairingService.h0:146 
+04-01 17:17:00.178   639  3770 I ActivityTaskManager: START u0 {flg=0x30000000 cmp=com.innopia.btpairingservice/.BTPairingView (has extras)} from uid 1000
+04-01 17:17:00.184  1949  1949 D BTPairingService: sendIntentToView exit
+04-01 17:17:00.184  1949  1949 D BTPairingService: setPairGuideActivity hide, delete timer 
+04-01 17:17:00.186  1949  1949 D BTPairingService: processResult Action Found
+04-01 17:17:00.186  1949  1949 D BTPairingService: no intro. return
+04-01 17:17:00.188  1949  1949 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 17:17:00.190  1949  1949 D BTPairingService: Already Bonded! : MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 17:17:00.190  1949  1949 D BTPairingService: BONED DEVICE!
+04-01 17:17:00.190  1949  1949 D BTPairingService: processResult already paired. ignore
+04-01 17:17:00.190  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.BOND_STATE_CHANGED
+04-01 17:17:00.192  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 17:17:00.193  1949  1949 D BTPairingService: Bond State Changed
+04-01 17:17:00.194  1949  1949 D BTPairingService: RCU Bond State Changed
+04-01 17:17:00.194  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.ACL_CONNECTED
+04-01 17:17:00.194  1949  1949 D BTPairingService: ACTION_ACL_CONNECTED
+04-01 17:17:00.196  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 17:17:00.198  1949  1949 D BTPairingService: ACTION_ACL_CONNECTED connected devices : 1
+04-01 17:17:00.199  1949  1949 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 17:17:00.201  1949  1949 D BTPairingService: onReceive: android.bluetooth.device.action.BOND_STATE_CHANGED
+04-01 17:17:00.203  1949  1949 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 17:17:00.204  1949  1949 D BTPairingService: Bond State Changed
+04-01 17:17:00.206  1949  1949 D BTPairingService: RCU Bond State Changed
+04-01 17:17:00.206  1949  1949 D BTPairingService: Paired
+04-01 17:17:00.206  1949  1949 D BTPairingService: setPairGuideActivity hide, delete timer 
+04-01 17:17:00.206  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+04-01 17:17:00.379  1949  1991 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:17:00.561  1949  1991 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:17:00.739  1949  1949 D BTPairingService: onReceive: android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED
+04-01 17:17:00.788  1949  6523 V BTPairingService: BTDevices.size(): 1
+04-01 17:17:00.793  1949  6523 D BTPairingService: Device Name : MagentaTV Remote 2
+04-01 17:17:00.797  1949  6523 V BTPairingService: connect, dev name: MagentaTV Remote 2 status 2
+04-01 17:17:00.798  1949  6523 V BTPairingService: call connectGatt
+04-01 17:17:00.801  1949  1991 V BTPairingService: onConnectionStateChange status 0 newStatus 2
+04-01 17:17:00.805  1949  1991 V BTPairingService: onServicesDiscovered status 0
+04-01 17:17:00.827  1949  1991 V BTPairingService: onCharacteristicRead status 0, uuid: 00002a19-0000-1000-8000-00805f9b34fb
+04-01 17:17:00.827  1949  1991 V BTPairingService: Battery : 48
+04-01 17:17:00.900  1949  6523 V BTPairingService: call close gatt service
+04-01 17:17:01.253  3875  3875 D DevelopmentSettings: innopia :: onStart()
+04-01 17:17:01.255  3875  3875 D DevelopmentSettings: innopia :: onResume()
+04-01 17:17:01.293  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:01.293  3875  5053 D DevelopmentSettings: innopia :: IN = T4HKeyLockSTB
+04-01 17:17:01.293  3875  5053 D DevelopmentSettings: innopia :: OUT = T4HKeyLockSTB
+04-01 17:17:01.293  3875  5053 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 17:17:01.293  3875  5053 D DevelopmentSettings: innopia :: true | true | true | true | true
+04-01 17:17:01.293  3875  5053 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:01.293  3875  5053 D DevelopmentSettings: innopia :: Default RCU IR Setting State
+04-01 17:17:01.296  3875  5053 D DevelopmentSettings: innopia :: Facory Reset ? PowerKeyLock Off
+04-01 17:17:01.307  1949  1966 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:17:01.819   639  3928 W InputManager-JNI: Input channel object 'e407cc4 com.innopia.btpairingservice/com.innopia.btpairingservice.BTPairingView (client)' was disposed without first being removed with the input manager!
+04-01 17:17:02.788  1949  1949 D BTPairingService: MSG_UPDATE_VERSION
+04-01 17:17:02.790  1949  1949 D BTPairingService: PAIRED dev MagentaTV Remote 2:30:D9:7F:1E:67:FC
+04-01 17:17:02.864  1949  1991 D BTPairingService: FWVersion: 0320.01.15
+04-01 17:17:02.864  1949  1991 V BTPairingService: >>> send broadcast com.innopia.btpairingservice.CHECK_FW_UP
+04-01 17:17:02.865  1949  1991 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1817 android.content.ContextWrapper.startService:776 com.innopia.btpairingservice.BTPairingService.g0:29 com.innopia.btpairingservice.BTPairingService.H:0 com.innopia.btpairingservice.o.v:102 
+04-01 17:17:02.873  4399  4399 D BTOADService: onStartCommand() com.innopia.btpairingservice.CHECK_FW_UP
+04-01 17:17:02.874  1949  1991 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:17:03.449  1949  1991 D BTPairingService: UDBVersion: 23020201
+04-01 17:17:03.451  1949  1991 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+04-01 17:17:20.945  3875  3875 D DevelopmentSettings: innopia :: PowerKeyLock =================================================== 
+04-01 17:17:20.947  3875  3875 D DevelopmentSettings: innopia :: HDMI_CONTROL_AUTO_WAKEUP_ENABLED = 0
+04-01 17:17:20.948  3875  3875 D DevelopmentSettings: innopia :: HDMI_CONTROL_AUTO_DEVICE_OFF_ENABLED = 0
+04-01 17:17:20.948  3875  3875 D DevelopmentSettings: innopia :: =================================================== 
+04-01 17:17:20.948  3875  3875 D DevelopmentSettings: innopia :: PowerKeyLock ON
+04-01 17:17:20.948  3875  3875 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:20.948  3875  3875 D DevelopmentSettings: innopia :: getRcuSetupState()
+04-01 17:17:20.949  3875  3875 D DevelopmentSettings: innopia :: get RcuSetupState = OFF
+04-01 17:17:20.949  3875  3875 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:20.949  3875  3875 D DevelopmentSettings: innopia :: startRcuSetup()
+04-01 17:17:20.949  3875  3875 D DevelopmentSettings: innopia :: start RCU Setup.
+04-01 17:17:20.982  3875  3875 D DevelopmentSettings: innopia :: getKeyLockState() 
+04-01 17:17:21.541  3875  5772 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:21.541  3875  5772 D DevelopmentSettings: innopia :: IN = T4HKeyLockTV
+04-01 17:17:21.541  3875  5772 D DevelopmentSettings: innopia :: OUT = T4HKeyLockTV
+04-01 17:17:21.541  3875  5772 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 17:17:21.541  3875  5772 D DevelopmentSettings: innopia :: false | false | false | false | false
+04-01 17:17:21.541  3875  5772 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:21.542  1949  1991 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:17:21.543  3875  5772 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:21.543  3875  5772 D DevelopmentSettings: innopia :: IN = T4HKeyLockSTB
+04-01 17:17:21.543  3875  5772 D DevelopmentSettings: innopia :: OUT = T4HKeyLockSTB
+04-01 17:17:21.543  3875  5772 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 17:17:21.543  3875  5772 D DevelopmentSettings: innopia :: true | true | true | true | true
+04-01 17:17:21.543  3875  5772 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:21.544  1949  1991 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:17:21.545  3875  5772 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:21.545  3875  5772 D DevelopmentSettings: innopia :: IN = T4HKeyLockBoth
+04-01 17:17:21.545  3875  5772 D DevelopmentSettings: innopia :: OUT = T4HKeyLockBoth
+04-01 17:17:21.545  3875  5772 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 17:17:21.545  3875  5772 D DevelopmentSettings: innopia :: false | false | false | false | false
+04-01 17:17:21.545  3875  5772 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:21.547  1949  1991 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:17:22.103  3875  3875 D DevelopmentSettings: innopia :: onStop()
+
+
+
+Power Key Lock ON --> RCU Setup App Start
+
+
+
+04-01 17:17:34.997  1949  1991 D BTPairingService: onConnected : 30:D9:7F:1E:67:FC
+04-01 17:17:35.558  1949  6600 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:17:35.582  1949  6600 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:17:35.617  1949  6600 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+04-01 17:17:38.220  3875  3875 D DevelopmentSettings: innopia :: Receive Action = de.telekom.rcusetup.das_over
+04-01 17:17:38.229  3875  3875 D DevelopmentSettings: innopia :: address = 30:D9:7F:1E:67:FC
+04-01 17:17:38.230  3875  3875 D DevelopmentSettings: innopia :: result  = true
+04-01 17:17:38.249  3875  3875 D DevelopmentSettings: innopia :: =============================================================
+04-01 17:17:38.250  3875  3875 D DevelopmentSettings: innopia :: KEY_INFRARED_CONTROL_SWITCH = ON : RCU Setup Complete
+04-01 17:17:38.250  3875  3875 D DevelopmentSettings: innopia :: =============================================================
+04-01 17:17:38.250  3875  3875 D DevelopmentSettings: innopia :: code    = 151
+04-01 17:17:38.251  3875  3875 D DevelopmentSettings: innopia :: status  = 0
+04-01 17:17:38.255  3875  3875 D DevelopmentSettings: innopia :: Receive Action = de.telekom.rcusetup.das_over
+04-01 17:17:38.255  3875  3875 D DevelopmentSettings: innopia :: address = 30:D9:7F:1E:67:FC
+04-01 17:17:38.255  3875  3875 D DevelopmentSettings: innopia :: result  = true
+04-01 17:17:38.262  3875  3875 D DevelopmentSettings: innopia :: =============================================================
+04-01 17:17:38.267  3875  3875 D DevelopmentSettings: innopia :: KEY_INFRARED_CONTROL_SWITCH = ON : RCU Setup Complete
+04-01 17:17:38.267  3875  3875 D DevelopmentSettings: innopia :: =============================================================
+04-01 17:17:38.267  3875  3875 D DevelopmentSettings: innopia :: code    = 151
+04-01 17:17:38.267  3875  3875 D DevelopmentSettings: innopia :: status  = 0
+04-01 17:17:38.785  3875  3875 D DevelopmentSettings: innopia :: onStart()
+04-01 17:17:38.796  3875  3875 D DevelopmentSettings: innopia :: onResume()
+04-01 17:17:39.236  3875  6114 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:39.236  3875  6114 D DevelopmentSettings: innopia :: IN = T4HKeyLockSTB
+04-01 17:17:39.236  3875  6114 D DevelopmentSettings: innopia :: OUT = T4HKeyLockSTB
+04-01 17:17:39.236  3875  6114 D DevelopmentSettings: innopia :: volup | vdown | power | mute | input 
+04-01 17:17:39.236  3875  6114 D DevelopmentSettings: innopia :: false | false | false | false | true
+04-01 17:17:39.236  3875  6114 D DevelopmentSettings: innopia :: ===================================================
+04-01 17:17:39.240  1949  6600 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+
+04-01 17:17:39.873  3875  3875 D DevelopmentSettings: innopia :: Receive Action = de.telekom.rcusetup.das_over
+04-01 17:17:39.874  3875  3875 D DevelopmentSettings: innopia :: address = 30:D9:7F:1E:67:FC
+04-01 17:17:39.874  3875  3875 D DevelopmentSettings: innopia :: result  = false
+04-01 17:17:39.874  3875  3875 D DevelopmentSettings: innopia :: code    = 65535
+04-01 17:17:39.874  3875  3875 D DevelopmentSettings: innopia :: status  = 2
+04-01 17:17:39.875  3875  3875 D DevelopmentSettings: innopia :: Receive Action = de.telekom.rcusetup.das_over
+04-01 17:17:39.875  3875  3875 D DevelopmentSettings: innopia :: address = 30:D9:7F:1E:67:FC
+04-01 17:17:39.875  3875  3875 D DevelopmentSettings: innopia :: result  = false
+04-01 17:17:39.875  3875  3875 D DevelopmentSettings: innopia :: code    = 65535
+04-01 17:17:39.875  3875  3875 D DevelopmentSettings: innopia :: status  = 2
+
+
+
+04-01 17:17:40.430  1949  6600 D BTPairingService: onDataReceived : 30:D9:7F:1E:67:FC
+^C
+130|console:/ # 
