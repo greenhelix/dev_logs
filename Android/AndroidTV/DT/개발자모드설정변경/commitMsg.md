@@ -1,5 +1,5 @@
 
-fixed jira issues (developer options)
+[Modify] fixed jira issues (developer options)
 
 - TVTE-82902 : add menu item for RCU IR control (Key Lock) to Developer options
 - TVTE-82907 : add menu item for RCU IR control (Reset RCU IR config) to Developer options
