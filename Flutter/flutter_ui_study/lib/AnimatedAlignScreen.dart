@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class AnimatedAlignScreen extends StatefulWidget
@@ -22,16 +23,15 @@ class _AnimatedAlignScreenState extends State<AnimatedAlignScreen>
               Expanded(
                 child: AnimatedAlign(
                   alignment: alignment,
-                  duration: Duration(milliseconds: 100),
-                  child: FlutterLogo(size: 150)
+                  duration: Duration(milliseconds: 1000),
+                  child: FlutterLogo(size: 100)
                 )
               ),
               TextButton(
                 child: Text("alignment change"),
                 onPressed:() {
                   setState(() {
-                    alignment = alignment == Alignment.bottomLeft
-                        ? Alignment.topRight : Alignment.bottomLeft;
+                    alignment = alignment == Alignment.bottomLeft ? Alignment.topRight : Alignment.bottomLeft;
                   });
                 },
               )
