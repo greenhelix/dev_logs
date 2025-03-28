@@ -1,0 +1,30 @@
+0ade1fffacd - bp_khs971, 8 months ago : add adb enable always at GSI image(for test CTS-on-GSI)
+20140c076b4 - bp_khs971, 8 months ago : change BT Service system to system_ext
+54d9df92d9b - seongjae, 8 months ago : modified ATV Settings
+42bb8e04c1d - bp_khs971, 8 months ago : change userdata partition size to 9942M
+56604a35b9c - bp_khs971, 8 months ago : change partition map
+ce78b512ad3 - bp_khs971, 8 months ago : add split Value/Classic build for synaptics audiopolicy patch
+b361a1bca7e - jcann, 8 months ago : modify to use Synaptics patch for getTVMaxHdcpLevel in DMS
+416eb678344 - bp_khs971, 8 months ago : re-ADD RCU power saver setting to 10 sec
+fd54dabdcc7 - seongjae, 8 months ago : add MagentaTV_Updater : version(1.77.908_g8)
+465cdae17cd - seongjae, 8 months ago : add LED Service (PRODUCT_PACKAGES += InnoLedService)
+d1067ab5660 - green, 8 months ago : led driver : add preset, modify color, bug fix
+6e4a690de19 - seongjae, 8 months ago : add LED Service
+e4233bbec50 - jcann, 8 months ago : modify setScreenResolution in DMS to use IDisplayManager after Synaptics patch
+ada5e60b25d - seongjae, 8 months ago : Apply to use release key in user / eng build
+f4d190e1b7d - bp_khs971, 8 months ago : change testkey for resolve gts fail
+0ad2d9ee095 - seongjae, 8 months ago : modified FTI "Welcome screen" keyevent issue
+2866b54b1c2 - bp_khs971, 8 months ago : Change errlogo partition
+f7339b3470e - Sunghoon Jung, 8 months ago : Apply to use release key in user / eng build
+091ef367117 - KyoungNam Lee, 8 months ago : restore neflix modelgroup
+54913aaf676 - bp_khs971, 8 months ago : Re-ADD "disable low power bootlogo for charger chip error"
+74c3e629b96 - bp_khs971, 8 months ago : Re-ADD "change errlogo partition img position"
+d23aa27c318 - bp_khs971, 8 months ago : Re-ADD "ADD print guide bmp at bootloader when low power source is connected."
+77ac5dde5c0 - seongjae, 8 months ago : modified : Allow users to skip the Google account sign-in step.
+d6ea550f3bf - Sunghoon Jung, 8 months ago : Change ARC menu
+c1326bd6404 - bp_khs971, 8 months ago : fix bug of FTI pairing screen 3min
+cb2ca0e166f - KyoungNam Lee, 8 months ago : microsoft blur for Classic
+3847b5952e7 - green, 8 months ago : Add Main LED driver (et6326)
+40a69ec56ac - KyoungNam Lee, 8 months ago : rollback netflix modelgroup for plugtest
+5834a3dcd96 - KyoungNam Lee, 8 months ago : add aging script
+bdc219abc26 - jcann, 8 months ago : modify BT pairing icons

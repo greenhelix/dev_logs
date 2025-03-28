@@ -1,0 +1,30 @@
+f1a174527eb - Sunghoon Jung, 9 months ago : Add key event for factory reset in recovery
+5981fc8c8b5 - yhlee, 9 months ago : Removed unnecessary files and updated git ignore list
+94997eb46c0 - bp_khs971, 9 months ago : 1. add RCU Factory reset at TvSettings Factory reset button 2. add RCU Firmware/IRDB version/power saver time check/setting routines
+1ddf0749416 - Sunghoon Jung, 9 months ago : Update key layer for BT RUC
+3de06842483 - KyoungNam Lee, 9 months ago : ntp polling interval 1day to 1hour
+2dcecf0fc81 - KyoungNam Lee, 9 months ago : dscp in network modification
+d8f4909b66d - khs971, 9 months ago : fix userdata size to actual mmcblk size
+2bf327487be - KyoungNam Lee, 9 months ago : RCU Setup, MagentaTV_RCU_Setup_V1.0RCU_setup_release_0340.01.09.08.01.13.15_32_B32_release-aligned-signed.apk
+9655f6b4c57 - khs971, 9 months ago : fix BTPairing UI is not shown
+172e05a4472 - khs971, 9 months ago : change FTI_END to broadcast
+ad3204526b8 - khs971, 9 months ago : BTPairingService UI add
+94835ab33f1 - khs971, 9 months ago : 1. change startService intent to explict 2. change service to foreground
+704f230ece8 - KyoungNam Lee, 9 months ago : MagentaTV_Teletext, MagentaTV_Teletext_V0.0.1_B123_release-aligned-signed.apk
+e3ab01caae7 - KyoungNam Lee, 9 months ago : format reserved partition in emmc.pt instead of zzyyxx.mk
+8aa80bf27bb - KyoungNam Lee, 10 months ago : modify partition table, boot_a, boot_b, reserved
+b03b104ad21 - KyoungNam Lee, 9 months ago : Restricted Profile : by lekail Modified to hide and allow MagentaLauncher item in Allowed App. Modified to show App items in Restricted Profile Mode.
+8ebedd500e1 - KyoungNam Lee, 9 months ago : umlauts string in 22.02.12.04.csv
+7f8f9db7931 - KyoungNam Lee, 9 months ago : add TvSetupCustomization to PRODUCT_PACKAGES
+6382eec57dd - KyoungNam Lee, 9 months ago : FTI and aidl for launcher
+0efb4bd9206 - jcann, 9 months ago : fix SystemProperties.set() build error for ABUpdater
+0c53e43451b - KyoungNam Lee, 9 months ago : fix twice import com.android.settingslib.development.DevelopmentSettingsEnabler
+49bf6a88f83 - KyoungNam Lee, 9 months ago : config_defaultListenerAccessPackages
+b27a35ebc3d - Sunghoon Jung, 9 months ago : allow downgrade by green
+426d9ef50fd - KyoungNam Lee, 9 months ago : format for reserved partition
+7694619ad50 - yhlee, 9 months ago : Added build config for IMTM840
+8f0d198a3d2 - yhlee, 9 months ago : Removed unnecessary files and updated .gitignore
+b08ff5ee91b - yhlee, 9 months ago : Fixed memory map of fastboot
+c995d7302e5 - Sunghoon Jung, 9 months ago : Add factory reset when booting while pressing a button
+5775e243d78 - Sunghoon Jung, 9 months ago : Apply DSCP rule in iptables
+9f9241781d7 - KyoungNam Lee, 9 months ago : IMTM840

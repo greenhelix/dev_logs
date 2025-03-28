@@ -1,0 +1,30 @@
+de23c5d263c - seongjae, 7 months ago : add new RCU Setup app
+23ffc517635 - jcann, 7 months ago : fix getCpuTemperature and setLanguage functions in DMS AIDL apps as TATA requested
+278f452b186 - polomeria, 7 months ago : DT jira issue
+1549d59febf - jcann, 7 months ago : change TATA DMS apks to PRESIGNED upon TATA's request
+49dad5ba482 - bp_khs971, 7 months ago : Reduce BLE GAP Connection interval MIN/LIMIT to 6ms for RCU fast connection
+92699656ccb - green, 7 months ago : fixed : mic led blinking is not working.
+6461ebf7e72 - green, 7 months ago : add config : dalvik_vm_4g
+75ec49901a1 - bp_khs971, 7 months ago : add delay to RCU SetPowerSaving mode
+dea420eb3d1 - bp_khs971, 7 months ago : force BT background scanning interval/window to FAST
+d1df6673960 - green, 7 months ago : modified : custom_handle_hdcp_error option in avsettings.xml (false -> true) - fixed : HDCP key is not installed, video does not displayed, and only audio is working - tested contents : youtube 1080p playback, DT live
+dfa423a31bf - bp_khs971, 7 months ago : merge commit 8fb327fe "fix TvSetting to require PIN when enter restricted mode"
+22d1174c604 - kiyou.lim, 7 months ago : VSSDK 1.10.7 Migration
+50d78ee9d9b - Sunghoon Jung, 7 months ago : Apply patch in /device/synaptics/IMTM840 and IMTM8300 for VSSDK 1.10.7
+75f41445b0c - jcann, 7 months ago : fix how HDMI CEC info is shown further
+d601a4b220a - lekail, 7 months ago : Fix DT Jira issue G8: Screen content is not refreshed until selecting HK_Back after removing Gmail account
+df999be8e0a - seongjae, 7 months ago : Fixed minor JIRA issue
+e5041546c94 - windholic@innopiatech.com, 7 months ago : M8300 DT Classic Factory s/w AudioController jni add
+0f4a7b1c39b - polomeria, 7 months ago : DT jira issue
+1f352e65d2b - seongjae, 7 months ago : Fixed minor JIRA issue
+d7bec1d488e - lekail, 7 months ago : Fix Dt Jira Issue G8: Wrong option icon displayed for display settings
+8f6bcd782f2 - polomeria, 7 months ago : DT jira issue
+b72ca0acedd - jcann, 7 months ago : modify Power & Energy setting pop-up button ordering
+ff98efaf8e1 - bp_khs971, 7 months ago : fix TvSetting RSSI doesn't print if DevelopmentSetting is disabled
+6674ed5fe82 - bp_khs971, 7 months ago : fix BTPairingService to not set PowerSaving at FTI
+9570a1b8b72 - KyoungNam Lee, 7 months ago : fix invalid flag setting value
+2e16cb9ff23 - lekail, 7 months ago : fix G8: Wrong screen title when access 'when inactive' from Power & Energy
+284bf85e19e - green, 7 months ago : modified factory - mic mute button test - mic mute led test
+58f75c8e13e - green, 7 months ago : modified mic mute key - MV_IR_KEY_MIC_STATE_CHANGED -> MV_IR_KEY_MIC_MUTE_PRESSED & MV_IR_KEY_MIC_MUTE_RELEASED
+7042088ae10 - seongjae, 7 months ago : Fixed minor JIRA issue
+86ec12d0ab0 - green, 7 months ago : Factory : fix USB test (USB 3.0 -> USB 2.0) - modified : check /sys/bus/usb/devices/1-1

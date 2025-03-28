@@ -1,0 +1,30 @@
+6a9ee09fcda - polomeria, 6 months ago : Enable the wi-fi f/w roaming function.
+9d7ed48f87f - lekail, 6 months ago : workaround AudioMixing property persist.sys.audiomixing
+0a8ff6de0e6 - polomeria, 6 months ago : Change default wi-fi driver
+f789da23337 - lekail, 6 months ago : Modify text related to audio output. - Dolby Atmos with Dolby Digital Plus - Dolby Atmos with Dolby TrueHD -> Dolby MAT - Audio-Einstellungen -> Audio Einstellungen
+fc7b4bef6c6 - lekail, 6 months ago : add: AudioMixing
+fe081489cdf - bp_khs971, 6 months ago : check bt fw version at btpairingservice for reducing memory usage
+ce68c7fd318 - green, 6 months ago : Set AC4 Dialog Enhancement
+fa4cd9b366a - KyoungNam Lee, 6 months ago : re-enable 4k30_fallback feature
+b463a152795 - green, 6 months ago : add sepolicy for AC4 Dialog Enhancement
+4d3ad13149f - green, 6 months ago : UPDATE android/device (VSSDK 1.10.7.1, 2024-05-04, add audio features)
+6ec51abf591 - Sunghoon Jung, 6 months ago : Apply patch in /device/synaptics/IMTM840 and IMTM8300 for VSSDK 1.10.7.1
+9a6a67cab38 - yhlee, 6 months ago : TAG: FACTORY_V1.00.00 / INN_v12.G8V_DE.116_20240417_eng
+7ec3b5d9e06 - yhlee, 6 months ago : Fixed factory tools and scripts
+c51cc33e3f8 - KyoungNam Lee, 6 months ago : add oemmodel for NTS
+a59f1b4bbb9 - KyoungNam Lee, 6 months ago : set PRODUCT_SUPPORTS_TUNER to false for RAM
+2808648d693 - green, 6 months ago : change mic mute keycode - pressed(MUTE) : F9 - released(UNMUTE) : F12
+6f9b90d2587 - seongjae, 6 months ago : "More TV" application is deprecated
+ff53ed21b43 - jcann, 6 months ago : add further checks for DMS AIDL API services when killed with LMK
+e2c41f827b4 - kimje, 6 months ago : modify for VTS
+506af73df26 - polomeria, 6 months ago : AMPAK wi-fi driver porting.
+df741be8123 - polomeria, 6 months ago : Add the AMPAK wi-fi driver.
+133e45d4721 - polomeria, 6 months ago : AMPAK wi-fi driver requires different name of wi-fi firmware.
+c53428835cc - KyoungNam Lee, 6 months ago : set label for ro.vendor.nrdp.oemmodel
+6247095ddfd - green, 6 months ago : Modify to ignore LED control when mic mute
+255229d5ae8 - kimje, 6 months ago : Add LedAidlTest : Test app for Magenta Voice Assistant LED AIDL
+c905b03221f - jcann, 6 months ago : fix DeadObjectException for DMS apps when innodevice is killed with LMK
+42082bbdf4d - kiyou.lim, 6 months ago : Fixed minor issue
+bfe778d28be - kiyou.lim, 6 months ago : Fixed minor JIRA ticket
+9abdff4b68e - Sunghoon Jung, 6 months ago : Add debuging log for CEC Volume issue
+57e1e1c4211 - KyoungNam Lee, 6 months ago : temporary commit for issue of memory 2G in value

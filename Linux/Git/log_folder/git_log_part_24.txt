@@ -1,0 +1,30 @@
+6d8967b1eaf - kiyou.lim, 7 months ago : Fixed S3 issues
+b8d3d99fc76 - bp_khs971, 7 months ago : re-add RCU power saving mode to 10 sec
+82b365fde25 - jcann, 7 months ago : revert IInnopiaSystemDT.aidl changes for InnoTest
+fe4320103b4 - KyoungNam Lee, 7 months ago : CONFIG_AMP_IP_AUDIO_MS12_HIFI_V2_6_Y enable
+fcab414ba71 - DongHoon Kim, 7 months ago : Fix build error
+92ea5ddbce0 - yhlee, 7 months ago : Fixed configuration file checking of wpa supplicant to improve stability
+7e7c75313be - DongHoon Kim, 7 months ago : To set AC-4 DE, use InnoHidlService, not InnoSystemService
+24cfaa08cad - bp_khs971, 7 months ago : change BTPairing/OADService app version to 1.8.0
+f2fa79c958b - bp_khs971, 7 months ago : change BTPairingService last pair complete screen showing time to 1800ms
+a0bac90f1bb - bp_khs971, 7 months ago : fix rcu factory-reset routine when TvSetting attempt to pair second rcu
+2369e5dc92f - yhlee, 7 months ago : Improved stability of wpa supplicant
+55a8f6138bd - Sunghoon Jung, 7 months ago : WOLE option is enabled.
+4c355b7725e - jcann, 7 months ago : fix Innopia apps BTS issue
+ffb3dfac6a5 - yhlee, 7 months ago : Modified wpa supplicant to check for corrupted configuration file to fix issue that not connected to AP
+9faa47fcd84 - bp_khs971, 7 months ago : fix BTPairingService onFactoryReset() error at DT Classic
+5cdaeffdab0 - Sunghoon Jung, 7 months ago : Keycode changes short press pinhole button(KEYCODE_PAIRING -> KEYCODE_F6), because KEYCODE_PAIRING key is used G8C.
+acc118be6a8 - lekail, 7 months ago : Bug read HW Version
+af8e66dcbb9 - KyoungNam Lee, 7 months ago : fix the issue for wifi off when wake up from s3
+13fda1fa884 - yhlee, 7 months ago : Fixed Board ID
+4eca4a91374 - green, 7 months ago : mic led driver - enable : AW21012 (4 channel) - disable : AW2026 (1 channel)
+6dfb24a48e0 - bp_khs971, 7 months ago : BTPairing/BTOAD stablilty patch
+c161040f741 - jcann, 7 months ago : fix sepolicy error upon LiveTV channel change.
+f6a02063a16 - jcann, 7 months ago : fix InnoTest app crash error after AC-4 Dialog Enchancement commit.
+615456b93dc - KyoungNam Lee, 7 months ago : wake up from s3 by cec and pinhole
+4498e100768 - Sunghoon Jung, 7 months ago : Key event is ignored if released when pinhole key is pressed for more than 10 seconds
+55e5aa28e09 - Sunghoon Jung, 7 months ago : Factory reset : If pressed for more than 10 seconds, FR is performed even if it is not released. BT reconnect : Pinhoe button is pressed more than 1 second
+5bee3a31a40 - bp_khs971, 7 months ago : add T4H RCU test app at eng build(DT Requirement) / add operator_flags.xml
+9f1ec960e12 - yhlee, 7 months ago : Fixed Factory App and Scripts
+bcd36446a83 - windholic@innopiatech.com, 7 months ago : M840A Factory SW Organizing the values transfer to MES and exposed in the UI
+a1f8762e7d9 - seongjae, 7 months ago : Fixed minor JIRA issue

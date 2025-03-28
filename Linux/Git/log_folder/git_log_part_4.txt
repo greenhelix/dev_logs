@@ -1,0 +1,30 @@
+22294ec6498 - Sunghoon Jung, 5 weeks ago : Apply synatics patch for memory
+1765968d308 - jcann, 5 weeks ago : manually apply 2024-10 SPL
+ec78afd3276 - jcann, 5 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+c416d344106 - lekail, 5 weeks ago : DolbyVision Mode Default sink Add a step to verify whether the default value has been modified.
+27b7a5d415c - lekail, 5 weeks ago : workaround for CLASSIC : Android Audio Presentation APIs do not work after patch related of Audio Presentation, need to remove codes.
+06ddd1e04c1 - lekail, 5 weeks ago : DRC RF / Line mode functionality DRC = RF mode --> please deliver 2ch PCM out at -23dBF
+2b3773e74b5 - lekail, 5 weeks ago : Fix: G8: STB MUTE / unMUTE or pause/play continuous_audio_mode = 1 98c08df.diff c59a62e.diff
+c29c3f123a3 - bp_khs971, 5 weeks ago : re-naming RCU model number aidl
+b75e5051570 - bp_khs971, 5 weeks ago : re-naming RCU model number aidl
+8d4026c477d - lekail, 5 weeks ago : Android Audio Presentation APIs do not work     0001-AudioHal-Add-setting-audio-presentation.patch     0001-Extractors-create-a-new-buffer-and-copy-the-data-in.patch     amp_patches       0001-AMP-ADEC-add-AC4-preferred-language-related-setting.patch       0002-AMP-ADEC-add-AC4-preferred-associated-type-support.patch       0003-AMP-ADEC-add-AC4-short-program-identifier-support.patch       0004-AMP-ADEC-add-AD-Mixing-enabled-support.patch       0005-AMP-ADEC-add-AC4-voice-boost-setting-support.patch       0006-AMP-SAMPLES-refine-multiple-MS12-runtime-params-sett.patch       0007-AMP-ADEC-remove-fader-mixer-setting.patch       0008-AMP-ADEC-refine-MS12-runtime-params-setting.patch       0009-AMP-TEST-ADEC-params-setting-refine.patch       0010-AMP-ADEC-add-AC4-advanced-features.patch       0011-AMP-ADEC-add-legacy-ddplus-output-support-for-AC4.patch
+5b9dc0ec367 - lekail, 5 weeks ago : Android Audio Presentation APIs do not work 0001-AudioHal-Add-setting-audio-presentation.patch 0001-Extractors-create-a-new-buffer-and-copy-the-data-in.patch amp_patches   0001-AMP-ADEC-add-AC4-preferred-language-related-setting.patch   0002-AMP-ADEC-add-AC4-preferred-associated-type-support.patch   0003-AMP-ADEC-add-AC4-short-program-identifier-support.patch   0004-AMP-ADEC-add-AD-Mixing-enabled-support.patch   0005-AMP-ADEC-add-AC4-voice-boost-setting-support.patch   0006-AMP-SAMPLES-refine-multiple-MS12-runtime-params-sett.patch   0007-AMP-ADEC-remove-fader-mixer-setting.patch   0008-AMP-ADEC-refine-MS12-runtime-params-setting.patch   0009-AMP-TEST-ADEC-params-setting-refine.patch   0010-AMP-ADEC-add-AC4-advanced-features.patch   0011-AMP-ADEC-add-legacy-ddplus-output-support-for-AC4.patch
+5bcb025fd63 - lekail, 5 weeks ago : remove InnoDisplayService
+89e33df1abe - lekail, 5 weeks ago : G8 STB freezes and doesn't respond to RCU commands after changing Display Settings - removed InnoDisplayService and modified it to use the API directly in Settings
+35cb31f91b7 - bp_khs971, 5 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+9d265e4121f - bp_khs971, 5 weeks ago : fix BTPairingService screen state transition & STB sidebutton RCU pair checker
+fb7a40ef94f - bp_khs971, 5 weeks ago : add RCU pairing check routine for prevent RCU pairing screen is not disappeared.
+f71343c7f79 - seongjae, 5 weeks ago : Revert Revert!! fixed TVTE-90857
+7773d4f53fa - lekail, 5 weeks ago : Netflix preview video corruption followed by a black screen CSMDTV-157-libvpp.tgz ee1588544e6d668427fc26e5d6e37ecd  ./vs640/outputimage_9310/libvpp.ta 76b9907f199eb5c294aceb4b4e7a2424  ./vs680/outputimage_9311/libvpp.ta
+0c5b2e0268a - lekail, 5 weeks ago : After zooming out in ScreenSize, the video layer expands to full size CSMDTV-174_20240904.diff
+4c5b5178861 - bp_khs971, 5 weeks ago : 1. remove RCU Factory reset at the STB side button RCU removing function 2. Set tts language when the system locale changed
+5a44e7496c9 - bp_khs971, 5 weeks ago : add TTS language pack (except Serbia and Croatia, these are served by Google Cloud TTS)
+73d5b4757fd - lekail, 5 weeks ago : Support for Dolby Vision mode is not available anymore for resolutions lower than 1080p50Hz 1_CSMDTV-138_240011.diff 2_CSMDTV-138_240015.diff 3_CSMDTV-138_240019.diff 4_CSMDTV-138_240023.diff 5_CSMDTV-138_240027.diff 6_CSMDTV-138_240031.diff
+b046fc18c14 - lekail, 5 weeks ago : 8dB loudness mismatch between DDP and AAC inputs CSMDTV-147
+07c9f6f8398 - Yiling Chuang, 4 months ago : RESTRICT AUTOMERGE FRP bypass defense in App battery usage page
+98f335d5611 - Himanshu Rawat, 7 months ago : RESTRICT AUTOMERGE Disallow unexpected incoming HID connections 2/2
+9d7f89d8866 - Almaz Mingaleev, 4 months ago : Do not accept zip files with invalid headers.
+e2dc071d1b5 - Sumedh Sen, 4 months ago : Check whether installerPackageName contains only valid characters
+fd468bccce9 - Mark Renouf, 4 months ago : Prevent Sharing when FRP enforcement is in effect
+df2112f34a9 - Dmitry Dementyev, 4 months ago : Update AccountManagerService checkKeyIntent.
+7c3f6263071 - William Loh, 5 months ago : Fail parseUri if end is missing

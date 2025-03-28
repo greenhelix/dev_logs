@@ -1,0 +1,30 @@
+923bcb8fea2 - jcann, 3 months ago : remove DMS Wi-Fi band switch notification as it is not yet implemented on TATA's side
+d5b8c8facfe - seongjae, 3 months ago : fixed jira issue
+a52d1b98107 - seongjae, 3 months ago : fixed RCU setup issue
+838647c0072 - kiyou.lim, 3 months ago : Resolved the LED i2c issue
+55325b9bae2 - green, 3 months ago : fix mic led operaion (classic only) - DT's QG 1.5 board is recognized as hw.verion QG.10
+42c117eeebf - kiyou.lim, 3 months ago : Change Increametal version form
+fca558e1802 - bp_khs971, 3 months ago : re-add MoreTV app
+59ceabc08cc - bp_khs971, 3 months ago : change MoreTV apk to 4K presigned (TVTE-89059)
+1a7b01adb95 - green, 3 months ago : fix cts failure : testQuiescentBoot_awakeAfterReboot
+d686dbfab63 - jcann, 3 months ago : SPL 2024-08-01
+30c836a9507 - seongjae, 3 months ago : fixed jira issue (TVTE-87574 surround sound UI issue)
+e310d71040d - green, 3 months ago : fix MAIN LED operation on quiescent booting
+8550a177651 - seongjae, 3 months ago : fixed jira issue
+d0e6ad8ea92 - lekail, 3 months ago : Failures occurred in the MediaTest module during the CTS test
+92eeee7aa91 - lekail, 3 months ago : disable tuner hal Failures related to the tuner API occurred during the CTS test.
+3700b37ffac - lekail, 3 months ago : fix log : TVTE-79381 Adjust to make sure the set gain value is correct. setAC4DialogEnhancer: 12 --> High setAC4DialogEnhancer: 8 –> Medium setAC4DialogEnhancer: 4 --> Low setAC4DialogEnhancer: 0 --> Off
+e086faad7a0 - bp_khs971, 3 months ago : fix BTPairingService to all MagentaTV RCU to add hidlservice/can get version
+1ebdbf3d72e - green, 3 months ago : add Magent Voice Assistant (debug) - classic only
+7c29cf7f017 - green, 3 months ago : - update MagentaVoiceAssistant (classic only) - Move MagentaVoiceAssistant permissions to 'privapp-permissions-oem-value.xml' and 'privapp-permissions-oem-classic.xml'
+51e5b4b06f3 - jcann, 3 months ago : modify DMS privapp-permissions to match DT WIKI pages
+1e28a41559c - jcann, 3 months ago : add DolbyMAT and external storage options for DMS
+b06f172c10b - seongjae, 3 months ago : add check property (persist.sys.locale) for GOTA
+12230261aae - green, 3 months ago : update factory tool
+a444a5574a7 - seongjae, 3 months ago : add MagentaTV Sales App
+a27ecce4faa - seongjae, 3 months ago : add ContentProvider for Mute Switch
+29f402b3bbd - jcann, 3 months ago : fix build error for DMS
+1f7246d5eef - Sunghoon Jung, 2 months ago : Fixed eMMC I/O error - vs640-m840a.dt
+20afd8e767c - jcann, 3 months ago : add Wi-Fi band switch notifications for DMS AIDLs
+6ae3090488b - kiyou.lim, 3 months ago : Neflix ModelGroup
+d845bcd9558 - yhlee, 3 months ago : TAG: FACTORY_V1.03.01/51 (INN_v12.G8V_DE.124_20240621_user)

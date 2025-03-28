@@ -1,0 +1,30 @@
+04be55dc9c8 - lekail, 8 months ago : Add IMTM8300 sign keys
+b590568b164 - KyoungNam Lee, 8 months ago : wakeup lock for hci send and timeout
+acba6c82b72 - yhlee, 8 months ago : Added RKEK ID information to cpu info and system property
+18f746ad897 - yhlee, 8 months ago : Fixed model name
+ea88bef2f8a - yhlee, 8 months ago : Added keybox for MP and fixed build scripts to sign firmwares
+d7f51d42725 - bp_khs971, 8 months ago : fix : If trying new RCU connect by TvSetting, remove recent RCU bonding info
+8e1fc30c19a - green, 8 months ago : mic driver : remove debug log (classic only) y
+15f03475eda - green, 8 months ago : add MIC driver (classic only) - disabled config in vs680_a0_s_IMTM8300_defconfig - CONFIG_LEDS_AW21012, CONFIG_LEDS_AW2026
+0b06a598e49 - green, 8 months ago : add adb enable always at GSI image(for test CTS-on-GSI) - copy from commit af21993a82acfac449ab8e502e987f5eceba1a14
+5bf07b78919 - seongjae, 8 months ago : modified language order comparator (bug fix)
+d49b4e14553 - green, 8 months ago : USB Updater : add version 12.0.1
+34cefa7d1aa - polomeria, 8 months ago : G8 Value Wi-Fi problem : Android network info menu shows the factory wi-fi mac. solution : modify the wi-fi driver to prevent using factory mac.
+0764589b3b1 - KyoungNam Lee, 8 months ago : add livetv zapping in aging
+d77ec971b35 - polomeria, 8 months ago : G8 Classic Wi-Fi problem : Android network info menu shows the factory wi-fi mac. solution : modify the wi-fi driver to prevent using factory mac.
+5064b912bbc - seongjae, 8 months ago : modified LED Service (version 12.0.1)
+c22c2abfb2e - green, 8 months ago : USB Updater : refresh list on onResume & add refresh button
+325720335cb - jcann, 8 months ago : remove privapp permissions for Launcher
+0988549e42a - jcann, 8 months ago : change MagentaTV launcher package path and name
+f6b1fcf2e34 - KyoungNam Lee, 8 months ago : set dhcp option 12 with device name
+1f0e5daf59c - bp_khs971, 8 months ago : add missing btpairingservice permission
+5a7ebc029c8 - bp_khs971, 8 months ago : Fix TvSettign bluetooth MAC always view at other devices
+6d7a355f5a6 - seongjae, 8 months ago : add language order comparator
+3724fe1174b - lekail, 8 months ago : Change default value for BT MAC
+93601feb830 - polomeria, 8 months ago : For the G8-Value Add the function that sets innopia wi-fi mac address. To do -> Add the innopia vendor mac path in the "android/vendor/synaptics/wireless/wlan/wireless_device_detect/wireless_device_detect_vendor.sh" or wi-fi driver will set the random innopia mac.
+8f069b55b16 - lekail, 8 months ago : Fix SPI uboot for IMTM8300.
+73e73accbb2 - seongjae, 8 months ago : add MagentaTV_Launcher : version(3.136.4682)
+7eba58c282e - polomeria, 8 months ago : Add the function that sets innopia wi-fi mac address. To do -> Add the innopia vendor mac path in the "wireless_device_detect_vendor.sh" or wi-fi driver will set the random innopia mac.
+56df09b94ab - jcann, 8 months ago : add TATA DMS apks version 2.12.1
+4acd8d0d28a - jcann, 8 months ago : modify to include DMS test app only in userdebug and eng builds
+87c69638860 - jcann, 8 months ago : add version info to DMS apps

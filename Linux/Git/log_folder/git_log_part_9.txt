@@ -1,0 +1,30 @@
+f3066e4affc - jcann, 10 weeks ago : SPL 2024-09-01
+fabe15dbaa8 - jcann, 10 weeks ago : apply a 2024-09 SPL patch manually due to conflict
+869c5600963 - jcann, 10 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+02711b0830c - green, 10 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+e35a97426bf - green, 10 weeks ago : [IMTM830A][IMTM8400] fix the problem where quiescent booting is not working.  : Applied workaround to pass the CTS testQuiescentBoot_awakeAfterReboot test
+b9fdca48d54 - Nikolay Elenkov, 4 months ago : RESTRICT AUTOMERGE Allow system_server to call IKeystoreMaintenance.deleteAllKeys()
+f6ca93bd451 - Brian Delwiche, 5 months ago : Disallow connect with key length downgrade
+cc0c751a7a2 - Brian Delwiche, 5 months ago : Disallow connect with Secure Connections downgrade
+d22b50fb549 - Brian Delwiche, 5 months ago : Add support for checking security downgrade
+ffd1874ec49 - Pranav Madapurmath, 5 months ago : Unbind CallScreeningService when timeout reached.
+fa9721d0af9 - Chris Antol, 7 months ago : RESTRICT AUTOMERGE Restrict Settings Homepage prior to provisioning
+f43e70a9e6d - Chris Antol, 5 months ago : Ignore fragment attr from ext authenticator resource
+c8a7034dd6c - Jason Chiu, 9 months ago : Replace getCallingActivity() with getLaunchedFromPackage()
+6b0927a81db - Chaohui Wang, 12 months ago : Limit wifi item edit content's max length to 500
+8de85c1c721 - Nikolay Elenkov, 4 months ago : RESTRICT AUTOMERGE Delete keystore keys from RecoveryService.rebootRecoveryWithCommand()
+ff894ef833e - Kiran Ramachandra, 5 months ago : DO NOT MERGE Ignore - Sanitized uri scheme by removing scheme delimiter
+ddcbf470f4b - Wonsik Kim, 4 months ago : omx: check HDR10+ info param size
+84003a264c7 - jcann, 2 months ago : fix get ethernet mac and remove avc denied error prints in DMS
+2105402b00e - bp_khs971, 2 months ago : add ro.lmk.use_minfree_levels=true
+8dfe4e058fd - Sunghoon Jung, 2 months ago : Add atv_lowram_defaults.mk for low memory(2G)
+86aa8d22d52 - Sunghoon Jung, 2 months ago : HdrDVForceTunnelMode is set as True in berlin_config_sw.xml
+b614d9f6782 - green, 2 months ago : [IMTM8300] apply config from VSSDK 1.10.8.1  - android/device/synaptics/IMTM8300/audio_policy_configuration.xml  - android/device/synaptics/IMTM8300/device.mk  - android/device/synaptics/IMTM8300/init.IMTM8300.rc
+823784a9d3b - Sunghoon Jung, 2 months ago : Update CMA size to 292MB for DT Value
+0848e7176cf - bp_khs971, 2 months ago : Revert "modify adj score for home app"
+57bbd16df9f - Sunghoon Jung, 2 months ago : [Synaptics Patch] CSMDTV-74 QG2(VS630) SoC temperature related.
+b0181884b7f - lekail, 2 months ago : Fix : TVTE-89242 'Dolby Vision Mode' changes from 'sink-led' to 'source-led' if changing 'HDR Policy' from 'Always HDR' to 'Adaptive HDR'
+0fbf4a229ee - lekail, 2 months ago : Fix : TVTE-89397 'Dolby Vision sink-led' option displayed on TV that doesn't support 'sink-led' capability Correction of the reversed expressions for sink and source in Dolby Vision Mode.
+b8868fe35ce - bp_khs971, 2 months ago : fix BTPairingService UI
+c426b68f294 - bp_khs971, 2 months ago : 1. BT OAD FW version changed to 0320.02.04 2. model name gatt client logic added 3. debugging some features
+81edd85a31e - bp_khs971, 2 months ago : change BTOAD fw to T4HG8_0320.02.04_OAD.bin

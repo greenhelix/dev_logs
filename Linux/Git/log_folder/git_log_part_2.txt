@@ -1,0 +1,30 @@
+15b9f3bbb28 - KyoungNam Lee, 9 days ago : remove com.synaptics.wakeupconfig in apps list of launcher
+4d5a2de6977 - KyoungNam Lee, 9 days ago : add com.synaptics.wakeupconfig in blacklist of tvsettings
+efecf917590 - seongjae, 10 days ago : update factory tool
+8d6d2ebb55e - Sunghoon Jung, 10 days ago : Add WakeupConfig : kill background media app
+68a24d70f4c - lekail, 10 days ago : Change setAlwaysFinish to true when Disney+ and Apple TV are running.
+cb3b1c5c48f - Sunghoon Jung, 10 days ago : Revert "Apply synaptics patch - memory"
+5232f3b15a8 - Sunghoon Jung, 10 days ago : Apply synaptcis patch - memory
+dadf76be225 - Sunghoon Jung, 10 days ago : Revert "Kill ott apks when oom score of them is changed to 250"
+7b32fd125ef - jcann, 10 days ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+744c2583cde - KyoungNam Lee, 10 days ago : Kill ott apks when oom score of them is changed to 250
+724b48154ed - KyoungNam Lee, 13 days ago : [Synaptics Patch] panic at bcmdhd (ADD to check NULL)
+491619690a6 - jcann, 13 days ago : Revert "Revert "Apply synaptics patch - memory""
+09968cc546f - jcann, 13 days ago : Revert "Apply synaptcis patch - memory"
+5e063cceb62 - Sunghoon Jung, 13 days ago : Apply synaptics patch - memory
+d64991a8b7e - KyoungNam Lee, 13 days ago : [Synaptics Patch]
+e500a64a8bc - lekail, 2 weeks ago : Revert "Dont keep activities(setAlwaysFinish) default value : true"
+3c86acf0aef - Sunghoon Jung, 2 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+e35fc5f2c55 - Sunghoon Jung, 2 weeks ago : Apply synaptcis patch - memory
+7195bd8728e - Sunghoon Jung, 2 weeks ago : Revert "Apply synaptics patch - memory"
+c2730766124 - lekail, 2 weeks ago : Dont keep activities(setAlwaysFinish) default value : true No background processes(setProcessLimit) default value : 0 Check the following Global values in settings, and if they are not exist, set the default values (setAlwaysFinish and setProcessLimit) - inno_always_finish_activities_sync - inno_process_limit_sync
+4e42c2bb98f - Sunghoon Jung, 2 weeks ago : Revert "memory issue : oom_adjust, vm, lmk"
+9614bc27e10 - Sunghoon Jung, 2 weeks ago : Apply synaptics patch - memory
+5e6329c4b9c - seongjae, 2 weeks ago : fixed jira issue
+6022a7782b3 - bp_khs971, 2 weeks ago : fix issue of TVTE-92780
+17631af47a6 - bp_khs971, 2 weeks ago : fix BT RCU first key ignoring issue for TVTE-91439
+3c32e90dc76 - Sunghoon Jung, 2 weeks ago : Fix Jira issue
+5314654191a - Sunghoon Jung, 2 weeks ago : Add com.amazon.amazonvideo.livingroom in BoostMediaList for memory issue.
+b9523d238b8 - KyoungNam Lee, 2 weeks ago : memory issue : oom_adjust, vm, lmk
+a642a3865f6 - Sunghoon Jung, 2 weeks ago : Apply synaptics patch - memory
+e9cc10926e0 - Sunghoon Jung, 2 weeks ago : Apply synaptics patch - memory

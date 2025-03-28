@@ -1,0 +1,30 @@
+46d8116de11 - bp_khs971, 9 weeks ago : add Mute 3s IR key
+a11a96ad4ea - lekail, 9 weeks ago : Add Feature QMS(Seamless) Api
+5a96e5113f2 - lekail, 9 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+aeab779de2e - lekail, 9 weeks ago : Change the summary text for Dolby Vision Mode  - Only support sink / Only support source  - both support sink and source : show current dolbyvision mod.
+4873cd9385b - KyoungNam Lee, 9 weeks ago : change bootloader version property
+d1b3eb58119 - bp_khs971, 9 weeks ago : add bootloader builddate to property
+9c8ab02dc78 - ikhwan, 2 months ago : Fix jira issue
+9b873aaeef6 - ikhwan, 2 months ago : Fix Jira Issue
+a89e6cc9455 - lekail, 9 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+979476acc6d - lekail, 9 weeks ago : apply volume table.
+8aa94382e5d - green, 9 weeks ago : remove permission : Manifest.permission.RECORD_AUDIO for assistant manager (rollback)
+71daf24cb16 - bp_khs971, 9 weeks ago : fix RCU R3 power saver target
+129b793b955 - bp_khs971, 9 weeks ago : fix BTPairingService gatt service remove-adding when Android Bluetooth service is killed
+00a7ab15eff - lekail, 9 weeks ago : When the Surround Sound setting is set to None, all Extended HDMI Output over HDMI settings are disabled, and it operates in downmixed PCM mode
+5e87e1393bd - lekail, 9 weeks ago : Added the seamless option. Matching Framerate text change. TODO: Remove the seamless option if QMS is not supported.
+59665c11aa2 - jcann, 9 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+38f7113dbfa - Yigang Zheng, 9 weeks ago : device_platypus: adjust supported co-instances number
+93d3ea9da5c - Sunghoon Jung, 9 weeks ago : Add to enable CONFIG_KSM for memory
+d9a6ba60e6b - green, 9 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+dee834a34bc - green, 2 months ago : ADD permission  - assistant manager : Manifest.permission.RECORD_AUDI  - de.telekom.magentatv : Manifest.permission.CONTROL_DEVICE_LIGHTS
+89675a0013c - Sunghoon Jung, 9 weeks ago : Fix jira issue for classic
+259a619d8f6 - green, 9 weeks ago : [IMTM8300] update Magenta Voice Assistant Debug stub app for debug f/w release (classic only)
+6ac903e86a2 - green, 9 weeks ago : [IMTM8300] (TVTE-90086) update Magent Voice Assistant Stub app & permission (classic only)
+aa3085b28cd - bp_khs971, 9 weeks ago : add retry logic for after stb reboots with lowpower
+3d2f876ca90 - seongjae, 9 weeks ago : Change storage path of More TV STUB App (TVTE-90238)
+12cd7f7a185 - lekail, 9 weeks ago : MOD: QMS-VRR feature Enable.
+b34caf0c38e - Sunghoon Jung, 9 weeks ago : Update CMA size to 292MB for DT Value - fix build err
+6c70bb28fd3 - Sunghoon Jung, 9 weeks ago : Update CMA size to 292MB for DT Value - cfg file
+5e518811827 - jcann, 9 weeks ago : fix BTS blocker issue 2024-06 SPL patch incorrectly applied
+f329001e747 - jcann, 10 weeks ago : fix audio drc settings revert after reboot

@@ -1,0 +1,30 @@
+9101d803295 - jcann, 8 months ago : set default suspend timeout
+ddc0a93d208 - bp_khs971, 8 months ago : add errlogo check usb_ethernet routine
+90f2099ec0d - bp_khs971, 8 months ago : add re-signing routine for errlogo partition
+e9050eaf479 - jcann, 8 months ago : add USB Host German descrption in Settings
+1f7dd28ff82 - Sunghoon Jung, 8 months ago : Fixed to operate as host when entering recovery mode after entering fastboot
+6e85edd9120 - lekail, 8 months ago : Fix Display and Sound title in Settings
+cb468651534 - green, 8 months ago : Mod: MIC LED driver - ADD RED, RED_BLINK - enable LEDS_AW2026
+6d68e92279e - seongjae, 8 months ago : add MagentaTV_Launcher ( version : 3.137.4846 )
+f6d095b229e - yhlee, 8 months ago : Fixed model name for user build
+8a15cd943e4 - yhlee, 8 months ago : Removed unnecessary files
+9cf878e4df3 - KyoungNam Lee, 8 months ago : FW Version 1.1.0 - QG1
+a3bfc738801 - seongjae, 8 months ago : add : DTUpdater ( verions : 1.77.910_g8 ) + fixed FTI issue
+13a93a82624 - bp_khs971, 8 months ago : disable tuner hal for remove bootlog error. vts tested.
+bc8ad19a0a1 - green, 8 months ago : fix : Screen Saver not activating - add excluded-input-devices.xml - mod device.mk
+89197603689 - jcann, 8 months ago : modify BT pairing icon logic
+081145a8d7c - yhlee, 8 months ago : Modified build script to fix compile error that occurs if the build variant is user
+a6e1c7dc0ac - green, 8 months ago : update ABUpdater - remove unnecessary permissions - set persist.sys.allow_downgrade to false on success
+d1d3aa26aaa - lekail, 8 months ago : Fix bug: when press back key, cancel display mode.
+05657744f6e - green, 8 months ago : add key for factory reset, bluetooth pairing
+55fe1ebd17b - jcann, 8 months ago : modify dt app module names to match DT Wiki specifications
+6e6ec5beb91 - seongjae, 8 months ago : removed Settings menu select effect
+1700f1026e9 - seongjae, 8 months ago : TvSetupCustomization (FTI) : add version 12.0.1
+2edc5a6a397 - KyoungNam Lee, 8 months ago : netflix ninja 9
+ffec158b421 - Sunghoon Jung, 8 months ago : Allow to downgrade on ARC(recvoery) mode
+1cae53fb527 - jcann, 8 months ago : remove duplicate set of privapp permissions for btpairingservice
+e876af90aac - bjna, 8 months ago : PMIC setting was fixed and HY7501WF have to be replaced to SY8827N
+67bb220e70a - green, 8 months ago : Add factory reset when booting while pressing a button from commit 11a276cc6f1c050d49e1cc549def82ede5f4f032
+02aa246e254 - seongjae, 8 months ago : modified DT apps LOCAL_CERTIFICATE (platform -> PRESIGNED)
+10972edc9ee - polomeria, 8 months ago : G8 Value wi-fi Update following files what is received from Ampak. 1. wi-fi firmware. version = 18.35.387.23.215 (g7861e478) 2. nvram 3. blob (country regulatory)
+cf1ab675ee0 - polomeria, 8 months ago : G8 Classic wi-fi Update following files what is received from Ampak. 1. wi-fi firmware. version = 18.35.387.23.215 (g7861e478) 2. nvram 3. blob (country regulatory)

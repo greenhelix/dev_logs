@@ -1,0 +1,30 @@
+0f7a9c83363 - yhlee, 3 months ago : Fixed issue with incorrect HDMI state when HDMI is not connected
+b7774fb8aad - yhlee, 4 months ago : Fixed versioning for factory software
+6ec15d25a1c - yhlee, 4 months ago : Modified Factory Tools to check for I/O error on eMMC and change LED scenarios
+626149bda72 - ikhwan, 4 months ago : Fix : TVTE-87174 G8V PowerKeyLock
+8c256af3cf5 - kiyou.lim, 4 months ago : Applied the same tweaks of G8V to G8C
+0b2542a9903 - kiyou.lim, 4 months ago : Fixed Wi-Fi issue : TVTE-84112 G8: WIFI toggle turned OFF 5 minutes after FW update - seldom
+f34cff73cf7 - green, 4 months ago : Add new main led (classic only) - modify the LED operation based on the hardware version
+ad11af9d72a - ikhwan, 4 months ago : fix : TVTE-87174 G8V PowerKeyLock
+0eae2dc1a48 - Sunghoon Jung, 4 months ago : Fixed to wake up according to CEC option in S3 mode
+5fc18c423a6 - jcann, 4 months ago : add dontaudit rule for system_app hal read
+3838e16416e - Sunghoon Jung, 2 months ago : Apply configuration for ffv
+ca1350b1ca3 - Sunghoon Jung, 2 months ago : update Netflix app to fix NTS failure
+38b899cc1d3 - bp_khs971, 4 months ago : add kernel patch for KEY_ACCESSIBILITY for prepare RCU MUTE longpress
+806dabddf05 - yhlee, 4 months ago : TAG: FACTORY_V1.02.00/50 for QG3 (INN_v12.G8V_DE.124_20240621_user)
+d41d59ac8bb - yhlee, 4 months ago : Modified Factory Tools to support QG3 scenarios
+0f4ab64b097 - seongjae, 4 months ago : fixed jira issue
+4b9ce1bb38f - bp_khs971, 4 months ago : change BTM_BLE_CONN_INT_MAX_DEF 15 to 23 due to compatiblity issue of internal Q/A
+d43393c20d9 - bp_khs971, 4 months ago : fix RCU OAD bug
+c43b4868ca5 - bp_khs971, 4 months ago : 1. Fix BTPairingService to not check duplicate RCU 2. Fix BTPairingView's malfunction when 2nd RCU connection
+4b1b4b3f2bf - bp_khs971, 4 months ago : BTPairingService : fix only check "MagentaTV Remote 2" to duplicate check
+aafb53493c6 - green, 4 months ago : change version : 12.0.4 -> 12.0.5 (led service)
+2928b881a33 - jcann, 4 months ago : add child process removed prod iCX_DT apk
+1b08818bc7e - seongjae, 4 months ago : fixed jira issue
+44ec1b01152 - Sunghoon Jung, 2 months ago : Apply fastlogo in IMTM8300.rc of device
+3aaa18b56ba - KyoungNam Lee, 4 months ago : Change prefix(Year) of ro.oem.key1
+0882022c38f - green, 4 months ago : ADD : LED OFF on quiescent booting
+5d6d9420887 - polomeria, 4 months ago : quiescent boot function to restore sleep mode.
+fb45759770d - yhlee, 4 months ago : Fixed to set OEM properties with the DT internal purposes field
+0181e2640cb - Sunghoon Jung, 2 months ago : Apply fastlogo in IMTM840A.rc of device
+44a9a1a68e7 - yhlee, 4 months ago : Modified OEM properties to support the serial number with length of 16

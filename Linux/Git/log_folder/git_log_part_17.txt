@@ -1,0 +1,30 @@
+e286fcfef82 - KyoungNam Lee, 5 months ago : setprop ro.runtime.innopia.type "Typ A"
+47b5d0fd1cb - seongjae, 5 months ago : fixed jira issue
+00649b64fdf - Sunghoon Jung, 5 months ago : Fix HDMI CEC issue
+1657ad8f30e - bp_khs971, 5 months ago : fix BTPairing scan fail and not retrying
+e5585e327d8 - seongjae, 5 months ago : fixe bug
+0cbafa95666 - seongjae, 5 months ago : fixed jira issue
+ad2c995bf6e - seongjae, 5 months ago : fixed jira issue
+51dd90dcdbd - lekail, 5 months ago : fix: Confirmation pop-up for audio settings is dismissed incorrectly when selecting G8 RCU HK_Back - the pop-up remains when the back button is pressed.
+6fb204fd173 - lekail, 5 months ago : fix: Incorrect confirmation focus when enabling an unsupported sound format Confirmation focus is on "Cancel"
+b01e12f07e9 - lekail, 5 months ago : fix: Incorrect confirmation focus when changing Power & Energy settings Focus should be on "Confirm" button.
+7d41b5744a5 - green, 5 months ago : fix TVTE-84908 : change from 'Device Preferences > Display & Sound' to 'Device Preference > Sound'
+844c16b5c24 - KyoungNam Lee, 5 months ago : remove useless application, com.marvell.wol
+caddc56f958 - ikhwan, 5 months ago : (TVTE-84674) DevelopmentFragment.java uneccesary codes modified.
+e4d2cc5f4e2 - jcann, 5 months ago : fix build error in TvSettings app
+9e2a40b3147 - jcann, 5 months ago : SPL 2024-06-01
+71cb96055b7 - ikhwan, 5 months ago : Fix : TVTE-84674 "Power on/off & volume" option doesn't get enabled when activating 'Power Key Lock'
+315de380e34 - yhlee, 5 months ago : Added factory script for generating master images for MP
+762691e3a91 - ikhwan, 5 months ago : Fix : wifi password edit text - losing focus in connectivity's State fragment.
+2b330c5cf36 - yhlee, 5 months ago : TAG: FACTORY_V1.01.00/50 for QG2 (INN_v12.G8V_DE.117_20240427_eng)
+9b066283309 - yhlee, 5 months ago : Fixed checking audio test results in factory tools
+e11d336465f - jcann, 5 months ago : add standby check for hdmi connectivity APIs in DMS
+b0be0af8c45 - kiyou.lim, 5 months ago : Fixed minor issue - TVTE-84852
+578cd9e9a37 - Sunghoon Jung, 5 months ago : Fix TVTE-85106, Cannot connect to STB IP using adb command(user release build)
+cb705a14bb5 - bp_khs971, 5 months ago : Battery Notification script change to G7
+9abe9f99e23 - lekail, 5 months ago : fix: Confirmation pop-up for audio settings is dismissed incorrectly when selecting G8 RCU HK_Back
+ee718a75d0d - bp_khs971, 6 months ago : BTOAD: add fwversion check for preventing t4h aidl malfunction
+f62b185039a - jcann, 6 months ago : update prod TATA DMS APKs
+3870051c98e - green, 6 months ago : fix TVTE-83596 : Audio Mixing is set to ON by default.
+e44d411eff9 - lekail, 6 months ago : Initial values of Extended Dolby output over HDMI to ON. The values configured by the user are saved.
+231c6101fa8 - bp_khs971, 6 months ago : Do not re-pairing RCU after OAD

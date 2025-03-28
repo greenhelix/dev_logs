@@ -1,0 +1,30 @@
+8202976b947 - bp_khs971, 2 months ago : TVTE-89160 fixes 1. add RCU model functions in SettingsApi aidl 2. add RCU model to TvSettings-RCU info
+6a639cde4c9 - bp_khs971, 2 months ago : add BT RCU Talkback toggle key (MUTE 3s) - TVTE-86681
+0f039aefdc9 - Sunghoon Jung, 2 months ago : Update .gitignore for IMTM840A
+19ca6676940 - Sunghoon Jung, 2 months ago : Apply patch in /device/synaptics/IMTM840A and syna-release-value/configs for VSSDK 1.10.8.1
+60a43be9483 - seongjae, 2 months ago : fixed jira issue
+3c0c784972a - seongjae, 2 months ago : fixed jira issue
+4d9cd9e91b5 - green, 3 months ago : update magenta voice stub app (classic only) - MagentaTV_VoiceAssistant_V0.0.13_B1_4K_release-aligned-signed.apk
+f915ecf4e84 - Sunghoon Jung, 2 months ago : Fix jira issue
+2d50858c363 - bp_khs971, 2 months ago : fix TVTE-89965 BTOAD text in DT_Value
+f7b5acafce3 - Sunghoon Jung, 2 months ago : Fix DT Jira : TVTE-89622 ARC menu is entered when triggering Factory Reset using back panel reset button during boot up
+4a9dac070cc - seongjae, 2 months ago : remove property check ( ro.boot.hw.version )
+b05b28d5000 - seongjae, 2 months ago : update factory tool
+445c8cb42be - seongjae, 2 months ago : fixed "Google Play Movie&TV" icon issue
+5f9de67ae42 - KyoungNam Lee, 2 months ago : audiohal: use HW mute to do mute/unmute on passthrough stream
+04129008703 - yhlee, 3 months ago : TAG: FACTORY_V1.04.20/70 for QG4 (INN_v12.G8V_DE.126_20240806_user)
+3746412581e - yhlee, 3 months ago : Fixed MP Master Image to be used factory_setting image, generated with Unsigned User Firmware
+fb55ae6c1d2 - yhlee, 3 months ago : TAG: FACTORY_V1.04.10/60 for QG4 (INN_v12.G8V_DE.126_20240806_user)
+80aae8b4816 - yhlee, 3 months ago : Improved stability of factory software
+7802dce4baa - bp_khs971, 3 months ago : fix BTPairingService to show "notfound" after 180s
+9bda1a876ce - bp_khs971, 3 months ago : 1. fix TVTE-89587 Pairing fail screen is not appeared. 2. add board thermal notification and reset function for test(partial, not working now) 3. add RCU model name info for test(partial, not working now)
+9201d9ea910 - jcann, 3 months ago : fix get/set DolbyMatHDMI in DMS for unsupported tvs
+a99cce60ca8 - jcann, 3 months ago : modify to reboot functionality in DMS
+4ce43805dcc - lekail, 3 months ago : ADD: description text in HDR Policy Priority. TVTE-89358: Add text to aid customers choosing the right video mode
+df5443d5b4f - polomeria, 3 months ago : add wi-fi configuration for the low power control.
+cc1fe7f4065 - jcann, 3 months ago : add v3 signed TATA DMS apks
+f557b288d52 - Sunghoon Jung, 3 months ago : Fix : USB storage was not recognized during booting
+79b50649f7f - Sunghoon Jung, 3 months ago : Fix jira issue
+82d3eade19e - Sunghoon Jung, 3 months ago : Fix Jira issue
+336777ace39 - seongjae, 3 months ago : fixed jira issue
+50075276305 - seongjae, 3 months ago : fixed jira issue

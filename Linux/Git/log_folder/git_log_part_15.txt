@@ -1,0 +1,30 @@
+27edd3fa66a - ikhwan, 5 months ago : Modify delayOpenInEditMode delay time in WifiConnectivityGuidedStepFragment.java
+1449e021fc5 - ikhwan, 5 months ago : Fix DasReceiver crash ui settings in DevelopmentFragment.java
+a45cb921621 - green, 5 months ago : change pinhole key mapping
+c1c4ec401d8 - seongjae, 5 months ago : fixed jira issue
+2a50ea8582c - kimje, 5 months ago : Synaptics CAF patch 1. mic order 2. adjust gain (ZQY0.caf) 3. activate soc_i2s_pri_lpbk node for more stable AEC
+30cccd99787 - jcann, 5 months ago : add 4k sign prod TATA DMS APKs
+4e667a03838 - green, 5 months ago : Change default value of Google voice typing to OFF - DT Jira : TVTE-85354
+c3a5ecf05c1 - seongjae, 5 months ago : fixed "control the volume of the TV" menu issue
+240a770c9d5 - bp_khs971, 5 months ago : check low_power if board_id is not 000/001
+9cd4fe33076 - seongjae, 5 months ago : add : DTUpdater ( versions : 1.80.1103_h5 )
+bb971e98c6b - bp_khs971, 5 months ago : if checking charger detection is false, reset ti chip and re-check charger detection
+f47e49d10a4 - jcann, 5 months ago : fix CtsOsHostTestCase QuiescentBootTests fails in CTS
+cbcf7234211 - lekail, 5 months ago : MOD : ExtendDolbyOutputOverHdmi remove setting surroundmod by handle. setting surroundmod thread sleep
+95b68330ced - lekail, 5 months ago : Fix : change String 'Extended Dolby output over HDMI' in German.
+c02a2fd695d - seongjae, 5 months ago : fixed java.lang.NullPointerException
+69d86aed3c0 - Sunghoon Jung, 5 months ago : Fix : TVTE-84502 Using MVA RCU key does not wake up device form Active Standby
+9e058ac702b - Sunghoon Jung, 5 months ago : Fix TVTE-84994 : TV doesn't trun ON after connecting G8 STB to power supply
+66a508841b6 - lekail, 5 months ago : bug Fix : ExtendDolbyOutputOverHdmi
+186ac701193 - KyoungNam Lee, 5 months ago : remove some config flag in atv_lowram_defaults
+8ce278f8740 - bp_khs971, 5 months ago : fix TVTE-84976 G8: manual re-start of the Google FTI process isn't applicable/visible
+a93bf8dafcb - KyoungNam Lee, 5 months ago : CEC OSD NAME : MagentaTV in android framework
+2290a5c94f3 - KyoungNam Lee, 5 months ago : CEC OSD NAME : MagentaTV Stick to MagentaTV
+ca4176a91fc - bp_khs971, 5 months ago : fix BTOAD asset loading for prevents CRC error
+b6409d709eb - bp_khs971, 5 months ago : change Mute key behavior from onKeyDown to onKeyUp, and longpress works to activate Talkback
+ccd929e4ce9 - KyoungNam Lee, 5 months ago : change dalvik heapsize 256 to 384 for buffering 50secs in Exoplayer
+8a69dfe4295 - KyoungNam Lee, 5 months ago : fix invalid checking for mDasReceiver
+1009b4040b7 - ikhwan, 5 months ago : Fix TVTE-85083 Keyboard is dismissed incorrectly when reaching specific screens from Wi-Fi proxy/IP settings
+bfacd313a8e - lekail, 5 months ago : MOD : sub-menu Extended Dolby output over HDMI get / set property Dolby output hdmi.
+f922edc5f02 - jcann, 5 months ago : modify default value for surround sound in DMS AIDL test app
+98b18b8fad2 - jcann, 5 months ago : add 4k signature TATA DMS APKs

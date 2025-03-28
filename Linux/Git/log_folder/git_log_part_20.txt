@@ -1,0 +1,30 @@
+0b7cadb1cc0 - green, 6 months ago : Add missing letter in device.mk : com.google.android.feature.katniss.xml (IMTM8300) Add Openlicense.html : 20240424
+6e7a8f84f84 - bp_khs971, 6 months ago : Revert "limit BT device name to <16. (for prevent MTU issues at FTI smart setup)"
+eccfc7c6130 - green, 6 months ago : fixed : mic led blinking is not working #2
+6a44767f3ae - Sunghoon Jung, 6 months ago : Fix : Mute status is maintained by katniss configruation
+14c5b375c58 - bp_khs971, 6 months ago : add TalkBack short service at the begin of FTI.
+cf56609802a - seongjae, 6 months ago : fixed RCUSetup issue
+71fdd8b5815 - ikhwan, 6 months ago : fixed jira issues (developer options)
+776608bbf32 - ikhwan, 6 months ago : fixed jira issues (developer options - RCU KeyLock & Reset)
+7ec6e1363ac - jcann, 6 months ago : fix NullPointerException upon updating Wi-Fi details
+1d62778b117 - seongjae, 6 months ago : add : DTUpdater ( verions : 1.79.1024_h5 )
+77b11a7df5f - seongjae, 6 months ago : fixed minor jira issue
+8aee7d4013b - jcann, 6 months ago : add TATA DMS preprod apks version 2.12.2
+853b230f879 - seongjae, 6 months ago : Add the following to "notification-allow-list"
+463d0ed34c8 - seongjae, 6 months ago : fixed minor jira issue
+5969e05bf12 - KyoungNam Lee, 6 months ago : modify wifi hw name for D8C's QG2
+2ef670c28f4 - KyoungNam Lee, 6 months ago : modify wifi hw name for QG2
+21715375708 - windholic@innopiatech.com, 6 months ago : 1. when keyboard connect, Factory App re-launch bug fix 2. DB Client Protocol fix. 3. StreamingTest re-try
+9513d27fdd4 - seongjae, 6 months ago : add debug log for RCUSetup
+5946ec66edb - Sunghoon Jung, 7 months ago : Mute status is maintained when HDMI Plug Out / In and Power Off / On
+6f13272abc7 - seongjae, 7 months ago : add MagentaTV_Launcher ( version : 3.140.5043 )
+6551c316aa4 - KyoungNam Lee, 7 months ago : remove checking useless property, ro.runtime.innopia.usbpower for usb low power
+a636ef2076f - bp_khs971, 7 months ago : fix bootloader to not check low_power at FAB1(000)
+3bd6c2ca3b4 - windholic@innopiatech.com, 7 months ago : remove libjni_propertyutil on FactoryTools
+eb046c130c7 - windholic@innopiatech.com, 7 months ago : add sepolicy rule for Provision
+26bab5f8464 - windholic@innopiatech.com, 7 months ago : when keyboard connect, Factory App re-launch bug fix
+6a404f60db5 - windholic@innopiatech.com, 7 months ago : DT value model M840A Factory SW , For provision safety, separated the steps.
+71a69b8d23c - seongjae, 7 months ago : fixed jira issue
+c04d95b30cc - KyoungNam Lee, 7 months ago : uncomment reboot lowpower
+891db2bba63 - polomeria, 7 months ago : DT jira issue
+eed194b2126 - seongjae, 7 months ago : MagentaKeyeventWrapper signing with platform key

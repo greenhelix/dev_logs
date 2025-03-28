@@ -1,0 +1,30 @@
+36c59de9dcb - seongjae, 4 months ago : fixed jira issue
+065b1538160 - jcann, 4 months ago : modify to set boot reason upon boot
+28504cc6a09 - polomeria, 4 months ago : quiescent boot function to restore sleep mode. - Additional work to do => 1. LED off scenario after quiescent boot. 2. Even if "persist.vendor.sleep2suspend.timeout" is set, device should be able to enter the STR mode after quiescent boot.
+7078b22ca8c - KyoungNam Lee, 4 months ago : HDMI Phy settings for DT value
+6a94d879416 - seongjae, 4 months ago : fixed jira issue TVTE-87217 (bug fix)
+ecd5859c3e9 - kiyou.lim, 4 months ago : Support the 16 charaters serial number
+f45a106a918 - lekail, 4 months ago : FIX: TVTE-86150 G8V: Determine LAN connection type - Add the getUsbDevicesInfo() function to the ISettingsApiInterfaceG8 - It returns the USB device information as a JSON formatted string.
+685002228aa - Sunghoon Jung, 4 months ago : Fixed to wake up from S3 mode when pressing shortly the pinhole button.
+b197522940b - seongjae, 4 months ago : fixed MagentaTV Signatures issue
+df65fbba260 - seongjae, 4 months ago : fixed jira issue
+266673b3166 - ikhwan, 4 months ago : fix : TVTE-87111 'Power Key Lock' toggle remians active(ON) & RCU factory reset TVTE-87111 'Power Key Lock' toggle remains active (ON) even if RCU Setup process is canceled or after RCU Factory Reset
+9f850e73d10 - seongjae, 4 months ago : fixed jira issue
+8c7b26cc70a - seongjae, 4 months ago : fixed jira issue
+75b5f9caf46 - seongjae, 4 months ago : fixed minor jira issue
+bfb2a26ecc9 - jcann, 4 months ago : add more sepolicy rules for TATA firmware updater app
+4d41f5fd1d7 - lekail, 4 months ago : Only remove DolbyTrueHD in Settings UI. - Removing TrueHD from surround_sound_configuration_5_0.xml causes a failure in TVTS. - So the Surround Format will be reverted and only removed from the UI.
+aa11df263ba - jcann, 4 months ago : add sepolicy for TATA firmware updater app
+ea0749a0767 - bp_khs971, 4 months ago : fix Talkback toast typo
+6fef7a924a4 - bp_khs971, 4 months ago : Fix Talkback toast typo
+4257303c078 - KyoungNam Lee, 4 months ago : change natco DE instead of DT
+1d8f9caa6f0 - jcann, 4 months ago : bug fix for quiescent boot issue
+8aace0bf1b2 - jcann, 4 months ago : add missing permissions for TATA DMS APKs
+56b7cd3e2e9 - jcann, 4 months ago : use SystemProperties.get instead for getting oem.sw.verion in Abouts page in TvSettings
+045b0e78a75 - seongjae, 4 months ago : add permission for MagentaTV Check App
+2e93168cbf1 - lekail, 4 months ago : Modify to set by comparing the color space value when best resolution auto is selected.
+51646cffe4c - seongjae, 4 months ago : modified: the language selection screen in FTI
+40ccee40f80 - seongjae, 4 months ago : Update MagentaKeyeventWrapper-v1.4-54_unsigned.apk
+3ef8343ec9c - lekail, 4 months ago : Delete the function no longer in use.
+ee19ce487a1 - polomeria, 4 months ago : Modifications about CTS wi-fi test
+dcb83493165 - Sunghoon Jung, 4 months ago : Use SystemProperties for USB debugging setting. bacuase of CTS issuse

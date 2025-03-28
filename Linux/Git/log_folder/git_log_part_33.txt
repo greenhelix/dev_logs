@@ -1,0 +1,30 @@
+49cdc9ffeee - jcann, 8 months ago : fix boot error
+acc65f1940e - green, 8 months ago : Update build properties (IMTM8300)
+92b3ceca106 - KyoungNam Lee, 8 months ago : fix PRODUCT_PACKAGES for innotest
+0b0f480b226 - KyoungNam Lee, 8 months ago : only add innotest for dms in usermode
+5cb6d932e3f - KyoungNam Lee, 8 months ago : remove useless items in dts
+76c90c12a3b - Sunghoon Jung, 8 months ago : Change USB Host/Device logic
+ef9332e734a - KyoungNam Lee, 8 months ago : disable console in usermode
+a3398edbe5d - jcann, 8 months ago : modified DMS to support TataSystemDT.aidl
+b5a8a029e16 - green, 8 months ago : copy and replace from dolphin to IMTM8300
+dbe900c8a35 - KyoungNam Lee, 8 months ago : netflix modelgroup MAGENTATVSTICK2GEN
+f28e4daee68 - lekail, 8 months ago : Bug fix duplicated Color space / depth items.
+2de373c47a4 - jcann, 8 months ago : modified Display and CEC settings in DMC
+65e69a4936d - bp_khs971, 8 months ago : fix GPIO APB0 is not mapped in bootloader stage.
+2d7fba94a28 - yhlee, 8 months ago : Removed unnecessary files
+ee778848e74 - jcann, 8 months ago : add missing sepolicy for audio drc
+ce3d7d51494 - jcann, 8 months ago : add persist property for audio drc and reduce log outputs in DMC
+6101b9fd838 - lekail, 8 months ago : add Features in Menu Modifcation
+9a3be794cb7 - Sunghoon Jung, 8 months ago : add testkey for user build
+1259e07aa95 - KyoungNam Lee, 8 months ago : when only user build type, apply release key
+26563f223c9 - KyoungNam Lee, 8 months ago : version 102 (1.0.2)
+ba4481d16e6 - KyoungNam Lee, 8 months ago : add PRODUCT_DEFAULT_DEV_CERTIFICATE
+e25ee82821f - Sunghoon Jung, 8 months ago : change menu (Device mode -> USB Host) for USB
+dbdd1676f6f - KyoungNam Lee, 8 months ago : version and build number : 010001 (101)
+d2a80e0759f - KyoungNam Lee, 8 months ago : build with release key for user mode
+a6f6fa6689d - Sunghoon Jung, 8 months ago : Update USB/Host mode for USB 2.0 A type
+3b432796f20 - jcann, 8 months ago : modify ColorSpaceSettings and ro.property read in DMS
+d13be4a0557 - bp_khs971, 8 months ago : change HDMI CEC default to DISABLE
+a56432370db - KyoungNam Lee, 8 months ago : change wifi country code US to DE
+d48f50db1fa - KyoungNam Lee, 8 months ago : define buildtype on bootloader for disabling console
+ef42f017ee0 - bp_khs971, 8 months ago : change fab version to ro.boot.hw.version

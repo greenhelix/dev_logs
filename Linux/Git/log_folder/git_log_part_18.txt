@@ -1,0 +1,30 @@
+1c46c1b3dac - Sunghoon Jung, 2 months ago : Fix : HDR when returning to UI after playing HDR Content in Adaptive HDR Settings - Classic
+8177289c0d9 - Sunghoon Jung, 6 months ago : Fix : HDR when returning to UI after playing HDR Content in Adaptive HDR Settings
+9b94e663d2c - seongjae, 6 months ago : fixed jira issue
+6d080f72381 - KyoungNam Lee, 6 months ago : Commit missing file for 2G optimization
+58aeabbdeb7 - KyoungNam Lee, 6 months ago : kernel config for debugfs
+1a60d642bd1 - yhlee, 6 months ago : TAG: FACTORY_V1.00.07 for QG2 (INN_v12.G8V_DE.120_20240510_eng)
+a0445af6f3c - yhlee, 6 months ago : Fixed factory tool to improve stability
+0d08dbc9c4b - green, 6 months ago : Audio Mix : rollback AudioOutputFragment.java
+d51e3a69cce - green, 6 months ago : fix Audio Mix : Set dolby_passthrough property to 0
+4f3b4c33913 - lekail, 6 months ago : change FramerateMatching value to Non-Seamless
+fdebbdcd07b - jcann, 6 months ago : update DMS Audio Mixing get/set system properties
+78e82485a0f - Sunghoon Jung, 2 months ago : Apply missing patches from Chang-Id : I89b8c35a20d43d65813b986932e0a1beea9b201e
+c6e9288d6a5 - green, 6 months ago : add persist.vendor.audio.dolby_passthrough for Audio Mixing status
+d74b0d6a23c - KyoungNam Lee, 6 months ago : debug fs for userdebug and eng
+6d77fd731ae - yhlee, 6 months ago : TAG: FACTORY_V1.00.05 for QG2 (INN_v12.G8V_DE.116_20240417_eng)
+4b2faa2063e - yhlee, 6 months ago : Modified factory tool to apply new LED scenario and update key pairing status
+d90f48ff29c - jcann, 6 months ago : update HIDL related Innopia app versions
+16f9e7f782c - jcann, 6 months ago : fix DMS AIDL API stuck issue
+9a9690e41dc - green, 6 months ago : Add ro.vendor.nrdp.oemmodel for NTS - setprop ro.vendor.nrdp.oemmodel "Deutsche Telekom_MagentaTV One 3. Generation Model"
+75a65da5d72 - seongjae, 6 months ago : fixed jira issue
+8c359008ff0 - polomeria, 6 months ago : DT jira issue
+ee00883a5bf - jcann, 6 months ago : add DMS apps log toggle option, audio mixing and dontaudit sepolicy for DMS
+68c908e0608 - Sunghoon Jung, 6 months ago : Add audio_format_mat and audio_ac4
+2ab56cfeabc - lekail, 6 months ago : Disable the 'Dolby Output over HDMI' option if it is not included in the ReportedFormat.
+d63db9d42d0 - Sunghoon Jung, 6 months ago : revert ueventd.rc file, becuase this fix is caused OTA upgrade error
+a7590e887e8 - bp_khs971, 6 months ago : fix notifications bug
+65152b1d925 - jcann, 6 months ago : fix DT Jira reported DMS issues, add extensive log outputs for DMS apps and remove Innopia changes for audio drc
+a8d7126c212 - polomeria, 6 months ago : Include wi-fi config file when building the image.
+32043b9eb48 - seongjae, 6 months ago : fixed minor jira issue
+73d762d31a0 - seongjae, 6 months ago : fixed minor jira issue

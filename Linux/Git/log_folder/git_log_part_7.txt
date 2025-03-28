@@ -1,0 +1,30 @@
+3ca4714c65d - green, 3 months ago : [IMT8300] Add assistant_led (classic only)
+df0cae0514c - green, 3 months ago : [IMTM8300] katniss_led is included only in Classic
+b2bcc7d65e9 - lekail, 3 months ago : add Service InnoAssistantManagerService mod/add permissions mod framework: mute functionality besides the uid value of vendor.inno.only.recording
+262aa3bc5d7 - green, 3 months ago : remove log message in katniss_led
+c4d6149cf3a - bp_khs971, 8 weeks ago : run fastlogo at the "reboot lowpower" status
+a3c04781925 - green, 3 months ago : [IMTM8300] add InnoLedTest
+cfa24e35cbe - green, 3 months ago : [IMTM8300] fix MIC LED for google assistant, magenta assistant (classic only)  - support sigle mode & group mode
+2cf947efcc0 - green, 3 months ago : modified katniss_led for google assistant, magenta assistant
+ed9adfec9fb - bp_khs971, 8 weeks ago : fix lowpower booting sequence - normal boot transition
+b289d19dab4 - KyoungNam Lee, 8 weeks ago : property for bl33 version
+adea9be5b0c - Sunghoon Jung, 8 weeks ago : Apply synaptics patch
+0859e899693 - Sunghoon Jung, 8 weeks ago : Apply synaptics patch for classic
+a124df1cea6 - Sunghoon Jung, 8 weeks ago : Apply synaptics patch
+dd9937b6fd6 - Sunghoon Jung, 8 weeks ago : Apply synaptics patch
+f0b92bdef37 - Sunghoon Jung, 9 weeks ago : Add CONFIG_NETFLIX_MGK in vs640_a0_android_baseline_m840a_defconfig
+c967649006f - Sunghoon Jung, 9 weeks ago : Update syaptics patch in device for IMTM8300
+277b2ac71cf - Sunghoon Jung, 9 weeks ago : Update syaptics patch for VSSDK 1.10.
+c72a93b68b2 - Sunghoon Jung, 9 weeks ago : DisplayVRRMode api is removed in new sdk, and it does block temporarily the build error.
+1da83b88f7a - Sunghoon Jung, 9 weeks ago : Update Synaptics patch for config
+d8ecd592b4a - Sunghoon Jung, 9 weeks ago : Update syaptics patch for VSSDK 1.10.9
+528e578efa1 - Sunghoon Jung, 9 weeks ago : Update synaptics patch for HDR10+
+16cfc2814b7 - Sunghoon Jung, 9 weeks ago : Update syaptics patch in device for IMTM840A
+e036ad9738e - Sunghoon Jung, 9 weeks ago : Update syaptics patch for VSSDK 1.10.9
+8c61577359b - ikhwan, 9 weeks ago : [Synaptics Patch] CSMDTV-158 TvtsAttestationTest
+fcc01e3c634 - lekail, 9 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+46747612f3c - lekail, 9 weeks ago : Fix the issue where the DRC Mode is not applied when the volume is not at maximum. Syna 2862e71.diff : The Downmix/DRC parameters should be set to MS12 input port 0 and 1, espeically for MS12v2.6, or there will be DRC metadata lost issue in FW. MS12v2.6 Dual Main Mixer will select one of the 2 input ports as dominate port and only consume the metadata on the dominate port. So here the uiPortIdx is ignored and the Downmix/DRC parameters are set to 2 MS12 input ports.
+78be02784ff - seongjae, 9 weeks ago : fixed jira issue
+d60026f3eb2 - seongjae, 9 weeks ago : fixed jira issue
+86f2c67aae5 - seongjae, 9 weeks ago : fixed jira issue
+540c9a5c9b4 - seongjae, 9 weeks ago : fixed jira issue

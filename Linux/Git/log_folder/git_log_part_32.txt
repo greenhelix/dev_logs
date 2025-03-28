@@ -1,0 +1,30 @@
+8051fca5f6f - green, 8 months ago : Add Main LED driver (et6326)
+a7c95fb6854 - bjna, 8 months ago : to support GVA by DMIC
+41455923867 - seongjae, 8 months ago : fix FTI KeyEvent issue
+decf4445e7c - green, 8 months ago : Max Volume level 15 -> 25, Remove unnecessary logs when swiching host/device mode - apply from commit 3a396f16e40d
+0a72246d752 - jcann, 8 months ago : fix DMS display setttings error
+156bfdb0c37 - DongHoon Kim, 8 months ago : Fix wrong typo on vendor_innopia.mk
+fac615667da - Sunghoon Jung, 8 months ago : Max Volume level 15 -> 25, Remove unnecessary logs when swiching host/device mode
+07345cf0456 - jcann, 8 months ago : fix DMS binding error
+e346f0aad2b - jcann, 8 months ago : fix InnoTest crash issue in DMS
+3cf2d601ad5 - green, 8 months ago : Fix : USB Host/Device scenario (apply from commit : d2691acd0e)
+94e36f77167 - Sunghoon Jung, 8 months ago : Fix : USB Host/Device scenario
+83bf0739a49 - jcann, 8 months ago : apply IInnopiaSystemDT AIDL in DMS
+f4f8f7bd270 - seongjae, 8 months ago : Add Play Auto Install for IMTM8300
+64ee738cb2b - polomeria, 8 months ago : Set the M8300(DT classic model)'s wi-fi country code to DE.
+df36b862d89 - DongHoon Kim, 8 months ago : Add private permission for T4H AIDL
+921f26aaef6 - DongHoon Kim, 8 months ago : Apply IR/BT Keymap for T4H G8 RCU
+9e4d77b3a00 - KyoungNam Lee, 8 months ago : version 1.0.3
+d3b0069deb1 - bjna, 8 months ago : apply the RSTEP code
+2117da40d63 - KyoungNam Lee, 8 months ago : fix filtering name to IMTM840A for DHCP Option
+9ef3f5f9ad4 - kiyou.lim, 8 months ago : Some tweaks for G8C Board
+eea9a6090c4 - kiyou.lim, 8 months ago : Linux kernel default configuration to apply DSCP rule
+50da02e13ee - kiyou.lim, 8 months ago : NTP Polling Interval setting required by DT
+9bdab490224 - kiyou.lim, 8 months ago : G8C Pinhole scenario
+c44ee87a75a - kiyou.lim, 8 months ago : USB Host/Device switching feature
+16190f10a9b - kiyou.lim, 8 months ago : LED Turning on in the bootloader
+cce167a188b - kiyou.lim, 8 months ago : DT G8C Partition map
+314feaa4c28 - kiyou.lim, 8 months ago : DT Boot splash and Animation
+46eafae517e - green, 8 months ago : Temporary commit to prevent build error
+9875c0c9130 - green, 8 months ago : disable installation of RemotePairGuide, SynaCustomizer for DT FTI(First Time Installation)
+a44149ceaa4 - green, 8 months ago : add build config for M8300 - add build configure : bootloader, kernel, android - mod Env.sh, IMTM8300_sl

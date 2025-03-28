@@ -1,0 +1,30 @@
+28e7040fe37 - seongjae, 7 months ago : fixed jira issue
+51db4f84c6d - KyoungNam Lee, 7 months ago : InnoHidlService versionCode 3, versionName 12.0.3
+be84757278b - green, 7 months ago : version : 12.0.2 -> 12.0.3
+f39dc551217 - KyoungNam Lee, 7 months ago : InnoSystemService : versionCode 3, versionName 12.0.3
+15b2da97877 - KyoungNam Lee, 7 months ago : BTPairingService Version 1.9.0
+09398eab07f - bp_khs971, 7 months ago : fix BTPairingService bug at enter/exit Restricted profile
+311b9dd159f - kimje, 7 months ago : Magenta Voice Assistant LED AIDL on InnoLed
+e8693437630 - Sunghoon Jung, 7 months ago : rollback : Screen about changing device name is opening/closing with delay leading shortly to overlapping UI
+bec2c3dc5a2 - bp_khs971, 7 months ago : fix InattentiveWarningView
+3bf187f9014 - Sunghoon Jung, 7 months ago : Fix : Switch on together option in Expert Settings HDMI-CEC
+e300443f1cd - bp_khs971, 7 months ago : remove test logs
+724f6f01e4f - bp_khs971, 7 months ago : add Sleep Warning dialog to sleep_timeout.
+a38411615b4 - Sunghoon Jung, 7 months ago : Fix : Screen about changing device name is opening/closing with delay leading shortly to overlapping UI
+cbd4b7c7172 - seongjae, 7 months ago : fixed jira issue
+102a7e7a885 - seongjae, 7 months ago : fixed jira issue
+54e092d6718 - KyoungNam Lee, 7 months ago : SYSTEM_ALERT_WINDOW for com.dt.onetv.selfcare and com.tataelxsi.icx
+2cf23a25688 - seongjae, 7 months ago : fixed jira issue
+8e3e0440a74 - green, 7 months ago : DT JIRA ISSUE (TVTE-83468) : Apps icon are not scaled properly
+72bc51224bf - Sunghoon Jung, 7 months ago : Block to wake up by any key except power key
+89195f0c9a5 - bp_khs971, 7 months ago : fix Battery notification malfunction/add intent for test
+a334afcb28d - seongjae, 7 months ago : Merge branch
+93aeaa4022f - jcann, 7 months ago : fix getScrSaver in DMS AIDL to only return Backdrop or Colors
+6ce92f86bdd - KyoungNam Lee, 7 months ago : List of paired device is displayed after short delay when opening 'remotes & accessories'
+11ed69851c9 - Sunghoon Jung, 7 months ago : Remove EVK environment, this script use only pure VSSDK 1.10.7 SDK
+9db04946141 - Sunghoon Jung, 7 months ago : Fixed an issue that took a long time to enter factory reset in settings
+82d7bb2bfa9 - kimje, 7 months ago : Katniss(Goggle assistant) LED trigger Lights AIDL HAL V1 : android/hardware/interfaces/light/aidl/android/hardware/light HAL implementation sample : android/device/amlogic/yukawa/hal/lights
+d13060ad876 - kiyou.lim, 7 months ago : Fixed minor issues
+35eb1ebaa9a - KyoungNam Lee, 7 months ago : check usb low power with TI chipset
+d13aec59e91 - jcann, 7 months ago : fix HDR Policy and Screen Saver in DMS AIDL apps as TATA requested
+753b612b1a8 - lekail, 7 months ago : ro.oem.sw.version remove prefix and suffix.

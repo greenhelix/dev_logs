@@ -1,0 +1,30 @@
+12887290365 - DongHoon Kim, 7 months ago : Add AC-4 Dialog Enhancement HAL/HIDL/AIDL/UI
+ebe8c0d1759 - yhlee, 7 months ago : Added factory software version and properties
+73430b3afb7 - lekail, 7 months ago : add sepolicy for ntfs and exfat
+dfe1023ad23 - lekail, 7 months ago : add sepolicy for ntfs and exfat
+7662e828df1 - lekail, 7 months ago : Add ntfs and exfat support feature in vold
+db2ef291849 - lekail, 7 months ago : Add external ntfs and exfat
+07598dbf594 - lekail, 7 months ago : Add filesystem ntfs and exfat in linux
+a78f67d0764 - lekail, 7 months ago : Add filesystem ntfs and exfat in linux
+af217c5c015 - windholic@innopiatech.com, 7 months ago : DT Factory missing file add
+6cc21102ca5 - windholic@innopiatech.com, 7 months ago : Factory M8300 Error vendor_innopia.mk fix
+03f4b72b927 - windholic@innopiatech.com, 7 months ago : M840A Factory SW vendor_innopia.mk build error fix
+1eb497c166b - windholic@innopiatech.com, 7 months ago : Factory SW vendor_innopia.mk build error fix
+f876610e9fe - windholic@innopiatech.com, 7 months ago : M840A Factory SW update 1. UI as request 2. LED test 3. CEC test is worked bin, not jni 4. separate FactoryTools apps (M840A & M8300)
+04316d8a0d6 - lekail, 7 months ago : Update IInnoHidlService.aidl
+d4c89abb1e1 - jcann, 7 months ago : add get/setZoomScreenValue functionality in TATA DMS apps
+420a7cfdf15 - KyoungNam Lee, 7 months ago : fix compile error in InnoPowerService
+82be2f05dcf - KyoungNam Lee, 7 months ago : default delay for wifi on when wake up from s3
+e496d84adb9 - yhlee, 8 months ago : Updated HDCP 2.2 ESM Firmware for MP
+b5c90a47cc1 - yhlee, 8 months ago : Updated HDCP 2.2 ESM Firmware
+8bf3fb38c70 - KyoungNam Lee, 7 months ago : issue about suspend and wifi
+e1745c6a4c6 - bp_khs971, 7 months ago : fix IRemoteService callbacks for changing d13 & delay 3sec for get version
+f6209922228 - seongjae, 7 months ago : revert implemented T4H broadcast receiver + fixed bug
+8827d6b0073 - seongjae, 7 months ago : revert implemented T4H broadcast receiver
+cbf9da4174f - lekail, 7 months ago : The confirmation screen for resolution changes is changed to a Popup Dialog.
+a2ec408c2e3 - bp_khs971, 7 months ago : fix miss commit of D13
+92e2b5b3afb - seongjae, 7 months ago : modified MagentaTv One(3. Generation) Firmware in about page (+ Stick)
+8efb97b0048 - bp_khs971, 7 months ago : update t4h aidl/java to d13
+5ccfb1eb2ab - green, 7 months ago : TVTE-78233 : Open Source license texts - TODO : update Openlicense.html
+63c8c067c86 - lekail, 7 months ago : Remove auto in Colorspace list
+c91729d74af - lekail, 7 months ago : InnoDisplayServer version is 12.0.1

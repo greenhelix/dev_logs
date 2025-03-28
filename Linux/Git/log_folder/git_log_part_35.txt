@@ -1,0 +1,30 @@
+05001323825 - Sunghoon Jung, 9 months ago : Change project name for IMTM840A
+b83649697cd - Sunghoon Jung, 9 months ago : Rename defconfig for VS640 Reference board(EVK)
+b7ddda3ee4e - Sunghoon Jung, 7 months ago : Change project name for IMTM840A
+692574fabb4 - bp_khs971, 9 months ago : ADD RCU fixes to TvSettings/BTPairing/BTOADService
+f687bdf0f37 - jcann, 9 months ago : fix get raw edid error after sdk update
+61ae83e0ea1 - bp_khs971, 9 months ago : enable obfuscation option for BTPairing/BTOAD apps
+ba6cf8a1de1 - Sunghoon Jung, 9 months ago : Add OEM directory
+b92b03e1f0b - bp_khs971, 9 months ago : fix merge error of BootAnimation
+072f35b59e7 - bp_khs971, 9 months ago : add factory reset timeout routine
+dba5794ccd4 - bp_khs971, 9 months ago : change RCU OAD install process
+152dd141232 - KyoungNam Lee, 9 months ago : Bootanimation for DT
+bb01e73ece0 - bp_khs971, 9 months ago : 1. fix binder error at BTOADService.onDestroy() 2. add FWUP waiting logic at FTI
+9b4fdc447c0 - bp_khs971, 9 months ago : add timeout for RCU FactoryReset waiting
+42f67c6fc2d - Sunghoon Jung, 9 months ago : Add OEM partition (oem_a : 4M, oem_b : 4M)
+d287ca26e85 - Sunghoon Jung, 9 months ago : Apply patch in /device/synaptics/IMTM840 for VSSDK 1.10.6
+c4095494876 - bp_khs971, 9 months ago : 1. BT Unpair when RCU Firmware Update is complete 2. Removed unused BTPairing FTI files
+7ca9cb23485 - bp_khs971, 9 months ago : add BT OAD Service : fwversion 0320.01.15 testcmd : am broadcast -a innopia.intent.action.INTENT_FORCE_UPDATE when BT is paired/connected
+1a04d438a8b - Sunghoon Jung, 9 months ago : remove key previously existing key layer file, because this file is overwritten Magenta BT Key file
+658ca79876b - Sunghoon Jung, 9 months ago : Add global key for Magenta TV Launcher
+f03d92e6a51 - Sunghoon Jung, 9 months ago : Add to enable bulr for window manager
+b1d09c08655 - KyoungNam Lee, 9 months ago : fix gzip format issue, fastlog.subimg.gz
+0af8bd0b9e2 - KyoungNam Lee, 9 months ago : org fastlogo.subimg.gz
+b0b72ebc54e - jcann, 9 months ago : added get raw edid and audio drc set functions (AMP) to innodevice (HIDL)
+75dca83b50e - jcann, 9 months ago : modified dms app names (InnoService > InnoHidlService; InnoSystem > InnoSystemService)
+d81f922aec3 - KyoungNam Lee, 9 months ago : dt fastlogo
+73e6ddae3b4 - bp_khs971, 9 months ago : 1. remove HidHost connection because it occurs double connecting and aidl malfunction 2. change scan method BluetoothAdaptor.discovery to BluetoothLeScanner.startScan
+5074590cf2a - KyoungNam Lee, 9 months ago : change bootanimation from G7
+d86f2575b4c - Sunghoon Jung, 9 months ago : Fix key event reset for factory reset in recovery
+7392bea1984 - KyoungNam Lee, 9 months ago : magentatv bootanimation
+24927f1a6df - KyoungNam Lee, 9 months ago : dhcp options : 12, 60

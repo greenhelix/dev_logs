@@ -1,0 +1,30 @@
+2390a7c01ca - seongjae, 5 months ago : Change the flag used when starting the "RCU Setup"
+dd589e4cc10 - lekail, 5 months ago : Add Property for Dolby output over HDMI - persist.vendor.audio.dolby_output_hdmi=7 Modify so that the settings are applied even after a reboot.
+d8b348dff74 - Sunghoon Jung, 5 months ago : Fix : the settings app crashed in developer options
+b9e02ea9dec - Sunghoon Jung, 5 months ago : Fix TVTE-83451 Screen about changing device name is opening/closing with delay leading shortly to overlapping UI
+442bd221b0b - seongjae, 5 months ago : fixed jira issue
+b09295f86a4 - polomeria, 5 months ago : Change the wi-fi driver
+73a40455d94 - bp_khs971, 5 months ago : change pinmux of BOARD_ID1,BOARD_ID2 to gpio
+aed070f611f - Sunghoon Jung, 5 months ago : Fix TVTE-79381 AC-4 Dialog Enhancement(DE)
+f03b7a66e41 - lekail, 5 months ago : Add Feature : Extended Dolby output over HDMI
+b1b53545730 - bp_khs971, 5 months ago : fix gatt client to close
+ab394e1aa0a - bp_khs971, 5 months ago : fix RSSI sometimes never shown issue
+eff61447f02 - Sunghoon Jung, 5 months ago : Fix TVTE-85353 : Incorrect state for ATV 24-hour format after completing FTI
+4bf1d4e13f6 - bp_khs971, 5 months ago : fix TVTE-85397 : Options "Version" and "TV Datenbank" are shown
+4586896807f - seongjae, 5 months ago : fixed dolby vision & hdr priority issue
+f7ad3ee8f25 - KyoungNam Lee, 5 months ago : change threshold for updating of system clock from 2000msec to 20msec
+c4ddeb06059 - Sunghoon Jung, 5 months ago : Update MagentaKeyeventWrapper-v-1.3_unsigned.apk
+e58cb20927b - lekail, 5 months ago : Fix: G8: Description 'Dolby Vision source-led' is displayed incorrectly on 'Dolby Vision Mode' option for TV without having Dolby Vision support
+0d5d8942f57 - jcann, 5 months ago : modify setSurroundSound function in DMS API to ignore invalid parameters
+147835974c6 - polomeria, 5 months ago : The sync between wi-fi hal and wi-fi driver is adjusted.
+8931348955a - polomeria, 5 months ago : wi-fi driver (version = 101.10.591.68.30) porting
+b5090a1166f - polomeria, 5 months ago : Add new wi-fi driver
+c8fbd1ee053 - jcann, 5 months ago : add iCX_DT_2.12.6-preprod-release.apk
+074856140ba - bp_khs971, 5 months ago : change app_not_authorized layout button to more visible
+3dfafbdfc2e - jcann, 5 months ago : fix incorrect log outputs for DMS APIs
+3a6c143bcd9 - jcann, 5 months ago : add more standby check for hdmi connectivity APIs in DMS
+b5e549f3246 - KyoungNam Lee, 5 months ago : change property name ro.runtime.innopia.type to ro.runtime.type
+70c1b9b5e16 - seongjae, 5 months ago : modified DT apps with 4k signature
+97fc0142f08 - seongjae, 5 months ago : add MagentaTV Sales App
+83435a530df - Sunghoon Jung, 5 months ago : Fix build error
+6ec38f20f4d - Sunghoon Jung, 5 months ago : Fix TVTE-83669 : Switch to Magenta TV input issue

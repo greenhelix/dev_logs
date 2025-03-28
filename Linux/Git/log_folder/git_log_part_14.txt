@@ -1,0 +1,30 @@
+43383f8676b - yhlee, 4 months ago : Fixed firmware versioning and OEM software version property: ro.oem.sw.version
+0a10f9c42e8 - bp_khs971, 4 months ago : fix InattentiveSleepView error when dismissing
+8c9797cc84e - bp_khs971, 4 months ago : dismiss InattentiveTimeoutWarningView when countdown is over.
+9b51701e047 - seongjae, 4 months ago : modified TvSetupCustomization version ( 12.0.3 -> 12.0.4 )
+a16f91c07a1 - seongjae, 4 months ago : modified: the language selection screen in FTI
+ed549930663 - yhlee, 5 months ago : Fixed OEM Properties: ro.oem.natco and ro.oem.key1
+f64951f7b3f - jcann, 5 months ago : add permissions for DMS updater upon TATA's request; apks not yet provided
+f5afda037dc - seongjae, 5 months ago : fixed jira issue
+50707661028 - lekail, 5 months ago : Set the color space to Auto when HDR Priority is enabled. Update Version 12.0.1 -> 12.0.2
+a84aed5ab53 - bp_khs971, 5 months ago : change BT Service versions to 1.11.0
+2fcc36b3441 - bp_khs971, 5 months ago : fix BTOAD view isn't get foreground when Aidl service returns lately
+c3619137b56 - Sunghoon Jung, 5 months ago : UI optimizations for menu navigaion on G8
+a47bd72fe18 - lekail, 5 months ago : Set the color space to Auto when HDR Priority is enabled. Set ColorSpace to Auto when Best Resolution is enabled.
+44ea160c5ec - bp_khs971, 5 months ago : remove commit bug which is included unwanted test code of power checker
+15053407184 - bp_khs971, 5 months ago : talkback toast string change when MUTE longpress
+93c31f20dc7 - bp_khs971, 5 months ago : change ethernet wifi power_en value
+9d8cab5b5c0 - bp_khs971, 5 months ago : set default language to English(DT's request : if lang=DE, print de UI, else print eng UI)
+8d1889b28fc - bp_khs971, 5 months ago : fix BLE CONN_ID MAX 50ms to 15ms
+bda26bc6f0a - seongjae, 5 months ago : modified : Confirmation pop-up design
+5c78ba166b2 - bp_khs971, 5 months ago : set FTI HOOK_BEGIN default language to DE for BTPairingService
+4d940f834b2 - bp_khs971, 5 months ago : change BTPairingService UI to DT's requirement
+155c5551e2b - bp_khs971, 5 months ago : change Low power errlogo image to DT's requirement
+620e6fa8127 - bp_khs971, 5 months ago : change BTPairingService Version to 1.10.0, BTOAD Version to 1.9.0
+5c17049b899 - seongjae, 5 months ago : fixed color space settings issue
+552aa69d720 - jcann, 5 months ago : add further edid check in DMS APIs to avoid crash
+8076eadcf99 - green, 5 months ago : Fix : pinhole button functions like the OK button
+16191a7df7e - Sunghoon Jung, 5 months ago : Fix CEC issue
+f1ce482acbb - Sunghoon Jung, 5 months ago : apply s3 mode patch bcmdhd_101.10.591.68.30_ampak driver
+7d28013441f - green, 5 months ago : change mic mute/unmute key mapping (classic only)
+4e5968a236f - Sunghoon Jung, 5 months ago : Fix : Google Voice Assistance UI(Icon, Hotword) is not shown in Settings app

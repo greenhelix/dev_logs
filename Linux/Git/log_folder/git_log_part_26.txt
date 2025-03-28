@@ -1,0 +1,30 @@
+5db5f92a1e1 - lekail, 7 months ago : Implemented a new display functionality named InnoServiceDisplay
+24c575422c6 - yhlee, 7 months ago : Fixed typo
+0d7ca66e64e - seongjae, 7 months ago : implemented T4H broadcast receiver
+28e3d7165f5 - green, 7 months ago : fix TVTE-81718 : set initial focus to 'Set time zone' on Device Preferences > Date & Time
+3c245df7e35 - bp_khs971, 7 months ago : limit BT device name to <16. (for prevent MTU issues at FTI smart setup)
+3e949b95541 - seongjae, 7 months ago : Fixed minor JIRA issue
+abe556596c1 - seongjae, 7 months ago : Fixed minor JIRA issue
+a19bb7c9b5f - lekail, 7 months ago : Implement the feature of ScreeSize in Setings
+bddb4434f20 - lekail, 7 months ago : add ScreenSize feature from Syna
+2537d5c6be2 - seongjae, 7 months ago : add MagentaTV_RCU_Setup ( 0340.01.09.08.01.13.15_32 -> 0340.01.09.15.02.18.20_44 )
+27954a02f87 - seongjae, 7 months ago : add start RCUSetup action
+e016dca1222 - Sunghoon Jung, 7 months ago : Fix Control the volume of the TV menu in CEC
+27f30352c4d - seongjae, 7 months ago : modified TvSetupCustomization version ( 12.0.1 -> 12.0.2 )
+e99b4bc4286 - seongjae, 7 months ago : add : FTI langeage picker
+c944b4cfb89 - kiyou.lim, 7 months ago : Fixed minor JIRA issue
+f8109732550 - bp_khs971, 7 months ago : TvSetting fix
+ab4b6b60395 - lekail, 7 months ago : Mod Deutscher On / Off
+80287a2de86 - lekail, 7 months ago : Add Extended Dolby output over HDMI category in AudioOutput. Only UI
+3f58bd027f4 - lekail, 7 months ago : add AC4 Dialogue Enhanced item and category. only ui.
+f64d3ebff81 - seongjae, 7 months ago : fixed power & energy selinux error
+aed401866b2 - bp_khs971, 7 months ago : change BT Services version to 1.5.0
+0acb58b92fa - bp_khs971, 7 months ago : fix BTPairingService to not show UI at factory reset
+cf666d12626 - bp_khs971, 7 months ago : add permissions for t4h aidl
+9342b78a086 - bp_khs971, 7 months ago : update t4h aidl to t4h_lib_aidl_release_0360.01.09.15.02.17.30_31
+0c3383be2ce - Sunghoon Jung, 7 months ago : Fix : factory reset to work in eng build.
+fa12a59d87a - Sunghoon Jung, 7 months ago : Disable Low Power function
+30ac6920141 - windholic@innopiatech.com, 7 months ago : IMTM840 Factory SW getconfig from USB retry until it loads config file.
+e0b72ff3352 - bp_khs971, 8 months ago : fix "Doesn't leave UnpairFragment diag when RCU is unpaired" issue
+f8a2d250dcd - bp_khs971, 8 months ago : change showing BT pairing ui first before FTI ui
+c227d16ed79 - kiyou.lim, 8 months ago : SoC Type should be VS710

@@ -1,0 +1,30 @@
+f04582f17fa - kiyou.lim, 3 weeks ago : Fixed Netflix Lane issue
+61c7b053521 - seongjae, 3 weeks ago : fixed jira issue
+a46ebb9ae03 - Sunghoon Jung, 3 weeks ago : Fix Jira issue : TVTE-92767 Screen saver is not dismissed when returning from standby if user has activated the standby by pressing HK_Power button
+e4be9dbbafb - Sunghoon Jung, 3 weeks ago : Fix Jira issue - TVTE-93341 Transition on the animations on the RCU Setup.
+9f167232e51 - seongjae, 3 weeks ago : fixed jira issue
+29c254daa40 - green, 3 weeks ago : When the 'Enable developer options' is turned off, switch USB to host mode (DT Jira : TVTE-92371)
+8b14c917177 - lekail, 3 weeks ago : To check QMS-VRR enabled or not.     CSMDTV-181-241527-102ab9b.diff     outputimage_9458.zip (for DTV(VS640) ) libvpp.ta
+422e8563f35 - lekail, 3 weeks ago : Needed to prevent changing the FPS in QMS mode. When QMS is active in STB and TV set, and the customer wants to change display settings by pressing OK entering the "Display Mode" is prevented and a alertbox.
+fc1e422e932 - lekail, 3 weeks ago : To check QMS-VRR enabled or not. To check Support QMS TV CSMDTV-181-241851-e9819ea.diff CSMDTV-181_242577.diff
+14cab1c8902 - lekail, 3 weeks ago : To check QMS-VRR enabled or not. CSMDTV-181-241527-102ab9b.diff outputimage_9393.zip (for DTV(VS640) ) libvpp.ta
+c3263c9c078 - green, 4 weeks ago : (classic only) fixed FFV failure after wake-up from S3 mode
+f07327b7d7c - KyoungNam Lee, 4 weeks ago : fix android.media.cts.MediaCodecCapabilitiesTest#testGetMaxSupportedInstances
+08304febcc5 - KyoungNam Lee, 4 weeks ago : [Synaptics Pactch] xTS issue CSMDTV-189 - not official
+b4cbcaca534 - Long Xiao, 4 weeks ago : platypus: adjust max supported codec instance number
+1d8072d9c2a - Sunghoon Jung, 4 weeks ago : Apply synatics patch for memory - official
+6346da57373 - Sunghoon Jung, 4 weeks ago : Revert "Apply synatics patch for memory"
+9374cd5c943 - green, 4 weeks ago : (classic only) add FFV features TARGET_FFV_CUSTOM_AUDIO_POLICY_MANAGER := TRUE TARGET_FFV_CAF_CUST := lonepine
+d6d461bc5d7 - lekail, 4 weeks ago : Android Audio Presentation APIs do not work     0001-AudioHal-Add-setting-audio-presentation.patch     0001-Extractors-create-a-new-buffer-and-copy-the-data-in.patch
+b69a691702c - lekail, 4 weeks ago : Revert "workaround for CLASSIC : Android Audio Presentation APIs do not work"
+0208d5913c0 - KyoungNam Lee, 5 weeks ago : fix wrong system time after wakeup from S3 mode
+a2b3ac019d8 - seongjae, 5 weeks ago : revert SetupWraithPrebuilt.apk
+b9b408c475a - seongjae, 5 weeks ago : modified TvSetupCustomization version ( 12.0.5 -> 12.0.6 )
+c58f347bd74 - bp_khs971, 5 weeks ago : change BTPairingService/BTOADService  version to 1.12.0
+91f50bdada9 - bp_khs971, 5 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+239bce9e582 - bp_khs971, 5 weeks ago : BTPairingService state issue fix
+67a76641b48 - Sunghoon Jung, 5 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+27afde2a274 - jcann, 5 weeks ago : SPL 2024-10-01
+e26fefea6aa - jcann, 5 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+54845039375 - seongjae, 5 weeks ago : fixed jira issue
+f344404ea15 - jcann, 5 weeks ago : gms package update to s-tv-syna-release / 0e2d6a85f16c07f799497acd46e2f54fe1ebf996

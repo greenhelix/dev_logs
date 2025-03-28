@@ -1,0 +1,30 @@
+8a9dc236fc6 - KyoungNam Lee, 5 weeks ago : remove useless audio volume log
+2037f1744c7 - KyoungNam Lee, 5 weeks ago : check abs for checking volume for passthrough
+ce8e3452786 - KyoungNam Lee, 6 weeks ago : mute when set volume to 0 during playing compressed audio data
+e3f6db7eff4 - seongjae, 6 weeks ago : integrate new DT Updater
+2c6a7cfca3f - seongjae, 6 weeks ago : fixed jira issue
+4b9cd5fc1d9 - jcann, 6 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+0990dbe5894 - jcann, 6 weeks ago : re-add DMS Wi-Fi band switch notifications as per TATA's request
+34004c29abc - seongjae, 6 weeks ago : update factory tool
+1b51d0ff2af - green, 6 weeks ago : (classic only) Modified to create version file when generating the eMMCimg_Factory, eMMCimg_Recovery for Factory Master image
+88b79fd8457 - yhlee, 6 weeks ago : Reverted vs640-fastboot.dts included in commit 68dd1f50e020079b25faf684722e11c6291655ed (Change-Id: Icf33a8efeaa665a71337627ce2df5fa0b48e3652)
+0e9811a142d - KyoungNam Lee, 7 weeks ago : remove the log in audio hal that output too many times repeatedly
+2a691da8855 - kiyou.lim, 7 weeks ago : Revert "fixed jira issue"
+aad0a37163d - green, 7 weeks ago : Modify to ignore MIC LED operation when booting or wake up #2 (classic only)
+546a9c3bc1a - green, 7 weeks ago : Modify to release AUDIO_SOURCE_HOTWORD in InnoAssistantManager (classic only)
+f6a4aefb14f - green, 7 weeks ago : Modify to ignore MIC LED operation when booting or wake up (classic only)
+7e325113d96 - seongjae, 7 weeks ago : fixed jira issue
+157de7327d3 - Sunghoon Jung, 7 weeks ago : Apply synaptics patch for Classic
+07cae522192 - Sunghoon Jung, 7 weeks ago : Apply synaptics patch for Value
+de6c83aa530 - KyoungNam Lee, 7 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+74e83f80795 - kiyou.lim, 7 weeks ago : Increased the bl33 version now that we had implemented TVTE-90217
+ca622738f3f - KyoungNam Lee, 7 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+72f3ab1dbde - KyoungNam Lee, 7 weeks ago : Revert "Revert "Bootanimation issue on 30hz / 25hz / 24hz""
+3ae43aa7e9a - bp_khs971, 7 weeks ago : SettingApi binder/broadcastreceiver leak fix
+2a404893c1b - bp_khs971, 7 weeks ago : do not RCU factory reset when unpairing TVTE-90340
+3cb76ef1073 - seongjae, 7 weeks ago : fixed settings issue
+82e7ae1f41c - bp_khs971, 7 weeks ago : AMPTA:VPP: On HDCP failure, block video plane only on DRM request
+757c4681e2d - KyoungNam Lee, 7 weeks ago : Revert "Bootanimation issue on 30hz / 25hz / 24hz"
+7d3f8e5b9c6 - KyoungNam Lee, 7 weeks ago : Bootanimation issue on 30hz / 25hz / 24hz
+1341ec585d0 - jcann, 7 weeks ago : fix boot stuck issue with unlocked devices
+68dd1f50e02 - yhlee, 7 weeks ago : Added 'downgrade' option to 'reboot' command to allow downgrade

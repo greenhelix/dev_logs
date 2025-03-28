@@ -1,0 +1,30 @@
+acf25091579 - kiyou.lim, 8 months ago : Got rid of <dirty> post fix from bootloader information
+d48ffde3e1f - seongjae, 8 months ago : modified Menu Modification
+db5d2462b02 - bp_khs971, 8 months ago : disable low-power
+a8ecae83e7a - bp_khs971, 8 months ago : disable low power mode
+2cd2e980944 - seongjae, 8 months ago : fixed Framerate matching menu issue
+ce52213497b - seongjae, 8 months ago : modified Menu Modification (power & energy)
+676f716b263 - windholic@innopiatech.com, 8 months ago : IMTM840 Factory SW urgent error fix. 1. Stops after one successful BT test. 2. Audio test retry until it succeed. 3. copy Temp file to /vendor/factory from /data
+d8e33aba386 - lekail, 8 months ago : Add MagentaTv One(3. Generation) Firmware in about page.
+6a38b040e24 - lekail, 8 months ago : Modify the summary expression of the Audio Mixer. The AudioMixing feature is not implemented.
+ddaf5702992 - seongjae, 8 months ago : modified Menu Modification
+0e9899a2a0d - bp_khs971, 8 months ago : fix BTPairing & BTOAD
+df9e648dcc6 - lekail, 8 months ago : The Audio Format information that was in the Surround Sound has been moved to the Surround Sound category location.
+1e8367e8363 - lekail, 8 months ago : Change WiFi MAC and Ethernet MAC to lowercase
+3f2c4b1a657 - bp_khs971, 8 months ago : fix G8 Classic RCU pairing disconnects right after it connects at FTI
+052cc12373f - Sunghoon Jung, 8 months ago : Apply HDMI CEC to be enabled by default and Fix to enable volume control when CEC is enabled
+e89b04e5f85 - bp_khs971, 8 months ago : fix build error
+688ad8f10b0 - bp_khs971, 8 months ago : fix BT RCU connection behavior
+a4b565ca573 - windholic@innopiatech.com, 8 months ago : IMTM840 Factory SW Usb mode = mtp & security Enforce unable.
+1b7ac312ebe - windholic@innopiatech.com, 8 months ago : IMTM840 Factory SW HDMI CEC enable code fix
+60bcbecc9f6 - windholic@innopiatech.com, 8 months ago : IMTM840 Factory S/W build error fix.
+f25d03dc22a - windholic@innopiatech.com, 8 months ago : IMTM840 Value model Factory S/W update
+01135627cc6 - jcann, 8 months ago : add NATCO check for DMS
+adf29f71627 - jcann, 8 months ago : add NATCO for value
+b393e7efa28 - lekail, 8 months ago : Settings Mensu: Device Preferences => About => Status
+09e6c6bad3c - yhlee, 8 months ago : Fixed factory signing error and log messages
+2fe230c9e91 - green, 8 months ago : Add runtime properties
+e209596d344 - jcann, 8 months ago : modified power saving functionality in TATA DMS apps
+5680d725c44 - jcann, 8 months ago : add TATA RMS app privapp permissions
+35093e77039 - lekail, 8 months ago : After key provision, Remove the execution of wipe_data.
+2480013cca0 - KyoungNam Lee, 8 months ago : youtube 4K content

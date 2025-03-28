@@ -1,0 +1,30 @@
+d9340fe037f - seongjae, 26 hours ago : Revert "updated AIDL for DMS apps to access "Hardware Version""
+32aace3f96d - kiyou.lim, 2 days ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+719bec52287 - kiyou.lim, 2 days ago : Revert "8dB loudness mismatch between DDP and AAC inputs"
+adb267fafe2 - seongjae, 2 days ago : updated AIDL for DMS apps to access "Hardware Version"
+7ad360161d0 - bp_khs971, 2 days ago : fix BTPairingService add delay for waiting TvSettings menu exit
+f4a9b5a68bd - seongjae, 2 days ago : add MagentaTV_Launcher ( version : 3.148.5468 )
+9822bd3b346 - seongjae, 3 days ago : update factory tool
+328c2c6cf10 - kiyou.lim, 6 days ago : Adjuset killing app list
+95703b804a4 - lekail, 6 days ago : FinishActivityService: When Netflix launches, Other apps are terminated by the removeTask command.
+380d26aba32 - lekail, 6 days ago : fix typo list
+a0b96ada59d - kiyou.lim, 6 days ago : Fixed the side-effect
+2eacc90ab46 - jcann, 6 days ago : redo fix TvtsYouTubeTS as the test runs multiple instances of YouTube app
+f29a00b4f44 - jcann, 6 days ago : Revert "fix TvtsYouTubeTS as the test runs multiple instances of YouTube app"
+28e2d03bc85 - jcann, 6 days ago : fix TvtsYouTubeTS as the test runs multiple instances of YouTube app
+a6e79e166d8 - bp_khs971, 6 days ago : fix TVTE-92855 : BTOAD tyop
+8f7db89f04b - kiyou.lim, 7 days ago : New DV TA and lib
+fa946b18219 - kiyou.lim, 7 days ago : Apply some tweaks for killing process
+68748b8c06c - green, 8 days ago : [TVTE-90659] Fixing the issue that HOTWORD is muted in the background for MVA FF
+bb679bcac6e - bp_khs971, 8 days ago : fix BTPairingService showing pairing screen after 3min when the RCU is already paired at the Classic device
+90fe1c7c876 - bp_khs971, 8 days ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+9bf31549afa - bp_khs971, 8 days ago : fix BTPairingService showing pairing screen after 3min when the RCU is already paired at the Classic device
+c7d86b5cc6b - seongjae, 8 days ago : update factory tool
+9a573c98633 - bp_khs971, 8 days ago : fix BTPairingService DT Classic FTI screen error
+81a8d02a40d - lekail, 8 days ago : FinishActivityService Modify to work only on IMTM840A.
+f1379da022e - jxi, 3 weeks ago : audiohal: fix audio pop noise when stopping the audio playback
+c5ea18f20ed - bp_khs971, 8 days ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+7a42378c34c - lekail, 9 days ago : Execute removeTask when the media app runs in the foreground. - com.netflix.ninja - com.google.android.youtube.tv - om.disney.disneyplus - com.apple.atve.androidtv.appletv - com.dazn - de.rtli.tvnow - com.amazon.amazonvideo.livingroom
+510a8ae77c4 - bp_khs971, 9 days ago : Revert "Revert "Apply synaptcis patch - memory""
+0726341367d - bp_khs971, 9 days ago : Revert "Revert "Revert "Apply synaptics patch - memory"""
+b3e475fa818 - seongjae, 9 days ago : update factory tool

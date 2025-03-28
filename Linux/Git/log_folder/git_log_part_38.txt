@@ -1,0 +1,22 @@
+4ebceb9f846 - KyoungNam Lee, 10 months ago : vendor innopia directory
+4a5df84b451 - KyoungNam Lee, 10 months ago : fix
+80b1d15ab3f - KyoungNam Lee, 10 months ago : remove vendor/t4h
+2a828654416 - Sunghoon Jung, 9 months ago : update permissions of application
+c38b9286074 - khs971, 10 months ago : 1. add BUILD_NUMBER and SPL 2. add t4h aidl lib apk and priv permission
+0b4e6c35d26 - KyoungNam Lee, 10 months ago : add directory and files for permissions of application
+25566df77dc - KyoungNam Lee, 10 months ago : default-permissions
+6532996afa8 - khs971, 10 months ago : add vs640 innopia keys generated with below cmd:
+09d2bdef9da - green, 2 months ago : Add VSSDK 1.10.8.1 - android MDK Release(2024-08-15) - CLASSIC
+e5adfdfff08 - Sunghoon Jung, 7 months ago : Add Env script for EVK
+f84f16e7a03 - Sunghoon Jung, 7 months ago : Update Env script and Makefile
+1ec4bc6dac4 - Sunghoon Jung, 3 months ago : Add .gitignore file
+4aa4a19743a - Sunghoon Jung, 9 months ago : modify git check and git apply for patch
+8bc7e59a58f - Sunghoon Jung, 3 months ago : apply synaptics patch which will applied with below
+c76e44829eb - Sunghoon Jung, 3 months ago : Add VSSDK 1.10.8.1 - android MDK Release(2024-08-15)
+6d22ff2b131 - Sunghoon Jung, 7 months ago : Add empty directory in android
+8f8b6eccb34 - Sunghoon Jung, 3 months ago : Remove synaptics directory of AOSP
+346c512ee9b - Sunghoon Jung, 3 months ago : [IMTM840] Add VSSDK 1.10.8.1 - Value MDK Release(2024-08-15)
+200bfab4df7 - green, 3 months ago : update google_gtvs (Tue Aug 13 07:29:57 2024)
+685b17798f6 - green, 3 months ago : Update AOSP (12130077)
+aafd650fa2c - green, 7 months ago : Update AOSP (11473889)
+28299b6f227 - green, 9 months ago : Initial AOSP (11175825)

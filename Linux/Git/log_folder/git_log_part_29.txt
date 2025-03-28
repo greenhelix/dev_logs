@@ -1,0 +1,30 @@
+e4fe925a3cf - seongjae, 8 months ago : modified language order comparator (bug fix)
+70993c9d8e6 - Sunghoon Jung, 8 months ago : Remove oem.img in OTA Image
+616b94cb16e - green, 8 months ago : fix GTS failure : android.security.cts.PackageSignatureTest#testPackageSignatures
+1000301cc21 - bp_khs971, 8 months ago : remove test log of InattentiveSleepWarningView
+d8bca316648 - KyoungNam Lee, 8 months ago : ro.runtime.innopia.soc
+6d84eab4cc8 - bp_khs971, 8 months ago : fix TvSetting menu navigateBack not work when Bluetooth unpairing issue
+a2677eb3f64 - ikhwan, 8 months ago : Test Error Modified
+ce32694753a - lekail, 8 months ago : flash Model name change
+a7c24e63296 - bp_khs971, 8 months ago : fix inattentive sleep warning dialog for DT menu translation requirement
+54e59babffe - seongjae, 8 months ago : Revert MagentaTV_Updater : version(1.77.910_g8 -> 1.77.908_g8)
+cb8c8b19ebc - kiyou.lim, 8 months ago : Insufficient Power detect
+2d2a9e2ad1f - bp_khs971, 8 months ago : Revert "re-ADD RCU power saver setting to 10 sec"
+b05c140de4a - seongjae, 8 months ago : add MagentaTV_Updater : version(1.77.910_g8)
+7ec97ad002a - lekail, 8 months ago : Add runtime properties
+ba5205ef247 - lekail, 8 months ago : Merged the following features.
+862aa5ad3f3 - yhlee, 8 months ago : Removed unnecessary files
+871d51ce841 - yhlee, 8 months ago : Modified build script to support firmware signing on build server that uses Python3 by default
+f7c326da6db - kiyou.lim, 8 months ago : Add OEM Partition
+d78b6b4cbbb - KyoungNam Lee, 8 months ago : fix hw revision
+ce55b86e8f3 - lekail, 8 months ago : Fix ModelName and remove message
+0c2195e87e2 - Sunghoon Jung, 8 months ago : Add oem.img in OTA image
+d72728f8e5d - Sunghoon Jung, 8 months ago : Update oem.img with ro.oem.model property set to IMTM840A
+66a531c2569 - KyoungNam Lee, 8 months ago : V1.0.5 for QG1 internal test
+3bae43ad03f - KyoungNam Lee, 8 months ago : add property for usbpower
+f899c613879 - bp_khs971, 8 months ago : fix fab1 ro.oem.hw.version to 1.0
+cca5bf92a60 - yhlee, 8 months ago : Fixed to use MAC addresses provisioned for WiFi and Bluetooth
+068b995d8a3 - yhlee, 8 months ago : Removed unnecessary files
+0cc0a9441c8 - Sunghoon Jung, 8 months ago : Add to build oem image
+b2200ff73cc - seongjae, 8 months ago : added wifi version to the AccessPoint list
+b1b26634f64 - lekail, 8 months ago : Build sign image

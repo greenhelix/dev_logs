@@ -1,0 +1,30 @@
+cb340dbb729 - green, 9 months ago : add LED scenario
+3854239675e - bp_khs971, 9 months ago : add ro.oem.hw.version and ro.runtime.innopia.ddr/flash/wifi property
+89e8c8f2f18 - KyoungNam Lee, 9 months ago : release file naming
+b3468f3e4df - bp_khs971, 9 months ago : change SPL to 2024-03-01
+a66e253e6a2 - KyoungNam Lee, 9 months ago : restore recovery menu
+04a08a84c7e - Jing Ji, 1 year ago : DO NOT MERGE: Fix ActivityManager#killBackgroundProcesses permissions
+b6404e9d5dd - bp_khs971, 9 months ago : change CONFIG_EMMC_TOTAL to correct size
+65daa88f36d - bp_khs971, 9 months ago : add missing file
+4c090d5bc75 - bp_khs971, 9 months ago : add pinhole bt pairing / Factory reset cmd at BTPairingService
+197907ff2b4 - jcann, 9 months ago : add getAudioDrc in DMS
+e9168ab3cf5 - Sunghoon Jung, 9 months ago : Add pinhoe key in recovery mode
+0c3e6a88626 - jcann, 9 months ago : FIX HDR and Dolby sound functions in DMS
+f675d877744 - jcann, 9 months ago : FIX issues regarding DMS functionalities
+cc473487480 - jcann, 9 months ago : ADD DMS integration to HdrPriority/DolbyVisionAutoSwitch
+16f213654fc - KyoungNam Lee, 9 months ago : configure arc menu
+289f64c2be3 - bp_khs971, 9 months ago : fix Partition sizes of super/userdata
+ff705f9d88e - Sunghoon Jung, 9 months ago : Add pinhole button key
+d9e110c500a - KyoungNam Lee, 9 months ago : fix project_type in env.sh
+0aa26ba7fa6 - KyoungNam Lee, 9 months ago : ro.oem.sw.version
+2701aeea13e - lekail, 9 months ago : Merge Menu Modification
+f774647d312 - KyoungNam Lee, 9 months ago : osd and spd
+bcab8f6ac56 - bp_khs971, 9 months ago : fix : do not set rcu pairing screen after 3min if paired RCU is already exists
+fdb25bb151e - bp_khs971, 9 months ago : fix Partition sizes of super/reserved/userdata
+2b314629155 - bp_khs971, 9 months ago : fix bug of FAB version read
+ad723b167e5 - bp_khs971, 9 months ago : add FAB version to "ro.boot.innopia.board.version"
+cd91a9663be - bp_khs971, 9 months ago : add PAI stub
+9056e01f0bf - yhlee, 9 months ago : Removed unnecessary files
+63668a9b885 - yhlee, 9 months ago : Fixed build configuration and resources for M840A based on VS640 EVK
+6258bf6924d - KyoungNam Lee, 9 months ago : fix PRODUCT_SYSTEM_DEFAULT_PROPERTIES
+df14de83b1c - bp_khs971, 9 months ago : remove synaptics oemkey1

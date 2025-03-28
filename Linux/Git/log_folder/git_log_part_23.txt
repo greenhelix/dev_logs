@@ -1,0 +1,30 @@
+d66b6b5f6e9 - KyoungNam Lee, 7 months ago : change netflix modelgroup to MAGENTATVSTICK2GEN
+aa64f15ce1a - seongjae, 7 months ago : Fixed minor JIRA issue
+65d457f8814 - green, 7 months ago : MIC LED : modify white color (R:0xff G:0xff B:0xff -> R:0xff G:0xff B:0x5f)
+d9183a251a5 - KyoungNam Lee, 7 months ago : modify adj score for home app
+d19082ab724 - seongjae, 7 months ago : modified Power Button operations
+3e932050393 - seongjae, 7 months ago : Change the factory reset UI sequence
+b337b3e7827 - windholic@innopiatech.com, 7 months ago : DT Classic Factory Env add.
+76cf6628c8b - windholic@innopiatech.com, 7 months ago : DT Classic Factory SW update.
+f7ec2d5b258 - DongHoon Kim, 7 months ago : Change Dolby MS12 Config to Z, not Y because Config Y causes wrong Dolby behavior
+9a7dcc64221 - green, 7 months ago : update InnoLedService : 12.0.1 -> 12.0.2
+4562f22fb77 - bp_khs971, 7 months ago : fix only send key to BTPairingService when getAction() is ACTION_UP
+b2abd15e42e - bp_khs971, 7 months ago : fix Factory reset skips RCU factory reset when RCU is disconnected
+65671c97846 - green, 7 months ago : mic led toggle (mute: LED RED, unmute: LED OFF) - classic only
+31acc8d87ff - jcann, 7 months ago : update Innopia's TATA DMS app versions
+af36131d91d - seongjae, 7 months ago : add Power Button operations
+2cd97655dbb - bp_khs971, 7 months ago : fix BTPairingView Pairing Fail crash bug
+99334eb333c - jcann, 7 months ago : add BTS script
+011429b6c28 - bp_khs971, 7 months ago : fix BTPairingService Integer obj is null situation
+3144a5e289e - bp_khs971, 7 months ago : fix always restart discover at Pairing key arrived.
+0e5cbc234a0 - bp_khs971, 7 months ago : merge pinhole button mapping change to Classic
+4d605a1f5b3 - bp_khs971, 7 months ago : fix FactoryReset Callback is not called issue / ignore homekey at PairingUI
+f36a798a7ae - bp_khs971, 7 months ago : change keymapping of Pinhole shortpress
+8e88943e2c2 - bp_khs971, 7 months ago : change pinhole key mapping
+b74386d5fcf - polomeria, 7 months ago : problem:Device wakes up from the STR(S3) mode by any IR key not just power key. solution:IR Powerkey only filtering code is added in the SM module.
+354c5177912 - bp_khs971, 7 months ago : fix BTPairingService Stability issue
+ab79403d923 - DongHoon Kim, 7 months ago : Enable Dolby MS12 Config Y, Disable MS Config Z
+ed99fc76966 - jcann, 7 months ago : add check/set of persist system property upon CEC Volume settings in TATA DMS
+a52cbc5baec - bp_khs971, 7 months ago : add delay to rcu power saving setting time
+bab3a309b93 - seongjae, 7 months ago : add Power off Menu Dialog
+cc6c49940ea - kiyou.lim, 7 months ago : Fixed Minor issue

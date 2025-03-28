@@ -1,0 +1,30 @@
+38b218e6fb8 - khs971, 9 months ago : 1. add Notification for RCU Low battery / fwupdate 2. add TVNotification whitelist in FTI 3. add dummy of BT Pairing UI 4. add safe codes for issues which occured at RCU pair/unpair scenarios
+8eea452d556 - KyoungNam Lee, 9 months ago : dscp and rcusetupdata
+a750674e41d - jcann, 9 months ago : add display functions to dms build ready (need to check runtime)
+446a6db91f7 - jcann, 9 months ago : fix InnoSystem (DMS system service) install upon boot error
+b9a9bf95504 - jcann, 9 months ago : set amp vdec state and resolution system property when video is playing used in DMS videoGetResolution()
+2362357444d - KyoungNam Lee, 9 months ago : cec osd name
+6a4978c5606 - Sunghoon Jung, 9 months ago : Fix to not enter fastboot if not in eng mode
+2e161a1e918 - Sunghoon Jung, 9 months ago : enable console on recovery mode
+a2584bc14c2 - Sunghoon Jung, 9 months ago : Fix to permission issue of ABUpdater
+663c79f26d0 - khs971, 9 months ago : add missing new files
+1184a430ec3 - khs971, 9 months ago : 1. remove Synaptics FTI 2. add custom FTI for BT background pairing 3. add background BT pairing service(for which name is "MagentaTV Remote*") 4. add notification access permission to BT Pairing Service
+be4582b5f47 - KyoungNam Lee, 9 months ago : ro.oem.key1 from https://gard.telekom.de/gardwiki/display/OTTG8/Google+Project+Tracker+G8+Classic
+fc2f949ae85 - KyoungNam Lee, 10 months ago : defaultListenerAccessPackages in config overlay
+f333e11fe04 - KyoungNam Lee, 10 months ago : ABUpdater
+2c39a7d14df - khs971, 10 months ago : 1. fix super partititon size to 5120M 2. enable console at recovery 3. add BTPairingService 4. change t4h_lib_aidl to system 5. change t4h_lib_aidl permission to system 6. add t4h_lib_aidl signing script and presigned files
+a942b5da132 - KyoungNam Lee, 10 months ago : rcusetupappdata
+42f1a1a4be6 - KyoungNam Lee, 10 months ago : add pt.tech4home.aidlapp in default-runtime-permissions.xml
+63ce6adaf78 - KyoungNam Lee, 10 months ago : default-runtime-permissions
+cacaebb775e - KyoungNam Lee, 10 months ago : default-permissions
+3a61fcf1eef - KyoungNam Lee, 10 months ago : enter fastboot mode in eng build type
+810e18fdbb1 - Sunghoon Jung, 10 months ago : Disable google launcher for DT launcher
+7dd58e88ae5 - Sunghoon Jung, 10 months ago : Add DT priv-app
+a76cef145ef - jcann, 10 months ago : remove boot reason property read/write for dms
+96a71db6a16 - jcann, 10 months ago : add sepolicy for dms
+495bb6b7393 - khs971, 10 months ago : change android keys which no passwd for prevent apksigner error
+fea670c9cbc - KyoungNam Lee, 10 months ago : fix compile error for dms
+5743644a734 - KyoungNam Lee, 10 months ago : remove invaild file
+cae9405e4b8 - KyoungNam Lee, 10 months ago : temp. commit
+19f19b4e54c - KyoungNam Lee, 10 months ago : first commit for dms
+1c3d58ad40e - KyoungNam Lee, 10 months ago : for boot reason of DMS

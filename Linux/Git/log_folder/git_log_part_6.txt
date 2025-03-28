@@ -1,0 +1,30 @@
+4125ad58d37 - yhlee, 8 weeks ago : [M840] TAG: FACTORY_V1.05.00/50 for MP (INN_v12.G8V_DE.126_20240806_user + LED_LowPower_Prop)
+a02a5d348c9 - yhlee, 8 weeks ago : [M840] Improved factory software stability
+57165a3cf7f - green, 7 weeks ago : add gen_mp_master for M8300 : GEN MASTER IMAGE ONLY (TODO : GEN GANG IMAGE)
+c936b83031e - kiyou.lim, 7 weeks ago : Revert "update t4h aidl to t4h_lib_aidl_release_0360.01.09.18.02.22.44_47"
+5a7697a6828 - bp_khs971, 7 weeks ago : imagination patch of CSMDTV-165
+eee324b55ba - seongjae, 7 weeks ago : update t4h aidl to t4h_lib_aidl_release_0360.01.09.18.02.22.44_47
+aed09e373eb - green, 8 weeks ago : fix USB Updater bug ( IllegalStateException )
+2fdfd1547b6 - jcann, 8 weeks ago : add child processes DMS apks
+2d3a683332c - bp_khs971, 8 weeks ago : change ZRAM compression algorithm to lz4 again
+d21fa959801 - lekail, 8 weeks ago : When the inno_match_content_frame_rate_sync Global Setting value is 0, it synchronizes with the mDisplayManager.setMatchContentFrameRate value.
+9dc6fbdaae3 - jcann, 8 weeks ago : apply CTS & VTS fails regarding MGKID with Synaptics patch manually
+6196a2c849c - jcann, 8 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+58ad2283628 - lekail, 8 weeks ago : FramerateMatching Default : Always
+628f18aa4cf - lekail, 8 weeks ago : Framerate Matching: only two settings, automatically (default) and never.
+9e0413ad2eb - Sunghoon Jung, 8 weeks ago : Apply synaptics patch for memory
+e955c9ab5fc - Sunghoon Jung, 8 weeks ago : Revert synaptics patch for BT wake up
+1fa9f5fe425 - Yezhong Yu, 8 weeks ago : VTS/CTS: fix case failure related with MGKID feature integration
+b8298146141 - bp_khs971, 8 weeks ago : BTPairingService : fix some connection failure
+f08672bb49d - green, 8 weeks ago : Merge branch 'VSSDK_1.10.9_202408' of 192.168.103.6:2024_ATV12DTG8_20240202 into VSSDK_1.10.9_202408
+91253384e49 - green, 8 weeks ago : apply assistan manager to Classic only fix assistant manager bug
+a3364533299 - Sunghoon Jung, 8 weeks ago : Apply synaptics patch for classic
+0d2a2bf023d - Sunghoon Jung, 8 weeks ago : Apply synaptics patch
+781ca3affb9 - lekail, 8 weeks ago : ColorSpace item in ScreenSetting - DolbyVision Support TV , HDR_AUTO HDR_DOLBYVISION : false
+67c4757e48b - Yezhong Yu, 8 weeks ago : MGKID: correct service config for VTS
+de42edb3514 - lekail, 8 weeks ago : remove Add Feature QMS(Seamless) Api
+f19e43dc996 - green, 9 weeks ago : [IMTM8300] support 4 channel MIC LED
+0d63eefc39e - green, 2 months ago : fix assistant manager  - exception handling for AudioRecord (fixed crash issue)
+a4f75b2d558 - green, 3 months ago : [IMTM8300] fix compile error : assistant_led
+8b12cf01cb7 - green, 3 months ago : update assistant manager  - modified assistant manager  - add sepolicy for assistant manager  - add stop GA FF (google assistant FF)
+4e745f2a070 - green, 3 months ago : add property (vendor.inno.mvanf.disable) : if set to 1, MVA NF keyevent is ignored
