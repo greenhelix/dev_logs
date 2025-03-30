@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ui_study/AnimatedAlignScreen.dart';
 import 'AnimatedContainerScreen.dart';
+import 'AnimatedCrossFadeScreen.dart';
+import 'AnimatedDefaultTextStyleScreen.dart';
+import 'AnimatedOpacityScreen.dart';
+import 'AnimatedPaddingScreen.dart';
+import 'AnimatedPhysicalModelScreen.dart';
+import 'AnimatedPositionedScreen.dart';
+import 'AnimatedSizeScreen.dart';
+import 'AnimatedSwitcherScreen.dart';
+import 'AnimatedThemeScreen.dart';
 
 void main() {
-  // runApp(const MyApp());
+  runApp(const MyApp());
   // runApp(AnimatedAlignScreen());
-  runApp(AnimatedContainerScreen());
+  // runApp(AnimatedContainerScreen());
 }
 
 class MyApp extends StatelessWidget {
@@ -20,7 +29,17 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: AnimatedAlignScreen(),
+      // home: AnimatedAlignScreen(),
+      // home: AnimatedContainerScreen(),
+      // home: AnimatedDefaultTextStyleScreen(),
+      // home: AnimatedOpacityScreen(),
+      // home: AnimatedPaddingScreen(),
+      // home: AnimatedPhysicalModelScreen(),
+      // home: AnimatedPositionedScreen(),
+      // home: AnimatedThemeScreen(),
+      // home: AnimatedSizeScreen(),
+      // home: AnimatedCrossFadeScreen(),
+      home: AnimatedSwitcherScreen(),
     );
   }
 
