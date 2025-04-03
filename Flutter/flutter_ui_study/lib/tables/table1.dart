@@ -54,6 +54,8 @@ class _DataTableExampleState extends State<DataTableExample> {
             }),
             cells: <DataCell>[DataCell(Text('Row $index')), DataCell(Text('test $index'))],  // column items add
             selected: selected[index],
+
+            
             onSelectChanged: (bool? value) {
               setState(() {
                 selected[index] = value!;
