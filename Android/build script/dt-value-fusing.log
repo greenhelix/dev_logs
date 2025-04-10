@@ -1,0 +1,606 @@
+
+=> 
+=> usb2emmc eMMCimg 
+changed to max of 0 entries of 0 blocks each
+starting USB...
+Bus usb@c00000: USB DWC2
+Bus dwc3@d00000: Register 2000140 NbrPorts 2
+Starting the controller
+USB XHCI 1.10
+scanning bus usb@c00000 for devices... 2 USB Device(s) found
+scanning bus dwc3@d00000 for devices... 1 USB Device(s) found
+       scanning usb for storage devices... 1 Storage Device(s) found
+fatload usb 0 0xa74d400 eMMCimg/emmc_part_list
+1468 bytes read in 70 ms (19.5 KiB/s)
+switch to partitions #0, OK
+mmc0(part 0) is current device
+
+
+Caution! Your devices Erase group is 0x400
+The erase range would be change to 0x0~0x3ff
+
+start to create partiton factory_setting 16 16...
+start to create partiton key_a 32 1...
+start to create partiton fastboot_a 33 7...
+start to create partiton tzk_a 40 8...
+start to create partiton key_b 48 1...
+start to create partiton fastboot_b 49 7...
+start to create partiton tzk_b 56 8...
+start to create partiton bl_a 64 32...
+start to create partiton bl_b 96 32...
+start to create partiton fastlogo_a 128 16...
+start to create partiton fastlogo_b 144 16...
+start to create partiton boot_a 160 64...
+start to create partiton boot_b 224 64...
+start to create partiton vendor_boot_a 288 32...
+start to create partiton vendor_boot_b 320 32...
+start to create partiton dtbo_a 352 8...
+start to create partiton dtbo_b 360 8...
+start to create partiton vbmeta_a 368 1...
+start to create partiton vbmeta_b 369 1...
+start to create partiton vbmeta_system_a 370 1...
+start to create partiton vbmeta_system_b 371 1...
+start to create partiton super 372 4296...
+start to create partiton misc 4668 2...
+start to create partiton devinfo 4670 4...
+start to create partiton metadata 4674 32...
+start to create partiton firmware_a 4706 32...
+start to create partiton firmware_b 4738 32...
+start to create partiton oem_a 4770 4...
+start to create partiton oem_b 4774 4...
+start to create partiton errlogo_a 4778 8...
+start to create partiton errlogo_b 4786 8...
+start to create partiton reserved_a 4794 16...
+start to create partiton reserved_b 4810 16...
+start to create partiton reserved2_a 4826 64...
+start to create partiton reserved2_b 4890 64...
+start to create partiton userdata 4954 9942...
+gpt update successfully.
+fatload usb 0 0xa74d400 eMMCimg/emmc_image_list
+636 bytes read in 64 ms (8.8 KiB/s)
+switch to partitions #0, OK
+mmc0(part 0) is current device
+###################################################################
+WRITE: start to write eMMCimg//preboot.subimg to partition b1
+SOURCE: usbh
+###################################################################
+Partition b1 info:
+    Name: boot1
+    Start address: 0x0 LBA, 0x0 Bytes
+    Size: 0x2000 LBA, 0x400000 Bytes
+allocated 0x400000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/preboot.subimg
+497196 bytes read in 80 ms (5.9 MiB/s)
+switch to partitions #1, OK
+mmc0(part 1) is current device
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//preboot.subimg to partition b2
+SOURCE: usbh
+###################################################################
+Partition b2 info:
+    Name: boot2
+    Start address: 0x0 LBA, 0x0 Bytes
+    Size: 0x2000 LBA, 0x400000 Bytes
+allocated 0x400000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/preboot.subimg
+497196 bytes read in 80 ms (5.9 MiB/s)
+switch to partitions #2, OK
+mmc0(part 2) is current device
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//key.subimg to partition sd2
+SOURCE: usbh
+###################################################################
+Partition sd2 info:
+    Name: key_a
+    Start address: 0x10000 LBA, 0x2000000 Bytes
+    Size: 0x800 LBA, 0x100000 Bytes
+allocated 0x100000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/key.subimg
+49152 bytes read in 65 ms (738.3 KiB/s)
+switch to partitions #0, OK
+mmc0(part 0) is current device
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//fastboot.subimg to partition sd3
+SOURCE: usbh
+###################################################################
+Partition sd3 info:
+    Name: fastboot_a
+    Start address: 0x10800 LBA, 0x2100000 Bytes
+    Size: 0x3800 LBA, 0x700000 Bytes
+allocated 0x700000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/fastboot.subimg
+638000 bytes read in 83 ms (7.3 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//tzk.subimg to partition sd4
+SOURCE: usbh
+###################################################################
+Partition sd4 info:
+    Name: tzk_a
+    Start address: 0x14000 LBA, 0x2800000 Bytes
+    Size: 0x4000 LBA, 0x800000 Bytes
+allocated 0x800000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/tzk.subimg
+421260 bytes read in 78 ms (5.1 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//key.subimg to partition sd5
+SOURCE: usbh
+###################################################################
+Partition sd5 info:
+    Name: key_b
+    Start address: 0x18000 LBA, 0x3000000 Bytes
+    Size: 0x800 LBA, 0x100000 Bytes
+allocated 0x100000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/key.subimg
+49152 bytes read in 65 ms (738.3 KiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//fastboot.subimg to partition sd6
+SOURCE: usbh
+###################################################################
+Partition sd6 info:
+    Name: fastboot_b
+    Start address: 0x18800 LBA, 0x3100000 Bytes
+    Size: 0x3800 LBA, 0x700000 Bytes
+allocated 0x700000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/fastboot.subimg
+638000 bytes read in 83 ms (7.3 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//tzk.subimg to partition sd7
+SOURCE: usbh
+###################################################################
+Partition sd7 info:
+    Name: tzk_b
+    Start address: 0x1c000 LBA, 0x3800000 Bytes
+    Size: 0x4000 LBA, 0x800000 Bytes
+allocated 0x800000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/tzk.subimg
+421260 bytes read in 79 ms (5.1 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//bl.subimg to partition sd8
+SOURCE: usbh
+###################################################################
+Partition sd8 info:
+    Name: bl_a
+    Start address: 0x20000 LBA, 0x4000000 Bytes
+    Size: 0x10000 LBA, 0x2000000 Bytes
+allocated 0x2000000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/bl.subimg
+3396096 bytes read in 132 ms (24.5 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//bl.subimg to partition sd9
+SOURCE: usbh
+###################################################################
+Partition sd9 info:
+    Name: bl_b
+    Start address: 0x30000 LBA, 0x6000000 Bytes
+    Size: 0x10000 LBA, 0x2000000 Bytes
+allocated 0x2000000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/bl.subimg
+3396096 bytes read in 132 ms (24.5 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//fastlogo.subimg to partition sd10
+SOURCE: usbh
+###################################################################
+Partition sd10 info:
+    Name: fastlogo_a
+    Start address: 0x40000 LBA, 0x8000000 Bytes
+    Size: 0x8000 LBA, 0x1000000 Bytes
+allocated 0x1000000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/fastlogo.subimg
+6606224 bytes read in 211 ms (29.9 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//fastlogo.subimg to partition sd11
+SOURCE: usbh
+###################################################################
+Partition sd11 info:
+    Name: fastlogo_b
+    Start address: 0x48000 LBA, 0x9000000 Bytes
+    Size: 0x8000 LBA, 0x1000000 Bytes
+allocated 0x1000000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/fastlogo.subimg
+6606224 bytes read in 211 ms (29.9 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//boot.subimg to partition sd12
+SOURCE: usbh
+###################################################################
+Partition sd12 info:
+    Name: boot_a
+    Start address: 0x50000 LBA, 0xa000000 Bytes
+    Size: 0x20000 LBA, 0x4000000 Bytes
+allocated 0x4000000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/boot.subimg
+67108864 bytes read in 1530 ms (41.8 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//boot.subimg to partition sd13
+SOURCE: usbh
+###################################################################
+Partition sd13 info:
+    Name: boot_b
+    Start address: 0x70000 LBA, 0xe000000 Bytes
+    Size: 0x20000 LBA, 0x4000000 Bytes
+allocated 0x4000000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/boot.subimg
+67108864 bytes read in 1531 ms (41.8 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//vendor_boot.subimg to partition sd14
+SOURCE: usbh
+###################################################################
+Partition sd14 info:
+    Name: vendor_boot_a
+    Start address: 0x90000 LBA, 0x12000000 Bytes
+    Size: 0x10000 LBA, 0x2000000 Bytes
+allocated 0x2000000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/vendor_boot.subimg
+33554432 bytes read in 795 ms (40.3 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//vendor_boot.subimg to partition sd15
+SOURCE: usbh
+###################################################################
+Partition sd15 info:
+    Name: vendor_boot_b
+    Start address: 0xa0000 LBA, 0x14000000 Bytes
+    Size: 0x10000 LBA, 0x2000000 Bytes
+allocated 0x2000000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/vendor_boot.subimg
+33554432 bytes read in 795 ms (40.3 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//dtbo.subimg to partition sd16
+SOURCE: usbh
+###################################################################
+Partition sd16 info:
+    Name: dtbo_a
+    Start address: 0xb0000 LBA, 0x16000000 Bytes
+    Size: 0x4000 LBA, 0x800000 Bytes
+allocated 0x800000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/dtbo.subimg
+8388608 bytes read in 244 ms (32.8 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//dtbo.subimg to partition sd17
+SOURCE: usbh
+###################################################################
+Partition sd17 info:
+    Name: dtbo_b
+    Start address: 0xb4000 LBA, 0x16800000 Bytes
+    Size: 0x4000 LBA, 0x800000 Bytes
+allocated 0x800000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/dtbo.subimg
+8388608 bytes read in 244 ms (32.8 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//vbmeta.subimg to partition sd18
+SOURCE: usbh
+###################################################################
+Partition sd18 info:
+    Name: vbmeta_a
+    Start address: 0xb8000 LBA, 0x17000000 Bytes
+    Size: 0x800 LBA, 0x100000 Bytes
+allocated 0x100000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/vbmeta.subimg
+8192 bytes read in 60 ms (132.8 KiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//vbmeta.subimg to partition sd19
+SOURCE: usbh
+###################################################################
+Partition sd19 info:
+    Name: vbmeta_b
+    Start address: 0xb8800 LBA, 0x17100000 Bytes
+    Size: 0x800 LBA, 0x100000 Bytes
+allocated 0x100000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/vbmeta.subimg
+8192 bytes read in 59 ms (134.8 KiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//vbmeta_system.subimg to partition sd20
+SOURCE: usbh
+###################################################################
+Partition sd20 info:
+    Name: vbmeta_system_a
+    Start address: 0xb9000 LBA, 0x17200000 Bytes
+    Size: 0x800 LBA, 0x100000 Bytes
+allocated 0x100000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/vbmeta_system.subimg
+4096 bytes read in 59 ms (67.4 KiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//vbmeta_system.subimg to partition sd21
+SOURCE: usbh
+###################################################################
+Partition sd21 info:
+    Name: vbmeta_system_b
+    Start address: 0xb9800 LBA, 0x17300000 Bytes
+    Size: 0x800 LBA, 0x100000 Bytes
+allocated 0x100000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/vbmeta_system.subimg
+4096 bytes read in 59 ms (67.4 KiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//super.subimg to partition sd22
+SOURCE: usbh
+###################################################################
+Partition sd22 info:
+    Name: super
+    Start address: 0xba000 LBA, 0x17400000 Bytes
+    Size: 0x864000 LBA, 0x10c800000 Bytes
+allocated 0x6f400000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/super.subimg
+1731348124 bytes read in 37894 ms (43.6 MiB/s)
+Image format: sparse
+Flashing Sparse Image
+........ wrote 1731538944 bytes to 'super'
+write image data success!
+###################################################################
+ERASE: start to erase partition: sd23
+###################################################################
+Partition sd23 info:
+    Name: misc
+    Start address: 0x91e000 LBA, 0x123c00000 Bytes
+    Size: 0x1000 LBA, 0x200000 Bytes
+erase sd23 done!!!
+###################################################################
+FORMAT: start to format partition: sd25
+###################################################################
+Partition sd25 info:
+    Name: metadata
+    Start address: 0x921000 LBA, 0x124200000 Bytes
+    Size: 0x10000 LBA, 0x2000000 Bytes
+make_ext4fs: dev=000000000a7368b0, start=0x921000size=0x10000
+Creating filesystem with parameters:
+    Size: 33554432
+    Block size: 4096
+    Blocks per group: 32768
+    Inodes per group: 2048
+    Inode size: 256
+    Journal blocks: 1024
+    Label: 
+    Blocks: 8192
+    Block groups: 1
+    Reserved block group size: 7
+Created filesystem with 11/2048 inodes and 1166/8192 blocks
+###################################################################
+WRITE: start to write eMMCimg//firmware.subimg to partition sd26
+SOURCE: usbh
+###################################################################
+Partition sd26 info:
+    Name: firmware_a
+    Start address: 0x931000 LBA, 0x126200000 Bytes
+    Size: 0x10000 LBA, 0x2000000 Bytes
+allocated 0x2000000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/firmware.subimg
+13155408 bytes read in 352 ms (35.6 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//firmware.subimg to partition sd27
+SOURCE: usbh
+###################################################################
+Partition sd27 info:
+    Name: firmware_b
+    Start address: 0x941000 LBA, 0x128200000 Bytes
+    Size: 0x10000 LBA, 0x2000000 Bytes
+allocated 0x2000000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/firmware.subimg
+13155408 bytes read in 352 ms (35.6 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//oem.subimg to partition sd28
+SOURCE: usbh
+###################################################################
+Partition sd28 info:
+    Name: oem_a
+    Start address: 0x951000 LBA, 0x12a200000 Bytes
+    Size: 0x2000 LBA, 0x400000 Bytes
+allocated 0x400000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/oem.subimg
+4194304 bytes read in 160 ms (25 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//oem.subimg to partition sd29
+SOURCE: usbh
+###################################################################
+Partition sd29 info:
+    Name: oem_b
+    Start address: 0x953000 LBA, 0x12a600000 Bytes
+    Size: 0x2000 LBA, 0x400000 Bytes
+allocated 0x400000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/oem.subimg
+4194304 bytes read in 159 ms (25.2 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//errlogo.subimg to partition sd30
+SOURCE: usbh
+###################################################################
+Partition sd30 info:
+    Name: errlogo_a
+    Start address: 0x955000 LBA, 0x12aa00000 Bytes
+    Size: 0x4000 LBA, 0x800000 Bytes
+allocated 0x800000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/errlogo.subimg
+6606224 bytes read in 217 ms (29 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+WRITE: start to write eMMCimg//errlogo.subimg to partition sd31
+SOURCE: usbh
+###################################################################
+Partition sd31 info:
+    Name: errlogo_b
+    Start address: 0x959000 LBA, 0x12b200000 Bytes
+    Size: 0x4000 LBA, 0x800000 Bytes
+allocated 0x800000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/errlogo.subimg
+6606224 bytes read in 216 ms (29.2 MiB/s)
+Image format: flat
+write image data success!
+###################################################################
+FORMAT: start to format partition: sd32
+###################################################################
+Partition sd32 info:
+    Name: reserved_a
+    Start address: 0x95d000 LBA, 0x12ba00000 Bytes
+    Size: 0x8000 LBA, 0x1000000 Bytes
+make_ext4fs: dev=000000000a7368b0, start=0x95d000size=0x8000
+Creating filesystem with parameters:
+    Size: 16777216
+    Block size: 4096
+    Blocks per group: 32768
+    Inodes per group: 1024
+    Inode size: 256
+    Journal blocks: 1024
+    Label: 
+    Blocks: 4096
+    Block groups: 1
+    Reserved block group size: 7
+Created filesystem with 11/1024 inodes and 1102/4096 blocks
+###################################################################
+FORMAT: start to format partition: sd33
+###################################################################
+Partition sd33 info:
+    Name: reserved_b
+    Start address: 0x965000 LBA, 0x12ca00000 Bytes
+    Size: 0x8000 LBA, 0x1000000 Bytes
+make_ext4fs: dev=000000000a7368b0, start=0x965000size=0x8000
+Creating filesystem with parameters:
+    Size: 16777216
+    Block size: 4096
+    Blocks per group: 32768
+    Inodes per group: 1024
+    Inode size: 256
+    Journal blocks: 1024
+    Label: 
+    Blocks: 4096
+    Block groups: 1
+    Reserved block group size: 7
+Created filesystem with 11/1024 inodes and 1102/4096 blocks
+###################################################################
+FORMAT: start to format partition: sd34
+###################################################################
+Partition sd34 info:
+    Name: reserved2_a
+    Start address: 0x96d000 LBA, 0x12da00000 Bytes
+    Size: 0x20000 LBA, 0x4000000 Bytes
+make_ext4fs: dev=000000000a7368b0, start=0x96d000size=0x20000
+Creating filesystem with parameters:
+    Size: 67108864
+    Block size: 4096
+    Blocks per group: 32768
+    Inodes per group: 4096
+    Inode size: 256
+    Journal blocks: 1024
+    Label: 
+    Blocks: 16384
+    Block groups: 1
+    Reserved block group size: 7
+Created filesystem with 11/4096 inodes and 1294/16384 blocks
+###################################################################
+FORMAT: start to format partition: sd35
+###################################################################
+Partition sd35 info:
+    Name: reserved2_b
+    Start address: 0x98d000 LBA, 0x131a00000 Bytes
+    Size: 0x20000 LBA, 0x4000000 Bytes
+make_ext4fs: dev=000000000a7368b0, start=0x98d000size=0x20000
+Creating filesystem with parameters:
+    Size: 67108864
+    Block size: 4096
+    Blocks per group: 32768
+    Inodes per group: 4096
+    Inode size: 256
+    Journal blocks: 1024
+    Label: 
+    Blocks: 16384
+    Block groups: 1
+    Reserved block group size: 7
+Created filesystem with 11/4096 inodes and 1294/16384 blocks
+###################################################################
+WRITE: start to write eMMCimg//userdata.subimg to partition sd36
+SOURCE: usbh
+###################################################################
+Partition sd36 info:
+    Name: userdata
+    Start address: 0x9ad000 LBA, 0x135a00000 Bytes
+    Size: 0x136b000 LBA, 0x26d600000 Bytes
+allocated 0x6f400000 bytes memory
+allocated memory address 0xa767380 
+fatload usb 0 0xa767380 eMMCimg/userdata.subimg
+2609428 bytes read in 125 ms (19.9 MiB/s)
+Image format: sparse
+Flashing Sparse Image
+........ wrote 2609152 bytes to 'userdata'
+write image data success!
+do_img2sd: time cost 213038 ms
+Set boot partition 1 to be boot part OK.
+CMD_PART: list2emmc success.
+do_list2emmc: time cost 216346 ms
+changed to max of 32 entries of 8 blocks each
+=> 
