@@ -87,10 +87,11 @@ setState()	상태를 변경하고 build()를 다시 실행
 deactivate()	위젯이 트리에서 제거될 때 호출
 dispose()	위젯이 완전히 사라지기 전에 리소스를 정리할 때 사용 (예: 컨트롤러 해제 등)
 
-| Android (Activity) | Flutter (StatefulWidget) | 설명
-| ===== | ===== | ===== |
-| onCreate()	| initState() | 초기 설정, 데이터 로딩
-| onStart() / onResume() | build() | UI를 그릴 때마다 실행
-| onPause() / onStop() | deactivate() | 위젯이 사라질 때 호출
-| onDestroy()	| dispose() | 리소스 해제, 정리 작업
-| setContentView() | build() | UI를 정의하는 메서드
+| Android Activity 생명주기 | Flutter StatefulWidget 생명주기 | 설명                                     |
+|---------------------------|----------------------------------|------------------------------------------|
+| `onCreate()`              | `initState()`                    | 초기 설정, 데이터 로딩 등 1회 초기화 작업 |
+| `onStart()` / `onResume()`| `build()`                        | UI를 그릴 때마다 호출됨                  |
+| `onPause()` / `onStop()`  | `deactivate()`                   | 위젯이 트리에서 제거될 때 호출           |
+| `onDestroy()`             | `dispose()`                      | 리소스를 해제할 때 호출 (ex. controller) |
+| `setContentView()`        | `build()`                        | UI를 그리는 함수                         |
+
