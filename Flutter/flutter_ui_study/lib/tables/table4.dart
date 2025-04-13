@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-
 import 'getData.dart';
 
 void main() {
@@ -11,7 +10,6 @@ void main() {
       ),
       home: const DataGridCustom()));
 }
-
 
 class DataGridCustom extends StatefulWidget {
    const  DataGridCustom({Key? key}) : super(key: key);
@@ -65,12 +63,10 @@ class TestDataSource extends DataGridSource {
   List<DataGridRow> dataGridRow = <DataGridRow>[];
   final BuildContext context;
 
+  TestDataSource(List<Test> a, this.context) { buildDataGridRow(a);}
+
   @override
   List<DataGridRow> get rows => dataGridRow;
-
-  TestDataSource(List<Test> a, this.context) {
-    buildDataGridRow(a);
-  }
 
   @override
   DataGridRowAdapter? buildRow(DataGridRow row) {
@@ -122,11 +118,10 @@ class TestDataSource extends DataGridSource {
           else {
             return Container(alignment: Alignment.center, child: Text(cellValue.toString()));
           }
+
         }).toList(),
       );
   }
-
-
 
   void buildDataGridRow(List<Test> data) {
     dataGridRow = data.map<DataGridRow>((test) {
