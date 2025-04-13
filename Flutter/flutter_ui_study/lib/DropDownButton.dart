@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const List<String> list = <String>['fail', 'pass', 'incomplete', 'wavier'];
+const List<String> status = <String>['fail', 'pass', 'incomplete', 'wavier'];
 
 void main() => runApp(const DropdownButtonApp());
 
@@ -26,7 +26,7 @@ class DropdownButtonExample extends StatefulWidget {
 }
 
 class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  String dropdownValue = list.first;
+  String dropdownValue = status.first;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
         });
       },
       items:
-      list.map<DropdownMenuItem<String>>((String value) {
+      status.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(value: value, child: Text(value));
       }).toList(),
     );

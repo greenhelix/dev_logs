@@ -30,7 +30,7 @@ class _SfDataGridDemoState extends State<SfDataGridDemo> {
     _employeeDataSource = EmployeeDataSource(_employees);
   }
 
-  String dropdownValue = list.first;
+  String dropdownValue = status.first;
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +100,7 @@ class _SfDataGridDemoState extends State<SfDataGridDemo> {
   }
 }
 
-const List<String> list = <String>['fail', 'pass', 'incomplete', 'wavier'];
+const List<String> status = <String>['fail', 'pass', 'incomplete', 'wavier'];
 
 class EmployeeDataSource extends DataGridSource {
   EmployeeDataSource(List<Employee> employees) {
@@ -131,12 +131,7 @@ class EmployeeDataSource extends DataGridSource {
           return Container(
               alignment: Alignment.center,
               child:
-                dataGridCell.columnName == 'button' ?
-                LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints)
-                  {
-                    return ElevatedButton(
-                      onPressed: () {
+                dataGridCell.columnName == 'button' ? LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) { return ElevatedButton(onPressed: () {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
@@ -159,11 +154,10 @@ class EmployeeDataSource extends DataGridSource {
                       child: const Text('Details')
                   );
                   })
-                  : Text(dataGridCell.value.toString()));
+                  : Text(dataGridCell.value.toString())
+          );
         }).toList());
   }
-
-
 }
 
 class Employee {

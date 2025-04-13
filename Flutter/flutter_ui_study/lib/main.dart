@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       // home: AnimatedThemeScreen(),
       // home: AnimatedSizeScreen(),
       // home: AnimatedCrossFadeScreen(),
-      home: AnimatedSwitcherScreen(),
+      // home: AnimatedSwitcherScreen(),
     );
   }
 
