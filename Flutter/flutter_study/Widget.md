@@ -51,3 +51,36 @@ Flutter에 사용되는 위젯의 범위이다.
 기본적으로는 StatelessWidget부터 시작 → 필요할 때만 Stateful로 전환
 복잡한 상태는 Provider, Riverpod, Bloc 등의 상태 관리 도구 사용
 성능과 유지보수를 위해 최대한 Stateless하게 구조화하는 게 좋음
+
+
+### StatefulWidget 
+생명주기
+createState()	위젯이 처음 생성될 때 상태 객체를 생성
+initState()	위젯이 위젯 트리에 삽입될 때 한 번만 호출됨
+didChangeDependencies()	위젯의 종속 객체가 변경됐을 때 호출됨
+build()	UI를 그릴 때마다 호출
+setState()	상태를 변경하고 build()를 다시 실행
+deactivate()	위젯이 트리에서 제거될 때 호출
+dispose()	위젯이 완전히 사라지기 전에 리소스를 정리할 때 사용 (예: 컨트롤러 해제 등)
+
+| Android Activity 생명주기 | Flutter StatefulWidget 생명주기 | 설명                                     |
+|---------------------------|----------------------------------|------------------------------------------|
+| `onCreate()`              | `initState()`                    | 초기 설정, 데이터 로딩 등 1회 초기화 작업 |
+| `onStart()` / `onResume()`| `build()`                        | UI를 그릴 때마다 호출됨                  |
+| `onPause()` / `onStop()`  | `deactivate()`                   | 위젯이 트리에서 제거될 때 호출           |
+| `onDestroy()`             | `dispose()`                      | 리소스를 해제할 때 호출 (ex. controller) |
+| `setContentView()`        | `build()`                        | UI를 그리는 함수                         |
+
+
+## State
+Flutter에서 State는 **화면(UI)**의 상태를 관리하는 객체입니다. 
+즉, 화면에 그려지는 내용을 바꾸고 싶을 때 상태(state)를 바꾸고,
+이를 반영해 다시 build()를 호출해 UI를 새로 그리게 돼요.
+
+- initState()
+  - 한번만 호출됨.
+  - API 호출, 초기 데이터 로딩, AnimationController 설정 등 초기화 작업에 사용돼요.
+
+- build()
+  - 위젯을 화면에 그리는 역할을 합니다.
+  - setState() 호출 시마다 build()가 다시 실행돼 UI가 새로 그려집니다.
