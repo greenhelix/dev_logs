@@ -80,14 +80,14 @@ class TestDataSource extends DataGridSource {
               alignment: Alignment.center,
               child: DropdownButton<String>(
                 value: cellValue.toString(),
-                items: ['Pass', 'Fail', 'Pending']
-                    .map((status) => DropdownMenuItem(
-                  value: status,
-                  child: Text(status),
-                ))
-                    .toList(),
+                items: ['Pass', 'Fail', 'Pending'].map((status) =>
+                    DropdownMenuItem(
+                        value: status,
+                        child: Text(status),
+                    )).toList(),
                 onChanged: (newValue) {
                   print('Changed status: $newValue');
+                  // status = newValue;
                 },
               ),);
           }
