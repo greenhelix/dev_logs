@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ui_study/tables/test/getData.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'getData.dart';
 
 void main() {
   runApp(MaterialApp(
