@@ -1,0 +1,16 @@
+[
+    {
+        "url": "https://docs.partner.android.com/tv/test/android/gsi",
+        "version_selector": "devsite-content-footer.nocontent p",
+        "target_by_id": {
+            "start_id": "14-release-notes",
+            "include_until": "h2"
+        },
+        "max_releases": 5,
+        "target_selector": [
+            "div.build-number",
+            "div.release-date",
+            "div.security-patch-level"
+        ]
+    }
+]
