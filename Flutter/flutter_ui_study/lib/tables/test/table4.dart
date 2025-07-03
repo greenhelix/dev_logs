@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ui_study/tables/test/getData.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'getData.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -80,14 +80,14 @@ class TestDataSource extends DataGridSource {
               alignment: Alignment.center,
               child: DropdownButton<String>(
                 value: cellValue.toString(),
-                items: ['Pass', 'Fail', 'Pending']
-                    .map((status) => DropdownMenuItem(
-                  value: status,
-                  child: Text(status),
-                ))
-                    .toList(),
+                items: ['Pass', 'Fail', 'Pending'].map((status) =>
+                    DropdownMenuItem(
+                        value: status,
+                        child: Text(status),
+                    )).toList(),
                 onChanged: (newValue) {
                   print('Changed status: $newValue');
+                  // status = newValue;
                 },
               ),);
           }
