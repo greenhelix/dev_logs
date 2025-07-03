@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F1F1F1"
+    tools:context=".side.ui.LeftFragment">
+
+    <!-- 1. 상단 Device Info 영역 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="#FFFFFF"
+        android:layout_margin="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Device Info"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/os_version_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OS Ver: Android 14 (U)"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/fw_version_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FW: v1.2.3_build_456"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/kernel_version_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kernel: 5.10.1-gxxxxxx"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/security_level_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Security Level: 2025-07"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <!-- 2. 하단 콘텐츠 영역 (FrameLayout으로 겹치기) -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- 2-1. 버튼 목록 (기본으로 보이게 설정) -->
+        <ScrollView
+            android:id="@+id/button_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"> <!-- 기본으로 보이게 -->
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:padding="8dp">
+
+                <!-- 버튼들은 가로 2열로 배치됩니다. -->
+                <Button android:text="USB TEST" style="@style/Widget.AppCompat.Button.Colored" android:layout_columnWeight="1" android:layout_margin="4dp"/>
+                <Button android:id="@+id/wifi_test_button" android:text="WIFI TEST" style="@style/Widget.AppCompat.Button.Colored" android:layout_columnWeight="1" android:layout_margin="4dp"/>
+                <Button android:text="BT TEST" style="@style/Widget.AppCompat.Button.Colored" android:layout_columnWeight="1" android:layout_margin="4dp"/>
+                <Button android:text="GPS TEST" style="@style/Widget.AppCompat.Button.Colored" android:layout_columnWeight="1" android:layout_margin="4dp"/>
+                <Button android:text="CAMERA TEST" style="@style/Widget.AppCompat.Button.Colored" android:layout_columnWeight="1" android:layout_margin="4dp"/>
+                <Button android:text="AUDIO TEST" style="@style/Widget.AppCompat.Button.Colored" android:layout_columnWeight="1" android:layout_margin="4dp"/>
+                <!-- 여기에 14개까지 버튼을 추가하면 됩니다. -->
+
+            </GridLayout>
+        </ScrollView>
+
+        <!-- 2-2. RecyclerView (기본으로 숨겨놓기) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/menu_item_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:listitem="@android:layout/simple_list_item_1"
+            tools:itemCount="5"
+            android:padding="8dp"/>
+
+    </FrameLayout>
+
+</LinearLayout>
