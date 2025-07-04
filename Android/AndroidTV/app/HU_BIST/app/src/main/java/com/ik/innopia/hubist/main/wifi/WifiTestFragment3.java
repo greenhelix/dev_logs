@@ -1,16 +1,23 @@
 package com.ik.innopia.hubist.main.wifi;
+//package com.innopia.bist;
 
 import android.app.Fragment;
-import android.app.DialogFragment;
+import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.ik.innopia.hubist.R;
-public class WifiTestFragment3 extends Fragment {
+//import com.innopia.bist.R;
 
+//public class WifiTestFragment extends Fragment {
+public class WifiTestFragment3 extends Fragment implements WifiScanDialog3.WifiConnectionListener{
+
+    private static final String DIALOG_TAG = "wifi_scan_dialog";
     private WifiTest3 wifiTest;
 
     @Override
@@ -28,7 +35,8 @@ public class WifiTestFragment3 extends Fragment {
 
             // 스캔 결과 다이얼로그 띄우기
             WifiScanDialog3 dialog = WifiScanDialog3.newInstance(wifiTest.wifiList);
-            dialog.show(getFragmentManager(), "wifi_scan_dialog");
+            dialog.setWifiConnectionListener(this);
+            dialog.show(getFragmentManager(), DIALOG_TAG);
         });
 
         btnTest.setOnClickListener(v -> {
@@ -37,5 +45,36 @@ public class WifiTestFragment3 extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onConnectAttempt(ScanResult scanResult, String password) {
+        Toast.makeText(getActivity(), scanResult.SSID + "에 연결합니다...", Toast.LENGTH_SHORT).show();
+
+        // WifiTest3의 연결 메서드 호출
+        wifiTest.connectToWifi(scanResult, password, new WifiTest3.ConnectionResultListener() {
+            @Override
+            public void onConnectionSuccess() {
+                // UI 작업은 메인 스레드에서 처리해야 함
+                getActivity().runOnUiThread(() -> {
+                    Toast.makeText(getActivity(), "연결 성공!", Toast.LENGTH_LONG).show();
+                    dismissDialog();
+                });
+            }
+
+            @Override
+            public void onConnectionFailure(String error) {
+                getActivity().runOnUiThread(() -> {
+                    Toast.makeText(getActivity(), "연결 실패: "+ error, Toast.LENGTH_LONG).show();
+                });
+            }
+        });
+    }
+
+    private void dismissDialog() {
+        WifiScanDialog3 dialog = (WifiScanDialog3) getFragmentManager().findFragmentByTag(DIALOG_TAG);
+        if(dialog != null) {
+            dialog.dismiss();
+        }
     }
 }

@@ -17,8 +17,11 @@
         android:padding="2dp">
 
         <!-- 10 rows × 2 buttons -->
-        <TableRow><Button android:text="Ethernet Test" /><Button android:text="Bluetooth Test" /></TableRow>
-        <TableRow><Button android:id="@+id/button_wifi_test" android:text="Wi-Fi Test" /><Button android:text="Video Test" /></TableRow>
+        <TableRow><Button android:text="Ethernet Test" /><Button android:text="Video Test" /></TableRow>
+        <TableRow>
+            <Button android:id="@+id/button_wifi_test" android:text="Wi-Fi Test" />
+            <Button android:id="@+id/button_bt_test" android:text="Bluetooth Test" />
+        </TableRow>
         <TableRow><Button android:text="HDMI Test" /><Button android:text="USB Test" /></TableRow>
         <TableRow><Button android:text="Memory Test" /><Button android:text="CPU Test" /></TableRow>
         <TableRow><Button android:text="RCU Test" /><Button android:text="BIST Uninstall" /></TableRow>

@@ -2,7 +2,6 @@
 title Wifi Feature Class Diagram
 
 ' 패키지로 묶어 가독성 향상
-package "com.example.wifitest" {
 
   ' --- 클래스 및 인터페이스 정의 ---
 
@@ -30,7 +29,7 @@ package "com.example.wifitest" {
   }
 
   ' 어댑터 내부에 클릭 리스너 인터페이스 정의
-  interface "WifiAdapter3.OnItemClickListener" {
+  interface OnItemClickListener {
     + onItemClick(position: int)
   }
 
@@ -59,5 +58,4 @@ package "com.example.wifitest" {
   ' WifiTestFragment3는 리스너 인터페이스를 구현하여 클릭 이벤트를 직접 처리합니다. (Implementation)
   WifiTestFragment3 ..|> "WifiAdapter3.OnItemClickListener"
 
-}
 @enduml

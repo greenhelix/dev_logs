@@ -1,14 +1,19 @@
 package com.ik.innopia.hubist.main.wifi;
 //package com.innopia.bist;
 
-
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.ScanResult;
 
+import android.net.wifi.WifiNetworkSpecifier;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
@@ -24,14 +29,10 @@ public class WifiTest3 {
     private final WifiManager mWifiManager;
     public Context mContext;
     public List<ScanResult> wifiList = new ArrayList<>();
-
-    // 로그 메시지를 MainActivity로 전달하기 위한 인터페이스 정의
-    public interface OnLogMessageListener {
-        void onLogMessage(String message);
+    public interface ConnectionResultListener {
+        void onConnectionSuccess();
+        void onConnectionFailure(String error);
     }
-
-    // 인터페이스 인스턴스 변수
-    private com.ik.innopia.hubist.WifiTest.OnLogMessageListener mLogMessageListener;
 
     // 생성자
     public WifiTest3(Context context) {
@@ -41,37 +42,13 @@ public class WifiTest3 {
     }
 
     /**
-     * 로그 메시지 리스너를 설정하는 메서드
-     * MainActivity에서 이 메서드를 호출하여 로그를 받을 리스너를 등록합니다.
-     * @param listener 로그 메시지를 받을 리스너
-     */
-    public void setOnLogMessageListener(com.ik.innopia.hubist.WifiTest.OnLogMessageListener listener) {
-        this.mLogMessageListener = listener;
-    }
-
-    /**
-     * 로그 메시지를 리스너를 통해 전달하는 헬퍼 메서드
-     * 리스너가 설정되어 있으면 메시지를 전달하고, 그렇지 않으면 내부 로그로만 출력합니다.
-     * @param message 전달할 로그 메시지
-     */
-    private void sendLogMessage(String message) {
-        // "WifiTestLog" 문구를 포함하여 MainActivity로 전달
-        String fullMessage = "WifiTestLog: " + message;
-        if (mLogMessageListener != null) {
-            mLogMessageListener.onLogMessage(fullMessage);
-        }
-        // 내부 디버깅을 위해 Logcat에 출력
-        Log.d(TAG, fullMessage);
-    }
-
-    /**
      * Wi-Fi 권한이 있는지 확인합니다.
      * @return 권한이 있으면 true, 없으면 false
      */
     public boolean checkWifiPermission() {
         boolean hasPermission = ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         if (!hasPermission) {
-            sendLogMessage("Wi-Fi 권한이 없습니다. ACCESS_FINE_LOCATION 필요.");
+            Log.d(TAG, "Wi-Fi 권한이 없습니다. ACCESS_FINE_LOCATION 필요.");
         }
         return hasPermission;
     }
@@ -81,13 +58,13 @@ public class WifiTest3 {
      * 권한이 없으면 스캔을 시작하지 않습니다.
      */
     public void startWifiScan() {
-        sendLogMessage("Wi-Fi 스캔 시작 요청.");
+        Log.d(TAG,"Wi-Fi 스캔 시작 요청.");
         if(checkWifiPermission()){
             wifiList = mWifiManager.getScanResults();
-            sendLogMessage("Wi-Fi 스캔 결과 수: " + wifiList.size());
+            Log.d(TAG,"Wi-Fi 스캔 결과 수: " + wifiList.size());
             checkWifiScanList(true);  // Wi-Fi 목록을 로그로 확인 (true: 켜기, false: 끄기)
         } else {
-            sendLogMessage("Wi-Fi 스캔을 시작할 수 없습니다: 권한 없음.");
+            Log.d(TAG,"Wi-Fi 스캔을 시작할 수 없습니다: 권한 없음.");
         }
     }
 
@@ -97,15 +74,61 @@ public class WifiTest3 {
      */
     public void checkWifiScanList(boolean on_off){
         if(on_off) {
-            sendLogMessage("Wi-Fi 목록 =======================");
+            Log.d(TAG,"Wi-Fi 목록 =======================");
             if (wifiList.isEmpty()) {
-                sendLogMessage("스캔된 Wi-Fi 네트워크가 없습니다.");
+                Log.d(TAG,"스캔된 Wi-Fi 네트워크가 없습니다.");
             } else {
                 for (int i = 0; i < wifiList.size(); i++) {
-                    sendLogMessage((i + 1) + " : " + wifiList.get(i).SSID);
+                    if(wifiList.get(i).SSID.isEmpty()){
+                        wifiList.remove(i);
+                    }
+                    Log.d(TAG,(i + 1) + " : " + wifiList.get(i).SSID);
                 }
             }
-            sendLogMessage("Wi-Fi 목록 끝 =======================");
+            Log.d(TAG,"Wi-Fi 목록 끝 =======================");
+        }
+    }
+
+    public void connectToWifi(ScanResult scanResult, String password, ConnectionResultListener listener) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            WifiNetworkSpecifier specifier = new WifiNetworkSpecifier.Builder()
+                    .setSsid(scanResult.SSID)
+                    .setWpa2Passphrase(password)
+                    .build();
+
+            NetworkRequest request = new NetworkRequest.Builder()
+                    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                    .setNetworkSpecifier(specifier)
+                    .build();
+
+            ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+            connectivityManager.requestNetwork(request, new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(Network network) {
+                    super.onAvailable(network);
+                    connectivityManager.bindProcessToNetwork(network);
+                    Log.d(TAG, "Wi-Fi onAvailable: 연결 성공");
+                    if (listener != null) listener.onConnectionSuccess();
+                }
+
+                @Override
+                public void onUnavailable() {
+                    super.onUnavailable();
+                    Log.d(TAG, "Wi-Fi onUnavailable: 연결 실패");
+                    if (listener != null) listener.onConnectionFailure("비밀번호가 틀리거나 연결할 수 없습니다.");
+                }
+
+                @Override
+                public void onLost(Network network) {
+                    super.onLost(network);
+                    Log.e(TAG, "[WifiTest3] Wi-Fi onLost: 네트워크 연결이 끊어졌습니다. SSID: " + scanResult.SSID);
+                    // 필요 시 실패 처리
+                }
+            });
+        } else {
+            // Q 이전 버전에 대한 연결 로직 (필요 시 구현)
+            Log.w(TAG, "[WifiTest3] Android Q 미만 버전에서는 지원되지 않는 연결 방식입니다.");
+            if (listener != null) listener.onConnectionFailure("지원되지 않는 OS 버전입니다.");
         }
     }
 }
