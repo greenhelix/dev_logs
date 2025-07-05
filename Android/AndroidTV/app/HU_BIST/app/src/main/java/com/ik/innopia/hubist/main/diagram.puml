@@ -52,10 +52,4 @@ title Wifi Feature Class Diagram
   ' WifiTestFragment3는 사용자가 항목을 클릭하면 WifiScanDialog3를 보여줍니다. (Dependency)
   WifiTestFragment3 ..> WifiScanDialog3 : shows
 
-  ' WifiAdapter3는 클릭 이벤트를 알리기 위해 리스너 인터페이스를 참조합니다. (Association)
-  WifiAdapter3 o-- "1" "WifiAdapter3.OnItemClickListener" : notifies
-
-  ' WifiTestFragment3는 리스너 인터페이스를 구현하여 클릭 이벤트를 직접 처리합니다. (Implementation)
-  WifiTestFragment3 ..|> "WifiAdapter3.OnItemClickListener"
-
 @enduml
