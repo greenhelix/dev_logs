@@ -2,62 +2,92 @@
 
 title BIST Class Diagram
 
-  class MainActivity {
-    + onCreate()
-  }
+class MainActivity {
+  + onCreate()
+  + onDestroy()
+  + onResume()
+  + onPause()
+  + showWifiTestFragment()
+  + showBluetoothTestFragment()
+}
 
-  class WifiTestFragment {
-    - adapter: WifiAdapter
-    - wifiTest: WifiTest
-    + onViewCreated()
-    + showWifiDialog()
-    + onItemClick()
-  }
+class WifiTestFragment {
+  - wifiTest: WifiTest
+  + interface WifiConnectionListener
+  + onCreateView()
+  + onConnectAttempt()
+  + dismissDialog()
+}
 
-  class WifiTest {
-    - mWifiManager: WifiManager
-    - mContext: Context
-    - wifiList: List
-    interface ConnectionResultListener
-    + checkWifiPermission()
-    + startWifiScan()
-    + checkWifiScanList()
-    + connectToWifi()
-  }
+class WifiTest {
+  - mWifiManager: WifiManager
+  - mContext: Context
+  - wifiList: List
+  + interface ConnectionResultListener
+  + checkWifiPermission()
+  + startWifiScan()
+  + checkWifiScanList()
+  + connectToWifi()
+}
 
-  class WifiAdapter {
-    + onCreateViewHolder()
-    + onBindViewHolder()
-    interface OnConnectClickListener
-  }
+class WifiScanDialog {
+  - wifiList: List
+  - recyclerView: RecyclerView
+  - mListener: WifiConnectionListener
+  + interface WifiConnectionListener
+  + setWifiConnectionListener()
+  + onAttach()
+  + onCreateView()
+  + onStart()
+  + onViewCreated()
+  + onConnectClick()
+  + onResume()
+  + onDetach()
+}
 
-  class WifiScanDialog {
-    interface WifiConnectionListener
-    + onCreateDialog()
-    + onConnectClick()
-  }
+class WifiScanAdapter {
+  - wifiList: List
+  - expandedPosition: int
+  - connectClickListener: OnConnectClickListener
+  + interface OnConnectClickListener
+  + setOnConnectClickListener()
+  + onCreateViewHolder()
+  + onBindViewHolder()
+  + getItemCount()
+  + ViewHolder()
+}
 
-  interface OnConnectClickListener
-  interface WifiConnectionListener {
-    onConnectAttempt(ScanResult, String)
-  }
-  interface ConnectionResultListener {
-    onConnectionSuccess()
-    onConnectionFailure(String)
-  }
 
-  ' --- 관계 정의 ---
+interface OnConnectClickListener
 
-  ' MainActivity는 WifiTestFragment를 호스팅합니다. (Composition)
-  MainActivity "1" *-- "1" WifiTestFragment : hosts
+interface WifiConnectionListener {
+  onConnectAttempt(ScanResult, String)
+}
 
-  ' WifiTestFragment는 WifiAdapter를 생성하고 소유합니다. (Composition)
-  WifiTestFragment "1" *-- "1" WifiAdapter : creates & owns
+interface ConnectionResultListener {
+  onConnectionSuccess()
+  onConnectionFailure(String)
+}
 
-  ' WifiTestFragment는 WifiTest 클래스를 사용하여 비즈니스 로직을 처리합니다. (Association)
-  WifiTestFragment --> WifiTest : uses
+' --- 관계 정의 ---
 
-  ' WifiTestFragment는 사용자가 항목을 클릭하면 WifiScanDialog를 보여줍니다. (Dependency)
-  WifiTestFragment ..> WifiScanDialog : shows
+' MainActivity는 WifiTestFragment를 호스팅합니다. (Composition)
+MainActivity "1" *-- "1" WifiTestFragment : hosts
+
+' WifiTestFragment는 WifiAdapter를 생성하고 소유합니다. (Composition)
+WifiTestFragment "1" *-- "1" WifiScanAdapter : creates & owns
+
+
+' WifiTestFragment는 사용자가 항목을 클릭하면 WifiScanDialog를 보여줍니다. (Dependency)
+WifiTestFragment ..> WifiScanDialog : shows
+
+WifiTestFragment <-- WifiConnectionListener : implement
+WifiConnectionListener <-- WifiScanDialog
+
+WifiScanDialog <-- OnConnectClickListener
+OnConnectClickListener <-- WifiScanAdapter
+
+WifiTestFragment::wifiTest --> ConnectionResultListener
+ConnectionResultListener <-- WifiTest
 
 @enduml

@@ -46,7 +46,7 @@ public class WifiTest {
     public boolean checkWifiPermission() {
         boolean hasPermission = ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         if (!hasPermission) {
-            Log.d(TAG, "Wi-Fi 권한이 없습니다. ACCESS_FINE_LOCATION 필요.");
+            Log.d(TAG, "Wi-Fi no persmission. ACCESS_FINE_LOCATION needed");
         }
         return hasPermission;
     }
@@ -60,7 +60,7 @@ public class WifiTest {
         if(checkWifiPermission()){
             wifiList = mWifiManager.getScanResults();
             Log.d(TAG,"Wi-Fi scan results: " + wifiList.size());
-            checkWifiScanList(true);  // Wi-Fi scan list show by log (true: on, false: off)
+            checkWifiScanList(true);
         } else {
             Log.d(TAG,"Wi-Fi scanning wasnt start: no permission.");
         }

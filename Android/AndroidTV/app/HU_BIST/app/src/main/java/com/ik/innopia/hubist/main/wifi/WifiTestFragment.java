@@ -15,8 +15,10 @@ import com.ik.innopia.hubist.R;
 //import com.innopia.bist.R;
 
 public class WifiTestFragment extends Fragment implements WifiScanDialog.WifiConnectionListener{
-
+    
+    private static final String TAG = "BIST";
     private static final String DIALOG_TAG = "wifi_scan_dialog";
+    
     private WifiTest wifiTest;
 
     @Override
@@ -45,7 +47,7 @@ public class WifiTestFragment extends Fragment implements WifiScanDialog.WifiCon
     public void onConnectAttempt(ScanResult scanResult, String password) {
         Toast.makeText(getActivity(), scanResult.SSID + "에 연결합니다...", Toast.LENGTH_SHORT).show();
 
-        wifiTest.connectToWifi(scanResult, password, new WifiTest3.ConnectionResultListener() {
+        wifiTest.connectToWifi(scanResult, password, new WifiTest.ConnectionResultListener() {
             @Override
             public void onConnectionSuccess() {
                 getActivity().runOnUiThread(() -> {
