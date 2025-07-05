@@ -24,7 +24,7 @@ import java.util.List;
 //public class WifiTest {
 public class WifiTest3 {
 
-    private static final String TAG = "BIST"; // 로그 태그
+    private static final String TAG = "BIST";
 
     private final WifiManager mWifiManager;
     public Context mContext;
@@ -42,7 +42,7 @@ public class WifiTest3 {
     }
 
     /**
-     * Wi-Fi 권한이 있는지 확인합니다.
+     * Wi-Fi 권한이 있는지 확인 합니다.
      * @return 권한이 있으면 true, 없으면 false
      */
     public boolean checkWifiPermission() {
@@ -54,7 +54,7 @@ public class WifiTest3 {
     }
 
     /**
-     * Wi-Fi 스캔을 시작합니다.
+     * Wi-Fi 스캔을 시작 합니다.
      * 권한이 없으면 스캔을 시작하지 않습니다.
      */
     public void startWifiScan() {
@@ -69,7 +69,7 @@ public class WifiTest3 {
     }
 
     /**
-     * Wi-Fi 스캔 목록을 로그로 확인합니다.
+     * Wi-Fi 스캔 목록을 로그로 확인 합니다.
      * @param on_off true면 로그를 출력하고, false면 출력하지 않습니다.
      */
     public void checkWifiScanList(boolean on_off){

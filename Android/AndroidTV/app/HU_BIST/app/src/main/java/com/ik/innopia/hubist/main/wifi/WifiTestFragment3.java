@@ -30,18 +30,13 @@ public class WifiTestFragment3 extends Fragment implements WifiScanDialog3.WifiC
         wifiTest = new WifiTest3(getActivity());
 
         btnScan.setOnClickListener(v -> {
-            // Wi-Fi 스캔 시작
             wifiTest.startWifiScan();
-
-            // 스캔 결과 다이얼로그 띄우기
             WifiScanDialog3 dialog = WifiScanDialog3.newInstance(wifiTest.wifiList);
             dialog.setWifiConnectionListener(this);
             dialog.show(getFragmentManager(), DIALOG_TAG);
         });
 
         btnTest.setOnClickListener(v -> {
-            // Wi-Fi 테스트 로직 호출 (필요시 구현)
-            // 예: wifiTest.startWifiTest();
         });
 
         return rootView;
@@ -51,11 +46,9 @@ public class WifiTestFragment3 extends Fragment implements WifiScanDialog3.WifiC
     public void onConnectAttempt(ScanResult scanResult, String password) {
         Toast.makeText(getActivity(), scanResult.SSID + "에 연결합니다...", Toast.LENGTH_SHORT).show();
 
-        // WifiTest3의 연결 메서드 호출
         wifiTest.connectToWifi(scanResult, password, new WifiTest3.ConnectionResultListener() {
             @Override
             public void onConnectionSuccess() {
-                // UI 작업은 메인 스레드에서 처리해야 함
                 getActivity().runOnUiThread(() -> {
                     Toast.makeText(getActivity(), "연결 성공!", Toast.LENGTH_LONG).show();
                     dismissDialog();
