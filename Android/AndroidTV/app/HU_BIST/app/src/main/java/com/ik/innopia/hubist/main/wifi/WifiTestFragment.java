@@ -14,20 +14,19 @@ import android.widget.Toast;
 import com.ik.innopia.hubist.R;
 //import com.innopia.bist.R;
 
-//public class WifiTestFragment extends Fragment {
-public class WifiTestFragment3 extends Fragment implements WifiScanDialog3.WifiConnectionListener{
+public class WifiTestFragment extends Fragment implements WifiScanDialog.WifiConnectionListener{
 
     private static final String DIALOG_TAG = "wifi_scan_dialog";
-    private WifiTest3 wifiTest;
+    private WifiTest wifiTest;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_wifi_test3, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_wifi_test, container, false);
 
         Button btnScan = rootView.findViewById(R.id.btn_wifi_scan);
         Button btnTest = rootView.findViewById(R.id.btn_wifi_test);
 
-        wifiTest = new WifiTest3(getActivity());
+        wifiTest = new WifiTest(getActivity());
 
         btnScan.setOnClickListener(v -> {
             wifiTest.startWifiScan();

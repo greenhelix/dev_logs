@@ -1,33 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp"
-    tools:context=".side.test.wifi.WifiTestFragment">
+    android:padding="8dp"
+    android:background="#222222"
+    >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/btn_wifi_scan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wi-Fi Scan" />
+
+    <Button
+        android:id="@+id/btn_wifi_test"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Wi-Fi Test"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="32dp"/>
-
-    <Button
-        android:id="@+id/wifi_scan_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Wi-Fi Scan"
-        android:layout_marginBottom="16dp"/>
-
-    <Button
-        android:id="@+id/wifi_action_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Wi-Fi Action Test"/>
+        android:layout_marginTop="8dp" />
 
 </LinearLayout>

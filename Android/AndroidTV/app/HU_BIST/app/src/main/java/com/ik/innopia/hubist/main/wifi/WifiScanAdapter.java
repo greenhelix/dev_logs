@@ -16,15 +16,15 @@ import com.ik.innopia.hubist.R;
 
 import java.util.List;
 
-//public class WifiScanAdapter extends RecyclerView.Adapter<WifiScanAdapter3.ViewHolder> {
-public class WifiScanAdapter3 extends RecyclerView.Adapter<WifiScanAdapter3.ViewHolder> {
+public class WifiScanAdapter extends RecyclerView.Adapter<WifiScanAdapter.ViewHolder> {
+
     private static final String TAG = "BIST";
 
     private List<ScanResult> wifiList;
     private int expandedPosition = -1;
     private OnConnectClickListener connectClickListener;
 
-    public WifiScanAdapter3(List<ScanResult> wifiList) {
+    public WifiScanAdapter(List<ScanResult> wifiList) {
         this.wifiList = wifiList;
     }
 
@@ -37,19 +37,19 @@ public class WifiScanAdapter3 extends RecyclerView.Adapter<WifiScanAdapter3.View
     }
 
     @Override
-    public WifiScanAdapter3.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_wifi_scan3, parent, false);
+    public WifiScanAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_wifi_scan, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(WifiScanAdapter3.ViewHolder holder, int position) {
+    public void onBindViewHolder(WifiScanAdapter.ViewHolder holder, int position) {
         ScanResult scanResult = wifiList.get(position);
         if(!scanResult.SSID.isEmpty()){
             holder.ssidText.setText(scanResult.SSID);
         }
-//        holder.bssidText.setText(scanResult.BSSID);
-//        holder.levelText.setText(String.valueOf(scanResult.level));
+        //holder.bssidText.setText(scanResult.BSSID);
+        //holder.levelText.setText(String.valueOf(scanResult.level));
 
         final boolean isExpanded = position == expandedPosition;
 
@@ -80,10 +80,10 @@ public class WifiScanAdapter3 extends RecyclerView.Adapter<WifiScanAdapter3.View
             String password = holder.passwordEdit.getText().toString();
             Log.d(TAG, "Button Click - PW: "+password);
             if (connectClickListener != null) {
-            Log.d(TAG, "[Adapter] 연결 버튼 클릭됨. SSID: " + scanResult.SSID + ", PW: " + password);
+            Log.d(TAG, "[Adapter] Click Conn Button. SSID: " + scanResult.SSID + ", PW: " + password);
             connectClickListener.onConnectClick(scanResult, password);
         } else {
-            Log.e(TAG, "[Adapter] OnConnectClickListener가 설정되지 않았습니다.");
+            Log.e(TAG, "[Adapter] OnConnectClickListener was not setting.");
         }
     });
     }
@@ -93,6 +93,12 @@ public class WifiScanAdapter3 extends RecyclerView.Adapter<WifiScanAdapter3.View
         return wifiList.size();
     }
 
+    /**
+     *  Recycler View item UI Contorl by ViewHolder
+     * 
+     *  In recylerview when item's ui is changed, 
+     *  In ViewHolder, ui component modifying in here. (like onCreate)
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView ssidText, bssidText, levelText;
         LinearLayout expandableLayout;
@@ -102,8 +108,8 @@ public class WifiScanAdapter3 extends RecyclerView.Adapter<WifiScanAdapter3.View
         public ViewHolder(View itemView) {
             super(itemView);
             ssidText = itemView.findViewById(R.id.text_ssid);
-//            bssidText = itemView.findViewById(R.id.text_bssid);
-//            levelText = itemView.findViewById(R.id.text_level);
+            // bssidText = itemView.findViewById(R.id.text_bssid);
+            // levelText = itemView.findViewById(R.id.text_level);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
             passwordEdit = itemView.findViewById(R.id.edit_password);
             connectButton = itemView.findViewById(R.id.btn_connect);

@@ -16,8 +16,7 @@ import com.ik.innopia.hubist.R;
 import com.ik.innopia.hubist.main.wifi.WifiTestFragment3;
 //import com.innopia.bist.wifi.WifiTestFragment;
 
-//public class MainActivity extends Activity {
-public class MainActivity3 extends Activity {
+public class MainActivity extends Activity {
 
     private static final String TAG = "BIST";
 
@@ -26,8 +25,7 @@ public class MainActivity3 extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//      setContentView(R.layout.activity_main);
-        setContentView(R.layout.activity_main3);
+        setContentView(R.layout.activity_main);
 
         this.mText1 = findViewById(R.id.text1);
         this.mText1.setText("SystemInfo:\n" + "  HW / SW Ver.\n" + "  App Ver.\n" + "  Model Name\n" + "  Serial Number\n" + "  Date\n" + "  CPU Temp.\n" + "  Data Parition: encrypted\n" + "  MAC (Ethernet / Wi-Fi / BT)\n" + "  IP Addr.\n" + "HWInfo:\n" + "  DDR : Size, Type, Frequency\n" + "  Chip ID\n" + "  EMMC: Size, Type\n" + "  Wi-Fi: Module");
@@ -61,7 +59,14 @@ public class MainActivity3 extends Activity {
     private void showWifiTestFragment() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.text_container, new WifiTestFragment3());
+        ft.replace(R.id.text_container, new WifiTestFragment());
+        ft.commit();
+    }
+
+    private void showBluetoothTestFragment() {
+         FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.text_container, new BluetoothTestFragment());
         ft.commit();
     }
 }

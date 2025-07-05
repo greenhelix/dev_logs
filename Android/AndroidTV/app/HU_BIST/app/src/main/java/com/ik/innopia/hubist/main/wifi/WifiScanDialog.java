@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //public class WifiScanDialog extends DialogFragment {
-public class WifiScanDialog3 extends DialogFragment implements WifiScanAdapter3.OnConnectClickListener {
+public class WifiScanDialog extends DialogFragment implements WifiScanAdapter.OnConnectClickListener {
 
     private static final String TAG = "BIST";
     private static final String ARG_WIFI_LIST = "wifi_list";
@@ -37,8 +37,8 @@ public class WifiScanDialog3 extends DialogFragment implements WifiScanAdapter3.
     }
     private WifiConnectionListener mListener;
 
-    public static WifiScanDialog3 newInstance(List<ScanResult> wifiList) {
-        WifiScanDialog3 dialog = new WifiScanDialog3();
+    public static WifiScanDialog newInstance(List<ScanResult> wifiList) {
+        WifiScanDialog dialog = new WifiScanDialog();
         Bundle args = new Bundle();
         args.putSerializable(ARG_WIFI_LIST, new ArrayList<>(wifiList));
         dialog.setArguments(args);
@@ -47,7 +47,6 @@ public class WifiScanDialog3 extends DialogFragment implements WifiScanAdapter3.
 
     public void setWifiConnectionListener(WifiConnectionListener listener) {
         this.mListener = listener;
-        Log.d(TAG, "[Dialog] WifiConnectionListener가 명시적으로 설정되었습니다.");
     }
 
     @Override
@@ -57,7 +56,7 @@ public class WifiScanDialog3 extends DialogFragment implements WifiScanAdapter3.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.dialog_wifi_scan3, container, false);
+        View rootView = inflater.inflate(R.layout.dialog_wifi_scan, container, false);
 
         if (getArguments() != null) {
             wifiList = (List<ScanResult>) getArguments().getSerializable(ARG_WIFI_LIST);
@@ -78,13 +77,12 @@ public class WifiScanDialog3 extends DialogFragment implements WifiScanAdapter3.
         super.onStart();
         Window window = getDialog().getWindow();
         if (window != null) {
-            // 사이드 패널처럼 보이게 하는 핵심 코드
             WindowManager.LayoutParams params = window.getAttributes();
-            params.gravity = Gravity.END; // 화면 오른쪽에 붙이기
-            params.width = getResources().getDisplayMetrics().widthPixels / 4; // 화면 너비의 절반 크기
-            params.height = WindowManager.LayoutParams.MATCH_PARENT; // 높이는 꽉 채우기
+            params.gravity = Gravity.END;
+            params.width = getResources().getDisplayMetrics().widthPixels / 4;
+            params.height = WindowManager.LayoutParams.MATCH_PARENT;
             window.setAttributes(params);
-            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); // 기본 배경 제거
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }
 

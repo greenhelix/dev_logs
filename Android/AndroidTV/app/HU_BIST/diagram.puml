@@ -1,0 +1,63 @@
+@startuml
+
+title BIST Class Diagram
+
+  class MainActivity {
+    + onCreate()
+  }
+
+  class WifiTestFragment {
+    - adapter: WifiAdapter
+    - wifiTest: WifiTest
+    + onViewCreated()
+    + showWifiDialog()
+    + onItemClick()
+  }
+
+  class WifiTest {
+    - mWifiManager: WifiManager
+    - mContext: Context
+    - wifiList: List
+    interface ConnectionResultListener
+    + checkWifiPermission()
+    + startWifiScan()
+    + checkWifiScanList()
+    + connectToWifi()
+  }
+
+  class WifiAdapter {
+    + onCreateViewHolder()
+    + onBindViewHolder()
+    interface OnConnectClickListener
+  }
+
+  class WifiScanDialog {
+    interface WifiConnectionListener
+    + onCreateDialog()
+    + onConnectClick()
+  }
+
+  interface OnConnectClickListener
+  interface WifiConnectionListener {
+    onConnectAttempt(ScanResult, String)
+  }
+  interface ConnectionResultListener {
+    onConnectionSuccess()
+    onConnectionFailure(String)
+  }
+
+  ' --- 관계 정의 ---
+
+  ' MainActivity는 WifiTestFragment를 호스팅합니다. (Composition)
+  MainActivity "1" *-- "1" WifiTestFragment : hosts
+
+  ' WifiTestFragment는 WifiAdapter를 생성하고 소유합니다. (Composition)
+  WifiTestFragment "1" *-- "1" WifiAdapter : creates & owns
+
+  ' WifiTestFragment는 WifiTest 클래스를 사용하여 비즈니스 로직을 처리합니다. (Association)
+  WifiTestFragment --> WifiTest : uses
+
+  ' WifiTestFragment는 사용자가 항목을 클릭하면 WifiScanDialog를 보여줍니다. (Dependency)
+  WifiTestFragment ..> WifiScanDialog : shows
+
+@enduml

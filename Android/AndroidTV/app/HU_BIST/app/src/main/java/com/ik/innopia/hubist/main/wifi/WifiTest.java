@@ -21,8 +21,7 @@ import androidx.core.app.ActivityCompat;
 import java.util.ArrayList;
 import java.util.List;
 
-//public class WifiTest {
-public class WifiTest3 {
+public class WifiTest {
 
     private static final String TAG = "BIST";
 
@@ -34,16 +33,15 @@ public class WifiTest3 {
         void onConnectionFailure(String error);
     }
 
-    // 생성자
-    public WifiTest3(Context context) {
+    public WifiTest(Context context) {
         mContext = context;
         mWifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-        // WifiInfo wifiInfo = mWifiManager.getConnectionInfo(); // 이 줄은 현재 사용되지 않으므로 필요에 따라 제거하거나 사용하십시오.
+        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
     }
 
     /**
-     * Wi-Fi 권한이 있는지 확인 합니다.
-     * @return 권한이 있으면 true, 없으면 false
+     * Wi-Fi has a permission check
+     * @return having permission is true, or not false
      */
     public boolean checkWifiPermission() {
         boolean hasPermission = ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
@@ -54,17 +52,17 @@ public class WifiTest3 {
     }
 
     /**
-     * Wi-Fi 스캔을 시작 합니다.
-     * 권한이 없으면 스캔을 시작하지 않습니다.
+     * Wi-Fi list scanning is started
+     * if not has permisison, this function not work
      */
     public void startWifiScan() {
-        Log.d(TAG,"Wi-Fi 스캔 시작 요청.");
+        Log.d(TAG,"Wi-Fi scan start");
         if(checkWifiPermission()){
             wifiList = mWifiManager.getScanResults();
-            Log.d(TAG,"Wi-Fi 스캔 결과 수: " + wifiList.size());
-            checkWifiScanList(true);  // Wi-Fi 목록을 로그로 확인 (true: 켜기, false: 끄기)
+            Log.d(TAG,"Wi-Fi scan results: " + wifiList.size());
+            checkWifiScanList(true);  // Wi-Fi scan list show by log (true: on, false: off)
         } else {
-            Log.d(TAG,"Wi-Fi 스캔을 시작할 수 없습니다: 권한 없음.");
+            Log.d(TAG,"Wi-Fi scanning wasnt start: no permission.");
         }
     }
 
@@ -74,9 +72,9 @@ public class WifiTest3 {
      */
     public void checkWifiScanList(boolean on_off){
         if(on_off) {
-            Log.d(TAG,"Wi-Fi 목록 =======================");
+            Log.d(TAG,"Wi-Fi list =======================");
             if (wifiList.isEmpty()) {
-                Log.d(TAG,"스캔된 Wi-Fi 네트워크가 없습니다.");
+                Log.d(TAG,"wifi list was empty, no results");
             } else {
                 for (int i = 0; i < wifiList.size(); i++) {
                     if(wifiList.get(i).SSID.isEmpty()){
@@ -85,7 +83,7 @@ public class WifiTest3 {
                     Log.d(TAG,(i + 1) + " : " + wifiList.get(i).SSID);
                 }
             }
-            Log.d(TAG,"Wi-Fi 목록 끝 =======================");
+            Log.d(TAG,"Wi-Fi list end =======================");
         }
     }
 
@@ -107,28 +105,28 @@ public class WifiTest3 {
                 public void onAvailable(Network network) {
                     super.onAvailable(network);
                     connectivityManager.bindProcessToNetwork(network);
-                    Log.d(TAG, "Wi-Fi onAvailable: 연결 성공");
+                    Log.d(TAG, "Wi-Fi onAvailable: connection success");
                     if (listener != null) listener.onConnectionSuccess();
                 }
 
                 @Override
                 public void onUnavailable() {
                     super.onUnavailable();
-                    Log.d(TAG, "Wi-Fi onUnavailable: 연결 실패");
-                    if (listener != null) listener.onConnectionFailure("비밀번호가 틀리거나 연결할 수 없습니다.");
+                    Log.d(TAG, "Wi-Fi onUnavailable: connection fail");
+                    if (listener != null) listener.onConnectionFailure("wrong password, or fail connection");
                 }
 
                 @Override
                 public void onLost(Network network) {
                     super.onLost(network);
-                    Log.e(TAG, "[WifiTest3] Wi-Fi onLost: 네트워크 연결이 끊어졌습니다. SSID: " + scanResult.SSID);
+                    Log.e(TAG, "[WifiTest] Wi-Fi onLost: network was disconnected, SSID: " + scanResult.SSID);
                     // 필요 시 실패 처리
                 }
             });
         } else {
             // Q 이전 버전에 대한 연결 로직 (필요 시 구현)
-            Log.w(TAG, "[WifiTest3] Android Q 미만 버전에서는 지원되지 않는 연결 방식입니다.");
-            if (listener != null) listener.onConnectionFailure("지원되지 않는 OS 버전입니다.");
+            Log.w(TAG, "[WifiTest] under Android Q, this conn not supported");
+            if (listener != null) listener.onConnectionFailure("not supported os version");
         }
     }
 }
