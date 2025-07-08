@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. 포커스된 상태 (가장 중요) -->
+    <!-- D-패드 등으로 포커스를 받았을 때의 모양 -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <!-- 기본 배경은 유지하되, 테두리로 시선을 집중시킴 -->
+            <solid android:color="#555555" />
+            <!-- BIST_EDIT: 밝은 파란색의 두꺼운 테두리를 추가하여 포커스를 명확하게 표시 -->
+            <stroke android:width="3dp" android:color="#03A9F4" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+    <!-- 2. 눌린 상태 -->
+    <!-- 사용자가 버튼을 손가락이나 클릭으로 누르고 있을 때의 모양 -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <!-- 눌렸을 때 좀 더 밝은 색으로 변경하여 피드백을 줌 -->
+            <solid android:color="#777777" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+    <!-- 3. 기본 상태 -->
+    <!-- 아무런 상호작용이 없을 때의 기본 모양 -->
+    <item>
+        <shape android:shape="rectangle">
+            <!-- 기본 버튼 배경색 -->
+            <solid android:color="#F8F8F8" />
+            <stroke android:width="3dp" android:color="#000000" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+</selector>

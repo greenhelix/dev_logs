@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [수정] FrameLayout을 LinearLayout으로 변경하여 위아래로 뷰를 배치합니다. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="400dp"
+    android:orientation="vertical"
+    android:background="#222222"
+    android:padding="8dp">
+
+    <!-- [추가] 포커스 앵커 역할을 할 TextView -->
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#CDDC39"
+        android:text="Wi-Fi Lists"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:padding="8dp"
+        android:gravity="start"
+        android:focusable="true"
+        android:nextFocusDown="@id/recycler_wifi_scan" /> <!-- [핵심] 아래로 가면 recycler_wifi_scan으로 포커스 이동 -->
+
+    <!-- 기존 RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_wifi_scan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:nextFocusUp="@id/dialog_title"/>
+
+    <TextView
+        android:id="@+id/text_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="#4CAF50"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
+</LinearLayout>

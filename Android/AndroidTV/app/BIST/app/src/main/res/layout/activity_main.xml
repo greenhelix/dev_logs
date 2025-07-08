@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="#111111">
+
+    <!-- 왼쪽 버튼 영역 (변경 없음) -->
+    <TableLayout
+        android:id="@+id/button_table"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:stretchColumns="0,1"
+        android:background="#333333"
+        android:padding="2dp">
+        <!-- ... (기존 버튼들과 동일) ... -->
+        <TableRow>
+            <Button
+                android:id="@+id/button_ethernet_test"
+                android:background="@drawable/button_focus_selector"
+                android:text="Ethernet Test"  />
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="Video Test" />
+        </TableRow>
+        <TableRow>
+            <Button
+                android:id="@+id/button_wifi_test"
+                android:background="@drawable/button_focus_selector"
+                android:text="Wi-Fi Test" />
+            <Button
+                android:id="@+id/button_bt_test"
+                android:background="@drawable/button_focus_selector"
+                android:text="Bluetooth Test" />
+        </TableRow>
+        <TableRow>
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="HDMI Test" />
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="USB Test" />
+        </TableRow>
+        <TableRow>
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="Memory Test" />
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="CPU Test" />
+        </TableRow>
+        <TableRow>
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="RCU Test" />
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="BIST Uninstall" />
+        </TableRow>
+        <TableRow>
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="Factory Reset" />
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="6-2" />
+        </TableRow>
+        <TableRow>
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="7-1" />
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="7-2" />
+        </TableRow>
+        <TableRow>
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="8-1" />
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="8-2" />
+        </TableRow>
+        <TableRow>
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="9-1" />
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="9-2" />
+        </TableRow>
+        <TableRow>
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="10-1" />
+            <Button
+                android:background="@drawable/button_focus_selector"
+                android:text="10-2" />
+        </TableRow>
+    </TableLayout>
+
+    <!-- 오른쪽 정보 및 로그 영역 -->
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#222222"
+        android:padding="2dp">
+
+        <!-- BIST_EDIT: 1. 상단 고정 영역 (레이아웃 수정) -->
+        <RelativeLayout
+            android:id="@+id/top_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:padding="8dp">
+
+            <!-- BIST_EDIT: 아이콘들을 담을 오른쪽 정렬 컨테이너 -->
+            <LinearLayout
+                android:id="@+id/icon_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+
+                <!-- Wi-Fi 아이콘 -->
+                <ImageView
+                    android:id="@+id/iv_wifi_status"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:visibility="visible"
+                    tools:src="@drawable/ic_wifi" />
+
+                <!-- 블루투스 아이콘 -->
+                <ImageView
+                    android:id="@+id/iv_bt_status"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="8dp"
+                    android:visibility="visible"
+                    tools:src="@drawable/ic_bt" />
+
+                <!-- 이더넷 아이콘 -->
+                <ImageView
+                    android:id="@+id/iv_ethernet_status"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="8dp"
+                    android:visibility="visible"
+                    tools:src="@drawable/ic_ethernet" />
+
+            </LinearLayout>
+
+            <!-- BIST_EDIT: 시스템 정보 TextView (너비와 제약 조건 수정) -->
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:layout_toStartOf="@id/icon_container"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textColor="#ffffff"
+                android:textSize="10sp"
+                tools:text="Model: ExampleModel FW Ver: 1.0.0 Android Ver: 12\nBuild Date: 2023-10-27\nSerial No: 1234567890ABCD" />
+
+        </RelativeLayout>
+
+        <!-- 하단 로그창 및 중간 프래그먼트 컨테이너 (변경 없음) -->
+        <ScrollView
+            android:id="@+id/log_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentBottom="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:background="#000000"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/text_log_window"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:text="Logging Start..."
+                android:textColor="#00FF00"
+                android:textSize="12sp"
+                android:typeface="monospace" />
+        </ScrollView>
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/top_info_container"
+            android:layout_above="@id/log_scroll_view" />
+
+    </RelativeLayout>
+</LinearLayout>

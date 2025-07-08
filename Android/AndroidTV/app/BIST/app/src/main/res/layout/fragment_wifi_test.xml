@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="#222222"
+    >
+
+    <TextView
+        android:id="@+id/text_wifi_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:text="Press 'Scan' to find Wi-Fi networks."/>
+
+    <Button
+        android:id="@+id/btn_wifi_scan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_focus_selector"
+        android:text="Wi-Fi Scan" />
+
+    <Button
+        android:id="@+id/btn_wifi_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_focus_selector"
+        android:text="Wi-Fi Test"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>
