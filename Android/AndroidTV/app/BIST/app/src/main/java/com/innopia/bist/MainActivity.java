@@ -1,7 +1,5 @@
 package com.innopia.bist;
 
-import static android.view.View.VISIBLE;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
@@ -27,11 +25,13 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.innopia.bist.bluetooth.BluetoothTest;
-import com.innopia.bist.bluetooth.BluetoothTestFragment;
+import com.innopia.bist.tests.bluetooth.BluetoothTest;
+import com.innopia.bist.tests.bluetooth.BluetoothTestFragment;
 import com.innopia.bist.util.FocusNavigationHandler;
-import com.innopia.bist.wifi.WifiTest;
-import com.innopia.bist.wifi.WifiTestFragment;
+import com.innopia.bist.util.ILogger;
+import com.innopia.bist.util.SysInfo;
+import com.innopia.bist.tests.wifi.WifiTest;
+import com.innopia.bist.tests.wifi.WifiTestFragment;
 
 @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
 public class MainActivity extends Activity implements ILogger {
@@ -156,6 +156,12 @@ public class MainActivity extends Activity implements ILogger {
         });
     }
 
+    public void updateBluetoothIcon(boolean isConnected) {
+        runOnUiThread(() -> {
+            ivBtStatus.setImageDrawable(ContextCompat.getDrawable(this, isConnected ? R.drawable.ic_bt_on : R.drawable.ic_bt_off));
+        });
+    }
+
     // ILogger 인터페이스 구현
     @Override
     public void log(String tag, String message) {
@@ -245,6 +251,10 @@ public class MainActivity extends Activity implements ILogger {
     public void refreshFocusFeatures() {
         // 1. 시각적 하이라이트를 갱신합니다.
         updateVisualHighlights(isFocusFeatureEnabled);
+    }
+
+    public boolean isFocusFeatureEnabled() {
+        return isFocusFeatureEnabled;
     }
 
     private void updateVisualHighlights(boolean enabled) {

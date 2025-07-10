@@ -1,4 +1,4 @@
-package com.innopia.bist;
+package com.innopia.bist.util;
 
 import android.util.Log;
 import java.io.BufferedReader;

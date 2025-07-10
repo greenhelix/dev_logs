@@ -1,4 +1,4 @@
-package com.innopia.bist.wifi;
+package com.innopia.bist.tests.wifi;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -7,14 +7,13 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
-import com.innopia.bist.ILogger;
+import com.innopia.bist.util.ILogger;
 
 import java.io.BufferedReader;
 import java.io.IOException;

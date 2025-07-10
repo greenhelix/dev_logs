@@ -1,4 +1,4 @@
-package com.innopia.bist.bluetooth;
+package com.innopia.bist.tests.bluetooth;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import androidx.core.app.ActivityCompat;
-import com.innopia.bist.ILogger;
+import com.innopia.bist.util.ILogger;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,7 +34,7 @@ public class BluetoothTest {
      * BIST_RENEWAL: 현재 Blueooth 연결 상태를 확인하고 정보를 반환하는 핵심 메서드
      * 이 메서드는 Fragment의 onResume 등에서 호출됩니다.
      */
-    public void checkCurrentConnection(com.innopia.bist.wifi.WifiTest.ConnectionInfoListener listener) {
+    public void checkCurrentConnection(com.innopia.bist.tests.wifi.WifiTest.ConnectionInfoListener listener) {
         log("Checking current Bluetooth connection status...");
         executor.execute(() -> {
 
