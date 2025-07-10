@@ -2,6 +2,6 @@ package com.innopia.bist.tests;
 
 import java.util.function.Consumer;
 
-public interface ITest {
+public interface AutoTest {
     void runTest(Consumer<TestResult> onResult);
 }

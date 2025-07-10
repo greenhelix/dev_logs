@@ -13,7 +13,8 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<Boolean> _wifiStatus = new MutableLiveData<>(false);
     public LiveData<Boolean> wifiStatus = _wifiStatus;
 
-    // ... (Bluetooth, Ethernet 상태 LiveData 추가 가능)
+    private final MutableLiveData<Boolean> _btStatus = new MutableLiveData<>(false);
+    public LiveData<Boolean> btStatus = _btStatus;
 
     public void appendLog(String message) {
         String currentLog = _logOutput.getValue() != null ? _logOutput.getValue() : "";
@@ -22,5 +23,9 @@ public class MainViewModel extends ViewModel {
 
     public void updateWifiStatus(boolean isConnected) {
         _wifiStatus.postValue(isConnected);
+    }
+
+    public void updateBtStatus(boolean isConnected) {
+        _btStatus.postValue(isConnected);
     }
 }

@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.innopia.bist.tests.bluetooth.BluetoothTestFragment;
 import com.innopia.bist.tests.wifi.WifiTestFragment;
 import com.innopia.bist.viewmodel.MainViewModel;
 
@@ -15,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
     private MainViewModel mainViewModel;
     private TextView logWindow;
     private ImageView ivWifiStatus;
+    private ImageView ivBtStatus;
+    private ImageView ivEthStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private void setupUI() {
         logWindow = findViewById(R.id.text_log_window);
         ivWifiStatus = findViewById(R.id.iv_wifi_status);
+        ivBtStatus = findViewById(R.id.iv_bt_status);
+        ivEthStatus = findViewById(R.id.iv_ethernet_status);
         // ... (다른 UI 요소 초기화)
     }
 
@@ -51,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
             mainViewModel.appendLog("Wi-Fi Test fragment loaded.");
         });
         // ... (다른 테스트 버튼 리스너 추가)
+        findViewById(R.id.button_bt_test).setOnClickListener(v -> {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, BluetoothTestFragment.newInstance())
+                    .addToBackStack(null)
+                    .commit();
+            mainViewModel.appendLog("Bluetooth Test fragment loaded.");
+        });
     }
 
     private void observeViewModel() {

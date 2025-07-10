@@ -1,16 +1,19 @@
 package com.innopia.bist.tests.wifi;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.innopia.bist.R;
 import com.innopia.bist.viewmodel.MainViewModel;
 import com.innopia.bist.viewmodel.WifiTestViewModel;
@@ -18,11 +21,24 @@ import com.innopia.bist.viewmodel.WifiTestViewModel;
 public class WifiTestFragment extends Fragment {
 
     private WifiTestViewModel wifiTestViewModel;
-    private MainViewModel mainViewModel; // Activity와 공유
+    private MainViewModel mainViewModel;
     private TextView textWifiInfo;
+    private ActivityResultLauncher<Intent> wifiSettingsLauncher;
 
     public static WifiTestFragment newInstance() {
         return new WifiTestFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        wifiSettingsLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    // 설정 화면에서 돌아왔을 때 로그만 남깁니다.
+                    // 실제 정보 업데이트는 onResume()에서 처리하여 일관성을 유지합니다.
+                    mainViewModel.appendLog("Returned from Wi-Fi settings.");
+                });
     }
 
     @Override
@@ -35,27 +51,37 @@ public class WifiTestFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Fragment 자신의 ViewModel
         wifiTestViewModel = new ViewModelProvider(this).get(WifiTestViewModel.class);
-        // Activity 범위의 ViewModel
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         textWifiInfo = view.findViewById(R.id.text_wifi_info);
         Button btnScan = view.findViewById(R.id.btn_wifi_scan);
         Button btnTest = view.findViewById(R.id.btn_wifi_test);
+        Button btnAutoTest = view.findViewById(R.id.btn_wifi_auto_test);
 
-        // 버튼 클릭 시 ViewModel의 함수 호출
         btnScan.setOnClickListener(v -> {
-            wifiTestViewModel.startScan(mainViewModel::appendLog);
+            mainViewModel.appendLog("Opening Wi-Fi settings...");
+            Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+            wifiSettingsLauncher.launch(intent);
         });
 
-        btnTest.setOnClickListener(v -> {
-            wifiTestViewModel.startTest(mainViewModel::appendLog, mainViewModel::updateWifiStatus);
-        });
+        btnTest.setOnClickListener(v -> wifiTestViewModel.startPingTest(mainViewModel::appendLog, mainViewModel::updateWifiStatus));
+        btnAutoTest.setOnClickListener(v -> wifiTestViewModel.startAutoTest(mainViewModel::appendLog, mainViewModel::updateWifiStatus));
 
-        // ViewModel의 LiveData를 관찰하여 UI 업데이트
-        wifiTestViewModel.testInfo.observe(getViewLifecycleOwner(), info -> {
-            textWifiInfo.setText(info);
-        });
+        // ViewModel의 displayInfo LiveData를 관찰하여 TextView를 업데이트합니다.
+//        wifiTestViewModel.displayInfo.observe(getViewLifecycleOwner(), info -> {
+//            textWifiInfo.setText(info);
+//        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 요구사항의 핵심: 프래그먼트가 화면에 보일 때마다 Wi-Fi 정보를 갱신합니다.
+        // 이렇게 하면 설정에서 돌아왔을 때, 또는 이미 연결된 상태에서 이 화면에 진입했을 때
+        // 항상 최신 정보를 표시할 수 있습니다.
+        if (getContext() != null) {
+            wifiTestViewModel.updateWifiInfo(requireContext());
+        }
     }
 }
