@@ -34,19 +34,6 @@ public class BluetoothTest {
      * BIST_RENEWAL: 현재 Blueooth 연결 상태를 확인하고 정보를 반환하는 핵심 메서드
      * 이 메서드는 Fragment의 onResume 등에서 호출됩니다.
      */
-    public void checkCurrentConnection(com.innopia.bist.tests.wifi.WifiTest.ConnectionInfoListener listener) {
-        log("Checking current Bluetooth connection status...");
-        executor.execute(() -> {
-
-
-            // Bluetooth 정보 가져오기
-
-            // 블루투스 유효성 검사
-
-            // 결과 문자열 생성
-
-        });
-    }
 
     /**
      * BIST_RENEWAL: Blueooth 유효성을 검사하는 private 헬퍼 메서드

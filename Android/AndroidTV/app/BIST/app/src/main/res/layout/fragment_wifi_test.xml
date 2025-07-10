@@ -4,23 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#222222"
-    >
+    android:background="#222222">
 
+    <!-- 버튼 그룹 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
         <Button
             android:id="@+id/btn_wifi_scan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/button_focus_selector"
-            android:text="Wi-Fi Scan"
-            />
-
+            android:text="Wi-Fi Scan" />
         <Button
             android:id="@+id/btn_wifi_test"
             android:layout_width="0dp"
@@ -28,18 +25,26 @@
             android:layout_weight="1"
             android:layout_marginStart="5dp"
             android:background="@drawable/button_focus_selector"
-            android:text="Wi-Fi Test"
-            />
+            android:text="Wi-Fi Test (Ping)" />
     </LinearLayout>
 
+    <!-- 신규: 자동 테스트 버튼 -->
+    <Button
+        android:id="@+id/btn_wifi_auto_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/button_focus_selector"
+        android:text="Wi-Fi Auto Test" />
+
+    <!-- 결과 표시 TextView -->
     <TextView
         android:id="@+id/text_wifi_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:focusable="true"
         android:background="@drawable/focusable_item_border"
         android:textColor="#FFFFFF"
-        android:text="Press 'Scan' to find Wi-Fi networks."
-        />
-
+        android:text="Press 'Scan' to find Wi-Fi networks." />
 </LinearLayout>
