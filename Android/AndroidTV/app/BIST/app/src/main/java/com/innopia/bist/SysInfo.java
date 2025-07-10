@@ -1,6 +1,5 @@
 package com.innopia.bist;
 
-import android.Manifest;
 import android.util.Log;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -33,8 +32,8 @@ public class SysInfo {
         Log.d(TAG, getSystemProperty("ro.serialno")); //null값 으로 보임 priv-app 이여야 보임
 
         // 각 항목의 출력 길이를 '%' 뒤의 숫자로 조절할 수 있습니다. (예: %-15s는 15칸을 차지)
-        String line1 = String.format("Model: %-15s  FW Ver: %-15s Android Ver: %s", model, fwVer, androidVer);
-        String line2 = "Build Date: " + buildDate;
+        String line1 = String.format("Model: %-15s  FW Ver: %-15s", model, fwVer);
+        String line2 = String.format("Build Date: %-15s Android Ver: %s",buildDate, androidVer);
         String line3 = "Serial No: "+serialNo;
 
         return line1 + "\n" + line2 + "\n" + line3;

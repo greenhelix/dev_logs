@@ -6,6 +6,7 @@ import android.net.Network;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,9 @@ import androidx.annotation.Nullable;
 import com.innopia.bist.ILogger;
 import com.innopia.bist.MainActivity;
 import com.innopia.bist.R;
+import com.innopia.bist.util.FocusNavigationHandler;
 
-public class WifiTestFragment extends Fragment {
+public class WifiTestFragment extends Fragment implements FocusNavigationHandler {
 
     private static final String TAG = "BIST_WIFI_FRAGMENT";
     private WifiTest wifiTest;
@@ -43,6 +45,17 @@ public class WifiTestFragment extends Fragment {
         if (logger != null) {
             logger.log(TAG, message);
         }
+    }
+
+    @Override
+    public int getTargetFocusId(int direction) {
+        if (direction == KeyEvent.KEYCODE_DPAD_UP) {
+            // 포커스를 받아야 할 뷰는 text_wifi_info 입니다.
+            return R.id.text_wifi_info;
+        } else if (direction == KeyEvent.KEYCODE_DPAD_DOWN) {
+            return R.id.btn_wifi_scan;
+        }
+        return 0;
     }
 
     @Override
@@ -92,6 +105,24 @@ public class WifiTestFragment extends Fragment {
                 log("Wi-Fi Test button clicked, but not connected to Wi-Fi.");
                 Toast.makeText(getActivity(), "Please connect to a Wi-Fi network first.", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        tvWifiInfo.setOnKeyListener((v, keyCode, event) -> {
+            // 키를 누르는 이벤트(ACTION_DOWN)이고, 그 키가 '아래 방향키'일 경우
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                // 부모 액티비티(MainActivity)의 인스턴스를 가져옵니다.
+                MainActivity activity = (MainActivity) getActivity();
+                if (activity != null) {
+                    // MainActivity에서 log_scroll_view를 찾아 포커스를 요청합니다.
+                    View logScrollView = activity.findViewById(R.id.log_scroll_view);
+                    if (logScrollView != null) {
+                        logScrollView.requestFocus();
+                    }
+                    // 이벤트 처리를 완료했으므로 true를 반환하여 시스템의 기본 동작을 막습니다.
+                    return true;
+                }
+            }
+            return false;
         });
 
         return rootView;

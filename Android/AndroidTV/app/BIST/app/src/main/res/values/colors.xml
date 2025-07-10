@@ -7,5 +7,6 @@
     <color name="default_background">#3d3d3d</color>
     <!-- ... 기존 색상 ... -->
     <color name="item_background_default">#222222</color> <!-- 기존 아이템 배경색 -->
-    <color name="item_background_focused">#838282</color> <!-- 포커스 시 적용될 밝은 회색 -->
+    <color name="item_background_focused">#838282</color>
+    <color name="black">#000000</color> <!-- 포커스 시 적용될 밝은 회색 -->
 </resources>

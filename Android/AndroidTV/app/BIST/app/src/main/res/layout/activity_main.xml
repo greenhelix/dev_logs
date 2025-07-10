@@ -12,7 +12,7 @@
         android:id="@+id/button_table"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="0.5"
         android:stretchColumns="0,1"
         android:background="#333333"
         android:padding="2dp">
@@ -21,7 +21,10 @@
             <Button
                 android:id="@+id/button_ethernet_test"
                 android:background="@drawable/button_focus_selector"
-                android:text="Ethernet Test"  />
+
+                android:text="Ethernet Test" >
+            </Button>
+
             <Button
                 android:background="@drawable/button_focus_selector"
                 android:text="Video Test" />
@@ -132,8 +135,10 @@
                     android:id="@+id/iv_wifi_status"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:visibility="visible"
-                    tools:src="@drawable/ic_wifi" />
+                    android:focusable="true"
+                    android:background="@drawable/focusable_item_border"
+                    android:src="@drawable/ic_wifi"
+                    />
 
                 <!-- 블루투스 아이콘 -->
                 <ImageView
@@ -141,8 +146,10 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginStart="8dp"
-                    android:visibility="visible"
-                    tools:src="@drawable/ic_bt" />
+                    android:focusable="true"
+                    android:background="@drawable/focusable_item_border"
+                    android:src="@drawable/ic_bt"
+                    />
 
                 <!-- 이더넷 아이콘 -->
                 <ImageView
@@ -150,8 +157,10 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginStart="8dp"
-                    android:visibility="visible"
-                    tools:src="@drawable/ic_ethernet" />
+                    android:focusable="true"
+                    android:background="@drawable/focusable_item_border"
+                    android:src="@drawable/ic_ethernet"
+                    />
 
             </LinearLayout>
 
@@ -166,6 +175,8 @@
                 android:layout_toStartOf="@id/icon_container"
                 android:ellipsize="end"
                 android:maxLines="3"
+                android:focusable="true"
+                android:background="@drawable/focusable_item_border"
                 android:textColor="#ffffff"
                 android:textSize="10sp"
                 tools:text="Model: ExampleModel FW Ver: 1.0.0 Android Ver: 12\nBuild Date: 2023-10-27\nSerial No: 1234567890ABCD" />
@@ -178,9 +189,9 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_alignParentBottom="true"
-            android:focusable="false"
+            android:focusable="true"
+            android:background="@drawable/focusable_scrollview_border"
             android:focusableInTouchMode="false"
-            android:background="#000000"
             android:padding="4dp">
 
             <TextView
@@ -188,7 +199,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                android:focusableInTouchMode="false"
                 android:text="Logging Start..."
                 android:textColor="#00FF00"
                 android:textSize="12sp"
