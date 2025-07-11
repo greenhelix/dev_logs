@@ -23,21 +23,13 @@ public class BluetoothTest {
         mLogger = logger;
     }
 
-    private void log(String message) {
-        Log.i(TAG, message);
-        if (mLogger != null) {
-            mLogger.log(TAG, message);
-        }
-    }
-
     /**
      * BIST_RENEWAL: 현재 Blueooth 연결 상태를 확인하고 정보를 반환하는 핵심 메서드
      * 이 메서드는 Fragment의 onResume 등에서 호출됩니다.
      */
-    public void checkCurrentConnection(com.innopia.bist.tests.wifi.WifiTest.ConnectionInfoListener listener) {
-        log("Checking current Bluetooth connection status...");
+    public void checkCurrentConnection() {
+        mLogger.log("Checking current Bluetooth connection status...");
         executor.execute(() -> {
-
 
             // Bluetooth 정보 가져오기
 
@@ -59,7 +51,6 @@ public class BluetoothTest {
      * BIST_RENEWAL: 연결된 Blueooth 에  테스트를 실행하는 메서드
      */
     public void runBtTest() {
-
         executor.execute(() -> {
 
         });

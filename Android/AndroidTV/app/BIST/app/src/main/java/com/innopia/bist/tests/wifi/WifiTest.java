@@ -1,7 +1,6 @@
 package com.innopia.bist.tests.wifi;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -9,9 +8,6 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-
-import androidx.core.app.ActivityCompat;
 
 import com.innopia.bist.util.ILogger;
 
@@ -33,19 +29,8 @@ public class WifiTest {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
-    /**
-     * BIST_RENEWAL: 현재 Wi-Fi 연결 상태 정보를 전달하기 위한 콜백 인터페이스
-     */
     public interface ConnectionInfoListener {
         void onInfoUpdated(String info, Network network, boolean isConnected);
-    }
-
-    /**
-     * BIST_RENEWAL: Ping 테스트 결과를 전달하기 위한 콜백 인터페이스
-     */
-    public interface PingResultListener {
-        void onPingLog(String log);
-        void onPingFinished(String summary);
     }
 
     public WifiTest(Context context, ILogger logger) {
@@ -55,19 +40,8 @@ public class WifiTest {
         mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
-    private void log(String message) {
-        Log.i(TAG, message);
-        if (mLogger != null) {
-            mLogger.log(TAG, message);
-        }
-    }
-
-    /**
-     * BIST_RENEWAL: 현재 Wi-Fi 연결 상태를 확인하고 정보를 반환하는 핵심 메서드
-     * 이 메서드는 Fragment의 onResume 등에서 호출됩니다.
-     */
     public void checkCurrentConnection(ConnectionInfoListener listener) {
-        log("Checking current Wi-Fi connection status...");
+        mLogger.log("Checking current Wi-Fi connection status...");
         executor.execute(() -> {
             Network activeNetwork = mConnectivityManager.getActiveNetwork();
             if (activeNetwork == null) {
@@ -98,18 +72,15 @@ public class WifiTest {
                     "Signal Strength (RSSI): " + rssi + " dBm\n" +
                     "Link Speed: " + linkSpeed + " Mbps";
 
-            log("Connection check finished. SSID: " + ssid + ", Internet available: " + isValidated);
+            mLogger.log("Connection check finished. SSID: " + ssid + ", Internet available: " + isValidated);
             mainThreadHandler.post(() -> listener.onInfoUpdated(info, activeNetwork, true));
         });
     }
 
-    /**
-     * BIST_RENEWAL: 인터넷 연결 유효성을 검사하는 private 헬퍼 메서드
-     */
     private boolean isInternetAvailable(Network network) {
         NetworkCapabilities caps = mConnectivityManager.getNetworkCapabilities(network);
         if (caps == null || !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
-            log("Network is not validated. May have no internet or a captive portal.");
+            mLogger.log("Network is not validated. May have no internet or a captive portal.");
             return false;
         }
 
@@ -120,27 +91,24 @@ public class WifiTest {
             urlConnection.connect();
             int responseCode = urlConnection.getResponseCode();
             urlConnection.disconnect();
-            log("Internet validation check: server returned " + responseCode);
+            mLogger.log("Internet validation check: server returned " + responseCode);
             return responseCode == 204;
         } catch (IOException e) {
-            log("Internet validation check failed: " + e.getMessage());
+            mLogger.log("Internet validation check failed: " + e.getMessage());
             return false;
         }
     }
 
-    /**
-     * BIST_RENEWAL: 연결된 Wi-Fi에 Ping 테스트를 실행하는 메서드
-     */
-    public void runPingTest(Network network, PingResultListener listener) {
+    public void runPingTest(Network network, ILogger listener) {
         if (network == null) {
-            log("Ping Test Error: Not connected to any Wi-Fi network.");
-            listener.onPingFinished("Ping Test Error: Not connected.");
+            mLogger.log("Ping Test Error: Not connected to any Wi-Fi network.");
+            listener.log("Ping Test Error: Not connected.");
             return;
         }
 
         executor.execute(() -> {
-            log("Starting ping test to 8.8.8.8...");
-            mainThreadHandler.post(() -> listener.onPingLog("Pinging 8.8.8.8..."));
+            mLogger.log("Starting ping test to 8.8.8.8...");
+            mainThreadHandler.post(() -> listener.log("Pinging 8.8.8.8..."));
             try {
                 Process process = Runtime.getRuntime().exec("ping -c 5 8.8.8.8");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -148,26 +116,21 @@ public class WifiTest {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     final String finalLine = line;
-                    mainThreadHandler.post(() -> listener.onPingLog(finalLine));
+                    mainThreadHandler.post(() -> listener.log(finalLine));
                 }
 
                 process.waitFor();
                 reader.close();
 
                 if (process.exitValue() == 0) {
-                    mainThreadHandler.post(() -> listener.onPingFinished("Ping test successful."));
+                    mainThreadHandler.post(() -> listener.log("Ping test successful."));
                 } else {
-                    mainThreadHandler.post(() -> listener.onPingFinished("Ping test failed. Host might be unreachable."));
+                    mainThreadHandler.post(() -> listener.log("Ping test failed. Host might be unreachable."));
                 }
 
             } catch (IOException | InterruptedException e) {
-                Log.e(TAG, "Ping test failed", e);
-                mainThreadHandler.post(() -> listener.onPingFinished("Ping Test Error: " + e.getMessage()));
+                mainThreadHandler.post(() -> listener.log("Ping Test Error: " + e.getMessage()));
             }
         });
-    }
-
-    public boolean checkWifiPermission() {
-        return ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 }

@@ -23,28 +23,16 @@ import com.innopia.bist.util.FocusNavigationHandler;
 
 public class WifiTestFragment extends Fragment implements FocusNavigationHandler {
 
-    private static final String TAG = "BIST_WIFI_FRAGMENT";
+    private static final String TAG = "BIST_WIFI_FRAG";
     private WifiTest wifiTest;
     private TextView tvWifiInfo;
     private Button btnWifiScan;
     private Button btnWifiTest;
-    private ILogger logger;
-    private Network currentNetwork; // 현재 연결된 네트워크 객체 저장
+    private ILogger mLogger;
+    private Network currentNetwork;
 
-    public static WifiTestFragment newInstance(ILogger logger) {
-        WifiTestFragment fragment = new WifiTestFragment();
-        fragment.setLogger(logger);
-        return fragment;
-    }
-
-    public void setLogger(ILogger logger) {
-        this.logger = logger;
-    }
-
-    private void log(String message) {
-        if (logger != null) {
-            logger.log(TAG, message);
-        }
+    public static WifiTestFragment newInstance() {
+        return new WifiTestFragment();
     }
 
     @Override
@@ -52,7 +40,6 @@ public class WifiTestFragment extends Fragment implements FocusNavigationHandler
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (getActivity() instanceof MainActivity && ((MainActivity) getActivity()).isFocusFeatureEnabled()) {
                 if (direction == KeyEvent.KEYCODE_DPAD_UP) {
-                    // 포커스를 받아야 할 뷰는 text_wifi_info 입니다.
                     return R.id.text_wifi_info;
                 } else if (direction == KeyEvent.KEYCODE_DPAD_DOWN) {
                     return R.id.btn_wifi_scan;
@@ -63,50 +50,42 @@ public class WifiTestFragment extends Fragment implements FocusNavigationHandler
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_wifi_test, container, false);
-        log("onCreateView called. Initializing Wi-Fi Test Fragment.");
-
-        // MainActivity로부터 WifiTest 인스턴스 가져오기
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                this.wifiTest = ((MainActivity) getActivity()).getWifiTest();
+                this.mLogger = activity.logUtil;
+                this.wifiTest = activity.getWifiTest();
+            }else{
+                mLogger.log("*** TIRAMISU not supported");
             }
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_wifi_test, container, false);
+        mLogger.log("onCreateView called. Initializing Wi-Fi Test Fragment.");
 
         tvWifiInfo = rootView.findViewById(R.id.text_wifi_info);
         btnWifiScan = rootView.findViewById(R.id.btn_wifi_scan);
         btnWifiTest = rootView.findViewById(R.id.btn_wifi_test);
 
-        // BIST_RENEWAL 1: 'Wi-Fi Scan' 버튼 -> 시스템 Wi-Fi 설정 화면 열기
         btnWifiScan.setOnClickListener(v -> {
-            log("Scan button clicked. Opening system Wi-Fi settings...");
+            mLogger.log("Scan button clicked. Opening system Wi-Fi settings...");
             Toast.makeText(getActivity(), "Opening Wi-Fi Settings...", Toast.LENGTH_SHORT).show();
-            // 안드로이드 시스템의 Wi-Fi 설정 화면을 여는 Intent
             startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
         });
 
-        // BIST_RENEWAL 3: 'Wi-Fi Test' 버튼 -> 현재 연결된 Wi-Fi에 Ping 테스트 실행
         btnWifiTest.setOnClickListener(v -> {
             if (currentNetwork != null) {
-                log("Wi-Fi Test button clicked. Starting ping test...");
+                mLogger.log("Wi-Fi Test button clicked. Starting ping test...");
                 tvWifiInfo.setText("Running Ping Test...");
-                wifiTest.runPingTest(currentNetwork, new WifiTest.PingResultListener() {
-                    @Override
-                    public void onPingLog(String logMessage) {
-                        log(logMessage); // 핑 로그를 메인 로그창에 출력
-                    }
-
-                    @Override
-                    public void onPingFinished(String summary) {
-                        log("Ping Test Finished: " + summary);
-                        Toast.makeText(getActivity(), summary, Toast.LENGTH_LONG).show();
-                        // 테스트가 끝나면 다시 현재 상태를 표시
-                        updateConnectionStatus();
-                    }
-                });
+                wifiTest.runPingTest(currentNetwork, mLogger);
+                updateConnectionStatus();
             } else {
-                log("Wi-Fi Test button clicked, but not connected to Wi-Fi.");
+                mLogger.log("Wi-Fi Test button clicked, but not connected to Wi-Fi.");
                 Toast.makeText(getActivity(), "Please connect to a Wi-Fi network first.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -121,7 +100,7 @@ public class WifiTestFragment extends Fragment implements FocusNavigationHandler
     @Override
     public void onResume() {
         super.onResume();
-        log("Fragment resumed. Checking for Wi-Fi connection status update.");
+        mLogger.log("Fragment resumed. Checking for Wi-Fi connection status update.");
         updateConnectionStatus();
     }
 
@@ -130,7 +109,7 @@ public class WifiTestFragment extends Fragment implements FocusNavigationHandler
      */
     private void updateConnectionStatus() {
         if (wifiTest == null) {
-            log("WifiTest helper is null. Cannot update status.");
+            mLogger.log("WifiTest helper is null. Cannot update status.");
             return;
         }
 

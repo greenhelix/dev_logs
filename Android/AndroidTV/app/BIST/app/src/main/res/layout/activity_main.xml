@@ -21,7 +21,6 @@
             <Button
                 android:id="@+id/button_ethernet_test"
                 android:background="@drawable/button_focus_selector"
-
                 android:text="Ethernet Test" >
             </Button>
 

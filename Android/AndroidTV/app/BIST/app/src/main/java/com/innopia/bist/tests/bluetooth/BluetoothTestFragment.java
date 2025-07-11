@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.innopia.bist.MainActivity;
+import com.innopia.bist.tests.wifi.WifiTest;
+import com.innopia.bist.util.FocusNavigationHandler;
 import com.innopia.bist.util.ILogger;
 import com.innopia.bist.R;
 
@@ -37,13 +40,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
-public class BluetoothTestFragment extends Fragment {
+public class BluetoothTestFragment extends Fragment implements FocusNavigationHandler {
 
     private static final String TAG = "BIST_BT_FRAGMENT";
     private static final int REQUEST_BLUETOOTH_PERMISSIONS = 101;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    private ILogger logger;
+    private BluetoothTest bluetoothTest;
+    private ILogger mLogger;
     private TextView tvBluetoothInfo;
     private Button btnBluetoothScan;
     private Button btnBluetoothTest;
@@ -54,33 +58,43 @@ public class BluetoothTestFragment extends Fragment {
     // 현재 시스템에 연결된 기기 목록을 임시 저장하는 캐시
     private final List<BluetoothDevice> connectedDevicesCache = new ArrayList<>();
 
-    public static BluetoothTestFragment newInstance(ILogger logger) {
-        BluetoothTestFragment fragment = new BluetoothTestFragment();
-        fragment.setLogger(logger);
-        return fragment;
+    public static BluetoothTestFragment newInstance() {
+        return new BluetoothTestFragment();
     }
 
-    public void setLogger(ILogger logger) {
-        this.logger = logger;
-    }
-
-    private void log(String message) {
-        if (logger != null) {
-            logger.log(TAG, message);
+    @Override
+    public int getTargetFocusId(int direction) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (getActivity() instanceof MainActivity && ((MainActivity) getActivity()).isFocusFeatureEnabled()) {
+                if (direction == KeyEvent.KEYCODE_DPAD_UP) {
+                    return R.id.text_bluetooth_info;
+                } else if (direction == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    return R.id.btn_bluetooth_scan;
+                }
+            }
         }
+        return 0;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true); // 프래그먼트 재생성 시 멤버 변수 유지를 위해 추가
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                this.mLogger = activity.logUtil;
+                this.bluetoothTest = activity.getBluetoothTest();
+            }else{
+                mLogger.log("*** TIRAMISU not supported");
+            }
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_bluetooth_test, container, false);
-        log("onCreateView called.");
+        mLogger.log("onCreateView called.");
 
         tvBluetoothInfo = rootView.findViewById(R.id.text_bluetooth_info);
         btnBluetoothScan = rootView.findViewById(R.id.btn_bluetooth_scan);
@@ -94,7 +108,7 @@ public class BluetoothTestFragment extends Fragment {
         }
 
         btnBluetoothScan.setOnClickListener(v -> {
-            log("Scan button clicked.");
+            mLogger.log("Scan button clicked.");
             if (!checkAndRequestPermissions()) {
                 return;
             }
@@ -104,12 +118,11 @@ public class BluetoothTestFragment extends Fragment {
 
         btnBluetoothTest.setOnClickListener(v -> {
             if (mSelectedDevice != null) {
-                log("Test button clicked for device: " + mSelectedDevice.getName());
-                // 강화된 테스트 스위트 호출
+                mLogger.log("Test button clicked for device: " + mSelectedDevice.getName());
                 runAllBluetoothTests(mSelectedDevice);
             } else {
                 Toast.makeText(getActivity(), "Please select a device to test.", Toast.LENGTH_SHORT).show();
-                log("Test button clicked but no device selected.");
+                mLogger.log("Test button clicked but no device selected.");
             }
         });
 
@@ -119,7 +132,7 @@ public class BluetoothTestFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        log("Fragment resumed. Updating connection status.");
+        mLogger.log("Fragment resumed. Updating connection status.");
         if (checkAndRequestPermissions()) {
             // 상태 유지 로직이 포함된 연결 상태 업데이트
             updateConnectionStatus();
@@ -133,10 +146,10 @@ public class BluetoothTestFragment extends Fragment {
         // 항상 최신 연결 목록을 가져오기 위해 캐시를 업데이트한 후 다이얼로그를 보여줌
         updateConnectedDevicesCache(() -> {
             if (connectedDevicesCache.isEmpty()) {
-                log("No connected devices found. Opening Add Accessory screen.");
+                mLogger.log("No connected devices found. Opening Add Accessory screen.");
                 openAddAccessoryScreen();
             } else {
-                log("Connected devices found. Showing selection dialog.");
+                mLogger.log("Connected devices found. Showing selection dialog.");
                 showDeviceSelectionDialog();
             }
         });
@@ -164,7 +177,7 @@ public class BluetoothTestFragment extends Fragment {
                     } else {
                         // 기존 연결된 기기 선택
                         mSelectedDevice = connectedDevicesCache.get(which);
-                        log("Device selected from dialog: " + mSelectedDevice.getName());
+                        mLogger.log("Device selected from dialog: " + mSelectedDevice.getName());
                         updateUiWithDeviceInfo(mSelectedDevice);
                     }
                 })
@@ -172,14 +185,14 @@ public class BluetoothTestFragment extends Fragment {
     }
 
     private void openAddAccessoryScreen() {
-        log("Opening Add Accessory screen.");
+        mLogger.log("Opening Add Accessory screen.");
         Toast.makeText(getActivity(), "액세서리 추가 화면을 엽니다...", Toast.LENGTH_SHORT).show();
         try {
             Intent intent = new Intent();
             intent.setClassName("com.android.tv.settings", "com.android.tv.settings.accessories.AddAccessoryActivity");
             startActivity(intent);
         } catch (android.content.ActivityNotFoundException e) {
-            log("Failed to open AddAccessoryActivity. Falling back to main settings.");
+            mLogger.log("Failed to open AddAccessoryActivity. Falling back to main settings.");
             startActivity(new Intent(Settings.ACTION_SETTINGS));
         }
     }
@@ -196,6 +209,7 @@ public class BluetoothTestFragment extends Fragment {
         new Thread(() -> {
             // 테스트 1: SPP 연결 테스트
             final boolean sppResult = testSppConnection(device);
+            mLogger.log("Device : "+ device.getName());
             updateTestResultOnUI("\nSPP Connection Test: " + (sppResult ? "SUCCESS" : "FAILED"));
 
             // 테스트 2: RSSI (신호 강도) 확인
@@ -221,10 +235,10 @@ public class BluetoothTestFragment extends Fragment {
                 return false;
             }
             socket.connect();
-            log("SPP socket connection successful.");
+            mLogger.log("SPP socket connection successful.");
             return true;
         } catch (IOException e) {
-            log("SPP socket connection failed: " + e.getMessage());
+            mLogger.log("SPP socket connection failed: " + e.getMessage());
             return false;
         }
     }
@@ -232,7 +246,7 @@ public class BluetoothTestFragment extends Fragment {
     private String testSoundPlayback(BluetoothDevice device) {
         // 실제 사운드 재생은 AudioManager를 통해 오디오 포커스를 요청하고 스트림을 라우팅해야 함
         // 여기서는 테스트가 가능한 구조만 보여주기 위해 시뮬레이션된 결과를 반환
-        log("Simulating sound playback test.");
+        mLogger.log("Simulating sound playback test.");
         return "Passed (Simulated)";
     }
 
@@ -260,17 +274,17 @@ public class BluetoothTestFragment extends Fragment {
         updateConnectedDevicesCache(() -> {
             // 이전에 선택한 기기가 있고, 그 기기가 여전히 연결 목록에 있는지 확인
             if (mSelectedDevice != null && connectedDevicesCache.contains(mSelectedDevice)) {
-                log("Previously selected device is still connected. Restoring state.");
+                mLogger.log("Previously selected device is still connected. Restoring state.");
                 updateUiWithDeviceInfo(mSelectedDevice);
             } else {
                 // 이전에 선택한 기기가 없거나, 연결이 끊겼다면 캐시의 첫번째 기기를 선택
                 if (!connectedDevicesCache.isEmpty()) {
-                    log("No previous device state. Selecting the first connected device.");
+                    mLogger.log("No previous device state. Selecting the first connected device.");
                     mSelectedDevice = connectedDevicesCache.get(0);
                     updateUiWithDeviceInfo(mSelectedDevice);
                 } else {
                     // 연결된 기기가 아무것도 없음
-                    log("No connected devices found.");
+                    mLogger.log("No connected devices found.");
                     mSelectedDevice = null;
                     updateUiWithDeviceInfo(null);
                 }
@@ -354,7 +368,9 @@ public class BluetoothTestFragment extends Fragment {
 
     private void updateBluetoothIcon(boolean isConnected) {
         if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).updateBluetoothIcon(isConnected);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ((MainActivity) getActivity()).updateBluetoothIcon(isConnected);
+            }
         }
     }
 
@@ -409,10 +425,10 @@ public class BluetoothTestFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            log("BLUETOOTH_CONNECT permission granted.");
+            mLogger.log("BLUETOOTH_CONNECT permission granted.");
             updateConnectionStatus();
         } else {
-            log("Permission denied by user.");
+            mLogger.log("Permission denied by user.");
             Toast.makeText(getActivity(), "Bluetooth permission is required.", Toast.LENGTH_LONG).show();
         }
     }

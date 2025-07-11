@@ -27,6 +27,8 @@ import androidx.core.content.ContextCompat;
 
 import com.innopia.bist.tests.bluetooth.BluetoothTest;
 import com.innopia.bist.tests.bluetooth.BluetoothTestFragment;
+import com.innopia.bist.tests.ethernet.EthernetTest;
+import com.innopia.bist.tests.ethernet.EthernetTestFragment;
 import com.innopia.bist.util.FocusNavigationHandler;
 import com.innopia.bist.util.ILogger;
 import com.innopia.bist.util.SysInfo;
@@ -34,7 +36,7 @@ import com.innopia.bist.tests.wifi.WifiTest;
 import com.innopia.bist.tests.wifi.WifiTestFragment;
 
 @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
-public class MainActivity extends Activity implements ILogger {
+public class MainActivity extends Activity {
 
     private static final String TAG = "BIST_MAIN";
     private static final int ALL_PERMISSIONS_REQUEST_CODE = 100;
@@ -44,9 +46,13 @@ public class MainActivity extends Activity implements ILogger {
     private TextView tvLogWindow;
     private ScrollView svLog;
     private Button btnEthernetTest;
+
     public WifiTest wifiTest;
     public BluetoothTest bluetoothTest;
+    public EthernetTest etherTest;
+
     public boolean isFocusFeatureEnabled;
+    public ILogger logUtil;
 
     private final String[] REQUIRED_PERMISSIONS = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -66,15 +72,13 @@ public class MainActivity extends Activity implements ILogger {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate: Activity starting.");
 
-        // UI 초기화
         ivWifiStatus = findViewById(R.id.iv_wifi_status);
         ivBtStatus = findViewById(R.id.iv_bt_status);
         ivEthStatus = findViewById(R.id.iv_ethernet_status);
         tvLogWindow = findViewById(R.id.text_log_window);
         svLog = findViewById(R.id.log_scroll_view);
-        // ScrollView에 키 리스너를 설정하여 포커스 이동을 제어합니다.
+
         svLog.setOnKeyListener((v, keyCode, event) -> {
-            // '위' 방향키를 눌렀을 때
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
                 // 현재 프래그먼트 컨테이너에 있는 프래그먼트를 찾습니다.
                 Fragment currentFragment = getFragmentManager().findFragmentById(R.id.fragment_container);
@@ -100,20 +104,29 @@ public class MainActivity extends Activity implements ILogger {
                 }
                 return true;
             }
-            return false; // 그 외의 키는 기본 동작을 따릅니다.
+            return false;
         });
+
+        logUtil = new ILogger() {
+            @Override
+            public void log(String tag, String message) {
+                appendToLog(tag+": "+message);
+            }
+
+            @Override
+            public void log(String message) {
+                appendToLog(TAG+": "+message);
+            }
+        };
 
         TextView mText1 = findViewById(R.id.text1);
         mText1.setText(SysInfo.getSystemInfo());
 
-        // BIST_RENEWAL: WifiTest 인스턴스는 한 번만 생성하여 프래그먼트에 제공합니다.
-        wifiTest = new WifiTest(this, this);
-        bluetoothTest = new BluetoothTest(this, this);
+        wifiTest = new WifiTest(this, logUtil);
+        bluetoothTest = new BluetoothTest(this, logUtil);
+        etherTest = new EthernetTest(this, logUtil);
 
-        // 앱 시작 시 권한 확인
         checkAndRequestPermissions();
-
-        btnEthernetTest = findViewById(R.id.button_ethernet_test);
 
         Button btnWifiTest = findViewById(R.id.button_wifi_test);
         btnWifiTest.setOnClickListener(v -> {
@@ -125,31 +138,42 @@ public class MainActivity extends Activity implements ILogger {
             showBluetoothTestFragment();
         });
 
+        Button btnEternetTest = findViewById(R.id.button_ethernet_test);
+        btnEternetTest.setOnClickListener(v -> {
+            showEternetTestFragment();
+        });
+
         loadFocusFeatureSetting();
         refreshFocusFeatures();
     }
 
     private void showWifiTestFragment() {
-        log(TAG, "Wi-Fi Test button clicked. Opening fragment...");
+        logUtil.log(TAG, "Wi-Fi Test button clicked. Opening fragment...");
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        // newInstance 팩토리 메서드를 사용하여 ILogger(this)를 전달합니다.
-        ft.replace(R.id.fragment_container, WifiTestFragment.newInstance(this));
+        ft.replace(R.id.fragment_container, WifiTestFragment.newInstance());
         ft.addToBackStack(null); // 뒤로가기 버튼으로 프래그먼트를 닫을 수 있게 함
         ft.commit();
     }
 
     private void showBluetoothTestFragment() {
-        log(TAG, "Bluetooth Test button clicked. Opening fragment...");
+        logUtil.log(TAG, "Bluetooth Test button clicked. Opening fragment...");
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        // newInstance 팩토리 메서드를 사용하여 ILogger(this)를 전달합니다.
-        ft.replace(R.id.fragment_container, BluetoothTestFragment.newInstance(this));
-        ft.addToBackStack(null); // 뒤로가기 버튼으로 프래그먼트를 닫을 수 있게 함
+        ft.replace(R.id.fragment_container, BluetoothTestFragment.newInstance());
+        ft.addToBackStack(null);
         ft.commit();
     }
 
-    // BIST_RENEWAL: Fragment에서 호출할 공용 메서드들 (변경 없음)
+    private void showEternetTestFragment() {
+        logUtil.log(TAG, "Ethernet Test button clicked. Opening fragment...");
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.fragment_container, EthernetTestFragment.newInstance());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
     public void updateWifiIcon(boolean isConnected) {
         runOnUiThread(() -> {
             ivWifiStatus.setImageDrawable(ContextCompat.getDrawable(this, isConnected ? R.drawable.ic_wifi_on : R.drawable.ic_wifi_off));
@@ -162,12 +186,6 @@ public class MainActivity extends Activity implements ILogger {
         });
     }
 
-    // ILogger 인터페이스 구현
-    @Override
-    public void log(String tag, String message) {
-        appendToLog(tag + ": " + message);
-    }
-
     public void appendToLog(String message) {
         runOnUiThread(() -> {
             tvLogWindow.append("\n" + message);
@@ -175,11 +193,9 @@ public class MainActivity extends Activity implements ILogger {
         });
     }
 
-    // BIST_RENEWAL: 프래그먼트가 WifiTest 인스턴스에 접근할 수 있도록 getter 제공
     public WifiTest getWifiTest() { return wifiTest; }
     public BluetoothTest getBluetoothTest() { return bluetoothTest; }
-
-    // --- 권한 및 설정 관련 메서드 (기존과 거의 동일) ---
+    public EthernetTest getEtherTest() { return etherTest; }
 
     @Override
     protected void onResume() {

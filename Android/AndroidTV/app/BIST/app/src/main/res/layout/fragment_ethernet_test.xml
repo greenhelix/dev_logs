@@ -13,33 +13,33 @@
         android:orientation="horizontal"
         >
         <Button
-            android:id="@+id/btn_bluetooth_scan"
+            android:id="@+id/btn_ether_scan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/button_focus_selector"
-            android:text="Bluetooth Scan"
+            android:text="Ethernet Scan"
             />
 
         <Button
-            android:id="@+id/btn_bluetooth_test"
+            android:id="@+id/btn_ether_test"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="5dp"
             android:background="@drawable/button_focus_selector"
-            android:text="Bluetooth Test"
+            android:text="Ethernet Test"
             />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/text_bluetooth_info"
+        android:id="@+id/text_ether_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:focusable="true"
         android:background="@drawable/focusable_item_border"
         android:textColor="#FFFFFF"
-        android:text="Press 'Scan' to find Bluetooth networks."
+        android:text="Press 'Scan' to find Ethernet networks."
         />
 
 </LinearLayout>
