@@ -1,4 +1,4 @@
-# BIST - Diagram Auto Maker v3
+# BIST - Diagram Auto Maker v4
 # Made by ik
 
 import tkinter as tk
@@ -16,14 +16,13 @@ def check_environment():
         input("계속하려면 Enter 키를 누르세요...")
         sys.exit(1)
 
-# --- 2. 코드 파싱 로직 (대폭 개선) ---
+# --- 2. 코드 파싱 로직 (오류 수정) ---
 class CodeParser:
     """
     Android 코드(Java/Kotlin)의 특성을 고려하여 구조를 분석하는 클래스입니다.
     - 생명주기 메서드, TAG 변수를 필터링합니다.
     - 정확한 메서드 선언만을 추출합니다.
     """
-    # 생략할 안드로이드 생명주기 및 일반 메서드 목록
     LIFECYCLE_METHODS = {
         'onCreate', 'onStart', 'onResume', 'onPause', 'onStop', 'onDestroy',
         'onCreateView', 'onViewCreated', 'onDestroyView', 'onAttach', 'onDetach',
@@ -46,12 +45,10 @@ class CodeParser:
         return -1
 
     def parse_files(self, file_paths):
-        """여러 소스 파일을 파싱하고 구조화된 데이터를 반환합니다."""
         structures = {}
         all_class_names = set()
         file_contents = {}
 
-        # 1. 모든 파일 내용 읽기 및 클래스/인터페이스 이름 수집
         for file_path in file_paths:
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                 content = f.read()
@@ -59,7 +56,6 @@ class CodeParser:
                 matches = re.findall(r'(?:class|interface)\s+(\w+)', content)
                 all_class_names.update(matches)
 
-        # 2. 각 파일의 구조를 상세히 파싱
         for file_path, content in file_contents.items():
             class_definitions = re.finditer(r'((?:public|private|protected|abstract|static|\s)*)(class|interface)\s+(\w+)(?:\s*extends\s+([\w\s,.<>]+))?(?:\s*implements\s+([\w\s,.<>]+))?\s*{', content)
 
@@ -73,13 +69,11 @@ class CodeParser:
 
                 body = content[class_body_start:class_body_end]
                 
-                # 클래스 이름을 키로 사용하여 구조 초기화
                 structures[name] = {
                     'type': keyword, 'variables': [], 'methods': [],
                     'relations': defaultdict(list)
                 }
 
-                # 상속 및 구현 관계 분석
                 if extends:
                     for parent in re.split(r',\s*', extends.strip()):
                         clean_parent = re.sub(r'<.*?>', '', parent).strip()
@@ -91,39 +85,33 @@ class CodeParser:
                         if clean_interface in all_class_names:
                             structures[name]['relations']['implements'].append(clean_interface)
 
-                # 변수 추출 (TAG 변수 필터링)
-                var_pattern = r'^\s*(private|public|protected|final|static|\s)*([\w<>.\[\]]+)\s+([\w\[\]]+)\s*(?:=.*?;|;)'
-                for v_match in re.finditer(var_pattern, body, re.MULTILINE):
-                    visibility_group, var_type, var_name = v_match.groups()
-                    if 'static' in str(visibility_group) and 'final' in str(visibility_group) and var_name == 'TAG':
-                        continue # TAG 변수는 건너뜀
+                # var_pattern = r'^\s*(private|public|protected|final|static|\s)*([\w<>.\[\]]+)\s+([\w\[\]]+)\s*(?:=.*?;|;)'
+                # for v_match in re.finditer(var_pattern, body, re.MULTILINE):
+                #     visibility_group, var_type, var_name = v_match.groups()
+                #     if 'static' in str(visibility_group) and 'final' in str(visibility_group) and var_name == 'TAG':
+                #         continue
                     
-                    vis_symbol = '+' if 'public' in str(visibility_group) else '-'
-                    structures[name]['variables'].append(f'{vis_symbol} {var_name}: {var_type.strip()}')
+                #     vis_symbol = '+' if 'public' in str(visibility_group) else '-'
+                #     structures[name]['variables'].append(f'{vis_symbol} {var_name}: {var_type.strip()}')
                     
-                    clean_type = re.sub(r'<.*?>', '', var_type).strip()
-                    if clean_type in all_class_names and clean_type != name:
-                        structures[name]['relations']['composition'].append(clean_type)
+                #     clean_type = re.sub(r'<.*?>', '', var_type).strip()
+                #     if clean_type in all_class_names and clean_type != name:
+                #         structures[name]['relations']['composition'].append(clean_type)
 
-                # 메서드 추출 (생명주기 메서드 필터링 및 정확도 향상)
+                # 메서드 추출 정규식
                 method_pattern = r'^\s*(?:@\w+\s*)*\s*(public|private|protected|static|abstract|synchronized|final|\s)*([\w<>.\[\]]+)\s+(\w+)\s*\(([^)]*)\)\s*(?:{|throws)'
                 for m_match in re.finditer(method_pattern, body, re.MULTILINE):
-                    _, _, return_type, method_name, params = m_match.groups()
-                    # 제어문 키워드 및 생명주기 메서드 필터링
+                    # ---!!! 오류 수정 지점 !!!---
+                    # 5개로 받으려던 것을 4개로 수정하고, 변수명 정리
+                    visibility_group, return_type, method_name, params = m_match.groups()
+                    
                     if method_name in self.LIFECYCLE_METHODS or method_name in {'if', 'for', 'while', 'switch', 'catch'}:
                         continue
                     
-                    # 생성자는 유지 (메서드 이름과 클래스 이름이 같음)
-                    if method_name == name:
-                         vis_symbol = '+' if 'public' in str(m_match.group(1)) else '-'
-                         structures[name]['methods'].append(f'{vis_symbol} {method_name}()')
-                         continue
-
-                    # 일반 메서드
-                    vis_symbol = '+' if 'public' in str(m_match.group(1)) else '-'
+                    # public 키워드 존재 여부로 접근 제어자 심볼 결정
+                    vis_symbol = '+' if 'public' in str(visibility_group) else '-'
                     structures[name]['methods'].append(f'{vis_symbol} {method_name}()')
 
-                    # 파라미터에서 Dependency 관계 분석
                     for class_name in all_class_names:
                         if re.search(r'\b' + re.escape(class_name) + r'\b', params):
                              if class_name != name:
@@ -140,20 +128,18 @@ class PumlGenerator:
             puml_content += f"{data['type']} \"{name}\" {{\n"
             for method in sorted(list(set(data['methods']))):
                 puml_content += f"  {method}\n"
-            if data['methods'] and data['variables']:
-                 puml_content += "--\n"
-            for var in sorted(list(set(data['variables']))):
-                puml_content += f"  {var}\n"
+            # if data['methods'] and data['variables']:
+            #      puml_content += "--\n"
+            # for var in sorted(list(set(data['variables']))):
+            #     puml_content += f"  {var}\n"
             puml_content += "}\n\n"
 
         puml_content += "' --- 관계 정의 ---\n\n"
         added_relations = set()
         for name, data in structures.items():
             relations = data.get('relations', {})
-            # 상속, 구현, 컴포지션, 의존 순으로 관계 정의
             for rel_type in ['extends', 'implements', 'composition', 'dependency']:
                 for target in set(relations.get(rel_type, [])):
-                    # 관계 중복 방지
                     rel_tuple = tuple(sorted((name, target))) + (rel_type,)
                     if rel_type in ['extends', 'implements']: rel_tuple = (name, target, rel_type)
                     
@@ -179,7 +165,7 @@ class PumlGenerator:
 class DiagramApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("BIST - Diagram Auto Maker v3")
+        self.title("BIST - Diagram Auto Maker v4")
         self.geometry("700x500")
         self.parser = CodeParser()
         self.generator = PumlGenerator()
