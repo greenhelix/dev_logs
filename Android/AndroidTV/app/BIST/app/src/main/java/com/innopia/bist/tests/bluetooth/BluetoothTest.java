@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
+
 import androidx.core.app.ActivityCompat;
-import com.innopia.bist.util.ILogger;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -14,20 +14,12 @@ public class BluetoothTest {
 
     private static final String TAG = "BIST_BT_TEST";
     private final Context mContext;
-    private final ILogger mLogger;
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
-    public BluetoothTest(Context context, ILogger logger) {
+    public BluetoothTest(Context context) {
         mContext = context;
-        mLogger = logger;
-    }
-
-    private void log(String message) {
-        Log.i(TAG, message);
-        if (mLogger != null) {
-            mLogger.log(TAG, message);
-        }
     }
 
     /**

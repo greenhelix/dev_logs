@@ -8,7 +8,6 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.util.Log;
 
-import com.innopia.bist.tests.AutoTest;
 import com.innopia.bist.tests.TestResult;
 
 import java.io.BufferedReader;
@@ -18,7 +17,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 // Wi-Fi 관련 수동/자동 테스트 로직을 모두 담당하는 클래스
-public class WifiTest implements AutoTest {
+public class WifiTest {
     private static final String TAG = "BIST_WIFI_TEST";
     Executor executor;
     Handler mainThreadHandler;
@@ -81,15 +80,6 @@ public class WifiTest implements AutoTest {
 
         // 핵심 로직 호출: 실시간 로그(onLog)는 필요 없으므로 null을 전달합니다.
         performPing(null, onResult);
-    }
-
-    /**
-     * IAutoTest 인터페이스 구현 메서드
-     * 자동 테스트에 필요한 `runPingTest(Consumer<TestResult>)` 버전을 호출합니다.
-     */
-    @Override
-    public void runTest(Consumer<TestResult> onResult) {
-        runPingTest(onResult);
     }
 
     /**

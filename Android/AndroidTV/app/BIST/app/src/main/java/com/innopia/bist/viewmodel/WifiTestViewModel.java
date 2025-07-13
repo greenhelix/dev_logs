@@ -56,7 +56,7 @@ public class WifiTestViewModel extends ViewModel {
      */
     public void startAutoTest(Consumer<String> logConsumer, Consumer<Boolean> statusConsumer) {
         logConsumer.accept("Starting Wi-Fi Auto Test..."); // 로그창에만 표시
-        wifiTest.runTest(result -> {
+        wifiTest.runPingTest(result -> {
             _displayInfo.postValue("Auto Test Result: " + result.message); // 정보창에 결과 표시
             logConsumer.accept("Auto Test Result: " + result.message); // 로그창에 결과 기록
             statusConsumer.accept(result.isSuccess);
