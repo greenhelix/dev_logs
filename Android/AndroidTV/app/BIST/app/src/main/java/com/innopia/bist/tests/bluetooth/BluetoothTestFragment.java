@@ -369,7 +369,7 @@ public class BluetoothTestFragment extends Fragment implements FocusNavigationHa
     private void updateBluetoothIcon(boolean isConnected) {
         if (getActivity() instanceof MainActivity) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ((MainActivity) getActivity()).updateBluetoothIcon(isConnected);
+                ((MainActivity) getActivity()).updateStatusIcon(((MainActivity) getActivity()).ivBtStatus, isConnected, R.drawable.ic_bt_on, R.drawable.ic_bt_off);
             }
         }
     }

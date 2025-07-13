@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
     public boolean isFocusFeatureEnabled;
     public ILogger logUtil;
 
-    private final String[] REQUIRED_PERMISSIONS = new String[]{
+    private final String[] REQUIRED_PERMISSIONS = new String[] {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.BLUETOOTH_SCAN,
@@ -129,60 +129,28 @@ public class MainActivity extends Activity {
         checkAndRequestPermissions();
 
         Button btnWifiTest = findViewById(R.id.button_wifi_test);
-        btnWifiTest.setOnClickListener(v -> {
-            showWifiTestFragment();
-        });
-
+        btnWifiTest.setOnClickListener(v -> showTestFragment(WifiTestFragment.newInstance()));
         Button btnBluetoothTest = findViewById(R.id.button_bt_test);
-        btnBluetoothTest.setOnClickListener(v -> {
-            showBluetoothTestFragment();
-        });
-
+        btnBluetoothTest.setOnClickListener(v -> showTestFragment(BluetoothTestFragment.newInstance()));
         Button btnEternetTest = findViewById(R.id.button_ethernet_test);
-        btnEternetTest.setOnClickListener(v -> {
-            showEternetTestFragment();
-        });
+        btnEternetTest.setOnClickListener(v -> showTestFragment(EthernetTestFragment.newInstance()));
 
         loadFocusFeatureSetting();
         refreshFocusFeatures();
     }
 
-    private void showWifiTestFragment() {
-        logUtil.log(TAG, "Wi-Fi Test button clicked. Opening fragment...");
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fragment_container, WifiTestFragment.newInstance());
-        ft.addToBackStack(null); // 뒤로가기 버튼으로 프래그먼트를 닫을 수 있게 함
-        ft.commit();
+    private void showTestFragment(Fragment testFragment) {
+        if (testFragment == null) return;
+        logUtil.log(TAG, testFragment.getClass().getSimpleName() + " button clicked. Opening fragment...");
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, testFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
-    private void showBluetoothTestFragment() {
-        logUtil.log(TAG, "Bluetooth Test button clicked. Opening fragment...");
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fragment_container, BluetoothTestFragment.newInstance());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    private void showEternetTestFragment() {
-        logUtil.log(TAG, "Ethernet Test button clicked. Opening fragment...");
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fragment_container, EthernetTestFragment.newInstance());
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    public void updateWifiIcon(boolean isConnected) {
+    public void updateStatusIcon(ImageView imageView, boolean isConnected, int onIconResId, int offIconResId) {
         runOnUiThread(() -> {
-            ivWifiStatus.setImageDrawable(ContextCompat.getDrawable(this, isConnected ? R.drawable.ic_wifi_on : R.drawable.ic_wifi_off));
-        });
-    }
-
-    public void updateBluetoothIcon(boolean isConnected) {
-        runOnUiThread(() -> {
-            ivBtStatus.setImageDrawable(ContextCompat.getDrawable(this, isConnected ? R.drawable.ic_bt_on : R.drawable.ic_bt_off));
+            imageView.setImageDrawable(ContextCompat.getDrawable(this, isConnected ? onIconResId : offIconResId));
         });
     }
 
@@ -265,7 +233,6 @@ public class MainActivity extends Activity {
     }
 
     public void refreshFocusFeatures() {
-        // 1. 시각적 하이라이트를 갱신합니다.
         updateVisualHighlights(isFocusFeatureEnabled);
     }
 

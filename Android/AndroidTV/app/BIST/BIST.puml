@@ -1,0 +1,341 @@
+@startuml
+
+title BIST
+
+skinparam classAttributeIconSize 0
+
+class "MainActivity" {
+  - onCreate()
+  - ILogger()
+  - WifiTest()
+  - BluetoothTest()
+  - EthernetTest()
+  - showTestFragment()
+  - showTestFragment()
+  - showTestFragment()
+  - showTestFragment()
+  - updateStatusIcon()
+  - appendToLog()
+  - getWifiTest()
+  - getBluetoothTest()
+  - getEtherTest()
+  - onResume()
+  - checkAndRequestPermissions()
+  - onRequestPermissionsResult()
+  - showLocationSettingsAlert()
+  - Intent()
+  - loadFocusFeatureSetting()
+  - saveFocusFeatureSetting()
+  - refreshFocusFeatures()
+  - isFocusFeatureEnabled()
+  - updateVisualHighlights()
+  - findViewById()
+  - dispatchKeyEvent()
+  - toggleFocusFeature()
+  - toggleFocusFeature()
+  - saveFocusFeatureSetting()
+  - refreshFocusFeatures()
+  - ALL_PERMISSIONS_REQUEST_CODE: int
+  - ivWifiStatus: ImageView
+  - ivBtStatus: ImageView
+  - ivEthStatus: ImageView
+  - tvLogWindow: TextView
+  - svLog: ScrollView
+  - btnEthernetTest: Button
+  - wifiTest: WifiTest
+  - bluetoothTest: BluetoothTest
+  - etherTest: EthernetTest
+  - isFocusFeatureEnabled: boolean
+  - logUtil: ILogger
+  - currentFragment: Fragment
+  - targetViewId: int
+  - targetView: View
+  - true: return
+  - targetView: View
+  - true: return
+  - false: return
+  - mText1: TextView
+  - btnWifiTest: Button
+  - btnBluetoothTest: Button
+  - btnEternetTest: Button
+  - wifiTest: return
+  - bluetoothTest: return
+  - etherTest: return
+  - allPermissionsGranted: boolean
+  - allGranted: boolean
+  - intent: Intent
+  - prefs: SharedPreferences
+  - prefs: SharedPreferences
+  - isFocusFeatureEnabled: return
+  - commandIndex: int
+  - commandIndex: 리셋합니다.
+  - commandIndex: 리셋합니다.
+  - isFocusFeatureEnabled: 반전시킵니다.
+  - status: String
+}
+
+interface "FocusNavigationHandler" {
+  - getTargetFocusId()
+--
+}
+
+interface "ILogger" {
+  - log()
+  - log()
+--
+}
+
+class "SysInfo" {
+  - getSystemProperty()
+  - BufferedReader()
+  - getSystemInfo()
+--
+  - TAG: String
+  - process: Process
+  - reader: BufferedReader
+  - line: String
+  - model: String
+  - fwVer: String
+  - androidVer: String
+  - buildDate: String
+  - serialNo: String
+  - line1: String
+  - line2: String
+  - line3: String
+}
+
+class "WifiTest" {
+  - Handler()
+  - onInfoUpdated()
+  - WifiTest()
+  - checkCurrentConnection()
+  - isInternetAvailable()
+  - URL()
+  - runPingTest()
+  - BufferedReader()
+--
+  - TAG: String
+  - mWifiManager: WifiManager
+  - mConnectivityManager: ConnectivityManager
+  - mContext: Context
+  - mLogger: ILogger
+  - executor: ExecutorService
+  - mainThreadHandler: Handler
+  - activeNetwork: Network
+  - caps: NetworkCapabilities
+  - wifiInfo: WifiInfo
+  - ssid: String
+  - bssid: String
+  - rssi: int
+  - linkSpeed: int
+  - isValidated: boolean
+  - caps: NetworkCapabilities
+  - false: return
+  - url: URL
+  - urlConnection: HttpURLConnection
+  - responseCode: int
+  - responseCode: return
+  - false: return
+  - process: Process
+  - reader: BufferedReader
+  - line: String
+  - finalLine: String
+}
+
+interface "ConnectionInfoListener" {
+  - onInfoUpdated()
+--
+}
+
+class "WifiTestFragment" {
+  - newInstance()
+  - WifiTestFragment()
+  - getTargetFocusId()
+  - if()
+  - onCreate()
+  - onCreateView()
+  - Intent()
+  - onResume()
+  - updateConnectionStatus()
+  - onViewCreated()
+  - if()
+--
+  - TAG: String
+  - wifiTest: WifiTest
+  - tvWifiInfo: TextView
+  - btnWifiScan: Button
+  - btnWifiTest: Button
+  - mLogger: ILogger
+  - currentNetwork: Network
+  - 0: return
+  - activity: MainActivity
+  - rootView: View
+  - rootView: return
+  - activity: MainActivity
+  - logScrollView: View
+  - true: return
+  - false: return
+}
+
+class "EthernetTest" {
+  - Handler()
+  - onInfoUpdated()
+  - EthernetTest()
+  - checkCurrentConnection()
+  - isInternetAvailable()
+  - runPingTest()
+--
+  - TAG: String
+  - mConnectivityManager: ConnectivityManager
+  - mContext: Context
+  - mLogger: ILogger
+  - executor: ExecutorService
+  - mainThreadHandler: Handler
+  - true: return
+}
+
+class "EthernetTestFragment" {
+  - newInstance()
+  - EthernetTestFragment()
+  - getTargetFocusId()
+  - if()
+  - onCreate()
+  - onCreateView()
+  - Intent()
+--
+  - TAG: String
+  - etherTest: EthernetTest
+  - tvEtherInfo: TextView
+  - btnEtherScan: Button
+  - btnEtherTest: Button
+  - mLogger: ILogger
+  - currentNetwork: Network
+  - 0: return
+  - activity: MainActivity
+  - rootView: View
+  - rootView: return
+}
+
+class "BluetoothTest" {
+  - Handler()
+  - BluetoothTest()
+  - checkCurrentConnection()
+  - isInternetAvailable()
+  - runBtTest()
+  - checkWifiPermission()
+--
+  - TAG: String
+  - mContext: Context
+  - mLogger: ILogger
+  - executor: ExecutorService
+  - mainThreadHandler: Handler
+  - true: return
+}
+
+class "BluetoothTestFragment" {
+  - newInstance()
+  - BluetoothTestFragment()
+  - getTargetFocusId()
+  - if()
+  - onCreate()
+  - onCreateView()
+  - showConnectedDevicesOrScan()
+  - onResume()
+  - updateConnectionStatus()
+  - showConnectedDevicesOrScan()
+  - showDeviceSelectionDialog()
+  - 검색()
+  - openAddAccessoryScreen()
+  - openAddAccessoryScreen()
+  - Intent()
+  - Intent()
+  - runAllBluetoothTests()
+  - updateUiWithDeviceInfo()
+  - updateTestResultOnUI()
+  - if()
+  - if()
+  - testSppConnection()
+  - testSoundPlayback()
+  - updateConnectionStatus()
+  - if()
+  - if()
+  - if()
+  - updateConnectedDevicesCache()
+  - CountDownLatch()
+  - onServiceConnected()
+  - onServiceDisconnected()
+  - if()
+  - updateUiWithDeviceInfo()
+  - StringBuilder()
+  - updateTestResultOnUI()
+  - updateBluetoothIcon()
+  - getBondStateString()
+  - isAudioDevice()
+  - getDeviceClassString()
+  - checkAndRequestPermissions()
+  - onRequestPermissionsResult()
+  - onViewCreated()
+--
+  - TAG: String
+  - REQUEST_BLUETOOTH_PERMISSIONS: int
+  - SPP_UUID: UUID
+  - bluetoothTest: BluetoothTest
+  - mLogger: ILogger
+  - tvBluetoothInfo: TextView
+  - btnBluetoothScan: Button
+  - btnBluetoothTest: Button
+  - bluetoothAdapter: BluetoothAdapter
+  - mSelectedDevice: BluetoothDevice
+  - connectedDevicesCache: List<BluetoothDevice>
+  - 0: return
+  - activity: MainActivity
+  - rootView: View
+  - rootView: return
+  - rootView: return
+  - deviceNames: List<String>
+  - mSelectedDevice: 선택
+  - intent: Intent
+  - sppResult: boolean
+  - soundTestResult: String
+  - false: return
+  - true: return
+  - false: return
+  - latch: CountDownLatch
+  - devices: List<BluetoothDevice>
+  - info: StringBuilder
+  - false: return
+  - btClass: BluetoothClass
+  - false: return
+  - true: return
+  - false: return
+  - false: return
+  - true: return
+}
+
+' --- 관계 정의 ---
+
+MainActivity "1" *-- "*" WifiTest
+MainActivity "1" *-- "*" BluetoothTest
+MainActivity "1" *-- "*" EthernetTest
+MainActivity "1" *-- "*" ILogger
+MainActivity ..> FocusNavigationHandler : uses
+MainActivity ..> WifiTestFragment : uses
+MainActivity ..> BluetoothTestFragment : uses
+MainActivity ..> EthernetTestFragment : uses
+WifiTest "1" *-- "*" ILogger
+WifiTest ..> ConnectionInfoListener : uses
+WifiTestFragment "1" *-- "*" WifiTest
+WifiTestFragment "1" *-- "*" ILogger
+WifiTestFragment "1" *-- "*" MainActivity
+EthernetTest "1" *-- "*" ILogger
+EthernetTest ..> EthernetTest : uses
+EthernetTest ..> ConnectionInfoListener : uses
+EthernetTestFragment "1" *-- "*" EthernetTest
+EthernetTestFragment "1" *-- "*" ILogger
+EthernetTestFragment "1" *-- "*" MainActivity
+BluetoothTest "1" *-- "*" ILogger
+BluetoothTestFragment "1" *-- "*" BluetoothTest
+BluetoothTestFragment "1" *-- "*" ILogger
+BluetoothTestFragment "1" *-- "*" MainActivity
+
+@enduml

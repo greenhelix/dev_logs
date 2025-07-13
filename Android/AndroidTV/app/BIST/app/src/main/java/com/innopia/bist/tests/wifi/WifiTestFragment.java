@@ -116,14 +116,12 @@ public class WifiTestFragment extends Fragment implements FocusNavigationHandler
         tvWifiInfo.setText("Checking connection status...");
 
         wifiTest.checkCurrentConnection((info, network, isConnected) -> {
-            // 콜백을 통해 UI 업데이트
             tvWifiInfo.setText(info);
             currentNetwork = network;
 
-            // 메인 액티비티의 상단 아이콘 업데이트
             if (getActivity() instanceof MainActivity) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    ((MainActivity) getActivity()).updateWifiIcon(isConnected);
+                    ((MainActivity) getActivity()).updateStatusIcon(((MainActivity) getActivity()).ivWifiStatus, isConnected, R.drawable.ic_wifi_on, R.drawable.ic_wifi_off);
                 }
             }
         });
@@ -138,11 +136,9 @@ public class WifiTestFragment extends Fragment implements FocusNavigationHandler
         }
 
         tvWifiInfo.setOnKeyListener((v, keyCode, event) -> {
-            // '아래' 방향키를 누르면
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
                 MainActivity activity = (MainActivity) getActivity();
                 if (activity != null) {
-                    // MainActivity의 log_scroll_view로 포커스를 넘겨줍니다.
                     View logScrollView = activity.findViewById(R.id.log_scroll_view);
                     if (logScrollView != null) {
                         logScrollView.requestFocus();
