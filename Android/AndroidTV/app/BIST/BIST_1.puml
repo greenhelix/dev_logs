@@ -1,0 +1,111 @@
+@startuml
+
+title BIST
+
+skinparam classAttributeIconSize 0
+
+class "MainActivity" {
+  - appendToLog()
+  - checkAndRequestPermissions()
+  - getBluetoothTest()
+  - getEtherTest()
+  - getWifiTest()
+  - isFocusFeatureEnabled()
+  - loadFocusFeatureSetting()
+  - log()
+  - refreshFocusFeatures()
+  - saveFocusFeatureSetting()
+  - showLocationSettingsAlert()
+  - showTestFragment()
+  - toggleFocusFeature()
+  - updateStatusIcon()
+  - updateVisualHighlights()
+}
+
+interface "FocusNavigationHandler" {
+}
+
+interface "ILogger" {
+}
+
+class "SysInfo" {
+  - getSystemInfo()
+  - getSystemProperty()
+}
+
+class "WifiTest" {
+  - WifiTest()
+  - checkCurrentConnection()
+  - isInternetAvailable()
+  - runPingTest()
+}
+
+interface "ConnectionInfoListener" {
+}
+
+class "WifiTestFragment" {
+  - newInstance()
+  - updateConnectionStatus()
+}
+
+class "EthernetTest" {
+  - EthernetTest()
+  - checkCurrentConnection()
+  - isInternetAvailable()
+  - runPingTest()
+}
+
+class "EthernetTestFragment" {
+  - newInstance()
+}
+
+class "BluetoothTest" {
+  - BluetoothTest()
+  - checkCurrentConnection()
+  - checkWifiPermission()
+  - isInternetAvailable()
+  - runBtTest()
+}
+
+class "BluetoothTestFragment" {
+  - checkAndRequestPermissions()
+  - getBondStateString()
+  - getDeviceClassString()
+  - isAudioDevice()
+  - newInstance()
+  - onServiceConnected()
+  - onServiceDisconnected()
+  - openAddAccessoryScreen()
+  - runAllBluetoothTests()
+  - showConnectedDevicesOrScan()
+  - showDeviceSelectionDialog()
+  - testSoundPlayback()
+  - testSppConnection()
+  - updateBluetoothIcon()
+  - updateConnectedDevicesCache()
+  - updateConnectionStatus()
+  - updateTestResultOnUI()
+  - updateUiWithDeviceInfo()
+}
+
+' --- 관계 정의 ---
+"WifiTestFragment" <---> "MainActivity"
+"BluetoothTestFragment" <---> "MainActivity"
+"EthernetTestFragment" <---> "MainActivity"
+
+WifiTest ..> ILogger : uses
+WifiTest ..> ConnectionInfoListener : uses
+WifiTest ---> "WifiTestFragment"
+
+EthernetTest ..> ILogger : uses
+EthernetTest ..> ConnectionInfoListener : uses
+EthernetTest ---> "EthernetTestFragment"
+
+BluetoothTest ..> ILogger : uses
+BluetoothTest ---> "BluetoothTestFragment"
+
+"ILogger" ---> "MainActivity"
+"ConnectionInfoListener" ---> "MainActivity"
+"FocusNavigationHandler" ---> "MainActivity"
+
+@enduml
