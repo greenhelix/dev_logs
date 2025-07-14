@@ -26,3 +26,7 @@ Android/AndroidTV/TestApp/BIST/.idea/runConfigurations.xml
 Android/AndroidTV/TestApp/BIST/.idea/vcs.xml
 Android/AndroidTV/TestApp/BIST/app/build.gradle.kts
 Android/AndroidTV/TestApp/BIST/app/proguard-rules.pro
+/Android/AndroidTV/app/HU_BIST/app/build
+/Android/AndroidTV/app/HU_BIST/.gradle
+Android/AndroidTV/app/HU_BIST/local.properties
+Android/AndroidTV/app/HU_BIST/build/reports/problems/problems-report.html
