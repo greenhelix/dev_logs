@@ -1,7 +1,6 @@
-package ${packageName}.model.tests.${TestName?lower_case};
+package com.innopia.bist.model.tests.${test};
 
-import ${packageName}.model.Test;
-
+import com.innopia.bist.model.Test;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -10,5 +9,10 @@ public class ${TestClassName} implements Test {
     @Override
     public void runManualTest(Map<String, Object> params, Consumer<String> callback) {
 
+    }
+    
+    @Override
+    public void runAutoTest(Map<String, Object> params, Consumer<String> callback) {
+        
     }
 }

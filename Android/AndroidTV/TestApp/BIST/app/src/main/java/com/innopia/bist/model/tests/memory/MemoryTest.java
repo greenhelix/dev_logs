@@ -6,8 +6,14 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class MemoryTest implements Test {
+
     @Override
     public void runManualTest(Map<String, Object> params, Consumer<String> callback) {
+
+    }
+
+    @Override
+    public void runAutoTest(Map<String, Object> params, Consumer<String> callback) {
 
     }
 }

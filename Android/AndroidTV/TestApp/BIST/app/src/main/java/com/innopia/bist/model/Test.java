@@ -1,3 +1,5 @@
+// com/innopia/bist/model/Test.java
+
 package com.innopia.bist.model;
 
 import java.util.Map;
@@ -7,6 +9,7 @@ import java.util.function.Consumer;
 public interface Test {
     // 수동 테스트 실행
     void runManualTest(Map<String, Object> params, Consumer<String> callback);
-    // 자동 테스트 실행 (필요 시)
-//    void runAutoTest(Consumer<String> callback);
+
+    // 자동 테스트 실행
+    void runAutoTest(Map<String, Object> params, Consumer<String> callback);
 }

@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
+    /**
+        Add View (Button, TextView etc..)
+     */
     private void setupViews() {
         ivWifiStatus = findViewById(R.id.iv_wifi_status);
         ivBtStatus = findViewById(R.id.iv_bt_status);
@@ -82,9 +85,10 @@ public class MainActivity extends AppCompatActivity  {
         btnUsbTest.setOnClickListener(v -> showTestFragment(UsbTestFragment.newInstance()));
         Button btnTest = findViewById(R.id.button_factory_reset_test);
         btnTest.setOnClickListener(v -> showTestFragment(FactoryResetTestFragment.newInstance()));
-        //Button Added? this code copy and paste >> modify test's name
-//        Button btnTest = findViewById(R.id.button__test);
-//        btnTest.setOnClickListener(v -> showTestFragment(TestFragment.newInstance()));
+
+        /* Button Added? this code copy and paste >> modify test's name */
+        //Button btnTest = findViewById(R.id.button__test);
+        //btnTest.setOnClickListener(v -> showTestFragment(TestFragment.newInstance()));
 
         // 초기 디바이스 정보 설정
         mainViewModel.deviceInfoLiveData.observe(this, mText1::setText);

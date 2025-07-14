@@ -11,4 +11,9 @@ public class BluetoothTest implements Test {
     public void runManualTest(Map<String, Object> params, Consumer<String> callback) {
 
     }
+
+    @Override
+    public void runAutoTest(Map<String, Object> params, Consumer<String> callback) {
+
+    }
 }

@@ -1,11 +1,10 @@
-package com.innopia.bist.model.tests.usb;
+package com.innopia.bist;
 
 import com.innopia.bist.model.Test;
-
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class UsbTest implements Test {
+public class FactoryResetTest implements Test {
 
     @Override
     public void runManualTest(Map<String, Object> params, Consumer<String> callback) {

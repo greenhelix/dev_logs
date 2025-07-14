@@ -2,7 +2,7 @@
 
 import android.app.Application;
 import androidx.annotation.NonNull;
-import com.innopia.bist.view.MainViewModel;
+import com.innopia.bist.model.tests.${test}.${TestModel};
 
 public class ${NAME} extends BaseTestViewModel {
     private static final String TAG = "${NAME}";

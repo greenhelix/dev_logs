@@ -40,5 +40,21 @@ public abstract class BaseTestViewModel extends AndroidViewModel {
         testModel.runManualTest(params, callback);
     }
 
+    // 자동 테스트 시작
+    public void startAutoTest() {
+        mainViewModel.appendLog(getTag(), "Auto test started.");
+
+        Consumer<String> callback = result -> {
+            // 자동 테스트 결과 처리 로직 (예: 상태 업데이트)
+            _testResultLiveData.postValue("AUTO TEST: " + result);
+            mainViewModel.appendLog(getTag(), "Auto test finished.");
+        };
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("context", getApplication().getApplicationContext());
+
+        testModel.runAutoTest(params, callback);
+    }
+
     protected abstract String getTag();
 }

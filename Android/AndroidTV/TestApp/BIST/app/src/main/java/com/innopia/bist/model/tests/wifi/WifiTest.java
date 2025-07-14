@@ -33,6 +33,11 @@ public class WifiTest implements Test {
         });
     }
 
+    @Override
+    public void runAutoTest(Map<String, Object> params, Consumer<String> callback) {
+
+    }
+
     private void checkCurrentConnection(Context context, Consumer<String> callback) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
