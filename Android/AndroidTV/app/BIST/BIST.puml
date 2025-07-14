@@ -1,0 +1,113 @@
+@startuml
+
+title BIST Application MVVM Architecture
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+' === ViewModel Layer ===
+class MainViewModel {
+  +logLiveData: LiveData<List<String>>
+  +testStatusesLiveData: LiveData<Map<TestType, Status>>
+  +deviceInfoLiveData: LiveData<String>
+  +appendLog(log: String)
+  +updateTestStatus(test: TestType, status: Status)
+  +resetAllTests()
+  +saveLogsToFile()
+  +checkForConfigAndRunAutoTests()
+}
+
+abstract class BaseTestViewModel {
+  +testResultLiveData: LiveData<String>
+  +startAutoTest()
+  +startManualTest()
+}
+
+class WifiTestViewModel extends BaseTestViewModel {
+  -wifiTest: WifiTest
+}
+class BluetoothTestViewModel extends BaseTestViewModel {
+  -bluetoothTest: BluetoothTest
+}
+' ... Other TestViewModels ...
+class RCU_TestViewModel extends BaseTestViewModel {
+  -rcuTest: RCU_Test
+}
+
+
+' === View Layer ===
+class MainActivity {
+  -mainViewModel: MainViewModel
+  +showFragment(fragment: Fragment)
+}
+
+abstract class BaseFragment {
+  #mainViewModel: MainViewModel
+  #testViewModel: BaseTestViewModel
+}
+
+class WifiTestFragment extends BaseFragment {
+}
+class BluetoothTestFragment extends BaseFragment {
+}
+' ... Other Fragments ...
+class RCU_TestFragment extends BaseFragment {
+}
+
+
+' === Model Layer ===
+class ConfigManager {
+  +shouldStartAutoTest(): boolean
+  +loadConfig(): Config
+}
+
+class LogRepository {
+  +addLog(log: String)
+  +getLogs(): List<String>
+  +saveToFile()
+  +clearLogs()
+}
+
+interface Test {
+  +runAutoTest(callback: (Result) -> Unit)
+  +runManualTest(params: Map, callback: (Result) -> Unit)
+}
+
+class WifiTest implements Test {
+  +checkConnection()
+  +scan()
+}
+class BluetoothTest implements Test {
+  +scanAndConnect()
+}
+' ... Other Test Modules ...
+class RCU_Test implements Test {
+  +checkFwVersion()
+  +testKeys()
+}
+
+
+' === Relationships ===
+MainActivity o--> MainViewModel
+MainActivity o--> "ButtonPanel"
+MainActivity o--> "LogView"
+MainActivity o--> "DeviceInfoView"
+MainActivity .> BaseFragment : shows
+
+BaseFragment ..> MainViewModel : uses
+BaseFragment ..> BaseTestViewModel : uses
+
+WifiTestFragment --> WifiTestViewModel
+BluetoothTestFragment --> BluetoothTestViewModel
+RCU_TestFragment --> RCU_TestViewModel
+
+WifiTestViewModel o--> WifiTest
+BluetoothTestViewModel o--> BluetoothTest
+RCU_TestViewModel o--> RCU_Test
+
+MainViewModel ..> LogRepository : uses
+MainViewModel ..> ConfigManager : uses
+BaseTestViewModel ..> MainViewModel : reports to
+BaseTestViewModel ..> Test : uses
+
+@enduml
