@@ -158,20 +158,20 @@ public class MainActivity extends AppCompatActivity  {
         public void onReceive(Context context, Intent intent) {
             if ("com.innopia.bistservice.ACTION_USB_DETACHED".equals(intent.getAction())) {
                 // USB 분리 시 사용자에게 제거 여부를 묻는 다이얼로그 표시
-                showUninstallDialog();
+                //showUninstallDialog();
             }
         }
     };
 
-    private void showUninstallDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Uninstall BIST App")
-                .setMessage("USB device has been detached. Do you want to uninstall the BIST application?")
-                .setPositiveButton("Uninstall", (dialog, which) -> {
-                    BISTService.uninstallPackage(MainActivity.this, BIST_PACKAGE_NAME, this::finish);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
+//    private void showUninstallDialog() {
+//        new AlertDialog.Builder(this)
+//                .setTitle("Uninstall BIST App")
+//                .setMessage("USB device has been detached. Do you want to uninstall the BIST application?")
+//                .setPositiveButton("Uninstall", (dialog, which) -> {
+//                    BISTService.uninstallPackage(MainActivity.this, BIST_PACKAGE_NAME, this::finish);
+//                })
+//                .setNegativeButton("Cancel", null)
+//                .show();
+//    }
 
 }
