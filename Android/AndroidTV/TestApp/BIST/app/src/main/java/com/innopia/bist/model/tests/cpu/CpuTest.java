@@ -64,7 +64,7 @@ public class CpuTest implements Test {
                 return String.format("CPU Speed: %.0f MHz", speedValue);
             }
         } catch (Exception e) {
-            return "CPU Speed: Not Available";
+            return "CPU Speed: Not Available or ";
         }
         return "CPU Speed: Not Available";
     }

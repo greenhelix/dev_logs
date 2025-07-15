@@ -12,3 +12,8 @@ Android/AndroidTV/app/HU_BIST/.idea/AndroidProjectSystem.xml
 /Android/AndroidTV/app/HU_BIST/.gradle
 Android/AndroidTV/app/HU_BIST/local.properties
 Android/AndroidTV/app/HU_BIST/build/reports/problems/problems-report.html
+/Android/AndroidTV/TestApp/BIST/app/build/intermediates/incremental/debug-mergeJavaRes/zip-cache
+/Android/AndroidTV/TestApp/BIST/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/innopia/bist/model/tests
+/Android/AndroidTV/TestApp/BIST/app/build
+/Android/AndroidTV/TestApp/BIST/.gradle
+/Android/AndroidTV/TestApp/BIST/.gradle
