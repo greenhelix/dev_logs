@@ -92,6 +92,7 @@ public class WifiTestFragment extends Fragment {
 
         // ViewModel의 LiveData를 관찰하여 UI 업데이트
         wifiTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
+            mainViewModel.appendLog(getTag(), result);
             tvWifiInfo.setText(result);
             boolean isConnected = result != null && !result.contains("not connected");
             mainViewModel.updateTestStatus(TestType.WIFI, isConnected ? Status.ON : Status.OFF);

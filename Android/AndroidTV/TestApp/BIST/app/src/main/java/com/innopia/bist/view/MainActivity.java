@@ -1,5 +1,9 @@
 package com.innopia.bist.view;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
@@ -8,6 +12,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -35,8 +40,6 @@ public class MainActivity extends AppCompatActivity  {
 
     private final String[] REQUIRED_PERMISSIONS = new String[]{/* ... 권한 목록 ... */};
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +55,21 @@ public class MainActivity extends AppCompatActivity  {
         mainViewModel.appendLog(TAG, "Activity starting.");
         mainViewModel.setDeviceInfo(SysInfo.getSystemInfo());
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 브로드캐스트 리시버 등록
+        IntentFilter filter = new IntentFilter("com.innopia.bistservice.ACTION_USB_DETACHED");
+//        registerReceiver(usbDetachReceiver, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 리시버 등록 해제
+        unregisterReceiver(usbDetachReceiver);
     }
 
     /**
@@ -131,6 +149,29 @@ public class MainActivity extends AppCompatActivity  {
 
     public void updateStatusIcon(ImageView imageView, boolean isConnected, int onIconResId, int offIconResId) {
         imageView.setImageDrawable(ContextCompat.getDrawable(this, isConnected ? onIconResId : offIconResId));
+    }
+
+    private static final String BIST_PACKAGE_NAME = "com.innopia.bist";
+
+    private BroadcastReceiver usbDetachReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if ("com.innopia.bistservice.ACTION_USB_DETACHED".equals(intent.getAction())) {
+                // USB 분리 시 사용자에게 제거 여부를 묻는 다이얼로그 표시
+                showUninstallDialog();
+            }
+        }
+    };
+
+    private void showUninstallDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Uninstall BIST App")
+                .setMessage("USB device has been detached. Do you want to uninstall the BIST application?")
+                .setPositiveButton("Uninstall", (dialog, which) -> {
+                    BISTService.uninstallPackage(MainActivity.this, BIST_PACKAGE_NAME, this::finish);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
 }
