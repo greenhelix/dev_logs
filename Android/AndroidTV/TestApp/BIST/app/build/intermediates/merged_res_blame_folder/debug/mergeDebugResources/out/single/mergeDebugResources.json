@@ -1,0 +1,90 @@
+[
+    {
+        "merged": "com.innopia.bist.app-debug-29:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.innopia.bist.app-main-31:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.innopia.bist.app-main-31:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_button_focus_selector.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/button_focus_selector.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_ic_wifi_on.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/ic_wifi_on.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_ic_bt.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/ic_bt.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_ic_ethernet_off.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/ic_ethernet_off.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_ic_ethernet.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/ic_ethernet.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_focusable_item_border.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/focusable_item_border.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_ic_wifi.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/ic_wifi.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/layout_activity_main.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_item_focus_background.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/item_focus_background.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_ic_bt_off.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/ic_bt_off.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/layout_fragment_bluetooth_test.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/layout/fragment_bluetooth_test.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.innopia.bist.app-main-31:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.innopia.bist.app-main-31:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_focusable_scrollview_border.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/focusable_scrollview_border.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_ic_ethernet_on.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/ic_ethernet_on.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_ic_wifi_off.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/ic_wifi_off.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/drawable_ic_bt_on.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/drawable/ic_bt_on.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/layout_fragment_ethernet_test.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/layout/fragment_ethernet_test.xml"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.innopia.bist.app-main-31:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.innopia.bist.app-debug-29:/layout_fragment_wifi_test.xml.flat",
+        "source": "com.innopia.bist.app-main-31:/layout/fragment_wifi_test.xml"
+    }
+]

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_gradient_end">#DDDDDD</color>
+    <color name="background_gradient_start">#000000</color>
+    <color name="black">#000000</color>
+    <color name="default_background">#3d3d3d</color>
+    <color name="fastlane_background">#0096a6</color>
+    <color name="item_background_default">#222222</color>
+    <color name="item_background_focused">#838282</color>
+    <color name="search_opaque">#ffaa3f</color>
+    <color name="selected_background">#ffaa3f</color>
+    <string name="app_name">BIST</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
