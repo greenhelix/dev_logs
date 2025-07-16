@@ -4,7 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 
-import com.innopia.bist.model.tests.hdmi.HdmiTest;
+import com.innopia.bist.model.test.hdmi.HdmiTest;
 
 public class HdmiTestViewModel extends BaseTestViewModel {
     private static final String TAG = "HdmiTestViewModel";

@@ -1,4 +1,4 @@
-package com.innopia.bist.model.tests.usb;
+package com.innopia.bist.model.test.usb;
 
 import com.innopia.bist.model.Test;
 

@@ -1,4 +1,4 @@
-package com.innopia.bist.model.tests.cpu;
+package com.innopia.bist.model.test.cpu;
 
 import com.innopia.bist.model.Test;
 import java.io.BufferedReader;

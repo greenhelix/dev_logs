@@ -1,4 +1,4 @@
-package com.innopia.bist.model.tests.wifi;
+package com.innopia.bist.model.test.wifi;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -6,6 +6,8 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
+
 import com.innopia.bist.model.Test;
 
 import java.io.IOException;
@@ -66,7 +68,7 @@ public class WifiTest implements Test {
                 "BSSID: " + bssid + "\n" +
                 "Signal Strength (RSSI): " + rssi + " dBm\n" +
                 "Link Speed: " + linkSpeed + " Mbps";
-
+        Log.d("BIST", "Connection check finished. SSID: " + ssid + ", Internet available: " + isValidated);
         callback.accept(info);
     }
 

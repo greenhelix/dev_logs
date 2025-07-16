@@ -104,7 +104,6 @@ public class WifiTestFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // 화면에 다시 나타날 때마다 테스트 실행
         wifiTestViewModel.startManualTest();
     }
 }

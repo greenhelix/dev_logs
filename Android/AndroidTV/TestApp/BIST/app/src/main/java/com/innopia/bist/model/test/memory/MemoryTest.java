@@ -1,4 +1,4 @@
-package com.innopia.bist.model.tests.memory;
+package com.innopia.bist.model.test.memory;
 
 import android.app.ActivityManager;
 import android.content.Context;

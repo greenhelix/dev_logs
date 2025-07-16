@@ -1,11 +1,14 @@
 package com.innopia.bist.view;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -14,36 +17,49 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.innopia.bist.R;
+import com.innopia.bist.util.ServiceUtils;
 import com.innopia.bist.util.Status;
 import com.innopia.bist.util.SysInfo;
 import com.innopia.bist.util.TestType;
+import com.innopia.bist.util.UsbDetachReceiver;
 import com.innopia.bist.viewmodel.MainViewModel;
 
 @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
 public class MainActivity extends AppCompatActivity  {
 
     private static final String TAG = "BIST_MAIN";
-    private static final int ALL_PERMISSIONS_REQUEST_CODE = 100;
-
     private MainViewModel mainViewModel;
-
+    private BroadcastReceiver appUsbDetachReceiver;
     private ImageView ivWifiStatus;
     private ImageView ivBtStatus;
     private ImageView ivEthStatus;
     private TextView tvLogWindow;
     private ScrollView svLog;
-
-    private final String[] REQUIRED_PERMISSIONS = new String[]{/* ... 권한 목록 ... */};
+    private static final int ALL_PERMISSIONS_REQUEST_CODE = 100;
+    private final String[] REQUIRED_PERMISSIONS = new String[] {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.CHANGE_WIFI_STATE,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.CHANGE_NETWORK_STATE,
+            Manifest.permission.NEARBY_WIFI_DEVICES,
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        checkAndRequestPermissions();
 
         // ViewModel 초기화
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -55,21 +71,33 @@ public class MainActivity extends AppCompatActivity  {
         mainViewModel.appendLog(TAG, "Activity starting.");
         mainViewModel.setDeviceInfo(SysInfo.getSystemInfo());
 
+        // USB 분리 이벤트를 처리할 리시버 초기화
+        appUsbDetachReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (UsbDetachReceiver.ACTION_USB_DETACHED_APP.equals(intent.getAction())) {
+                    mainViewModel.appendLog(TAG, "USB device detached detected.");
+                }
+            }
+        };
+
+        checkAndLogBistServiceStatus();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // 브로드캐스트 리시버 등록
-        IntentFilter filter = new IntentFilter("com.innopia.bistservice.ACTION_USB_DETACHED");
-//        registerReceiver(usbDetachReceiver, filter);
+        // 앱 내부용 USB 분리 감지 리시버 등록
+        IntentFilter filter = new IntentFilter(UsbDetachReceiver.ACTION_USB_DETACHED_APP);
+        ContextCompat.registerReceiver(this, appUsbDetachReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         // 리시버 등록 해제
-        unregisterReceiver(usbDetachReceiver);
+        unregisterReceiver(appUsbDetachReceiver);
     }
 
     /**
@@ -103,6 +131,14 @@ public class MainActivity extends AppCompatActivity  {
         btnUsbTest.setOnClickListener(v -> showTestFragment(UsbTestFragment.newInstance()));
         Button btnTest = findViewById(R.id.button_factory_reset_test);
         btnTest.setOnClickListener(v -> showTestFragment(FactoryResetTestFragment.newInstance()));
+        Button btnUninstall = findViewById(R.id.button_uninstall); // layout에 해당 ID의 버튼이 있어야 함
+        btnUninstall.setOnClickListener(v -> {
+            mainViewModel.appendLog(TAG, "Uninstall button clicked. Requesting uninstall to BIST Service.");
+            Intent intent = new Intent("com.innopia.bistservice.ACTION_REQUEST_UNINSTALL_FROM_APP");
+            sendBroadcast(intent);
+            // BIST App 종료
+            finish();
+        });
 
         /* Button Added? this code copy and paste >> modify test's name */
         //Button btnTest = findViewById(R.id.button__test);
@@ -137,41 +173,31 @@ public class MainActivity extends AppCompatActivity  {
                 .commit();
     }
 
-//    android.Fragment 사용시 아래방법으로 전환
-//    private void showTestFragment(Fragment testFragment) {
-//        if (testFragment == null) return;
-//        mainViewModel.appendLog(TAG, testFragment.getClass().getSimpleName() + " button clicked. Opening fragment...");
-//        getFragmentManager().beginTransaction()
-//                .replace(R.id.fragment_container, testFragment)
-//                .addToBackStack(null)
-//                .commit();
-//    }
-
     public void updateStatusIcon(ImageView imageView, boolean isConnected, int onIconResId, int offIconResId) {
         imageView.setImageDrawable(ContextCompat.getDrawable(this, isConnected ? onIconResId : offIconResId));
     }
 
-    private static final String BIST_PACKAGE_NAME = "com.innopia.bist";
+    private void checkAndLogBistServiceStatus() {
+        final String bistServiceClassName = "com.innopia.bistservice.BISTService";
+        boolean isRunning = ServiceUtils.isServiceRunning(this, bistServiceClassName);
+        String statusMessage = "BIST Service is " + (isRunning ? "running." : "not running.");
+        mainViewModel.appendLog(TAG, statusMessage);
+    }
 
-    private BroadcastReceiver usbDetachReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if ("com.innopia.bistservice.ACTION_USB_DETACHED".equals(intent.getAction())) {
-                // USB 분리 시 사용자에게 제거 여부를 묻는 다이얼로그 표시
-                //showUninstallDialog();
+    private void checkAndRequestPermissions() {
+        boolean allPermissionsGranted = true;
+        for (String permission : REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                allPermissionsGranted = false;
+                break;
             }
         }
-    };
 
-//    private void showUninstallDialog() {
-//        new AlertDialog.Builder(this)
-//                .setTitle("Uninstall BIST App")
-//                .setMessage("USB device has been detached. Do you want to uninstall the BIST application?")
-//                .setPositiveButton("Uninstall", (dialog, which) -> {
-//                    BISTService.uninstallPackage(MainActivity.this, BIST_PACKAGE_NAME, this::finish);
-//                })
-//                .setNegativeButton("Cancel", null)
-//                .show();
-//    }
-
+        if (!allPermissionsGranted) {
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, ALL_PERMISSIONS_REQUEST_CODE);
+            Log.d(TAG, "Requesting necessary permissions...");
+        } else {
+            Log.d(TAG, "All necessary permissions already granted.");
+        }
+    }
 }

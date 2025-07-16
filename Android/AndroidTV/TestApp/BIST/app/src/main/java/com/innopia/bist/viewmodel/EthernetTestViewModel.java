@@ -4,7 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 
-import com.innopia.bist.model.tests.ethernet.EthernetTest;
+import com.innopia.bist.model.test.ethernet.EthernetTest;
 
 public class EthernetTestViewModel extends BaseTestViewModel{
 

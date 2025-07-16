@@ -4,7 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 
-import com.innopia.bist.model.tests.bluetooth.BluetoothTest;
+import com.innopia.bist.model.test.bluetooth.BluetoothTest;
 
 public class BluetoothTestViewModel extends BaseTestViewModel {
     private static final String TAG = "BluetoothTestViewModel";

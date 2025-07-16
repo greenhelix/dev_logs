@@ -16,9 +16,10 @@
     <!-- bluetooth test -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -40,23 +41,18 @@
             tools:targetApi="tiramisu">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+
         <receiver
-            android:name=".util.UsbBroadcastReceiver"
+            android:name="com.innopia.bist.util.UsbDetachReceiver"
             android:exported="true">
             <intent-filter>
-                <!-- USB 연결/해제 감지 -->
-                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
                 <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
-                <!-- 앱 설치/제거 완료 감지 -->
-                <action android:name="com.innopia.bistservice.ACTION_INSTALL_COMPLETE" />
-                <action android:name="com.innopia.bistservice.ACTION_UNINSTALL_COMPLETE" />
             </intent-filter>
-            <meta-data
-                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/device_filter" />
         </receiver>
+
     </application>
 </manifest>

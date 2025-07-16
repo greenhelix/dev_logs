@@ -4,7 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 
-import com.innopia.bist.model.tests.video.VideoTest;
+import com.innopia.bist.model.test.video.VideoTest;
 
 public class VideoTestViewModel extends BaseTestViewModel {
     private static final String TAG = "VideoTestViewModel";

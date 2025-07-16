@@ -18,3 +18,7 @@ Android/AndroidTV/app/HU_BIST/build/reports/problems/problems-report.html
 /Android/AndroidTV/TestApp/BIST/.gradle
 /Android/AndroidTV/TestApp/BIST/.gradle
 Android/AndroidTV/TestApp/BIST/local.properties
+Android/AndroidTV/TestApp/BIST/local.properties
+*.properties
+Android/AndroidTV/TestApp/BIST/local.properties
+Android/AndroidTV/TestApp/BIST/local.properties
