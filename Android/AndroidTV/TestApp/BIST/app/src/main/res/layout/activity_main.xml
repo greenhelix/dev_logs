@@ -103,8 +103,9 @@
         </TableRow>
         <TableRow>
             <Button
+                android:id="@+id/button_uninstall"
                 android:background="@drawable/button_focus_selector"
-                android:text="10-1" />
+                android:text="Uninstall This App" />
             <Button
                 android:id="@+id/button_auto_test"
                 android:background="@drawable/button_focus_selector"

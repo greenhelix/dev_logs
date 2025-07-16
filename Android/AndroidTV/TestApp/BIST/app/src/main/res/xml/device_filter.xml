@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 모든 USB 장치 연결을 감지하도록 설정 -->
+    <usb-device />
+</resources>
