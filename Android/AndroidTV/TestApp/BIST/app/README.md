@@ -3,10 +3,6 @@ Built In Self Test
 
 MVVM (Model View ViewModel) Architecture 
 
-
-
-
-
 ## 코드 설명 
 - src 폴더 구성
 View (TestFragment, MainActivity)
@@ -31,6 +27,7 @@ A라는 Test를 추가할때 생성해야하는 파일
 - ATest.java 
 - ATestViewModel.java
 - ATestFragment.java
+
 
 ATest.java 파일은 핵심적 기능을 넣는 곳이다.
 구현하고자 하는 기능을 함수로 구현한뒤 runManualTest 안에서 실행을 시키면된다. 

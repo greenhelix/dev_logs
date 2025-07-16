@@ -22,3 +22,4 @@ Android/AndroidTV/TestApp/BIST/local.properties
 *.properties
 Android/AndroidTV/TestApp/BIST/local.properties
 Android/AndroidTV/TestApp/BIST/local.properties
+/Android/AndroidTV/TestApp/BIST/.idea
