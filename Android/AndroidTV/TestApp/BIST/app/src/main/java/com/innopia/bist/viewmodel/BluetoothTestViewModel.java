@@ -1,5 +1,6 @@
 package com.innopia.bist.viewmodel;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.bluetooth.BluetoothDevice;
 import android.util.Log;
@@ -36,13 +37,9 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
     public BluetoothTestViewModel(@NonNull Application application, MainViewModel mainViewModel) {
         super(application, new BluetoothTest(), mainViewModel);
         this.bluetoothTest = (BluetoothTest) getTestModel();
+        checkForConnectedDevicesOnStart();
     }
 
-    /**
-     * Initiates a scan for connected Bluetooth devices.
-     * If devices are found, it posts them to _devicesForDialog to show a selection dialog.
-     * If no devices are found, it triggers navigation to settings.
-     */
     public void onScanClicked() {
         String logMsg = "Scan requested. Finding connected devices...";
         mainViewModel.appendLog(getTag(), logMsg);
@@ -63,11 +60,44 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
         });
     }
 
+    private void checkForConnectedDevicesOnStart() {
+        String logMsg = "ViewModel initialized. Checking for pre-connected devices...";
+        mainViewModel.appendLog(getTag(), logMsg);
+        Log.d(getTag(), logMsg);
+
+        bluetoothTest.findConnectedDevices(getApplication(), devices -> {
+            if (devices != null && !devices.isEmpty()) {
+                if (devices.size() == 1) {
+                    // If only one device is connected, select it automatically.
+                    BluetoothDevice device = devices.get(0);
+                    String autoSelectMsg = "Found one connected device. Auto-selecting: " + device.getName();
+                    mainViewModel.appendLog(getTag(), autoSelectMsg);
+                    Log.d(getTag(), autoSelectMsg);
+                    // onDeviceSelected will handle updating LiveData for both device info and selection state.
+                    onDeviceSelected(device);
+                } else {
+                    // If multiple devices are connected, show the selection dialog.
+                    String multiDeviceMsg = "Found multiple connected devices. Prompting user for selection.";
+                    mainViewModel.appendLog(getTag(), multiDeviceMsg);
+                    Log.d(getTag(), multiDeviceMsg);
+                    _devicesForDialog.postValue(devices);
+                }
+            } else {
+                // If no devices are connected, do nothing. The UI will show the default message.
+                String noDeviceMsg = "No pre-connected devices found.";
+                mainViewModel.appendLog(getTag(), noDeviceMsg);
+                Log.d(getTag(), noDeviceMsg);
+            }
+        });
+    }
+
+    @SuppressLint("MissingPermission")
     public void onDeviceSelected(BluetoothDevice device) {
         _selectedDevice.setValue(device);
         _testResultLiveData.setValue("Test Result: PENDING"); // Reset test result on new selection
 
         if (device != null) {
+
             String logMsg = "Device selected: " + device.getName() + ". Fetching details.";
             mainViewModel.appendLog(getTag(), logMsg);
             Log.d(getTag(), logMsg);

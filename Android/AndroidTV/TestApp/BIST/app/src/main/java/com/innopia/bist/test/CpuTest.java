@@ -39,7 +39,7 @@ public class CpuTest implements Test {
 //            callback.accept(result);
 //        });
 //    }
-
+    // didn't check cpu temp
     private String checkCpuTemperature() {
         try {
             Process process = Runtime.getRuntime().exec("cat /sys/class/thermal/thermal_zone0/temp");
@@ -55,8 +55,9 @@ public class CpuTest implements Test {
         return "CPU Temperature: Not Available";
     }
 
+    // This API requires Android N (Nougat) or higher.
+    // check cpu temp
     private String checkCpuTemperature(Context context) {
-        // This API requires Android N (Nougat) or higher.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             return "CPU Temperature: Not Available (Requires Android 7.0+)";
         }

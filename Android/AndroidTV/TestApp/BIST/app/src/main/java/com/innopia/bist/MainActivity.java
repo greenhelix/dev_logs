@@ -106,7 +106,8 @@ public class MainActivity extends AppCompatActivity  {
         ivEthStatus = findViewById(R.id.iv_ethernet_status);
         tvLogWindow = findViewById(R.id.text_log_window);
         svLog = findViewById(R.id.log_scroll_view);
-        TextView mText1 = findViewById(R.id.text1);
+        TextView tvInfo1 = findViewById(R.id.text_info_1);
+        TextView tvInfo2 = findViewById(R.id.text_info_2);
 
         Button btnWifiTest = findViewById(R.id.button_wifi_test);
         btnWifiTest.setOnClickListener(v -> showTestFragment(WifiTestFragment.newInstance()));
@@ -126,7 +127,12 @@ public class MainActivity extends AppCompatActivity  {
         btnMemoryTest.setOnClickListener(v -> showTestFragment(MemoryTestFragment.newInstance()));
         Button btnUsbTest = findViewById(R.id.button_usb_test);
         btnUsbTest.setOnClickListener(v -> showTestFragment(UsbTestFragment.newInstance()));
+
+
         Button btnTest = findViewById(R.id.button_factory_reset_test);
+        btnTest.setOnClickListener(v -> {
+            mainViewModel.appendLog(TAG, "!!!!!!!!!!!!! FACTORY RESET START !!!!!!!!!!!!!\n!!!!!!!!!!!!! FACTORY RESET START !!!!!!!!!!!!!\n!!!!!!!!!!!!! FACTORY RESET START !!!!!!!!!!!!!");
+        });
         Button btnUninstall = findViewById(R.id.button_uninstall);
         btnUninstall.setOnClickListener(v -> {
             mainViewModel.appendLog(TAG, "Uninstall button clicked. Requesting uninstall to BIST Service.");
@@ -134,7 +140,9 @@ public class MainActivity extends AppCompatActivity  {
             sendBroadcast(intent);
             finish();
         });
-        mainViewModel.deviceInfoLiveData.observe(this, mText1::setText);
+
+        mainViewModel.deviceInfoLiveData.observe(this, tvInfo1::setText);
+        mainViewModel.deviceInfoLiveData.observe(this, tvInfo2::setText);
     }
 
     private void setupObservers() {
