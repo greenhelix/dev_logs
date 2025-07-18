@@ -2,7 +2,7 @@ package com.innopia.bist.viewmodel;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
-import com.innopia.bist.model.test.wifi.WifiTest;
+import com.innopia.bist.test.WifiTest;
 
 public class WifiTestViewModel extends BaseTestViewModel {
     private static final String TAG = "WifiTestViewModel";

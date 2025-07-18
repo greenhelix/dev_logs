@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- 상태: 포커스를 받았을 때 -->
     <item android:state_focused="true"
         android:drawable="@color/item_background_focused" />
 
-    <!-- 기본 상태 (아무 상태에도 해당하지 않을 때) -->
     <item android:drawable="@color/item_background_default" />
 
 </selector>

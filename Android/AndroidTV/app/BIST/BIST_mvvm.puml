@@ -1,0 +1,270 @@
+@startuml
+
+title BIST_Service
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+class "BluetoothTestFragment" {
+  - BluetoothTestViewModelFactory()
+  - newInstance()
+  - onServiceConnected()
+  - onServiceDisconnected()
+  - openAddAccessoryScreen()
+  - showConnectedDevicesOrScan()
+  - showDeviceSelectionDialog()
+  - updateConnectedDevicesCache()
+  - updateConnectionStatus()
+}
+
+class "BluetoothTestViewModelFactory" {
+  - BluetoothTestViewModelFactory()
+}
+
+class "CpuTestFragment" {
+  - CpuTestViewModelFactory()
+  - newInstance()
+}
+
+class "CpuTestViewModelFactory" {
+  - CpuTestViewModelFactory()
+}
+
+class "EthernetTestFragment" {
+  - newInstance()
+}
+
+class "FactoryResetTestFragment" {
+  - newInstance()
+}
+
+class "HdmiTestFragment" {
+  - newInstance()
+}
+
+class "MainActivity" {
+  - checkAndLogBistServiceStatus()
+  - checkAndRequestPermissions()
+  - onReceive()
+  - setupObservers()
+  - setupViews()
+  - showTestFragment()
+  - updateStatusIcon()
+}
+
+class "MemoryTestFragment" {
+  - MemoryTestViewModelFactory()
+  - newInstance()
+}
+
+class "MemoryTestViewModelFactory" {
+  - MemoryTestViewModelFactory()
+}
+
+class "RcuTestFragment" {
+  - newInstance()
+}
+
+class "UsbTestFragment" {
+  - newInstance()
+}
+
+class "VideoTestFragment" {
+  - newInstance()
+}
+
+class "WifiTestFragment" {
+  - WifiTestViewModelFactory()
+  - newInstance()
+}
+
+class "WifiTestViewModelFactory" {
+  - WifiTestViewModelFactory()
+}
+
+class "BaseTestViewModel" {
+  - BaseTestViewModel()
+  - startAutoTest()
+  - startManualTest()
+}
+
+class "BluetoothTestViewModel" {
+  - BluetoothTestViewModel()
+  - getTag()
+}
+
+class "CpuTestViewModel" {
+  - CpuTestViewModel()
+  - getTag()
+}
+
+class "EthernetTestViewModel" {
+  - EthernetTestViewModel()
+  - getTag()
+}
+
+class "HdmiTestViewModel" {
+  - HdmiTestViewModel()
+  - getTag()
+}
+
+class "MainViewModel" {
+  - MainViewModel()
+  - appendLog()
+  - resetAllTests()
+  - saveLogsToFile()
+  - setDeviceInfo()
+  - updateTestStatus()
+}
+
+class "MemoryTestViewModel" {
+  - MemoryTestViewModel()
+  - getTag()
+}
+
+class "RcuTestViewModel" {
+  - RcuTestViewModel()
+  - getTag()
+}
+
+class "UsbTestViewModel" {
+  - UsbTestViewModel()
+  - getTag()
+}
+
+class "VideoTestViewModel" {
+  - VideoTestViewModel()
+  - getTag()
+}
+
+class "WifiTestViewModel" {
+  - WifiTestViewModel()
+  - getTag()
+}
+
+class "LogRepository" {
+  - LogRepository()
+  - addLog()
+  - clearLogs()
+  - getInstance()
+  - getLogs()
+  - saveToFile()
+}
+
+class "ServiceUtils" {
+  - isServiceRunning()
+}
+
+class "SysInfo" {
+  - getSystemInfo()
+  - getSystemProperty()
+}
+
+class "UsbDetachReceiver" {
+  - onReceive()
+}
+
+interface "Test" {
+}
+
+class "BluetoothTest" {
+  - runAutoTest()
+  - runManualTest()
+  - testSppConnection()
+}
+
+class "CpuTest" {
+  - checkCpuSpeed()
+  - checkCpuTemperature()
+  - runAutoTest()
+  - runManualTest()
+}
+
+class "EthernetTest" {
+  - runAutoTest()
+  - runManualTest()
+}
+
+class "FactoryResetTest" {
+  - runAutoTest()
+  - runManualTest()
+}
+
+class "HdmiTest" {
+  - runAutoTest()
+  - runManualTest()
+}
+
+class "MemoryTest" {
+  - checkMemoryUsage()
+  - getMemoryInfo()
+  - parseSpeed()
+  - runAutoTest()
+  - runManualTest()
+  - runSpeedTest()
+}
+
+class "RcuTest" {
+  - runAutoTest()
+  - runManualTest()
+}
+
+class "UsbTest" {
+  - runAutoTest()
+  - runManualTest()
+}
+
+class "VideoTest" {
+  - runAutoTest()
+  - runManualTest()
+}
+
+class "WifiTest" {
+  - checkCurrentConnection()
+  - isInternetAvailable()
+  - runAutoTest()
+  - runManualTest()
+}
+
+' --- 관계 정의 ---
+
+BluetoothTestFragment ..> MainViewModel : uses
+BluetoothTestViewModelFactory ..> MainViewModel : uses
+CpuTestFragment ..> MainViewModel : uses
+CpuTestViewModelFactory ..> MainViewModel : uses
+MemoryTestFragment ..> MainViewModel : uses
+MemoryTestViewModelFactory ..> MainViewModel : uses
+WifiTestFragment ..> MainViewModel : uses
+WifiTestViewModelFactory ..> MainViewModel : uses
+BaseTestViewModel ..> MainViewModel : uses
+BaseTestViewModel ..> Test : uses
+BaseTestViewModel <|-- BluetoothTestViewModel
+BluetoothTestViewModel ..> MainViewModel : uses
+BaseTestViewModel <|-- CpuTestViewModel
+CpuTestViewModel ..> MainViewModel : uses
+BaseTestViewModel <|-- EthernetTestViewModel
+EthernetTestViewModel ..> MainViewModel : uses
+BaseTestViewModel <|-- HdmiTestViewModel
+HdmiTestViewModel ..> MainViewModel : uses
+BaseTestViewModel <|-- MemoryTestViewModel
+MemoryTestViewModel ..> MainViewModel : uses
+BaseTestViewModel <|-- RcuTestViewModel
+RcuTestViewModel ..> MainViewModel : uses
+BaseTestViewModel <|-- UsbTestViewModel
+UsbTestViewModel ..> MainViewModel : uses
+BaseTestViewModel <|-- VideoTestViewModel
+VideoTestViewModel ..> MainViewModel : uses
+BaseTestViewModel <|-- WifiTestViewModel
+WifiTestViewModel ..> MainViewModel : uses
+Test <|.. BluetoothTest
+Test <|.. CpuTest
+Test <|.. EthernetTest
+Test <|.. FactoryResetTest
+Test <|.. HdmiTest
+Test <|.. MemoryTest
+Test <|.. RcuTest
+Test <|.. UsbTest
+Test <|.. VideoTest
+Test <|.. WifiTest
+
+@enduml

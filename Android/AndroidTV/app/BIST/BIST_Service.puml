@@ -1,0 +1,30 @@
+@startuml
+
+title BIST_Service
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+class BISTService {
+  - checkBistAppStatusAndUninstall()
+  - createNotificationChannel()
+  - findAndInstallBistApk()
+  - getUsbStoragePath()
+  - handleInstallComplete()
+  - installApk()
+  - isAppInForeground()
+  - isPackageInstalled()
+  - launchBistApp()
+  - onReceive()
+  - onStartCommand()
+  - uninstallPackage()
+}
+
+class BootCompletedReceiver {
+  - onReceive()
+}
+
+' --- 관계 정의 ---
+
+
+@enduml

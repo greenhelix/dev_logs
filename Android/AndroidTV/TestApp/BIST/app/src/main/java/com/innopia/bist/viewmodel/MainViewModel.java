@@ -30,39 +30,29 @@ public class MainViewModel extends ViewModel {
         for (TestType type : TestType.values()) {
             initialStatuses.put(type, Status.OFF);
         }
-        _testStatusesLiveData.setValue(initialStatuses); // 앱 시작 시 초기값 설정은 메인 스레드이므로 setValue 사용 가능
+        _testStatusesLiveData.setValue(initialStatuses);
     }
 
     public void setDeviceInfo(String info) {
         _deviceInfoLiveData.postValue(info);
     }
 
-    /**
-     * 로그를 추가하고 LiveData를 업데이트합니다.
-     * 백그라운드 스레드에서 호출될 수 있으므로 postValue()를 사용합니다.
-     */
     public void appendLog(String tag, String message) {
         String timestamp = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault()).format(new Date());
         String logMessage = String.format("[%s] %s: %s", timestamp, tag, message);
-
         logRepository.addLog(logMessage);
-        _logLiveData.postValue(logRepository.getLogs()); // setValue -> postValue 변경
+        _logLiveData.postValue(logRepository.getLogs());
     }
 
-    /**
-     * 테스트 상태를 업데이트합니다.
-     * 백그라운드 스레드에서 호출될 수 있으므로 postValue()를 사용합니다.
-     */
     public void updateTestStatus(TestType test, Status status) {
         Map<TestType, Status> currentStatuses = _testStatusesLiveData.getValue();
         if (currentStatuses != null) {
             currentStatuses.put(test, status);
-            _testStatusesLiveData.postValue(currentStatuses); // setValue -> postValue 변경
+            _testStatusesLiveData.postValue(currentStatuses);
         }
     }
 
     public void saveLogsToFile() {
-        // 이 작업은 UI 스레드에서 시작될 수 있지만, 로그 추가는 스레드 안전하게 처리
         appendLog("MainViewModel", "Logs saved to file.");
         logRepository.saveToFile();
     }

@@ -4,7 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 
-import com.innopia.bist.model.test.usb.UsbTest;
+import com.innopia.bist.test.UsbTest;
 
 public class UsbTestViewModel extends BaseTestViewModel {
     private static final String TAG = "UsbTestViewModel";

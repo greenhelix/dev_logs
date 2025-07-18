@@ -2,7 +2,7 @@ package com.innopia.bist.viewmodel;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
-import com.innopia.bist.model.test.memory.MemoryTest;
+import com.innopia.bist.test.MemoryTest;
 
 public class MemoryTestViewModel extends BaseTestViewModel {
     private static final String TAG = "MemoryTestViewModel";

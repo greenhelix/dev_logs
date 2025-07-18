@@ -32,14 +32,36 @@
             />
     </LinearLayout>
 
+
+
     <TextView
         android:id="@+id/text_bluetooth_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="true"
+        android:padding="8dp"
+        android:text="Device Info: (Select a device to see details)"
         android:background="@drawable/focusable_item_border"
         android:textColor="#FFFFFF"
-        android:text="Press 'Scan' to find Bluetooth networks."
+        />
+
+    <TextView
+        android:id="@+id/text_selected_device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Selected for Test: None"
+        android:background="@drawable/focusable_item_border"
+        android:textColor="#FFFFFF"
+        />
+
+    <TextView
+        android:id="@+id/text_bluetooth_test_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Test Result: PENDING"
+        android:background="@drawable/focusable_item_border"
+        android:textColor="#FFFFFF"
         />
 
 </LinearLayout>
