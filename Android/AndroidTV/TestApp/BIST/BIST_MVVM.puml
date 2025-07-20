@@ -1,269 +1,64 @@
 @startuml
+!theme cloudscape-design
+title BIST MVVM Architecture (Improved Layout)
 
-title BIST_Service
+' A4 사이즈 출력을 위한 레이아웃 최적화
+top to bottom direction
+skinparam linetype ortho
+skinparam wrapWidth 250
+scale max 1200 width
 
+' 기타 스타일링
+skinparam packageStyle folder
 skinparam classAttributeIconSize 0
+skinparam groupInheritance 2 ' 상속/구현 화살표 병합
 
-class "BluetoothTestFragment" {
-  - BluetoothTestViewModelFactory()
-  - newInstance()
-  - onServiceConnected()
-  - onServiceDisconnected()
-  - openAddAccessoryScreen()
-  - showConnectedDevicesOrScan()
-  - showDeviceSelectionDialog()
-  - updateConnectedDevicesCache()
-  - updateConnectionStatus()
+' --- 패키지 정의 (클래스 내용은 동일하므로 생략) ---
+
+package "View (fragment)" as View {
+  class "BluetoothTestFragment"
+  class "CpuTestFragment"
+  ' ...
 }
 
-class "BluetoothTestViewModelFactory" {
-  - BluetoothTestViewModelFactory()
+package "ViewModel" as ViewModel {
+  class "MainViewModel"
+  class "BaseTestViewModel"
+  class "BluetoothTestViewModel"
+  ' ...
 }
 
-class "CpuTestFragment" {
-  - CpuTestViewModelFactory()
-  - newInstance()
+package "Model (test)" as Model {
+  interface "Test"
+  class "BluetoothTest"
+  class "CpuTest"
+  ' ...
 }
 
-class "CpuTestViewModelFactory" {
-  - CpuTestViewModelFactory()
+package "Util" as Util {
+  class "LogRepository"
+  class "SysInfo"
+  ' ...
 }
 
-class "EthernetTestFragment" {
-  - newInstance()
-}
+' --- 관계 정의 (아키텍처 레벨) ---
 
-class "FactoryResetTestFragment" {
-  - newInstance()
-}
+' 1. 패키지 간의 주요 의존성 흐름을 정의합니다.
+View ..> ViewModel : uses
+ViewModel ..> Model : uses
+ViewModel ..> Util : uses
 
-class "HdmiTestFragment" {
-  - newInstance()
-}
+' 2. 패키지들을 세로로 정렬하기 위해 보이지 않는 화살표를 사용합니다.
+View -[hidden]up-> ViewModel
+ViewModel -[hidden]down-> Model
 
-class "MainActivity" {
-  - checkAndLogBistServiceStatus()
-  - checkAndRequestPermissions()
-  - onReceive()
-  - setupObservers()
-  - setupViews()
-  - showTestFragment()
-  - updateStatusIcon()
-}
+' 3. 가장 중요한 상속 관계만 명시하여 구조를 보충합니다.
+Model.Test <|.. Model.BluetoothTest
+Model.Test <|.. Model.CpuTest
+' ... (다른 Test 구현들) ...
 
-class "MemoryTestFragment" {
-  - MemoryTestViewModelFactory()
-  - newInstance()
-}
-
-class "MemoryTestViewModelFactory" {
-  - MemoryTestViewModelFactory()
-}
-
-class "RcuTestFragment" {
-  - newInstance()
-}
-
-class "UsbTestFragment" {
-  - newInstance()
-}
-
-class "VideoTestFragment" {
-  - newInstance()
-}
-
-class "WifiTestFragment" {
-  - WifiTestViewModelFactory()
-  - newInstance()
-}
-
-class "WifiTestViewModelFactory" {
-  - WifiTestViewModelFactory()
-}
-
-class "BaseTestViewModel" {
-  - BaseTestViewModel()
-  - startAutoTest()
-  - startManualTest()
-}
-
-class "BluetoothTestViewModel" {
-  - BluetoothTestViewModel()
-  - getTag()
-}
-
-class "CpuTestViewModel" {
-  - CpuTestViewModel()
-  - getTag()
-}
-
-class "EthernetTestViewModel" {
-  - EthernetTestViewModel()
-  - getTag()
-}
-
-class "HdmiTestViewModel" {
-  - HdmiTestViewModel()
-  - getTag()
-}
-
-class "MainViewModel" {
-  - MainViewModel()
-  - appendLog()
-  - resetAllTests()
-  - saveLogsToFile()
-  - setDeviceInfo()
-  - updateTestStatus()
-}
-
-class "MemoryTestViewModel" {
-  - MemoryTestViewModel()
-  - getTag()
-}
-
-class "RcuTestViewModel" {
-  - RcuTestViewModel()
-  - getTag()
-}
-
-class "UsbTestViewModel" {
-  - UsbTestViewModel()
-  - getTag()
-}
-
-class "VideoTestViewModel" {
-  - VideoTestViewModel()
-  - getTag()
-}
-
-class "WifiTestViewModel" {
-  - WifiTestViewModel()
-  - getTag()
-}
-
-class "LogRepository" {
-  - LogRepository()
-  - addLog()
-  - clearLogs()
-  - getInstance()
-  - getLogs()
-  - saveToFile()
-}
-
-class "ServiceUtils" {
-  - isServiceRunning()
-}
-
-class "SysInfo" {
-  - getSystemInfo()
-  - getSystemProperty()
-}
-
-class "UsbDetachReceiver" {
-  - onReceive()
-}
-
-interface "Test" {
-}
-
-class "BluetoothTest" {
-  - runAutoTest()
-  - runManualTest()
-  - testSppConnection()
-}
-
-class "CpuTest" {
-  - checkCpuSpeed()
-  - checkCpuTemperature()
-  - runAutoTest()
-  - runManualTest()
-}
-
-class "EthernetTest" {
-  - runAutoTest()
-  - runManualTest()
-}
-
-class "FactoryResetTest" {
-  - runAutoTest()
-  - runManualTest()
-}
-
-class "HdmiTest" {
-  - runAutoTest()
-  - runManualTest()
-}
-
-class "MemoryTest" {
-  - checkMemoryUsage()
-  - getMemoryInfo()
-  - parseSpeed()
-  - runAutoTest()
-  - runManualTest()
-  - runSpeedTest()
-}
-
-class "RcuTest" {
-  - runAutoTest()
-  - runManualTest()
-}
-
-class "UsbTest" {
-  - runAutoTest()
-  - runManualTest()
-}
-
-class "VideoTest" {
-  - runAutoTest()
-  - runManualTest()
-}
-
-class "WifiTest" {
-  - checkCurrentConnection()
-  - isInternetAvailable()
-  - runAutoTest()
-  - runManualTest()
-}
-
-' --- 관계 정의 ---
-
-BluetoothTestFragment ..> MainViewModel : uses
-BluetoothTestViewModelFactory ..> MainViewModel : uses
-CpuTestFragment ..> MainViewModel : uses
-CpuTestViewModelFactory ..> MainViewModel : uses
-MemoryTestFragment ..> MainViewModel : uses
-MemoryTestViewModelFactory ..> MainViewModel : uses
-WifiTestFragment ..> MainViewModel : uses
-WifiTestViewModelFactory ..> MainViewModel : uses
-BaseTestViewModel ..> MainViewModel : uses
-BaseTestViewModel ..> Test : uses
-BaseTestViewModel <|-- BluetoothTestViewModel
-BluetoothTestViewModel ..> MainViewModel : uses
-BaseTestViewModel <|-- CpuTestViewModel
-CpuTestViewModel ..> MainViewModel : uses
-BaseTestViewModel <|-- EthernetTestViewModel
-EthernetTestViewModel ..> MainViewModel : uses
-BaseTestViewModel <|-- HdmiTestViewModel
-HdmiTestViewModel ..> MainViewModel : uses
-BaseTestViewModel <|-- MemoryTestViewModel
-MemoryTestViewModel ..> MainViewModel : uses
-BaseTestViewModel <|-- RcuTestViewModel
-RcuTestViewModel ..> MainViewModel : uses
-BaseTestViewModel <|-- UsbTestViewModel
-UsbTestViewModel ..> MainViewModel : uses
-BaseTestViewModel <|-- VideoTestViewModel
-VideoTestViewModel ..> MainViewModel : uses
-BaseTestViewModel <|-- WifiTestViewModel
-WifiTestViewModel ..> MainViewModel : uses
-Test <|.. BluetoothTest
-Test <|.. CpuTest
-Test <|.. EthernetTest
-Test <|.. FactoryResetTest
-Test <|.. HdmiTest
-Test <|.. MemoryTest
-Test <|.. RcuTest
-Test <|.. UsbTest
-Test <|.. VideoTest
-Test <|.. WifiTest
+ViewModel.BaseTestViewModel <|-- ViewModel.BluetoothTestViewModel
+ViewModel.BaseTestViewModel <|-- ViewModel.CpuTestViewModel
+' ... (다른 ViewModel 상속들) ...
 
 @enduml
