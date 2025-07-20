@@ -18,7 +18,7 @@
    1. 설치안했다면 설치한다. 
        > pip install pyinstaller
 
-   > pyinstaller --onefile --windowed --name "BIST_Diagram_Maker" diagram_generator.py
+   > pyinstaller --onefile --windowed --name "BIST_Diagram_Maker" diagram_generator.pyw
 
 4.  이 installer 을 돌리면 dist 폴더가 생성되고 거기안에 있는 exe를 배포용으로 사용하면 된다. 
 

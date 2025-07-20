@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['diagram_generator_code.py'],
+    ['diagram_generator.pyw'],
     pathex=[],
     binaries=[],
     datas=[],
