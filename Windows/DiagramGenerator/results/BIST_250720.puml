@@ -1,266 +1,97 @@
 @startuml
 !theme cloudscape-design
 title BIST
-
-' A4 사이즈 출력을 위한 레이아웃 최적화
 top to bottom direction
 skinparam linetype ortho
-skinparam wrapWidth 200
+skinparam wrapWidth 250
 scale max 1200 width
-
-' 기타 스타일링
 skinparam packageStyle folder
 skinparam classAttributeIconSize 0
-
-package "default" {
-  class "MainActivity" {
-    - checkAndLogBistServiceStatus()
-    - checkAndRequestPermissions()
-    - onReceive()
-    - setupObservers()
-    - setupViews()
-    - showTestFragment()
-    - updateStatusIcon()
-  }
+skinparam groupInheritance 2
+package "App (default)" as App {
+  class "MainActivity"
 }
 
-package "fragment" {
-  class "BluetoothTestFragment" {
-    - BluetoothTestViewModelFactory()
-    - checkPermissionAndScan()
-    - newInstance()
-    - observeViewModel()
-    - openAddAccessoryScreen()
-    - showDeviceSelectionDialog()
-  }
-  class "BluetoothTestViewModelFactory" {
-    - BluetoothTestViewModelFactory()
-  }
-  class "CpuTestFragment" {
-    - CpuTestViewModelFactory()
-    - newInstance()
-  }
-  class "CpuTestViewModelFactory" {
-    - CpuTestViewModelFactory()
-  }
-  class "EthernetTestFragment" {
-    - newInstance()
-  }
-  class "HdmiTestFragment" {
-    - newInstance()
-  }
-  class "MemoryTestFragment" {
-    - MemoryTestViewModelFactory()
-    - newInstance()
-  }
-  class "MemoryTestViewModelFactory" {
-    - MemoryTestViewModelFactory()
-  }
-  class "RcuTestFragment" {
-    - newInstance()
-  }
-  class "UsbTestFragment" {
-    - UsbTestViewModelFactory()
-    - newInstance()
-  }
-  class "UsbTestViewModelFactory" {
-    - UsbTestViewModelFactory()
-  }
-  class "VideoTestFragment" {
-    - newInstance()
-  }
-  class "WifiTestFragment" {
-    - WifiTestViewModelFactory()
-    - newInstance()
-  }
-  class "WifiTestViewModelFactory" {
-    - WifiTestViewModelFactory()
-  }
+package "Model (test)" as Model {
+  class "BluetoothTest"
+  class "CpuTest"
+  class "EthernetTest"
+  class "HdmiTest"
+  class "MemoryTest"
+  class "RcuTest"
+  interface "Test"
+  class "UsbTest"
+  class "VideoTest"
+  class "WifiTest"
 }
 
-package "test" {
-  class "BluetoothTest" {
-    - findConnectedDevices()
-    - getBondStateString()
-    - getDeviceInfo()
-    - getDeviceTypeString()
-    - onReceive()
-    - onServiceConnected()
-    - onServiceDisconnected()
-    - runManualTest()
-    - testConnection()
-  }
-  class "CpuTest" {
-    - checkCpuSpeed()
-    - checkCpuTemperature()
-    - runManualTest()
-  }
-  class "EthernetTest" {
-    - runManualTest()
-  }
-  class "HdmiTest" {
-    - runManualTest()
-  }
-  class "MemoryTest" {
-    - checkMemoryUsage()
-    - getMemoryInfo()
-    - parseSpeed()
-    - runManualTest()
-    - runSpeedTest()
-  }
-  class "RcuTest" {
-    - runManualTest()
-  }
-  interface "Test" {
-  }
-  class "UsbTest" {
-    - getUsbDrive()
-    - performSpeedTest()
-    - runManualTest()
-  }
-  class "VideoTest" {
-    - runManualTest()
-  }
-  class "WifiTest" {
-    - checkCurrentConnection()
-    - isInternetAvailable()
-    - runManualTest()
-  }
+package "Util (util)" as Util {
+  class "LogRepository"
+  class "ServiceUtils"
+  class "SysInfo"
+  class "UsbDetachReceiver"
 }
 
-package "util" {
-  class "LogRepository" {
-    - LogRepository()
-    - addLog()
-    - clearLogs()
-    - getInstance()
-    - getLogs()
-    - saveToFile()
-  }
-  class "ServiceUtils" {
-    - isServiceRunning()
-  }
-  class "SysInfo" {
-    - getSystemInfo()
-    - getSystemProperty()
-  }
-  class "UsbDetachReceiver" {
-    - onReceive()
-  }
+package "View (fragment)" as View {
+  class "BluetoothTestFragment"
+  class "BluetoothTestViewModelFactory"
+  class "CpuTestFragment"
+  class "CpuTestViewModelFactory"
+  class "EthernetTestFragment"
+  class "HdmiTestFragment"
+  class "MemoryTestFragment"
+  class "MemoryTestViewModelFactory"
+  class "RcuTestFragment"
+  class "UsbTestFragment"
+  class "UsbTestViewModelFactory"
+  class "VideoTestFragment"
+  class "WifiTestFragment"
+  class "WifiTestViewModelFactory"
 }
 
-package "viewmodel" {
-  class "BaseTestViewModel" {
-    - BaseTestViewModel()
-    - getTestModel()
-    - getTestResult()
-    - startManualTest()
-  }
-  class "BluetoothTestViewModel" {
-    - BluetoothTestViewModel()
-    - checkForConnectedDevicesOnStart()
-    - getTag()
-    - onDeviceSelected()
-    - onDialogShown()
-    - onNavigatedToSettings()
-    - onScanClicked()
-    - startManualTest()
-  }
-  class "CpuTestViewModel" {
-    - CpuTestViewModel()
-    - getTag()
-  }
-  class "EthernetTestViewModel" {
-    - EthernetTestViewModel()
-    - getTag()
-  }
-  class "HdmiTestViewModel" {
-    - HdmiTestViewModel()
-    - getTag()
-  }
-  class "MainViewModel" {
-    - MainViewModel()
-    - appendLog()
-    - resetAllTests()
-    - saveLogsToFile()
-    - setDeviceInfo()
-    - updateTestStatus()
-  }
-  class "MemoryTestViewModel" {
-    - MemoryTestViewModel()
-    - getTag()
-  }
-  class "RcuTestViewModel" {
-    - RcuTestViewModel()
-    - getTag()
-  }
-  class "UsbTestViewModel" {
-    - UsbTestViewModel()
-    - getTag()
-  }
-  class "VideoTestViewModel" {
-    - VideoTestViewModel()
-    - getTag()
-  }
-  class "WifiTestViewModel" {
-    - WifiTestViewModel()
-    - getTag()
-  }
+package "ViewModel (viewmodel)" as ViewModel {
+  class "BaseTestViewModel"
+  class "BluetoothTestViewModel"
+  class "CpuTestViewModel"
+  class "EthernetTestViewModel"
+  class "HdmiTestViewModel"
+  class "MainViewModel"
+  class "MemoryTestViewModel"
+  class "RcuTestViewModel"
+  class "UsbTestViewModel"
+  class "VideoTestViewModel"
+  class "WifiTestViewModel"
 }
 
-' --- 관계 정의 ---
+' --- Architecture Level Relations ---
+View ..> ViewModel : uses
+ViewModel ..> Model : uses
+ViewModel ..> Util : uses
+App ..> ViewModel : uses
 
-MainActivity *-- MainViewModel
-BluetoothTestFragment *-- BluetoothTestViewModelFactory
-BluetoothTestFragment *-- MainViewModel
-BluetoothTestFragment *-- BluetoothTestViewModel
-BluetoothTestViewModelFactory *-- MainViewModel
-CpuTestFragment *-- CpuTestViewModelFactory
-CpuTestFragment *-- MainViewModel
-CpuTestFragment *-- CpuTestViewModel
-CpuTestViewModelFactory *-- MainViewModel
-HdmiTestFragment *-- MainViewModel
-HdmiTestFragment *-- HdmiTestViewModel
-MemoryTestFragment *-- MainViewModel
-MemoryTestFragment *-- MemoryTestViewModelFactory
-MemoryTestFragment *-- MemoryTestViewModel
-MemoryTestViewModelFactory *-- MainViewModel
-UsbTestFragment *-- MainViewModel
-UsbTestFragment *-- UsbTestViewModel
-UsbTestViewModelFactory *-- MainViewModel
-WifiTestFragment *-- WifiTestViewModel
-WifiTestFragment *-- MainViewModel
-WifiTestViewModelFactory *-- MainViewModel
-Test <|.. BluetoothTest
-Test <|.. CpuTest
-Test <|.. EthernetTest
-Test <|.. HdmiTest
-Test <|.. MemoryTest
-Test <|.. RcuTest
-Test <|.. UsbTest
-Test <|.. VideoTest
-Test <|.. WifiTest
-BaseTestViewModel *-- MainViewModel
-BaseTestViewModel *-- Test
-BaseTestViewModel <|-- BluetoothTestViewModel
-BluetoothTestViewModel *-- BluetoothTest
-BluetoothTestViewModel ..> MainViewModel
-BaseTestViewModel <|-- CpuTestViewModel
-CpuTestViewModel ..> MainViewModel
-BaseTestViewModel <|-- EthernetTestViewModel
-EthernetTestViewModel ..> MainViewModel
-BaseTestViewModel <|-- HdmiTestViewModel
-HdmiTestViewModel ..> MainViewModel
-MainViewModel *-- LogRepository
-BaseTestViewModel <|-- MemoryTestViewModel
-MemoryTestViewModel ..> MainViewModel
-BaseTestViewModel <|-- RcuTestViewModel
-RcuTestViewModel ..> MainViewModel
-BaseTestViewModel <|-- UsbTestViewModel
-UsbTestViewModel ..> MainViewModel
-BaseTestViewModel <|-- VideoTestViewModel
-VideoTestViewModel ..> MainViewModel
-BaseTestViewModel <|-- WifiTestViewModel
-WifiTestViewModel ..> MainViewModel
+' Vertical Layout Alignment
+View -[hidden]down-> ViewModel
+ViewModel -[hidden]down-> Model
+Model -[hidden]down- Util
+
+' --- Key Inheritance & Implementation ---
+Model.Test <|.. Model.BluetoothTest
+Model.Test <|.. Model.CpuTest
+Model.Test <|.. Model.EthernetTest
+Model.Test <|.. Model.HdmiTest
+Model.Test <|.. Model.MemoryTest
+Model.Test <|.. Model.RcuTest
+Model.Test <|.. Model.UsbTest
+Model.Test <|.. Model.VideoTest
+Model.Test <|.. Model.WifiTest
+ViewModel.BaseTestViewModel <|-- ViewModel.BluetoothTestViewModel
+ViewModel.BaseTestViewModel <|-- ViewModel.CpuTestViewModel
+ViewModel.BaseTestViewModel <|-- ViewModel.EthernetTestViewModel
+ViewModel.BaseTestViewModel <|-- ViewModel.HdmiTestViewModel
+ViewModel.BaseTestViewModel <|-- ViewModel.MemoryTestViewModel
+ViewModel.BaseTestViewModel <|-- ViewModel.RcuTestViewModel
+ViewModel.BaseTestViewModel <|-- ViewModel.UsbTestViewModel
+ViewModel.BaseTestViewModel <|-- ViewModel.VideoTestViewModel
+ViewModel.BaseTestViewModel <|-- ViewModel.WifiTestViewModel
 
 @enduml
