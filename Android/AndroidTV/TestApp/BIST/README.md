@@ -38,3 +38,9 @@ ATest에 링크되는 부분을 변경해주면 된다.
 ## Wifi SSID 정보 가져오기 
 - 권한 처리를 허용을 안해주면 SSID 정보를 가져오지 못한다. 
 - WifiManager.getConnectionInfo().getSSID() 메서드는 안드로이드 8.1 (API 27)부터 사용자의 위치 정보 보호를 위해 ACCESS_FINE_LOCATION 권한이 필요하도록 변경되었습니다.
+
+## HDMI 정보 가져오기 
+- sign 앱이 아니 정보를 가져올 수 없다. 
+- android.permission.HDMI_CEC 권한이 필요합니다. 이 권한은 시스템 앱 또는 플랫폼 키로 서명된 앱에만 부여되는 'signature' 수준의 보호 권한입니다.
+- 따라서 ADB 명령어로 숨겨진 API 접근을 임시로 허용하더라도, 일반 앱은 HDMI_CEC 권한이 없기 때문에 HdmiControlManager의 주요 메서드를 호출하는 시점에서 SecurityException (보안 예외)이 발생하여 결국 기능이 동작하지 않습니다.
+- HDMI 기능테스트는 sign app 으로 빌드해서 해야함
