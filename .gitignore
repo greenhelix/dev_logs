@@ -24,3 +24,8 @@ Android/AndroidTV/TestApp/BIST/local.properties
 Android/AndroidTV/TestApp/BIST/local.properties
 /Android/AndroidTV/TestApp/BIST/.idea
 /Android/AndroidTV/app/BIST/.idea
+/Android/AndroidTV/app/BIST/app/build
+/Android/AndroidTV/app/BIST/.gradle/8.10.2
+/Android/AndroidTV/app/BIST/.gradle
+/Android/AndroidTV/TestApp/BIST/build
+/Android/AndroidTV/TestApp/BIST/gradle
