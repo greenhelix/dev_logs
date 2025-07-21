@@ -23,6 +23,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.innopia.bist.R;
+import com.innopia.bist.util.Status;
+import com.innopia.bist.util.TestType;
 import com.innopia.bist.viewmodel.BluetoothTestViewModel;
 import com.innopia.bist.viewmodel.MainViewModel;
 import java.util.List;
@@ -143,6 +145,12 @@ public class BluetoothTestFragment extends Fragment {
                 openAddAccessoryScreen();
                 bluetoothTestViewModel.onNavigatedToSettings(); // Reset the trigger.
             }
+        });
+
+        bluetoothTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result ->{
+            mainViewModel.appendLog(getTag(), result);
+            boolean isConnected = result != null && !result.contains("not connected");
+            mainViewModel.updateTestStatus(TestType.BLUETOOTH, isConnected? Status.ON : Status.OFF);
         });
     }
 

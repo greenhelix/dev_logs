@@ -44,3 +44,19 @@ ATest에 링크되는 부분을 변경해주면 된다.
 - android.permission.HDMI_CEC 권한이 필요합니다. 이 권한은 시스템 앱 또는 플랫폼 키로 서명된 앱에만 부여되는 'signature' 수준의 보호 권한입니다.
 - 따라서 ADB 명령어로 숨겨진 API 접근을 임시로 허용하더라도, 일반 앱은 HDMI_CEC 권한이 없기 때문에 HdmiControlManager의 주요 메서드를 호출하는 시점에서 SecurityException (보안 예외)이 발생하여 결국 기능이 동작하지 않습니다.
 - HDMI 기능테스트는 sign app 으로 빌드해서 해야함
+- HdmiDeviceInfo 을 통해서 정보를 가져온다. 
+  - 클래스는 다음과 같은 주요 기능을 제공합니다:
+    장치 정보:
+    getDeviceType(): 장치 유형 (예: TV, 플레이어, 오디오 시스템)을 반환합니다.
+    getLogicalAddress(): 장치의 논리 주소를 반환합니다.
+    getPhysicalAddress(): 장치의 물리적 주소를 반환합니다.
+    getDisplayName(): 장치의 표시 이름을 반환합니다.
+    getVendorId(): 장치의 벤더 ID를 반환합니다.
+    CEC 지원:
+    isCecDevice(): 장치가 CEC를 지원하는지 여부를 반환합니다.
+    getCecVersion(): 장치의 CEC 버전을 반환합니다.
+    getControlState(): 장치의 제어 상태 (예: 활성, 비활성)를 반환합니다.
+    포트 정보:
+    getPortId(): 장치가 연결된 포트 ID를 반환합니다.
+    getPortType(): 포트 유형 (예: HDMI, MHL)을 반환합니다.
+    getPortName(): 포트 이름을 반환합니다.

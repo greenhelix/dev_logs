@@ -23,7 +23,6 @@ public class HdmiTestFragment extends Fragment {
     private HdmiTestViewModel hdmiTestViewModel;
     private MainViewModel mainViewModel;
     private TextView tvHdmiInfo;
-    private Button btnHdmiTest;
 
     public static HdmiTestFragment newInstance() {
         return new HdmiTestFragment();
@@ -55,7 +54,7 @@ public class HdmiTestFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_hdmi_test, container, false);
 
         tvHdmiInfo = rootView.findViewById(R.id.text_hdmi_info);
-        btnHdmiTest = rootView.findViewById(R.id.btn_hdmi_manual_test);
+        Button btnHdmiTest = rootView.findViewById(R.id.btn_hdmi_manual_test);
 
         // Set a click listener for the test button.
         btnHdmiTest.setOnClickListener(v -> {

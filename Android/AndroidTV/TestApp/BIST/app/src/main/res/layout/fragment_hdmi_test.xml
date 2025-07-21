@@ -20,15 +20,15 @@
             android:text="Run Manual hdmi Test"
             />
 
-        <Button
-            android:id="@+id/btn_hdmi_auto_test"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/button_focus_selector"
-            android:text="Run Auto Stress Test"
-            />
+<!--        <Button-->
+<!--            android:id="@+id/btn_hdmi_auto_test"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:layout_marginStart="5dp"-->
+<!--            android:background="@drawable/button_focus_selector"-->
+<!--            android:text="Run Auto Stress Test"-->
+<!--            />-->
     </LinearLayout>
 
     <TextView

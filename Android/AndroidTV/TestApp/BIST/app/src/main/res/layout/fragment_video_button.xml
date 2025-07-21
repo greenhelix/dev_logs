@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_video_button_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/tv_video_info_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="영상 선택 후 재생됩니다."
+        android:textSize="16sp"/>
+
+    <LinearLayout
+        android:id="@+id/layout_video_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="18dp"/>
+    <!-- 동적으로 버튼 추가 -->
+
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="320dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="18dp"/>
+</LinearLayout>
