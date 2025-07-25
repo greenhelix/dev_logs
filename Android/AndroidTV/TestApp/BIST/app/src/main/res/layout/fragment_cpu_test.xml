@@ -17,8 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/button_focus_selector"
-            android:text="Run Manual CPU Test"
-            />
+            android:text="Run Manual CPU Test" />
 
         <Button
             android:id="@+id/btn_cpu_auto_test"
@@ -27,8 +26,7 @@
             android:layout_weight="1"
             android:layout_marginStart="5dp"
             android:background="@drawable/button_focus_selector"
-            android:text="Run Auto Stress Test"
-            />
+            android:text="Run Auto Stress Test" />
     </LinearLayout>
 
     <TextView
@@ -38,7 +36,5 @@
         android:focusable="true"
         android:background="@drawable/focusable_item_border"
         android:textColor="#FFFFFF"
-        android:text="Press button to start CPU test..."
-        />
-
+        android:text="Press button to start CPU test..." />
 </LinearLayout>

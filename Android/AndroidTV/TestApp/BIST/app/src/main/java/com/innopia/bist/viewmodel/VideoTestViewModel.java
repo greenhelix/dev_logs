@@ -6,18 +6,19 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.innopia.bist.test.VideoTest;
+import com.innopia.bist.util.TestType;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class VideoTestViewModel extends BaseTestViewModel {
     public final MutableLiveData<String> videoInfo = new MutableLiveData<>("wait test start");
+    private static final String TAG = "BIST_VIDEO_VM";
 
     public VideoTestViewModel(@NonNull Application application, MainViewModel mainViewModel) {
         super(application, new VideoTest(), mainViewModel);
     }
 
-    // 샘플 영상 정보 정의
     public static class VideoSample {
         private final String displayName;
         private final String fileName;
@@ -32,24 +33,21 @@ public class VideoTestViewModel extends BaseTestViewModel {
         public String getMetaInfo() { return metaInfo; }
     }
 
-    // 코덱, 화질별 샘플 영상리스트. raw에 샘플 파일 사전 추가 필요
     public List<VideoSample> getVideoSamples() {
         return Arrays.asList(
-                new VideoSample("H264/480p", "sample_h264_480p", "코덱: H264 / 해상도: 480p / 10s"),
-                new VideoSample("H265/1080p", "sample_h265_1080p", "코덱: H265 / 해상도: 1080p / 15s"),
-                new VideoSample("VP9/720p", "sample_vp9_720p", "코덱: VP9 / 해상도: 720p / 12s"),
-                new VideoSample("AV1/360p", "sample_av1_360p", "코덱: AV1 / 해상도: 360p / 10s")
-                // 파일명은 raw 폴더에 실제 파일명/확장자를 int 리소스명으로 추가 필요
+                new VideoSample("AV1/1080p", "bunny_1080_10s_5mb_av1", "H264 1080p 10s"),
+                new VideoSample("H264/1080p", "bunny_1080_10s_5mb_h264", "H265 1080p 10s"),
+                new VideoSample("VP9/1280p", "sample_video_1280x720_1mb", "VP9 1280p 12s"),
+                new VideoSample("AVC/4k", "driving_mountain_4k", "AVC 4k")
         );
     }
 
     @Override
-    protected String getTag() {
-        return "VideoTestViewModel";
-    }
+    protected String getTag() { return TAG; }
 
-    // 추후 signed 영상/키확인 등 확장시 메소드 추가
-    // public void checkDRMVideo() { ... }
+    @Override
+    protected TestType getTestType() { return TestType.VIDEO; }
+
     public static class Factory implements androidx.lifecycle.ViewModelProvider.Factory {
         private final Application application;
         private final MainViewModel mainViewModel;

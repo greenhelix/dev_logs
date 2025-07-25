@@ -3,6 +3,7 @@ package com.innopia.bist.viewmodel;
 import android.app.Application;
 import androidx.annotation.NonNull;
 import com.innopia.bist.test.HdmiTest;
+import com.innopia.bist.util.TestType;
 
 /**
  * ViewModel for the HdmiTestFragment.
@@ -25,5 +26,10 @@ public class HdmiTestViewModel extends BaseTestViewModel {
     @Override
     protected String getTag() {
         return TAG;
+    }
+
+    @Override
+    protected TestType getTestType() {
+        return TestType.HDMI;
     }
 }

@@ -7,8 +7,22 @@ import java.io.IOException;
 
 public class SysInfo {
     private static final String TAG = "BIST_SYS_INFO";
+    private static final String PROP_HW_VERSION = "ro.oem.hw.version";
+    private static final String PROP_SW_VERSION = "ro.oem.sw.version";
+    private static final String PROP_MODEL = "ro.product.model";
 
-    private static String getSystemProperty(String propName) {
+    private static final String SYSFS_CPU_TEMP = "/sys/class/thermal/thermal_zone0/temp";
+    private static final String SYSFS_ETH0_MAC = "/sys/class/net/eth0/address";
+    private static final String SYSFS_WIFI_MAC = "/sys/class/net/wlan0/address";
+
+    private static final String BLUETOOTH_ADDRESS = "bluetooth_address";
+
+    private static final String IPV4_REGEX = "^(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
+            "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
+            "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
+            "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+
+    public static String getSystemProperty(String propName) {
         try {
             Process process = Runtime.getRuntime().exec("getprop " + propName);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

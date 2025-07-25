@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 
 import com.innopia.bist.test.UsbTest;
+import com.innopia.bist.util.TestType;
 
 public class UsbTestViewModel extends BaseTestViewModel {
     private static final String TAG = "UsbTestViewModel";
@@ -16,5 +17,10 @@ public class UsbTestViewModel extends BaseTestViewModel {
     @Override
     protected String getTag() {
         return TAG;
+    }
+
+    @Override
+    protected TestType getTestType() {
+        return TestType.USB;
     }
 }

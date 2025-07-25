@@ -67,11 +67,11 @@ public class UsbTestFragment extends Fragment {
         Button btnUsbTest = rootView.findViewById(R.id.btn_usb_manual_test);
         btnUsbTest.setOnClickListener(v -> {
             mainViewModel.appendLog(getTag(), "Usb Test Start");
-            usbTestViewModel.startManualTest();
+            usbTestViewModel.startTest();
         });
 
         usbTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
-            tvUsbResult.setText(result);
+            tvUsbResult.setText(result.getMessage());
             mainViewModel.appendLog(getTag(), "Usb Result \n" + result);
         });
 

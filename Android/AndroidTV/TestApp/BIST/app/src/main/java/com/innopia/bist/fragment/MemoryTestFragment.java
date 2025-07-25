@@ -62,7 +62,7 @@ public class MemoryTestFragment extends Fragment {
         Button btnMemoryManTest = rootView.findViewById(R.id.btn_memory_manual_test);
         btnMemoryManTest.setOnClickListener(v -> {
             tvMemoryInfo.setText("Running Memory Manual Test...");
-            memoryTestViewModel.startManualTest();
+            memoryTestViewModel.startTest();
         });
         Button btnMemoryAutoTest = rootView.findViewById(R.id.btn_memory_auto_test);
         btnMemoryAutoTest.setOnClickListener(v -> {
@@ -75,6 +75,6 @@ public class MemoryTestFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        memoryTestViewModel.startManualTest();
+        memoryTestViewModel.startTest();
     }
 }

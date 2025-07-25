@@ -1,427 +1,394 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:background="#111111"
-    >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/root_layout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="horizontal"
+	android:background="#111111">
 
-    <TableLayout
-        android:id="@+id/button_table"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.5"
-        android:stretchColumns="0,1"
-        android:background="#111111"
-        android:padding="2dp">
+	<TableLayout
+		android:id="@+id/button_table"
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="0.5"
+		android:stretchColumns="0,1"
+		android:background="#111111"
+		android:padding="2dp">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            >
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
 
-            <Button
-                android:id="@+id/button_ethernet_test"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="Ethernet Test"
-                android:textColor="@color/white"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<Button
+				android:id="@+id/button_ethernet_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="Ethernet Test"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
 
-            <Button
-                android:id="@+id/button_video_test"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="Video Test"
-                android:textColor="@color/white"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<Button
+				android:id="@+id/button_video_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="Video Test"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
 
-        </TableRow>
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            >
+			<Button
+				android:id="@+id/button_wifi_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="Wi-Fi Test"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
 
-            <Button
-                android:id="@+id/button_wifi_test"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="Wi-Fi Test"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<Button
+				android:id="@+id/button_bt_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="Bluetooth Test"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
 
-            <Button
-                android:id="@+id/button_bt_test"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="Bluetooth Test"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
 
-        </TableRow>
+			<Button
+				android:id="@+id/button_hdmi_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="HDMI Test"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            >
+			<Button
+				android:id="@+id/button_usb_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="USB Test"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
 
-            <Button
-                android:id="@+id/button_hdmi_test"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="HDMI Test"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
 
-            <Button
-                android:id="@+id/button_usb_test"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="USB Test"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<Button
+				android:id="@+id/button_memory_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="Memory Test"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
 
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            >
+			<Button
+				android:id="@+id/button_cpu_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="CPU Test"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
 
-            <Button
-                android:id="@+id/button_memory_test"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="Memory Test"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
 
-            <Button
-                android:id="@+id/button_cpu_test"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="CPU Test"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<Button
+				android:id="@+id/button_rcu_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="RCU Test"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
 
-        </TableRow>
+			<Button
+				android:id="@+id/button_start_auto_test"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:layout_height="match_parent"
+				android:text="Auto Test"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            >
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
 
-            <Button
-                android:id="@+id/button_rcu_test"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="RCU Test"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<Button
+				android:id="@+id/button_factory_reset_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="Factory Reset"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
 
-            <Button
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="5-2"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<Button
+				android:id="@+id/button_reboot_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="Reboot"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
 
-        </TableRow>
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            >
+			<Button
+				android:id="@+id/button_settings_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="Settings"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
 
-            <Button
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="6-1"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<Button
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:layout_height="match_parent"
+				android:text="7-2"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
 
-            <Button
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="6-2"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
 
-        </TableRow>
+			<Button
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:layout_height="match_parent"
+				android:text="8-1"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            >
+			<Button
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:layout_height="match_parent"
+				android:text="8-2"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
 
-            <Button
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="7-1"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
 
-            <Button
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="7-2"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<Button
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:layout_height="match_parent"
+				android:text="9-1"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
 
-        </TableRow>
+			<Button
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:layout_height="match_parent"
+				android:text="9-2"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            >
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
 
-            <Button
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="8-1"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<Button
+				android:id="@+id/button_uninstall"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="Uninstall This App"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
 
-            <Button
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="8-2"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<Button
+				android:id="@+id/button_auto_test"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="10-2"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
+	</TableLayout>
 
-        </TableRow>
+	<RelativeLayout
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:background="#222222"
+		android:padding="2dp">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            >
+		<RelativeLayout
+			android:id="@+id/top_info_container"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:padding="8dp">
 
-            <Button
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="9-1"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
 
-            <Button
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="9-2"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
 
-        </TableRow>
+			<LinearLayout
+				android:id="@+id/info_text_container"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_centerVertical="true"
+				android:layout_toStartOf="@id/icon_container"
+				android:layout_marginEnd="8dp"
+				android:orientation="horizontal">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            >
+				<TextView
+					android:id="@+id/text_sys_info"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:ellipsize="end"
+					android:maxLines="15"
+					android:focusable="false"
+					android:background="@drawable/focusable_item_border"
+					android:textColor="#ffffff"
+					android:textSize="11sp"
+					tools:text="System Info:" />
 
-            <Button
-                android:id="@+id/button_uninstall"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="Uninstall This App"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+				<TextView
+					android:id="@+id/text_hw_info"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:layout_marginStart="8dp"
+					android:ellipsize="end"
+					android:maxLines="15"
+					android:focusable="false"
+					android:background="@drawable/focusable_item_border"
+					android:textColor="#ffffff"
+					android:textSize="11sp"
+					tools:text="HW Info:" />
+			</LinearLayout>
 
-            <Button
-                android:id="@+id/button_factory_reset_test"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_focus_selector"
-                android:text="Factory Reset"
-                android:gravity="start|center_vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                />
+			<LinearLayout
+				android:id="@+id/icon_container"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentTop="true"
+				android:orientation="horizontal">
 
-        </TableRow>
+				<ImageView
+					android:id="@+id/iv_wifi_status"
+					android:layout_width="12dp"
+					android:layout_height="12dp"
+					android:focusable="false"
+					android:background="@drawable/focusable_item_border"
+					android:src="@drawable/ic_wifi" />
 
-    </TableLayout>
+				<ImageView
+					android:id="@+id/iv_bt_status"
+					android:layout_width="12dp"
+					android:layout_height="12dp"
+					android:layout_marginStart="8dp"
+					android:focusable="false"
+					android:background="@drawable/focusable_item_border"
+					android:src="@drawable/ic_bt" />
 
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="#222222"
-        android:padding="2dp"
-        >
+				<ImageView
+					android:id="@+id/iv_ethernet_status"
+					android:layout_width="12dp"
+					android:layout_height="12dp"
+					android:layout_marginStart="8dp"
+					android:focusable="false"
+					android:background="@drawable/focusable_item_border"
+					android:src="@drawable/ic_ethernet" />
+			</LinearLayout>
 
-        <RelativeLayout
-            android:id="@+id/top_info_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:padding="8dp"
-            >
+		</RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/icon_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:orientation="horizontal"
-                >
+		<FrameLayout
+			android:id="@+id/fragment_container"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_below="@id/top_info_container"
+			android:layout_above="@id/log_scroll_view" />
 
-                <ImageView
-                    android:id="@+id/iv_wifi_status"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:focusable="true"
-                    android:background="@drawable/focusable_item_border"
-                    android:src="@drawable/ic_wifi"
-                    />
+		<ScrollView
+			android:id="@+id/log_scroll_view"
+			android:layout_width="match_parent"
+			android:layout_height="100dp"
+			android:layout_alignParentBottom="true"
+			android:focusable="false"
+			android:background="@drawable/focusable_scrollview_border"
+			android:focusableInTouchMode="false"
+			android:padding="4dp">
 
-                <ImageView
-                    android:id="@+id/iv_bt_status"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_marginStart="8dp"
-                    android:focusable="true"
-                    android:background="@drawable/focusable_item_border"
-                    android:src="@drawable/ic_bt"
-                    />
-
-                <ImageView
-                    android:id="@+id/iv_ethernet_status"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_marginStart="8dp"
-                    android:focusable="true"
-                    android:background="@drawable/focusable_item_border"
-                    android:src="@drawable/ic_ethernet"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/text_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/icon_container"
-                android:layout_marginEnd="8dp"
-                android:orientation="horizontal"
-                >
-
-                <TextView
-                    android:id="@+id/text_info_1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:maxLines="6"
-                    android:focusable="true"
-                    android:background="@drawable/focusable_item_border"
-                    android:textColor="#ffffff"
-                    android:textSize="11sp"
-                    tools:text="Model: ExampleModel FW Ver: 1.0.0 Android Ver: 12\nBuild Date: 2023-10-27\nSerial No: 1234567890ABCD\nAdditional Info\nAdditional Info\nAdditional Info"
-                    />
-
-                <TextView
-                    android:id="@+id/text_info_2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:ellipsize="end"
-                    android:maxLines="6"
-                    android:focusable="true"
-                    android:background="@drawable/focusable_item_border"
-                    android:textColor="#ffffff"
-                    android:textSize="11sp"
-                    tools:text="Additional Info Line 1\nAdditional Info Line 2\nAdditional Info Line 3\nAdditional Info\nAdditional Info\nAdditional Info"
-                    />
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/top_info_container"
-            android:layout_above="@id/log_scroll_view"
-            />
-
-        <ScrollView
-            android:id="@+id/log_scroll_view"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_alignParentBottom="true"
-            android:focusable="true"
-            android:background="@drawable/focusable_scrollview_border"
-            android:focusableInTouchMode="false"
-            android:padding="4dp"
-            >
-
-            <TextView
-                android:id="@+id/text_log_window"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:text="Logging Start..."
-                android:textColor="#00FF00"
-                android:textSize="10sp"
-                android:typeface="monospace" />
-
-        </ScrollView>
-
-    </RelativeLayout>
-
+			<TextView
+				android:id="@+id/text_log_window"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:focusable="false"
+				android:text="Logging Start..."
+				android:textColor="#00FF00"
+				android:textSize="10sp"
+				android:typeface="monospace" />
+		</ScrollView>
+	</RelativeLayout>
 </LinearLayout>

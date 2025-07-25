@@ -78,14 +78,14 @@ public class WifiTestFragment extends Fragment {
 
         btnWifiTest.setOnClickListener(v -> {
             tvWifiInfo.setText("Running Wi-Fi Test...");
-            wifiTestViewModel.startManualTest();
+            wifiTestViewModel.startTest();
         });
 
         wifiTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
-            mainViewModel.appendLog(getTag(), result);
-            tvWifiInfo.setText(result);
-            boolean isConnected = result != null && !result.contains("not connected");
-            mainViewModel.updateTestStatus(TestType.WIFI, isConnected ? Status.ON : Status.OFF);
+            mainViewModel.appendLog(getTag(), result.getMessage());
+            tvWifiInfo.setText(result.getMessage());
+            boolean isConnected = result != null && !result.getMessage().contains("not connected");
+            mainViewModel.updateHardwareStatus(TestType.WIFI, isConnected ? Status.ON : Status.OFF);
         });
 
         return rootView;
@@ -94,6 +94,6 @@ public class WifiTestFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        wifiTestViewModel.startManualTest();
+        wifiTestViewModel.startTest();
     }
 }

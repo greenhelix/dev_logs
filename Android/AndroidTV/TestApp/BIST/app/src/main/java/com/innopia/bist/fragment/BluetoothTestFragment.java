@@ -111,7 +111,7 @@ public class BluetoothTestFragment extends Fragment {
         Button btnBluetoothScan = rootView.findViewById(R.id.btn_bluetooth_scan);
         Button btnBluetoothTest = rootView.findViewById(R.id.btn_bluetooth_test);
         btnBluetoothScan.setOnClickListener(v -> checkPermissionAndScan());
-        btnBluetoothTest.setOnClickListener(v -> bluetoothTestViewModel.startManualTest());
+        btnBluetoothTest.setOnClickListener(v -> bluetoothTestViewModel.startTest());
 
         // Start observing LiveData from the ViewModel.
         observeViewModel();
@@ -131,7 +131,7 @@ public class BluetoothTestFragment extends Fragment {
             }
         });
 
-        bluetoothTestViewModel.getTestResult().observe(getViewLifecycleOwner(), result -> tvTestResult.setText(result));
+        bluetoothTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> tvTestResult.setText(result.getMessage()));
 
         bluetoothTestViewModel.devicesForDialog.observe(getViewLifecycleOwner(), devices -> {
             if (devices != null && !devices.isEmpty()) {
@@ -148,9 +148,9 @@ public class BluetoothTestFragment extends Fragment {
         });
 
         bluetoothTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result ->{
-            mainViewModel.appendLog(getTag(), result);
-            boolean isConnected = result != null && !result.contains("not connected");
-            mainViewModel.updateTestStatus(TestType.BLUETOOTH, isConnected? Status.ON : Status.OFF);
+            mainViewModel.appendLog(getTag(), result.getMessage());
+            boolean isConnected = result != null && !result.getMessage().contains("not connected");
+            mainViewModel.updateHardwareStatus(TestType.BLUETOOTH, isConnected? Status.ON : Status.OFF);
         });
     }
 

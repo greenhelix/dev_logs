@@ -36,15 +36,13 @@ public class VideoTestFragment extends Fragment {
                 new VideoTestViewModel.Factory(requireActivity().getApplication(), mainViewModel))
                 .get(VideoTestViewModel.class);
 
-        TextView tvVideoInfo = root.findViewById(R.id.tv_video_info);
-        Button btnVideoTestStart = root.findViewById(R.id.btn_video_test_start);
+        TextView tvVideoInfo = root.findViewById(R.id.text_video_info);
+        Button btnVideoTestStart = root.findViewById(R.id.btn_video_manual_test);
 
-        // 초기 상태 observe (추후 확장 대비)
         videoTestViewModel.videoInfo.observe(getViewLifecycleOwner(),
                 s -> tvVideoInfo.setText(s != null ? s : "wait test start"));
 
         btnVideoTestStart.setOnClickListener(v -> {
-            // video button fragment 화면 전환
             FragmentTransaction tx = requireActivity().getSupportFragmentManager().beginTransaction();
             tx.replace(R.id.fragment_container, VideoTestButtonFragment.newInstance());
             tx.addToBackStack(null);

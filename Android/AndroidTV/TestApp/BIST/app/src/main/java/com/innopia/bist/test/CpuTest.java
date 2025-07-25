@@ -3,7 +3,9 @@ package com.innopia.bist.test;
 import android.content.Context;
 import android.os.Build;
 import android.os.HardwarePropertiesManager;
-import android.util.Log;
+
+import com.innopia.bist.util.TestResult;
+import com.innopia.bist.util.TestStatus;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,31 +16,28 @@ import java.util.function.Consumer;
 
 public class CpuTest implements Test {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private static final String TAG = "CpuTest";
 
     @Override
-    public void runManualTest(Map<String, Object> params, Consumer<String> callback) {
+    public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
+        executeTest(params, callback);
+    }
+
+    @Override
+    public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
+        executeTest(params, callback);
+    }
+
+    private void executeTest(Map<String, Object> params, Consumer<TestResult> callback) {
         executor.execute(() -> {
             Context context = (Context) params.get("context");
-//            String temp = checkCpuTemperature();
+            // String temp = checkCpuTemperature();
             String temp = checkCpuTemperature(context);
             String speed = checkCpuSpeed();
             String result = "== CPU Test Result ==\n" + temp + "\n" + speed;
-            callback.accept(result);
+            callback.accept(new TestResult(TestStatus.PASSED, result));
         });
     }
 
-//    @Override
-//    public void runAutoTest(Map<String, Object> params, Consumer<String> callback) {
-//        executor.execute(() -> {
-//            long startTime = System.currentTimeMillis();
-//            while (System.currentTimeMillis() - startTime < 10000) {
-//                // stress inject test
-//            }
-//            String result = "CPU Stress Test Completed. \n" + checkCpuSpeed();
-//            callback.accept(result);
-//        });
-//    }
     // didn't check cpu temp
     private String checkCpuTemperature() {
         try {
@@ -79,7 +78,6 @@ public class CpuTest implements Test {
                 return "CPU Temperature: Not Available (API returned no data)";
             }
         } catch (Exception e) {
-            Log.e(TAG, "Failed to get CPU temperature.", e);
             return "CPU Temperature: Not Available (Error)";
         }
     }

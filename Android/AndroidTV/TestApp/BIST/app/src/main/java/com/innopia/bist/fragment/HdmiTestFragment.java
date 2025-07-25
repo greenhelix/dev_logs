@@ -59,12 +59,12 @@ public class HdmiTestFragment extends Fragment {
         // Set a click listener for the test button.
         btnHdmiTest.setOnClickListener(v -> {
             mainViewModel.appendLog(getTag(), "HDMI Test Start");
-            hdmiTestViewModel.startManualTest();
+            hdmiTestViewModel.startTest();
         });
 
         // Observe the LiveData for test results and update the UI.
-        hdmiTestViewModel.getTestResult().observe(getViewLifecycleOwner(), result -> {
-            tvHdmiInfo.setText(result);
+        hdmiTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
+            tvHdmiInfo.setText(result.getMessage());
             mainViewModel.appendLog(getTag(), "HDMI Result \n" + result);
         });
 

@@ -3,6 +3,10 @@ package com.innopia.bist.test;
 import android.content.Context;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
+
+import com.innopia.bist.util.TestResult;
+import com.innopia.bist.util.TestStatus;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
@@ -15,28 +19,6 @@ import java.util.function.Consumer;
 public class UsbTest implements Test {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private static final int TEST_FILE_SIZE_MB = 20;
-
-    @Override
-    public void runManualTest(Map<String, Object> params, Consumer<String> callback) {
-        executor.execute(() -> {
-            Context context = (Context) params.get("context");
-            if (context == null) {
-                callback.accept("Error: Context is null");
-                return;
-            }
-            File usbDrive = getUsbDrive(context);
-            if (usbDrive == null) {
-                callback.accept("USB drive not found or not accessible.");
-                return;
-            }
-            callback.accept(performSpeedTest(usbDrive));
-        });
-    }
-
-//    @Override
-//    public void runAutoTest(Map<String, Object> params, Consumer<String> callback) {
-//        runManualTest(params, callback);
-//    }
 
     private File getUsbDrive(Context context) {
         StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
@@ -78,5 +60,31 @@ public class UsbTest implements Test {
             testFile.delete();
             return "USB Speed Test Failed: " + e.getMessage();
         }
+    }
+
+    @Override
+    public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
+        executeTest(params, callback);
+    }
+
+    @Override
+    public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
+        executeTest(params, callback);
+    }
+
+    private void executeTest(Map<String, Object> params, Consumer<TestResult> callback) {
+        executor.execute(() -> {
+            Context context = (Context) params.get("context");
+            if (context == null) {
+                callback.accept(new TestResult(TestStatus.ERROR,"Error: Context is null"));
+                return;
+            }
+            File usbDrive = getUsbDrive(context);
+            if (usbDrive == null) {
+                callback.accept(new TestResult(TestStatus.FAILED, "USB drive not found or not accessible."));
+                return;
+            }
+            callback.accept(new TestResult(TestStatus.PASSED, performSpeedTest(usbDrive)));
+        });
     }
 }

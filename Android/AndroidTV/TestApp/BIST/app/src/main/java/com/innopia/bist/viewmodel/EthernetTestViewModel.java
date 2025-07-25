@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 
 import com.innopia.bist.test.EthernetTest;
+import com.innopia.bist.util.TestType;
 
 public class EthernetTestViewModel extends BaseTestViewModel{
 
@@ -17,5 +18,10 @@ public class EthernetTestViewModel extends BaseTestViewModel{
     @Override
     protected String getTag() {
         return TAG;
+    }
+
+    @Override
+    protected TestType getTestType() {
+        return TestType.ETHERNET;
     }
 }

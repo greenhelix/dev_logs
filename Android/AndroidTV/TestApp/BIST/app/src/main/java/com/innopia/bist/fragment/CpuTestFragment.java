@@ -63,11 +63,11 @@ public class CpuTestFragment extends Fragment {
         Button btnCpuTest = rootView.findViewById(R.id.btn_cpu_manual_test);
         btnCpuTest.setOnClickListener(v -> {
             mainViewModel.appendLog("CpuTestFragment", "Cpu Test Start");
-            cpuTestViewModel.startManualTest();
+            cpuTestViewModel.startTest();
         });
 
         cpuTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
-            tvCpuInfo.setText(result);
+            tvCpuInfo.setText(result.getMessage());
         });
 
         return rootView;

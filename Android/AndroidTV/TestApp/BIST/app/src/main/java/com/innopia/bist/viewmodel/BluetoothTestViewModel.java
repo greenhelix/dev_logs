@@ -8,6 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.innopia.bist.test.BluetoothTest;
+import com.innopia.bist.util.TestResult;
+import com.innopia.bist.util.TestStatus;
+import com.innopia.bist.util.TestType;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +40,7 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
 
     public BluetoothTestViewModel(@NonNull Application application, MainViewModel mainViewModel) {
         super(application, new BluetoothTest(), mainViewModel);
-        this.bluetoothTest = (BluetoothTest) getTestModel();
+        this.bluetoothTest = (BluetoothTest) this.testModel;
         checkForConnectedDevicesOnStart();
     }
 
@@ -94,7 +98,7 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
     @SuppressLint("MissingPermission")
     public void onDeviceSelected(BluetoothDevice device) {
         _selectedDevice.setValue(device);
-        _testResultLiveData.setValue("Test Result: PENDING"); // Reset test result on new selection
+        _testResultLiveData.setValue(new TestResult(TestStatus.PENDING, "Test Result: PENDING")); // Reset test result on new selection
 
         if (device != null) {
 
@@ -116,7 +120,7 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
     }
 
     @Override
-    public void startManualTest() {
+    public void startTest() {
         String initialLog = "Manual test button clicked.";
         mainViewModel.appendLog(getTag(), initialLog);
         Log.d(getTag(), initialLog);
@@ -124,7 +128,7 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
         BluetoothDevice device = _selectedDevice.getValue();
         if (device == null) {
             String noDeviceMsg = "Cannot start test: Please select a device first.";
-            _testResultLiveData.postValue(noDeviceMsg);
+            _testResultLiveData.postValue(new TestResult(TestStatus.ERROR, noDeviceMsg));
             mainViewModel.appendLog(getTag(), noDeviceMsg);
             Log.w(getTag(), noDeviceMsg);
             return;
@@ -134,7 +138,7 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
         params.put("context", getApplication().getApplicationContext());
         params.put("device", device);
 
-        Consumer<String> callback = result -> {
+        Consumer<TestResult> callback = result -> {
             _testResultLiveData.postValue(result);
             String finishMsg = "Manual test finished. Result: " + result;
             mainViewModel.appendLog(getTag(), finishMsg);
@@ -150,5 +154,10 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
     @Override
     protected String getTag() {
         return TAG;
+    }
+
+    @Override
+    protected TestType getTestType() {
+        return TestType.BLUETOOTH;
     }
 }

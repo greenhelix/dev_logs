@@ -4,22 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#222222"
-    >
+    android:background="#222222">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/btn_bluetooth_scan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/button_focus_selector"
-            android:text="Bluetooth Scan"
-            />
+            android:text="Bluetooth Scan" />
 
         <Button
             android:id="@+id/btn_bluetooth_test"
@@ -28,11 +26,8 @@
             android:layout_weight="1"
             android:layout_marginStart="5dp"
             android:background="@drawable/button_focus_selector"
-            android:text="Bluetooth Test"
-            />
+            android:text="Bluetooth Test" />
     </LinearLayout>
-
-
 
     <TextView
         android:id="@+id/text_bluetooth_info"
@@ -41,8 +36,7 @@
         android:padding="8dp"
         android:text="Device Info: (Select a device to see details)"
         android:background="@drawable/focusable_item_border"
-        android:textColor="#FFFFFF"
-        />
+        android:textColor="#FFFFFF" />
 
     <TextView
         android:id="@+id/text_selected_device"
@@ -51,8 +45,7 @@
         android:padding="8dp"
         android:text="Selected for Test: None"
         android:background="@drawable/focusable_item_border"
-        android:textColor="#FFFFFF"
-        />
+        android:textColor="#FFFFFF" />
 
     <TextView
         android:id="@+id/text_bluetooth_test_result"
@@ -61,7 +54,5 @@
         android:padding="8dp"
         android:text="Test Result: PENDING"
         android:background="@drawable/focusable_item_border"
-        android:textColor="#FFFFFF"
-        />
-
+        android:textColor="#FFFFFF" />
 </LinearLayout>

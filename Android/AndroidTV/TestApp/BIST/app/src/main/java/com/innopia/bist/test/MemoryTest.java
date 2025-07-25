@@ -1,7 +1,11 @@
 package com.innopia.bist.test;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
+
+import com.innopia.bist.util.TestResult;
+import com.innopia.bist.util.TestStatus;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -15,11 +19,20 @@ public class MemoryTest implements Test {
     private static final double PASS_THRESHOLD_SPEED_MBps = 100.0;
 
     @Override
-    public void runManualTest(Map<String, Object> params, Consumer<String> callback) {
+    public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
+        executeTest(params, callback);
+    }
+
+    @Override
+    public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
+        executeTest(params, callback);
+    }
+
+    private void executeTest(Map<String, Object> params, Consumer<TestResult> callback) {
         executor.execute(() -> {
             Context context = (Context) params.get("context");
             if (context == null) {
-                callback.accept("Error: Context is null");
+                callback.accept(new TestResult(TestStatus.ERROR,"Error: Context is null"));
                 return;
             }
 
@@ -34,14 +47,10 @@ public class MemoryTest implements Test {
             String finalStatus = (isMemoryOk && isSpeedOk) ? "Result: PASS" : "Result: FAIL";
 
             String result = "== Memory Test Result ==\n" + memoryUsage + "\n" + speedTestResult + "\n\n" + finalStatus;
-            callback.accept(result);
+
+            callback.accept(new TestResult(TestStatus.PASSED, result));
         });
     }
-
-//    @Override
-//    public void runAutoTest(Map<String, Object> params, Consumer<String> callback) {
-//        runManualTest(params, callback);
-//    }
 
     private ActivityManager.MemoryInfo getMemoryInfo(Context context) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -50,10 +59,10 @@ public class MemoryTest implements Test {
         return memoryInfo;
     }
 
-    private String checkMemoryUsage(Context context) {
-        ActivityManager.MemoryInfo mi = getMemoryInfo(context);
+	private String checkMemoryUsage(Context context) {
+        ActivityManager.MemoryInfo mi = getMemoryInfo(context); // null 체크 하고 null이면 fail
         long availableMegs = mi.availMem / 1048576L; // 1024*1024
-        long totalMegs = mi.totalMem / 1048576L;
+        long totalMegs = mi.totalMem / 1048576L; // 이게 0이면  Fail
         return String.format("Memory Usage: %d MB / %d MB", (totalMegs - availableMegs), totalMegs);
     }
 
@@ -79,7 +88,7 @@ public class MemoryTest implements Test {
             long readDuration = endTime - startTime;
             double readSpeed = (double) size / (1024*1024) / (readDuration / 1_000_000_000.0);
 
-            return String.format("Memory Speed: Write %.2f MB/s, Read %.2f MB/s", writeSpeed, readSpeed);
+            return String.format("Memory Speed: Write %.2f MB/s, Read %.2f MB/s", writeSpeed, readSpeed); // 둘다 0보다 크면 pass
 
         } catch (OutOfMemoryError e) {
             return "Memory Speed: Test Failed (Out of Memory)";

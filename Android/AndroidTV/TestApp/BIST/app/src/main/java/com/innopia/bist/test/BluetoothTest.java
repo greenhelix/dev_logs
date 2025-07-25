@@ -16,6 +16,10 @@ import android.content.pm.PackageManager;
 import android.os.Parcelable;
 import android.util.Log;
 import androidx.core.app.ActivityCompat;
+
+import com.innopia.bist.util.TestResult;
+import com.innopia.bist.util.TestStatus;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -181,18 +185,34 @@ public class BluetoothTest implements Test {
      * @param callback A consumer to return the test result string.
      */
     @Override
-    public void runManualTest(Map<String, Object> params, Consumer<String> callback) {
+    public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
         Context context = (Context) params.get("context");
         BluetoothDevice device = (BluetoothDevice) params.get("device");
 
         if (device == null || context == null) {
-            callback.accept("Device or Context is null.");
+            callback.accept(new TestResult(TestStatus.ERROR, "Device or Context is null."));
             return;
         }
 
         new Thread(() -> {
             String result = testConnection(context, device);
-            callback.accept(result);
+            callback.accept(new TestResult(TestStatus.PASSED, result));
+        }).start();
+    }
+
+    @Override
+    public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
+        Context context = (Context) params.get("context");
+        BluetoothDevice device = (BluetoothDevice) params.get("device");
+
+        if (device == null || context == null) {
+            callback.accept(new TestResult(TestStatus.ERROR, "Device or Context is null."));
+            return;
+        }
+
+        new Thread(() -> {
+            String result = testConnection(context, device);
+            callback.accept(new TestResult(TestStatus.PASSED, result));
         }).start();
     }
 

@@ -13,7 +13,7 @@ import android.widget.VideoView;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -47,11 +47,12 @@ public class VideoTestButtonFragment extends Fragment {
         LinearLayout layoutButtons = root.findViewById(R.id.layout_video_buttons);
         videoView = root.findViewById(R.id.video_view);
 
-        // 영상 버튼 정보 동적 생성
         List<VideoTestViewModel.VideoSample> samples = videoTestViewModel.getVideoSamples();
         for (VideoTestViewModel.VideoSample sample : samples) {
             Button btnSample = new Button(getContext());
             btnSample.setText(sample.getDisplayName());
+            btnSample.setBackgroundResource(R.drawable.button_focus_selector);
+            btnSample.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
             btnSample.setOnClickListener(v -> playSample(sample));
             layoutButtons.addView(btnSample);
         }
@@ -68,7 +69,6 @@ public class VideoTestButtonFragment extends Fragment {
             videoView.setVideoURI(videoUri);
             tvVideoInfo.setText(sample.getMetaInfo());
 
-            // 재생 시작
             videoView.setOnPreparedListener(MediaPlayer::start);
             videoView.setOnErrorListener((mp, what, extra) -> {
                 String errorMsg = "Video play error: " + what + "," + extra;
