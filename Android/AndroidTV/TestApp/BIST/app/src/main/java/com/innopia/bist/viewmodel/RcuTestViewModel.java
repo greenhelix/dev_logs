@@ -11,11 +11,8 @@ public class RcuTestViewModel extends BaseTestViewModel{
 
     private static final String TAG = "RcuTestViewModel";
 
-    private RcuTest rcuTest;
-
     public RcuTestViewModel(@NonNull Application application, RcuTest rcuTest, MainViewModel mainViewModel) {
         super(application, rcuTest, mainViewModel);
-        this.rcuTest = rcuTest;
     }
 
     @Override
@@ -26,9 +23,5 @@ public class RcuTestViewModel extends BaseTestViewModel{
     @Override
     protected TestType getTestType() {
         return TestType.RCU;
-    }
-
-    public RcuTest getRcuTest() {
-        return rcuTest;
     }
 }

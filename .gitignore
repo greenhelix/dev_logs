@@ -29,3 +29,4 @@ Android/AndroidTV/TestApp/BIST/local.properties
 /Android/AndroidTV/app/BIST/.gradle
 /Android/AndroidTV/TestApp/BIST/build
 /Android/AndroidTV/TestApp/BIST/gradle
+.DS_Store

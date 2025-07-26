@@ -5,6 +5,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.innopia.bist.R;
 import com.innopia.bist.util.AutoTestManager;
 import com.innopia.bist.util.LogRepository;
 import com.innopia.bist.util.SingleLiveEvent;
@@ -117,6 +119,13 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
         _isAutoTestRunning.setValue(true);
         appendLog("AutoTest", "Starting auto test sequence...");
         autoTestManager.startAutoTestFromUsb(usbPath);
+    }
+
+    public void startAutoTest(boolean test) {
+        resetAllTests();
+        _isAutoTestRunning.setValue(true);
+        appendLog("AutoTest", "Starting auto test by button ...");
+        autoTestManager.startAutoTestFromRawResource(getApplication().getApplicationContext(), R.raw.test_config);
     }
 
     public void userActionConfirmed() {

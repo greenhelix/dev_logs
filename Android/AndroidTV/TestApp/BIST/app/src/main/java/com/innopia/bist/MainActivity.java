@@ -204,7 +204,8 @@ public class MainActivity extends AppCompatActivity {
         btnStartAutoTest.setOnClickListener(v -> {
             // [MODIFIED] Assuming USB path is auto-detected or fixed.
             // You may need a more robust way to find the USB path.
-            mainViewModel.startAutoTest("/storage/usb_storage");
+//            mainViewModel.startAutoTest("/storage/usb_storage");
+            mainViewModel.startAutoTest(true);
         });
         mainTestButtons.add(btnStartAutoTest);
 

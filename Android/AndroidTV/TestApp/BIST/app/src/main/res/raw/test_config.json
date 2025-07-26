@@ -1,0 +1,14 @@
+{
+  "mode": "auto",
+  "tests": [
+    "ETHERNET",
+    "WIFI",
+    "BLUETOOTH",
+    "HDMI",
+    "USB",
+    "MEMORY",
+    "CPU",
+    "VIDEO",
+    "RCU"
+  ]
+}

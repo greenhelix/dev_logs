@@ -109,9 +109,9 @@ public class RcuTestFragment extends Fragment {
         Map<String, Object> params = new HashMap<>();
         params.put("context", getContext());
 
-        rcuTest.runManualTest(params, message -> {
-            requireActivity().runOnUiThread(() -> tvRcuTest.setText(message));
-            if (message.contains("Test Passed")) {
+        rcuTest.runManualTest(params, result -> {
+            requireActivity().runOnUiThread(() -> tvRcuTest.setText(result.getMessage()));
+            if (result.getMessage().contains("Test Passed")) {
                 rootView.setFocusable(false);
                 btnRcuTest.setFocusable(true);
                 tvRcuTest.setFocusable(true);
