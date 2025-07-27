@@ -64,7 +64,7 @@ public class MemoryTestFragment extends Fragment {
             tvMemoryInfo.setText("Running Memory Manual Test...");
             memoryTestViewModel.startTest();
         });
-        Button btnMemoryAutoTest = rootView.findViewById(R.id.btn_memory_auto_test);
+        Button btnMemoryAutoTest = rootView.findViewById(R.id.btn_memory_manual_test);
         btnMemoryAutoTest.setOnClickListener(v -> {
             tvMemoryInfo.setText("Running Memory Auto Test...");
 //            memoryTestViewModel.startAutoTest();

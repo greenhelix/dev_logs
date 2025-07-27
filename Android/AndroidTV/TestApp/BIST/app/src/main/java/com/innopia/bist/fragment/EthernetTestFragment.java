@@ -67,11 +67,7 @@ public class EthernetTestFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_ethernet_test, container, false);
         tvEthernetInfo = rootView.findViewById(R.id.text_ethernet_info);
 
-        Button btnEthernetScan = rootView.findViewById(R.id.btn_ethernet_scan);
         Button btnEthernetTest = rootView.findViewById(R.id.btn_ethernet_test);
-        btnEthernetScan.setOnClickListener(v -> {
-            mainViewModel.appendLog("EthernetTestFragment", "Scan button clicked. ?...");
-        });
         btnEthernetTest.setOnClickListener(v -> {
             tvEthernetInfo.setText("Running Ethernet Test...");
             ethernetTestViewModel.startTest();

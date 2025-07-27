@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 public class AutoTestManager {
 
-	private static final String TAG = "AutoTestManager";
+	private static final String TAG = "BIST_AutoTestManager";
 	private static final String CONFIG_FILE = "config.json";
 
 	private final Context context;
@@ -28,7 +28,6 @@ public class AutoTestManager {
 	private final Queue<TestType> testQueue = new LinkedList<>();
 	private final AutoTestListener listener;
 
-	// [NEW] A map to hold instances of our test models.
 	private final Map<TestType, Test> testModelMap;
 
 	public interface AutoTestListener {
@@ -41,7 +40,6 @@ public class AutoTestManager {
 		this.context = context;
 		this.listener = listener;
 		this.testModelMap = new EnumMap<>(TestType.class);
-		// [NEW] Initialize all test models. A TestFactory would be a good improvement here.
 		initializeTestModels();
 	}
 
@@ -153,7 +151,6 @@ public class AutoTestManager {
 		runTestAsync(currentTestType);
 	}
 
-	// [MODIFIED] This method now executes the real test logic.
 	private void runTestAsync(final TestType testType) {
 		Test testModel = testModelMap.get(testType);
 		if (testModel == null) {
@@ -165,7 +162,6 @@ public class AutoTestManager {
 			return;
 		}
 
-		// The callback that the test model will invoke upon completion.
 		Consumer<TestResult> callback = result -> {
 			mainHandler.post(() -> {
 				if (listener != null) listener.onTestStatusChanged(testType, result.getStatus(), result.getMessage());
@@ -176,21 +172,16 @@ public class AutoTestManager {
 			});
 		};
 
-		// Execute the test on a background thread.
 		new Thread(() -> {
 			Log.d(TAG, "Running auto test for: " + testType.name());
 			Map<String, Object> params = new HashMap<>();
 			params.put("context", context);
-			// The Test model is now responsible for its own logic, including user interaction prompts.
 			testModel.runAutoTest(params, callback);
 		}).start();
 	}
 
 	public void resumeTestAfterUserAction() {
 		Log.d(TAG, "User confirmed action. Resuming test process.");
-		// The logic for what to do after user confirmation should ideally be inside the
-		// specific test model. For now, we assume it means we can proceed.
-		// A more advanced implementation might re-run the check.
 		processNextTest();
 	}
 }

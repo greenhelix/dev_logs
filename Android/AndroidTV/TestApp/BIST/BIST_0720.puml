@@ -7,8 +7,8 @@ top to bottom direction
 skinparam linetype ortho
 skinparam wrapWidth 200
 skinparam groupInheritance 2
-
 scale max 1200 width
+
 
 ' 기타 스타일링
 skinparam packageStyle folder

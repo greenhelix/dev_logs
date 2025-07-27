@@ -136,14 +136,15 @@
 				android:paddingEnd="12dp" />
 
 			<Button
-				android:id="@+id/button_start_auto_test"
+				android:layout_height="match_parent"
 				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
-				android:layout_height="match_parent"
-				android:text="Auto Test"
+				android:text="5-2"
+				android:visibility="invisible"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
+
 		</TableRow>
 
 		<TableRow
@@ -188,13 +189,15 @@
 				android:paddingEnd="12dp" />
 
 			<Button
+				android:layout_height="match_parent"
 				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
-				android:layout_height="match_parent"
 				android:text="7-2"
+				android:visibility="invisible"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
+
 		</TableRow>
 
 		<TableRow
@@ -207,6 +210,7 @@
 				android:textColor="@color/white"
 				android:layout_height="match_parent"
 				android:text="8-1"
+				android:visibility="invisible"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
@@ -216,6 +220,7 @@
 				android:textColor="@color/white"
 				android:layout_height="match_parent"
 				android:text="8-2"
+				android:visibility="invisible"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
@@ -231,6 +236,7 @@
 				android:textColor="@color/white"
 				android:layout_height="match_parent"
 				android:text="9-1"
+				android:visibility="invisible"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
@@ -240,6 +246,7 @@
 				android:textColor="@color/white"
 				android:layout_height="match_parent"
 				android:text="9-2"
+				android:visibility="invisible"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
@@ -251,21 +258,21 @@
 			android:layout_weight="1">
 
 			<Button
-				android:id="@+id/button_uninstall"
+				android:id="@+id/button_start_auto_test"
 				android:layout_height="match_parent"
 				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
-				android:text="Uninstall This App"
+				android:text="Auto Test"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
 
 			<Button
-				android:id="@+id/button_auto_test"
+				android:id="@+id/button_reset_auto_test"
 				android:layout_height="match_parent"
 				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
-				android:text="10-2"
+				android:text="Reset Auto Test"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />

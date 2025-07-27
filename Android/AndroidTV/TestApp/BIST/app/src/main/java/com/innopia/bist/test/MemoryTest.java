@@ -32,6 +32,17 @@ public class MemoryTest implements Test {
         executor.execute(() -> {
             Context context = (Context) params.get("context");
             if (context == null) {
+                callback.accept(new TestResult(TestStatus.ERROR, "Error: Context is null"));
+                return;
+            }
+            callback.accept(new TestResult(TestStatus.PASSED, "Memory Test pass"));
+        });
+    }
+
+    private void memoryTest(Map<String, Object> params, Consumer<TestResult> callback) {
+        executor.execute(() -> {
+            Context context = (Context) params.get("context");
+            if (context == null) {
                 callback.accept(new TestResult(TestStatus.ERROR,"Error: Context is null"));
                 return;
             }

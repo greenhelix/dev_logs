@@ -132,8 +132,6 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
         autoTestManager.resumeTestAfterUserAction();
     }
 
-    //-- AutoTestListener Implementation --//
-
     @Override
     public void onTestStatusChanged(TestType type, TestStatus status, String message) {
         // This method is for AUTO-TESTS. It updates the same LiveData as the manual test method.

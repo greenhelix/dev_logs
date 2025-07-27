@@ -48,22 +48,5 @@ public class VideoTestViewModel extends BaseTestViewModel {
     @Override
     protected TestType getTestType() { return TestType.VIDEO; }
 
-    public static class Factory implements androidx.lifecycle.ViewModelProvider.Factory {
-        private final Application application;
-        private final MainViewModel mainViewModel;
 
-        public Factory(Application application, MainViewModel mainViewModel) {
-            this.application = application;
-            this.mainViewModel = mainViewModel;
-        }
-
-        @NonNull
-        @Override
-        public <T extends androidx.lifecycle.ViewModel> T create(@NonNull Class<T> modelClass) {
-            if (modelClass.isAssignableFrom(VideoTestViewModel.class)) {
-                return (T) new VideoTestViewModel(application, mainViewModel);
-            }
-            throw new IllegalArgumentException("Unknown ViewModel class");
-        }
-    }
 }

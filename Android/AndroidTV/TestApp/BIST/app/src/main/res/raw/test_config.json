@@ -2,13 +2,13 @@
   "mode": "auto",
   "tests": [
     "ETHERNET",
+    "VIDEO",
     "WIFI",
     "BLUETOOTH",
     "HDMI",
     "USB",
     "MEMORY",
     "CPU",
-    "VIDEO",
     "RCU"
   ]
 }

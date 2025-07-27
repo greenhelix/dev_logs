@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvLogWindow;
     private ScrollView svLog;
 
-    // [NEW] A map to link TestType to its button for UI updates.
     private Map<TestType, Button> testButtonMap;
 
     private static final int ALL_PERMISSIONS_REQUEST_CODE = 100;
@@ -112,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 if (UsbDetachReceiver.ACTION_USB_DETACHED_APP.equals(intent.getAction())) {
                     mainViewModel.appendLog(TAG, "USB device detach detected.");
-                    // You might want to trigger some logic here, e.g., stop a USB test.
                 }
             }
         };
@@ -191,23 +189,19 @@ public class MainActivity extends AppCompatActivity {
         btnSettingsTest.setOnClickListener(v -> startSettings());
         mainTestButtons.add(btnSettingsTest);
 
-        Button btnUninstall = findViewById(R.id.button_uninstall);
-        btnUninstall.setOnClickListener(v -> {
-            mainViewModel.appendLog(TAG, "Uninstall button clicked. Requesting uninstall to BIST Service.");
-            Intent intent = new Intent("com.innopia.bistservice.ACTION_REQUEST_UNINSTALL_FROM_APP");
-            sendBroadcast(intent);
-            finish();
-        });
-        mainTestButtons.add(btnUninstall);
-
         Button btnStartAutoTest = findViewById(R.id.button_start_auto_test);
         btnStartAutoTest.setOnClickListener(v -> {
-            // [MODIFIED] Assuming USB path is auto-detected or fixed.
-            // You may need a more robust way to find the USB path.
-//            mainViewModel.startAutoTest("/storage/usb_storage");
-            mainViewModel.startAutoTest(true);
+            // mainViewModel.startAutoTest("/storage/usb_storage");
+            mainViewModel.startAutoTest(true); //for testing
         });
+        Button btnResetAutoTest = findViewById(R.id.button_reset_auto_test);
+        btnResetAutoTest.setOnClickListener(v -> {
+            mainViewModel.resetAllTests();
+        });
+
+
         mainTestButtons.add(btnStartAutoTest);
+
 
         mainViewModel.sysInfoLiveData.observe(this, sysInfoText::setText);
         mainViewModel.hwInfoLiveData.observe(this, hwInfoText::setText);

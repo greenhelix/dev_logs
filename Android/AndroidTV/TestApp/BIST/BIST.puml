@@ -1,0 +1,188 @@
+@startuml
+class com.innopia.bist.viewmodel.VideoTestViewModel {
+}
+class com.innopia.bist.viewmodel.VideoTestViewModel$VideoSample {
+}
+class com.innopia.bist.viewmodel.HdmiTestViewModel {
+}
+class com.innopia.bist.test.EthernetTest {
+}
+enum com.innopia.bist.util.Status {
++  ON
++  OFF
+}
+
+class com.innopia.bist.util.AutoTestManager {
+}
+interface com.innopia.bist.util.AutoTestManager$AutoTestListener {
+}
+abstract class com.innopia.bist.viewmodel.BaseTestViewModel {
+}
+class com.innopia.bist.fragment.MemoryTestFragment {
+}
+class com.innopia.bist.fragment.MemoryTestFragment$MemoryTestViewModelFactory {
+}
+interface com.innopia.bist.test.Test {
+}
+class com.innopia.bist.util.FocusControl {
+}
+class com.innopia.bist.test.BluetoothTest {
+}
+class com.innopia.bist.info.SystemInfo {
+}
+class com.innopia.bist.fragment.UsbTestFragment {
+}
+class com.innopia.bist.fragment.UsbTestFragment$UsbTestViewModelFactory {
+}
+class com.innopia.bist.util.ServiceUtils {
+}
+class com.innopia.bist.util.LogRepository {
+}
+class com.innopia.bist.test.MemoryTest {
+}
+class com.innopia.bist.viewmodel.BluetoothTestViewModel {
+}
+class com.innopia.bist.viewmodel.UsbTestViewModel {
+}
+enum com.innopia.bist.util.TestType {
++  WIFI
++  BLUETOOTH
++  ETHERNET
++  CPU
++  MEMORY
++  VIDEO
++  HDMI
++  USB
++  RCU
+}
+
+class com.innopia.bist.fragment.WifiTestFragment {
+}
+class com.innopia.bist.fragment.WifiTestFragment$WifiTestViewModelFactory {
+}
+class com.innopia.bist.test.CpuTest {
+}
+class com.innopia.bist.MainActivity {
+}
+class com.innopia.bist.fragment.CpuTestFragment {
+}
+class com.innopia.bist.fragment.CpuTestFragment$CpuTestViewModelFactory {
+}
+class com.innopia.bist.test.WifiTest {
+}
+class com.innopia.bist.util.UsbDetachReceiver {
+}
+class com.innopia.bist.util.SysInfo {
+}
+class com.innopia.bist.util.TestResult {
+}
+class com.innopia.bist.util.LogManager {
+}
+class com.innopia.bist.test.HdmiTest {
+}
+class com.innopia.bist.info.HwInfo {
+}
+class com.innopia.bist.util.SecretCodeManager {
+}
+class com.innopia.bist.util.SingleLiveEvent {
+}
+class com.innopia.bist.viewmodel.WifiTestViewModel {
+}
+class com.innopia.bist.fragment.BluetoothTestFragment {
+}
+class com.innopia.bist.fragment.BluetoothTestFragment$BluetoothTestViewModelFactory {
+}
+class com.innopia.bist.viewmodel.MainViewModel {
+}
+class com.innopia.bist.fragment.HdmiTestFragment {
+}
+class com.innopia.bist.viewmodel.RcuTestViewModel {
+}
+class com.innopia.bist.test.RcuTest {
+}
+class com.innopia.bist.fragment.VideoTestFragment {
+}
+class com.innopia.bist.fragment.VideoTestFragment$VideoTestViewModelFactory {
+}
+class com.innopia.bist.viewmodel.EthernetTestViewModel {
+}
+class com.innopia.bist.test.VideoTest {
+}
+class com.innopia.bist.fragment.RcuTestFragment {
+}
+class com.innopia.bist.fragment.RcuTestFragment$RcuTestViewModelFactory {
+}
+class com.innopia.bist.viewmodel.CpuTestViewModel {
+}
+class com.innopia.bist.viewmodel.MemoryTestViewModel {
+}
+enum com.innopia.bist.util.TestStatus {
++  PENDING
++  PASSED
++  FAILED
++  RETEST
++  RUNNING
++  WAITING_FOR_USER
++  ERROR
+}
+
+class com.innopia.bist.test.UsbTest {
+}
+class com.innopia.bist.fragment.EthernetTestFragment {
+}
+class com.innopia.bist.fragment.EthernetTestFragment$EthernetTestViewModelFactory {
+}
+
+
+com.innopia.bist.viewmodel.BaseTestViewModel <|-- com.innopia.bist.viewmodel.VideoTestViewModel
+com.innopia.bist.viewmodel.VideoTestViewModel +.. com.innopia.bist.viewmodel.VideoTestViewModel$VideoSample
+com.innopia.bist.viewmodel.BaseTestViewModel <|-- com.innopia.bist.viewmodel.HdmiTestViewModel
+com.innopia.bist.test.Test <|.. com.innopia.bist.test.EthernetTest
+com.innopia.bist.util.AutoTestManager +.. com.innopia.bist.util.AutoTestManager$AutoTestListener
+androidx.lifecycle.AndroidViewModel <|-- com.innopia.bist.viewmodel.BaseTestViewModel
+androidx.fragment.app.Fragment <|-- com.innopia.bist.fragment.MemoryTestFragment
+com.innopia.bist.fragment.MemoryTestFragment +.. com.innopia.bist.fragment.MemoryTestFragment$MemoryTestViewModelFactory
+com.innopia.bist.fragment.Factory <|.. com.innopia.bist.fragment.MemoryTestFragment$MemoryTestViewModelFactory
+com.innopia.bist.test.Test <|.. com.innopia.bist.test.BluetoothTest
+androidx.fragment.app.Fragment <|-- com.innopia.bist.fragment.UsbTestFragment
+com.innopia.bist.fragment.UsbTestFragment +.. com.innopia.bist.fragment.UsbTestFragment$UsbTestViewModelFactory
+com.innopia.bist.fragment.Factory <|.. com.innopia.bist.fragment.UsbTestFragment$UsbTestViewModelFactory
+com.innopia.bist.test.Test <|.. com.innopia.bist.test.MemoryTest
+com.innopia.bist.viewmodel.BaseTestViewModel <|-- com.innopia.bist.viewmodel.BluetoothTestViewModel
+com.innopia.bist.viewmodel.BaseTestViewModel <|-- com.innopia.bist.viewmodel.UsbTestViewModel
+androidx.fragment.app.Fragment <|-- com.innopia.bist.fragment.WifiTestFragment
+com.innopia.bist.fragment.WifiTestFragment +.. com.innopia.bist.fragment.WifiTestFragment$WifiTestViewModelFactory
+com.innopia.bist.fragment.Factory <|.. com.innopia.bist.fragment.WifiTestFragment$WifiTestViewModelFactory
+com.innopia.bist.test.Test <|.. com.innopia.bist.test.CpuTest
+androidx.appcompat.app.AppCompatActivity <|-- com.innopia.bist.MainActivity
+androidx.fragment.app.Fragment <|-- com.innopia.bist.fragment.CpuTestFragment
+com.innopia.bist.fragment.CpuTestFragment +.. com.innopia.bist.fragment.CpuTestFragment$CpuTestViewModelFactory
+com.innopia.bist.fragment.Factory <|.. com.innopia.bist.fragment.CpuTestFragment$CpuTestViewModelFactory
+com.innopia.bist.test.Test <|.. com.innopia.bist.test.WifiTest
+android.content.BroadcastReceiver <|-- com.innopia.bist.util.UsbDetachReceiver
+com.innopia.bist.test.Test <|.. com.innopia.bist.test.HdmiTest
+androidx.lifecycle.MutableLiveData <|-- com.innopia.bist.util.SingleLiveEvent
+com.innopia.bist.viewmodel.BaseTestViewModel <|-- com.innopia.bist.viewmodel.WifiTestViewModel
+androidx.fragment.app.Fragment <|-- com.innopia.bist.fragment.BluetoothTestFragment
+com.innopia.bist.fragment.BluetoothTestFragment +.. com.innopia.bist.fragment.BluetoothTestFragment$BluetoothTestViewModelFactory
+com.innopia.bist.fragment.Factory <|.. com.innopia.bist.fragment.BluetoothTestFragment$BluetoothTestViewModelFactory
+com.innopia.bist.viewmodel.AutoTestListener <|.. com.innopia.bist.viewmodel.MainViewModel
+androidx.lifecycle.AndroidViewModel <|-- com.innopia.bist.viewmodel.MainViewModel
+androidx.fragment.app.Fragment <|-- com.innopia.bist.fragment.HdmiTestFragment
+com.innopia.bist.viewmodel.BaseTestViewModel <|-- com.innopia.bist.viewmodel.RcuTestViewModel
+com.innopia.bist.test.Test <|.. com.innopia.bist.test.RcuTest
+androidx.fragment.app.Fragment <|-- com.innopia.bist.fragment.VideoTestFragment
+com.innopia.bist.fragment.VideoTestFragment +.. com.innopia.bist.fragment.VideoTestFragment$VideoTestViewModelFactory
+com.innopia.bist.fragment.Factory <|.. com.innopia.bist.fragment.VideoTestFragment$VideoTestViewModelFactory
+com.innopia.bist.viewmodel.BaseTestViewModel <|-- com.innopia.bist.viewmodel.EthernetTestViewModel
+com.innopia.bist.test.Test <|.. com.innopia.bist.test.VideoTest
+androidx.fragment.app.Fragment <|-- com.innopia.bist.fragment.RcuTestFragment
+com.innopia.bist.fragment.RcuTestFragment +.. com.innopia.bist.fragment.RcuTestFragment$RcuTestViewModelFactory
+com.innopia.bist.fragment.Factory <|.. com.innopia.bist.fragment.RcuTestFragment$RcuTestViewModelFactory
+com.innopia.bist.viewmodel.BaseTestViewModel <|-- com.innopia.bist.viewmodel.CpuTestViewModel
+com.innopia.bist.viewmodel.BaseTestViewModel <|-- com.innopia.bist.viewmodel.MemoryTestViewModel
+com.innopia.bist.test.Test <|.. com.innopia.bist.test.UsbTest
+androidx.fragment.app.Fragment <|-- com.innopia.bist.fragment.EthernetTestFragment
+com.innopia.bist.fragment.EthernetTestFragment +.. com.innopia.bist.fragment.EthernetTestFragment$EthernetTestViewModelFactory
+com.innopia.bist.fragment.Factory <|.. com.innopia.bist.fragment.EthernetTestFragment$EthernetTestViewModelFactory
+@enduml
