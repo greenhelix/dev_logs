@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import com.innopia.bist.test.*; // Import all test classes
+import com.innopia.bist.test.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.File;
@@ -29,6 +29,10 @@ public class AutoTestManager {
 	private final AutoTestListener listener;
 
 	private final Map<TestType, Test> testModelMap;
+
+	// Added state variable to handle paused tests waiting for user input.
+	private TestType currentTestType;
+	private Map<String, Object> currentParams;
 
 	public interface AutoTestListener {
 		void onTestStatusChanged(TestType type, TestStatus status, String message);
@@ -143,21 +147,27 @@ public class AutoTestManager {
 		if (testQueue.isEmpty()) {
 			Log.d(TAG, "All tests in queue are completed.");
 			if (listener != null) listener.onAllTestsCompleted();
+			currentTestType = null;
 			return;
 		}
 
-		TestType currentTestType = testQueue.poll();
+		currentTestType = testQueue.poll();
 		if (listener != null) listener.onTestStatusChanged(currentTestType, TestStatus.RUNNING, null);
-		runTestAsync(currentTestType);
+
+		currentParams = new HashMap<>();
+		currentParams.put("context", context);
+		currentParams.put("isResume", false);
+
+		runTestAsync(currentTestType, currentParams);
 	}
 
-	private void runTestAsync(final TestType testType) {
+	private void runTestAsync(final TestType testType, final Map<String, Object> params) {
 		Test testModel = testModelMap.get(testType);
 		if (testModel == null) {
 			Log.e(TAG, "No test model found for type: " + testType);
 			mainHandler.post(() -> {
 				if (listener != null) listener.onTestStatusChanged(testType, TestStatus.FAILED, "Test implementation not found.");
-				processNextTest(); // Continue with the next test
+				processNextTest();
 			});
 			return;
 		}
@@ -168,20 +178,40 @@ public class AutoTestManager {
 
 				if (result.getStatus() != TestStatus.WAITING_FOR_USER) {
 					processNextTest();
+				} else {
+					Log.d(TAG, "Test "+ testType + " is paused, waiting for user action.");
 				}
 			});
 		};
 
 		new Thread(() -> {
 			Log.d(TAG, "Running auto test for: " + testType.name());
-			Map<String, Object> params = new HashMap<>();
-			params.put("context", context);
-			testModel.runAutoTest(params, callback);
+			try {
+				testModel.runAutoTest(params, callback);
+			} catch (Exception e) {
+				Log.d(TAG, "Unhanced exception in " + testType.name() + " auto-test.", e);
+				TestResult errorResult = new TestResult(TestStatus.ERROR, e.getMessage());
+				callback.accept(errorResult);
+			}
 		}).start();
 	}
 
-	public void resumeTestAfterUserAction() {
-		Log.d(TAG, "User confirmed action. Resuming test process.");
-		processNextTest();
+	/**
+	 * @param userConfirmed The user's choice from the dialog (true for YES/OK, false for NO).
+	 */
+	public void resumeTestAfterUserAction(boolean userConfirmed) {
+		if (currentTestType == null) {
+			Log.w(TAG, "resumeTestAfterUserAction called but no test is paused.");
+			return;
+		}
+		Log.d(TAG, "User action received: " + userConfirmed + " Resuming test: " + currentTestType.name());
+		currentParams.put("isResume", true);
+		currentParams.put("userChoice", userConfirmed);
+
+		if ( listener != null) {
+			listener.onTestStatusChanged(currentTestType, TestStatus.RUNNING, "Resuming after user action ...");
+		}
+
+		runTestAsync(currentTestType, currentParams);
 	}
 }

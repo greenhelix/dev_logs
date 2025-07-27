@@ -30,6 +30,7 @@ public class VideoTestFragment extends Fragment {
     private MainViewModel mainViewModel;
     private VideoView videoView;
     private TextView tvVideoInfo;
+    private LinearLayout layoutButtons;
 
     public static VideoTestFragment newInstance() {
         return new VideoTestFragment();
@@ -66,7 +67,7 @@ public class VideoTestFragment extends Fragment {
         videoTestViewModel = new ViewModelProvider(this, factory).get(VideoTestViewModel.class);
 
         tvVideoInfo = root.findViewById(R.id.tv_video_info_button);
-        LinearLayout layoutButtons = root.findViewById(R.id.layout_video_buttons);
+        layoutButtons = root.findViewById(R.id.layout_video_buttons);
         videoView = root.findViewById(R.id.video_view);
 
         List<VideoTestViewModel.VideoSample> samples = videoTestViewModel.getVideoSamples();
@@ -81,6 +82,14 @@ public class VideoTestFragment extends Fragment {
 
         videoTestViewModel.videoInfo.observe(getViewLifecycleOwner(), info -> tvVideoInfo.setText(info));
 
+        mainViewModel.isAutoTestRunning.observe(getViewLifecycleOwner(), isRunning -> {
+            if (isRunning) {
+                layoutButtons.setVisibility(View.INVISIBLE);
+                tvVideoInfo.setText("Auto-test in progress...");
+            } else {
+                layoutButtons.setVisibility(View.VISIBLE);
+            }
+        });
         return root;
     }
 

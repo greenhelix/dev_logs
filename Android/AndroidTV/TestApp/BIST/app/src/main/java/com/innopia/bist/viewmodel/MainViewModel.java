@@ -7,12 +7,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.innopia.bist.R;
+import com.innopia.bist.test.Test;
 import com.innopia.bist.util.AutoTestManager;
 import com.innopia.bist.util.LogRepository;
 import com.innopia.bist.util.SingleLiveEvent;
 import com.innopia.bist.util.Status;
 import com.innopia.bist.util.TestStatus;
 import com.innopia.bist.util.TestType;
+
+import java.security.Signature;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EnumMap;
@@ -48,6 +51,11 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 
     private final SingleLiveEvent<String> _userActionRequired = new SingleLiveEvent<>();
     public final LiveData<String> userActionRequired = _userActionRequired;
+    private final SingleLiveEvent<TestType> _navigateToTestFragment = new SingleLiveEvent<>();
+    public final LiveData<TestType> navigateToTestFragment = _navigateToTestFragment;
+
+    private final SingleLiveEvent<Void> _clearFragmentContainer = new SingleLiveEvent<>();
+    public final LiveData<Void> clearFragmentContainer = _clearFragmentContainer;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -128,14 +136,19 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
         autoTestManager.startAutoTestFromRawResource(getApplication().getApplicationContext(), R.raw.test_config);
     }
 
-    public void userActionConfirmed() {
-        autoTestManager.resumeTestAfterUserAction();
+    public void userActionConfirmed(boolean confirmed) {
+        appendLog("MainViewModel", "User action confirmed with choice: " + confirmed);
+        autoTestManager.resumeTestAfterUserAction(confirmed);
     }
 
     @Override
     public void onTestStatusChanged(TestType type, TestStatus status, String message) {
         // This method is for AUTO-TESTS. It updates the same LiveData as the manual test method.
         updateTestResult(type, status);
+
+        if (status == TestStatus.RUNNING) {
+            _navigateToTestFragment.postValue(type);
+        }
 
         if (status == TestStatus.WAITING_FOR_USER && message != null) {
             appendLog("AutoTest", "Waiting for user action: " + message);
@@ -150,11 +163,13 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
         appendLog("AutoTest", "All tests completed.");
         _isAutoTestRunning.postValue(false);
         saveLogsToFile();
+        _clearFragmentContainer.postValue(null);
     }
 
     @Override
     public void onAutoTestError(String errorMessage) {
         appendLog("AutoTest", "Error during auto test: " + errorMessage);
         _isAutoTestRunning.postValue(false);
+        _clearFragmentContainer.postValue(null);
     }
 }

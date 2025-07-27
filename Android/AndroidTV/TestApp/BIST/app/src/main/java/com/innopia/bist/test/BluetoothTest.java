@@ -1,4 +1,3 @@
-// MODIFIED: This file contains the definitive fix for the connection issue.
 package com.innopia.bist.test;
 
 import android.Manifest;
@@ -37,7 +36,7 @@ import java.util.function.Consumer;
  */
 public class BluetoothTest implements Test {
 
-    private static final String TAG = "BluetoothTest";
+    private static final String TAG = "BIST_BT_TEST";
     private static final UUID STANDARD_SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -206,9 +205,50 @@ public class BluetoothTest implements Test {
         executeTest(params, callback);
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
-        executeTest(params, callback);
+        // executeTest(params, callback);
+        Context context = (Context) params.get("context");
+        Boolean isResume = (Boolean) params.getOrDefault("isResume", false);
+        BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+            callback.accept(new TestResult(TestStatus.FAILED, "Bluetooth is not enabled."));
+            return;
+        }
+
+        List<BluetoothDevice> connectedDevices = getProxyConnectedDevices(bluetoothAdapter, context);
+
+        if (!isResume) {
+            if (!connectedDevices.isEmpty()) {
+                Log.d(TAG, "AutoTest: Device already connected. Starting connection test.");
+                String resultStr = testConnection(context, connectedDevices.get(0));
+                if (resultStr.contains("PASS")) {
+                    callback.accept(new TestResult(TestStatus.PASSED, resultStr));
+                } else {
+                    callback.accept(new TestResult(TestStatus.FAILED, resultStr));
+                }
+            } else {
+                Log.d(TAG, "AutoTest: No device connected. Waiting for user action.");
+                callback.accept(new TestResult(TestStatus.WAITING_FOR_USER, "Bluetooth device is not connected. Do you want to scan and connect now?"));
+            }
+        } else {
+            Boolean userChoice = (Boolean) params.getOrDefault("userChoice", false);
+            if (userChoice) {
+                Log.d(TAG, "AutoTest: User choose to connect. Waiting for user to pair a device.");
+                callback.accept(new TestResult(TestStatus.WAITING_FOR_USER, "Please pair a Bluetooth device from Settings, then press OK."));
+            } else {
+                Log.d(TAG, "AutoTest: User choose not to connect.");
+                callback.accept(new TestResult(TestStatus.RETEST, "User skipped Bluetooth Connection. Marked for re-test."));
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private List<BluetoothDevice> getProxyConnectedDevices(BluetoothAdapter adapter, Context context) {
+        return new ArrayList<>(adapter.getBondedDevices());
     }
 
     private void executeTest(Map<String, Object> params, Consumer<TestResult> callback) {

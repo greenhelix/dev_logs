@@ -223,14 +223,14 @@ public class MainActivity extends AppCompatActivity {
             updateStatusIcon(ivEthStatus, statuses.get(TestType.ETHERNET) == Status.ON, R.drawable.ic_ethernet_on, R.drawable.ic_ethernet_off);
         });
 
-        // [NEW] Observer for auto-test running state to enable/disable buttons.
+        // Observer for auto-test running state to enable/disable buttons.
         mainViewModel.isAutoTestRunning.observe(this, isRunning -> {
             for (Button button : mainTestButtons) {
                 if (button != null) button.setEnabled(!isRunning);
             }
         });
 
-        // [NEW] Observer for individual test statuses to update button colors.
+        // Observer for individual test statuses to update button colors.
         mainViewModel.testStatusesLiveData.observe(this, statuses -> {
             if (statuses == null) return;
             for (Map.Entry<TestType, TestStatus> entry : statuses.entrySet()) {
@@ -238,12 +238,76 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // [NEW] Observer for user action requests to show dialogs during auto-test.
+        // Observer for user action requests to show dialogs during auto-test.
         mainViewModel.userActionRequired.observe(this, message -> {
             if (message != null && !message.isEmpty()) {
                 showUserActionDialog(message);
             }
         });
+        mainViewModel.navigateToTestFragment.observe(this, testType -> {
+            if (testType != null) {
+                showFragmentForAutoTest(testType);
+            }
+        });
+        mainViewModel.clearFragmentContainer.observe(this, aVoid -> {
+            clearFragmentContainer();
+        });
+    }
+
+    private void showFragmentForAutoTest(TestType type) {
+        Fragment fragmentToShow;
+        switch (type) {
+            case WIFI:
+                fragmentToShow = WifiTestFragment.newInstance();
+                break;
+            case BLUETOOTH:
+                fragmentToShow = BluetoothTestFragment.newInstance();
+                break;
+            case ETHERNET:
+                fragmentToShow = EthernetTestFragment.newInstance();
+                break;
+            case CPU:
+                fragmentToShow = CpuTestFragment.newInstance();
+                break;
+            case MEMORY:
+                fragmentToShow = MemoryTestFragment.newInstance();
+                break;
+            case VIDEO:
+                fragmentToShow = VideoTestFragment.newInstance();
+                break;
+            case HDMI:
+                fragmentToShow = HdmiTestFragment.newInstance();
+                break;
+            case USB:
+                fragmentToShow = UsbTestFragment.newInstance();
+                break;
+            case RCU:
+                fragmentToShow = RcuTestFragment.newInstance();
+                break;
+            default:
+        // If there's no fragment for a test type, just clear the view.
+        clearFragmentContainer();
+        return;
+    }
+
+        mainViewModel.appendLog(TAG, "Auto-test showing fragment for: " + type.name());
+    getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragmentToShow, TAG_TEST_FRAGMENT)
+    // DO NOT add to back stack for auto-test navigation
+                .commit();
+    }
+
+    private void clearFragmentContainer() {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment currentFragment = fm.findFragmentByTag(TAG_TEST_FRAGMENT);
+        if (currentFragment != null) {
+            mainViewModel.appendLog(TAG, "Auto-test finished. Clearing fragment container.");
+            fm.beginTransaction().remove(currentFragment).commit();
+            // Restore focus to a default button if needed
+            if(defaultFocusButton != null) {
+                defaultFocusButton.requestFocus();
+            }
+        }
     }
 
     // [NEW] This method updates button background based on test status.
@@ -276,16 +340,26 @@ public class MainActivity extends AppCompatActivity {
 
     // [NEW] This method shows a dialog when user interaction is needed.
     private void showUserActionDialog(String message) {
-        new AlertDialog.Builder(this)
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("User Action Required")
                 .setMessage(message)
-                .setPositiveButton("OK", (dialog, which) -> {
-                    // Notify ViewModel that user has confirmed the action.
-                    mainViewModel.userActionConfirmed();
-                })
-                .setCancelable(false)
-                .create()
-                .show();
+                .setCancelable(false);
+
+        // If the message is a question, show YES/NO buttons. Otherwise, show an OK button.
+        if (message.contains("?")) {
+            builder.setPositiveButton("YES", (dialog, which) -> {
+                mainViewModel.userActionConfirmed(true);
+            });
+            builder.setNegativeButton("NO", (dialog, which) -> {
+                mainViewModel.userActionConfirmed(false);
+            });
+        } else {
+            builder.setPositiveButton("OK", (dialog, which) -> {
+                // For informational dialogs, "OK" implies user has performed the action.
+                mainViewModel.userActionConfirmed(true);
+            });
+        }
+        builder.create().show();
     }
 
     private void setupBackButtonHandler() {
