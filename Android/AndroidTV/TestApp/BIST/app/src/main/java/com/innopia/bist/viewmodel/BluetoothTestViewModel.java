@@ -26,7 +26,7 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
     private final MutableLiveData<BluetoothDevice> _selectedDevice = new MutableLiveData<>(null);
     public final LiveData<BluetoothDevice> selectedDevice = _selectedDevice;
 
-    // ADDED: LiveData to hold the detailed information of the selected device.
+    // LiveData to hold the detailed information of the selected device.
     private final MutableLiveData<String> _deviceInfo = new MutableLiveData<>("Device Info: (Select a device to see details)");
     public final LiveData<String> deviceInfo = _deviceInfo;
 
@@ -40,7 +40,7 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
 
     public BluetoothTestViewModel(@NonNull Application application, MainViewModel mainViewModel) {
         super(application, new BluetoothTest(), mainViewModel);
-        this.bluetoothTest = (BluetoothTest) this.testModel;
+        this.bluetoothTest = (BluetoothTest) new BluetoothTest();
         checkForConnectedDevicesOnStart();
     }
 
@@ -98,7 +98,7 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
     @SuppressLint("MissingPermission")
     public void onDeviceSelected(BluetoothDevice device) {
         _selectedDevice.postValue(device);
-        _testResultLiveData.postValue(new TestResult(TestStatus.PENDING, "Test Result: PENDING")); // Reset test result on new selection
+        _testResultLiveData.postValue(new TestResult(TestStatus.RUNNING, "Bluetooth Test Status: RUNNING")); // Reset test result on new selection
 
         if (device != null) {
 
@@ -119,6 +119,7 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
         _navigateToSettings.setValue(false);
     }
 
+    // override start Test from MainViewModel
     @Override
     public void startTest() {
         String initialLog = "Manual test button clicked.";
@@ -143,12 +144,13 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
             String finishMsg = "Manual test finished. Result: " + result;
             mainViewModel.appendLog(getTag(), finishMsg);
             Log.d(getTag(), finishMsg);
+            mainViewModel.updateTestResult(getTestType(), result.getStatus());
         };
 
         String startMsg = "Starting manual test for device: " + device.getName();
         mainViewModel.appendLog(getTag(), startMsg);
         Log.d(getTag(), startMsg);
-        testModel.runManualTest(params, callback);
+        bluetoothTest.runManualTest(params, callback);
     }
 
     @Override

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
@@ -41,7 +42,7 @@ public class BluetoothTestFragment extends Fragment {
     private BluetoothTestViewModel bluetoothTestViewModel;
     private MainViewModel mainViewModel;
 
-    // MODIFIED: TextViews are now separated for different purposes.
+    // TextViews are now separated for different purposes.
     private TextView tvBluetoothInfo; // For detailed device info
     private TextView tvSelectedDevice; // For the name of the device selected for the test
     private TextView tvTestResult; // ADDED: For displaying the connection test result
@@ -102,7 +103,7 @@ public class BluetoothTestFragment extends Fragment {
         // Inflate the layout for this fragment.
         View rootView = inflater.inflate(R.layout.fragment_bluetooth_test, container, false);
 
-        // MODIFIED: Initialize all three TextViews.
+        // Initialize all three TextViews.
         tvBluetoothInfo = rootView.findViewById(R.id.text_bluetooth_info);
         tvSelectedDevice = rootView.findViewById(R.id.text_selected_device);
         tvTestResult = rootView.findViewById(R.id.text_bluetooth_test_result); // ADDED
@@ -172,18 +173,49 @@ public class BluetoothTestFragment extends Fragment {
                 .collect(Collectors.toList());
         deviceNames.add("Scan for other devices..."); // Option to go to settings.
 
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Select Test Device")
-                .setItems(deviceNames.toArray(new String[0]), (dialog, which) -> {
-                    if (which == deviceNames.size() - 1) {
-                        // The last item is "Scan for other devices...".
-                        openAddAccessoryScreen();
-                    } else {
-                        // An existing device was selected.
-                        bluetoothTestViewModel.onDeviceSelected(devices.get(which));
-                    }
-                })
-                .show();
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View dialogView = inflater.inflate(R.layout.dialog_custom_list, null);
+        TextView title = dialogView.findViewById(R.id.dialog_list_title);
+        LinearLayout container = dialogView.findViewById(R.id.dialog_list_container);
+        title.setText("Select Test Device");
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setCancelable(true);
+        final AlertDialog dialog = builder.create();
+        for (BluetoothDevice device : devices) {
+            Button deviceButton = new Button(getContext());
+            deviceButton.setText(device.getName());
+            deviceButton.setBackgroundResource(R.drawable.button_focus_selector);
+            deviceButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
+            deviceButton.setOnClickListener(v -> {
+                bluetoothTestViewModel.onDeviceSelected(device);
+                dialog.dismiss();
+            });
+            container.addView(deviceButton);
+        }
+        Button scanButton = new Button(getContext());
+        scanButton.setText("Scan for other devices...");
+        scanButton.setBackgroundResource(R.drawable.button_focus_selector);
+        scanButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
+        scanButton.setOnClickListener(v -> {
+            openAddAccessoryScreen();
+            dialog.dismiss();
+        });
+        container.addView(scanButton);
+
+        dialog.setOnShowListener(dialogInterface -> {
+            if (container.getChildCount() > 0) {
+                container.getChildAt(0).requestFocus();
+            }
+        });
+
+        dialog.show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume()");
     }
 
     /**

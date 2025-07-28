@@ -17,7 +17,8 @@
 		android:id="@+id/text_rcu_test"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:focusable="true"
+		android:focusable="false"
+		android:focusableInTouchMode="false"
 		android:background="@drawable/focusable_item_border"
 		android:textColor="#FFFFFF"
 		android:text="Test RCU by pressing instructed keys:" />

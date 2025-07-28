@@ -20,54 +20,49 @@ import com.innopia.bist.viewmodel.MainViewModel;
  */
 public class HdmiTestFragment extends Fragment {
 
-    private HdmiTestViewModel hdmiTestViewModel;
-    private MainViewModel mainViewModel;
-    private TextView tvHdmiInfo;
+	private HdmiTestViewModel hdmiTestViewModel;
+	private MainViewModel mainViewModel;
+	private TextView tvHdmiInfo;
 
-    public static HdmiTestFragment newInstance() {
-        return new HdmiTestFragment();
-    }
+	public static HdmiTestFragment newInstance() {
+		return new HdmiTestFragment();
+	}
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
-        // Custom factory to inject MainViewModel into HdmiTestViewModel.
-        ViewModelProvider.Factory factory = new ViewModelProvider.Factory() {
-            @NonNull
-            @Override
-            public <T extends androidx.lifecycle.ViewModel> T create(@NonNull Class<T> modelClass) {
-                if (modelClass.isAssignableFrom(HdmiTestViewModel.class)) {
-                    return (T) new HdmiTestViewModel(requireActivity().getApplication(), mainViewModel);
-                }
-                throw new IllegalArgumentException("Unknown ViewModel class");
-            }
-        };
-        hdmiTestViewModel = new ViewModelProvider(this, factory).get(HdmiTestViewModel.class);
-    }
+		ViewModelProvider.Factory factory = new ViewModelProvider.Factory() {
+			@NonNull
+			@Override
+			public <T extends androidx.lifecycle.ViewModel> T create(@NonNull Class<T> modelClass) {
+				if (modelClass.isAssignableFrom(HdmiTestViewModel.class)) {
+					return (T) new HdmiTestViewModel(requireActivity().getApplication(), mainViewModel);
+				}
+				throw new IllegalArgumentException("Unknown ViewModel class");
+			}
+		};
+		hdmiTestViewModel = new ViewModelProvider(this, factory).get(HdmiTestViewModel.class);
+	}
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_hdmi_test, container, false);
+	@Nullable
+	@Override
+	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_hdmi_test, container, false);
+		tvHdmiInfo = rootView.findViewById(R.id.text_hdmi_info);
+		Button btnHdmiTest = rootView.findViewById(R.id.btn_hdmi_manual_test);
 
-        tvHdmiInfo = rootView.findViewById(R.id.text_hdmi_info);
-        Button btnHdmiTest = rootView.findViewById(R.id.btn_hdmi_manual_test);
+		btnHdmiTest.setOnClickListener(v -> {
+			mainViewModel.appendLog(getTag(), "HDMI Test Start");
+			hdmiTestViewModel.startTest();
+		});
 
-        // Set a click listener for the test button.
-        btnHdmiTest.setOnClickListener(v -> {
-            mainViewModel.appendLog(getTag(), "HDMI Test Start");
-            hdmiTestViewModel.startTest();
-        });
+		hdmiTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
+			tvHdmiInfo.setText(result.getMessage());
+			mainViewModel.appendLog(getTag(), "HDMI Result \n" + result);
+		});
 
-        // Observe the LiveData for test results and update the UI.
-        hdmiTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
-            tvHdmiInfo.setText(result.getMessage());
-            mainViewModel.appendLog(getTag(), "HDMI Result \n" + result);
-        });
-
-        return rootView;
-    }
+		return rootView;
+	}
 }

@@ -52,10 +52,7 @@ public class UsbTestFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-        UsbTestViewModelFactory factory = new UsbTestViewModelFactory(
-                requireActivity().getApplication(),
-                mainViewModel
-        );
+        UsbTestViewModelFactory factory = new UsbTestViewModelFactory(requireActivity().getApplication(), mainViewModel);
         usbTestViewModel = new ViewModelProvider(this, factory).get(UsbTestViewModel.class);
     }
 

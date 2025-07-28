@@ -93,7 +93,7 @@ public class BluetoothTest implements Test {
     }
 
     /**
-     * MODIFIED: Performs a connection test by first discovering services via SDP.
+     * Performs a connection test by first discovering services via SDP.
      * It fetches the device's advertised UUIDs and attempts to connect to each one.
      * This is far more reliable than assuming SPP is always available.
      * @param context The application context.
@@ -187,22 +187,44 @@ public class BluetoothTest implements Test {
      * @param callback A consumer to return the test result string.
      */
     private void bluetoothTest (Map<String, Object> params, Consumer<TestResult> callback) {
-        Context context = (Context) params.get("context");
-        BluetoothDevice device = (BluetoothDevice) params.get("device");
-        if (device == null || context == null) {
-            callback.accept(new TestResult(TestStatus.ERROR, "Device or Context is null."));
-            return;
-        }
-
-        new Thread(() -> {
+        executor.execute(() -> {
+            Context context = (Context) params.get("context");
+            BluetoothDevice device = (BluetoothDevice) params.get("device");
+            if (device == null || context == null) {
+                callback.accept(new TestResult(TestStatus.ERROR, "Device or Context is null."));
+                return;
+            }
             String result = testConnection(context, device);
-            callback.accept(new TestResult(TestStatus.PASSED, result));
-        }).start();
+            if (result.contains("PASS")) {
+                Log.d(TAG, "bluetooth test PASS!!!!!!!!!!!!!!!!!!!!");
+                callback.accept(new TestResult(TestStatus.PASSED, "BT Test pass \n"+result));
+            } else {
+                callback.accept(new TestResult(TestStatus.FAILED, "BT Test fail \n"+result));
+            }
+        });
+
+//        Context context = (Context) params.get("context");
+//        BluetoothDevice device = (BluetoothDevice) params.get("device");
+//        if (device == null || context == null) {
+//            callback.accept(new TestResult(TestStatus.ERROR, "Device or Context is null."));
+//            return;
+//        }
+//
+//        new Thread(() -> {
+//            String result = testConnection(context, device);
+//            if (result.contains("PASS")) {
+//                Log.d(TAG, "bluetooth test PASS!!!!!!!!!!!!!!!!!!!!");
+//                callback.accept(new TestResult(TestStatus.PASSED, "BT Test pass \n"+result));
+//            } else {
+//                callback.accept(new TestResult(TestStatus.FAILED, "BT Test fail \n"+result));
+//            }
+//        }).start();
     }
 
     @Override
     public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
-        executeTest(params, callback);
+        // executeTest(params, callback);
+        bluetoothTest(params, callback);
     }
 
     @SuppressLint("MissingPermission")

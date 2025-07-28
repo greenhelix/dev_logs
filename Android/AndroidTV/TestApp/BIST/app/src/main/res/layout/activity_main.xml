@@ -385,6 +385,7 @@
 			android:focusable="false"
 			android:background="@drawable/focusable_scrollview_border"
 			android:focusableInTouchMode="false"
+			android:nextFocusUp="@+id/button_reboot_test"
 			android:padding="4dp">
 
 			<TextView

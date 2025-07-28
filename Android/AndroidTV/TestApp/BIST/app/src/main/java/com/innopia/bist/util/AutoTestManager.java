@@ -59,6 +59,12 @@ public class AutoTestManager {
 		testModelMap.put(TestType.RCU, new RcuTest());
 	}
 
+	public void proceedToNextTest() {
+		Log.d(TAG, "Proceeding to next test externally.");
+		// The main handler ensures this runs on the main thread,
+		// which is safe for queue processing.
+		mainHandler.post(this::processNextTest);
+	}
 
 	public void startAutoTestFromRawResource(Context context, int rawResId) {
 		try (InputStream is = context.getResources().openRawResource(rawResId)) {
