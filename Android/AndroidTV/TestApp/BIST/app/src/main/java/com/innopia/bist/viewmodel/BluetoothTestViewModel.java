@@ -97,8 +97,8 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
 
     @SuppressLint("MissingPermission")
     public void onDeviceSelected(BluetoothDevice device) {
-        _selectedDevice.setValue(device);
-        _testResultLiveData.setValue(new TestResult(TestStatus.PENDING, "Test Result: PENDING")); // Reset test result on new selection
+        _selectedDevice.postValue(device);
+        _testResultLiveData.postValue(new TestResult(TestStatus.PENDING, "Test Result: PENDING")); // Reset test result on new selection
 
         if (device != null) {
 
