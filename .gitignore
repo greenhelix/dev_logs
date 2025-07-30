@@ -36,3 +36,7 @@ Windows/DiagramGenerator/build/BIST_Diagram_Maker/BIST_Diagram_Maker.exe
 Windows/DiagramGenerator/build/BIST_Diagram_Maker/BIST_Diagram_Maker.pkg
 Windows/DiagramGenerator/build/BIST_Diagram_Maker/COLLECT-00.toc
 Windows/DiagramGenerator/build/BIST_Diagram_Maker/EXE-00.toc
+Windows/DiagramGenerator/dist/UML/_internal/settings/pythonw.exe
+Windows/DiagramGenerator/build/BIST_UML/localpycs/pyimod04_pywin32.pyc
+Windows/DiagramGenerator/build/UML/localpycs/pyimod04_pywin32.pyc
+Windows/DiagramGenerator/dist/UML/_internal/settings/python3w.exe
