@@ -5,8 +5,8 @@
     <item android:state_focused="true">
         <shape android:shape="rectangle">
             <!-- same background color -->
-            <solid android:color="#555555" />
-            <!-- foucsing outline coloer & border -->
+            <solid android:color="#777777" />
+            <!-- focusing outline coloer & border -->
             <stroke android:width="3dp" android:color="#FFEB3B" />
             <corners android:radius="4dp" />
         </shape>

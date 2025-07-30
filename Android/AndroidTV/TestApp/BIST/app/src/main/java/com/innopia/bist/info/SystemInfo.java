@@ -110,7 +110,7 @@ public class SystemInfo {
         LogManager.d(TAG, "getCpuTemp ++");
         HardwarePropertiesManager hpm = (HardwarePropertiesManager) mContext.getSystemService(Context.HARDWARE_PROPERTIES_SERVICE);
         float[] temps = hpm.getDeviceTemperatures(HardwarePropertiesManager.DEVICE_TEMPERATURE_CPU, HardwarePropertiesManager.TEMPERATURE_CURRENT);
-        String temp = String.format("%.2f", temps[0]) + "°C";
+        String temp = String.format("%f", temps[0]) + "°C";
         LogManager.d(TAG, "getCpuTemp(temp=" + temp + ") --");
         return temp;
     }

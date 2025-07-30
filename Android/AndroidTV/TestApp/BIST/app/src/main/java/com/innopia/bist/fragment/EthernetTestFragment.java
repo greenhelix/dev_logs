@@ -22,68 +22,68 @@ import com.innopia.bist.viewmodel.MainViewModel;
 
 public class EthernetTestFragment extends Fragment {
 
-    private EthernetTestViewModel ethernetTestViewModel;
-    private MainViewModel mainViewModel;
-    private TextView tvEthernetInfo;
+	private EthernetTestViewModel ethernetTestViewModel;
+	private MainViewModel mainViewModel;
+	private TextView tvEthernetInfo;
 
-    public static EthernetTestFragment newInstance() {
-        return new EthernetTestFragment();
-    }
+	public static EthernetTestFragment newInstance() {
+		return new EthernetTestFragment();
+	}
 
-    public static class EthernetTestViewModelFactory implements ViewModelProvider.Factory {
+	public static class EthernetTestViewModelFactory implements ViewModelProvider.Factory {
 
-        private final Application application;
-        private final MainViewModel mainViewModel;
+		private final Application application;
+		private final MainViewModel mainViewModel;
 
-        public EthernetTestViewModelFactory(@NonNull Application application, @NonNull MainViewModel mainViewModel) {
-            this.application = application;
-            this.mainViewModel = mainViewModel;
-        }
+		public EthernetTestViewModelFactory(@NonNull Application application, @NonNull MainViewModel mainViewModel) {
+			this.application = application;
+			this.mainViewModel = mainViewModel;
+		}
 
-        @NonNull
-        @Override
-        @SuppressWarnings("unchecked")
-        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            if (modelClass.isAssignableFrom(EthernetTestViewModel.class)) {
-                return (T) new EthernetTestViewModel(application, mainViewModel);
-            }
-            throw new IllegalArgumentException("Unknown ViewModel class");
-        }
-    }
+		@NonNull
+		@Override
+		@SuppressWarnings("unchecked")
+		public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+			if (modelClass.isAssignableFrom(EthernetTestViewModel.class)) {
+				return (T) new EthernetTestViewModel(application, mainViewModel);
+			}
+			throw new IllegalArgumentException("Unknown ViewModel class");
+		}
+	}
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-        EthernetTestViewModelFactory factory = new EthernetTestViewModelFactory(
-                requireActivity().getApplication(),
-                mainViewModel
-        );
-        ethernetTestViewModel = new ViewModelProvider(this, factory).get(EthernetTestViewModel.class);
-    }
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+		EthernetTestViewModelFactory factory = new EthernetTestViewModelFactory(
+				requireActivity().getApplication(),
+				mainViewModel
+		);
+		ethernetTestViewModel = new ViewModelProvider(this, factory).get(EthernetTestViewModel.class);
+	}
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_ethernet_test, container, false);
-        tvEthernetInfo = rootView.findViewById(R.id.text_ethernet_info);
+	@Override
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_ethernet_test, container, false);
+		tvEthernetInfo = rootView.findViewById(R.id.text_ethernet_info);
 
-        Button btnEthernetTest = rootView.findViewById(R.id.btn_ethernet_test);
-        btnEthernetTest.setOnClickListener(v -> {
-            tvEthernetInfo.setText("Running Ethernet Test...");
-            ethernetTestViewModel.startTest();
-        });
+		Button btnEthernetTest = rootView.findViewById(R.id.btn_ethernet_test);
+		btnEthernetTest.setOnClickListener(v -> {
+			tvEthernetInfo.setText("Running Ethernet Test...");
+			ethernetTestViewModel.startTest();
+		});
 
-        ethernetTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
-            tvEthernetInfo.setText(result.getMessage());
-            boolean isConnected = result != null && !result.getMessage().contains("not connected");
-            mainViewModel.updateHardwareStatus(TestType.ETHERNET, isConnected ? Status.ON : Status.OFF);
-        });
-        return rootView;
-    }
+		ethernetTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
+			tvEthernetInfo.setText(result.getMessage());
+			boolean isConnected = result != null && !result.getMessage().contains("not connected");
+			mainViewModel.updateHardwareStatus(TestType.ETHERNET, isConnected ? Status.ON : Status.OFF);
+		});
+		return rootView;
+	}
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ethernetTestViewModel.startTest();
-    }
+	@Override
+	public void onResume() {
+		super.onResume();
+		ethernetTestViewModel.startTest();
+	}
 }

@@ -1,14 +1,19 @@
 <resources>
-    <color name="background_gradient_start">#000000</color>
-    <color name="background_gradient_end">#DDDDDD</color>
-    <color name="fastlane_background">#0096a6</color>
-    <color name="search_opaque">#ffaa3f</color>
-    <color name="selected_background">#ffaa3f</color>
-    <color name="default_background">#3d3d3d</color>
+	<color name="background_gradient_start">#000000</color>
+	<color name="background_gradient_end">#DDDDDD</color>
+	<color name="fastlane_background">#0096a6</color>
+	<color name="search_opaque">#ffaa3f</color>
+	<color name="selected_background">#ffaa3f</color>
+	<color name="default_background">#3d3d3d</color>
 
-    <color name="item_background_default">#222222</color>
-    <color name="item_background_focused">#838282</color>
-    <color name="dialog_background_color">#777777</color>
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
+	<color name="item_background_default">#222222</color>
+	<color name="item_background_focused">#838282</color>
+	<color name="dialog_background_color">#777777</color>
+	<color name="black">#000000</color>
+	<color name="white">#FFFFFF</color>
+	<color name="red">#F44336</color>
+	<color name="green">#4CAF50</color>
+	<color name="purple">#7B12CC</color>
+	<color name="yellow">#FFEB3B</color>
+	<color name="normal">#777777</color>
 </resources>

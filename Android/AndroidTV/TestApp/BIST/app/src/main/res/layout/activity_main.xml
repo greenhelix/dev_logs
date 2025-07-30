@@ -24,7 +24,6 @@
 			<Button
 				android:id="@+id/button_ethernet_test"
 				android:layout_height="match_parent"
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="Ethernet Test"
 				android:gravity="start|center_vertical"
@@ -34,7 +33,6 @@
 			<Button
 				android:id="@+id/button_video_test"
 				android:layout_height="match_parent"
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="Video Test"
 				android:gravity="start|center_vertical"
@@ -50,7 +48,6 @@
 			<Button
 				android:id="@+id/button_wifi_test"
 				android:layout_height="match_parent"
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="Wi-Fi Test"
 				android:gravity="start|center_vertical"
@@ -60,7 +57,6 @@
 			<Button
 				android:id="@+id/button_bt_test"
 				android:layout_height="match_parent"
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="Bluetooth Test"
 				android:gravity="start|center_vertical"
@@ -76,7 +72,6 @@
 			<Button
 				android:id="@+id/button_hdmi_test"
 				android:layout_height="match_parent"
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="HDMI Test"
 				android:gravity="start|center_vertical"
@@ -86,7 +81,6 @@
 			<Button
 				android:id="@+id/button_usb_test"
 				android:layout_height="match_parent"
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="USB Test"
 				android:gravity="start|center_vertical"
@@ -102,7 +96,6 @@
 			<Button
 				android:id="@+id/button_memory_test"
 				android:layout_height="match_parent"
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="Memory Test"
 				android:gravity="start|center_vertical"
@@ -112,7 +105,6 @@
 			<Button
 				android:id="@+id/button_cpu_test"
 				android:layout_height="match_parent"
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="CPU Test"
 				android:gravity="start|center_vertical"
@@ -128,7 +120,6 @@
 			<Button
 				android:id="@+id/button_rcu_test"
 				android:layout_height="match_parent"
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="RCU Test"
 				android:gravity="start|center_vertical"
@@ -137,7 +128,6 @@
 
 			<Button
 				android:layout_height="match_parent"
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="5-2"
 				android:visibility="invisible"
@@ -190,7 +180,6 @@
 
 			<Button
 				android:layout_height="match_parent"
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="7-2"
 				android:visibility="invisible"
@@ -206,7 +195,6 @@
 			android:layout_weight="1">
 
 			<Button
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:layout_height="match_parent"
 				android:text="8-1"
@@ -216,7 +204,6 @@
 				android:paddingEnd="12dp" />
 
 			<Button
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:layout_height="match_parent"
 				android:text="8-2"
@@ -232,7 +219,6 @@
 			android:layout_weight="1">
 
 			<Button
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:layout_height="match_parent"
 				android:text="9-1"
@@ -242,7 +228,6 @@
 				android:paddingEnd="12dp" />
 
 			<Button
-				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:layout_height="match_parent"
 				android:text="9-2"
@@ -268,11 +253,11 @@
 				android:paddingEnd="12dp" />
 
 			<Button
-				android:id="@+id/button_reset_auto_test"
+				android:id="@+id/button_reset_test"
 				android:layout_height="match_parent"
 				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
-				android:text="Reset Auto Test"
+				android:text="Reset Test"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
@@ -292,8 +277,6 @@
 			android:layout_height="wrap_content"
 			android:layout_alignParentTop="true"
 			android:padding="8dp">
-
-
 
 			<LinearLayout
 				android:id="@+id/info_text_container"

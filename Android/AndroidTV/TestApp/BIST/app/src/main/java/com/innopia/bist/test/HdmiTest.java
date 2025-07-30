@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-
+import java.util.List;
 /**
  * HdmiTest class performs tests on the HDMI connection for STB environments.
  * It identifies the primary HDMI display, retrieves TV (sink) and STB (source) information,
@@ -108,7 +108,7 @@ public class HdmiTest implements Test {
 //            info.append("CEC Status: Service unavailable\n");
 //        } else {
 		try {
-//                List<HdmiDeviceInfo> devices = hdmiControlManager.getConnectedDevices();
+//			List<HdmiDeviceInfo> devices = hdmiControlManager.getConnectedDevices();
 			info.append("CEC Status: Supported\n");
 //                if (devices.isEmpty()) {
 //                    info.append("- No active CEC devices found.\nHDMI connect directly to STB");

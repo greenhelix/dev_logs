@@ -134,6 +134,7 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 		_testStatusesLiveData.setValue(initialStatuses);
 		logRepository.clearLogs();
 		_logLiveData.postValue(logRepository.getLogs());
+		_clearFragmentContainer.postValue(null);
 	}
 
 	public void startAutoTest(String usbPath) {

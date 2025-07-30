@@ -7,9 +7,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -194,8 +200,8 @@ public class MainActivity extends AppCompatActivity {
 			// mainViewModel.startAutoTest("/storage/usb_storage");
 			mainViewModel.startAutoTest(true); //for testing
 		});
-		Button btnResetAutoTest = findViewById(R.id.button_reset_auto_test);
-		btnResetAutoTest.setOnClickListener(v -> {
+		Button btnResetTest = findViewById(R.id.button_reset_test);
+		btnResetTest.setOnClickListener(v -> {
 			mainViewModel.resetAllTests();
 		});
 
@@ -209,8 +215,9 @@ public class MainActivity extends AppCompatActivity {
 		mainViewModel.logLiveData.observe(this, logs -> {
 			if (logs != null) {
 				tvLogWindow.setText(String.join("\n", logs));
-				if (mainViewModel.isLogAutoScrollEnabled()) {
-					svLog.post(() -> svLog.fullScroll(ScrollView.FOCUS_DOWN));
+				if (mainViewModel.isLogAutoScrollEnabled() && svLog.hasFocus()) {
+					int bottom = svLog.getHeight();
+					svLog.smoothScrollTo(0, bottom);
 				}
 			}
 		});
@@ -310,32 +317,43 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	// This method updates button background based on test status.
 	private void updateButtonUI(TestType type, TestStatus status) {
 		Button button = testButtonMap.get(type);
 		if (button == null) return;
 
-		int backgroundResId;
+		int colorResId;
 		switch (status) {
-			case PASSED:
-				backgroundResId = R.drawable.button_state_passed; // You need to create this drawable
-				break;
-			case FAILED:
-				backgroundResId = R.drawable.button_state_failed; // You need to create this drawable
-				break;
-			case RETEST:
-				backgroundResId = R.drawable.button_state_retest; // You need to create this drawable
-				break;
+			case PASSED: colorResId = R.color.green; break;
+			case FAILED: colorResId = R.color.red; break;
+			case RETEST: colorResId = R.color.purple; break;
 			case RUNNING:
-			case WAITING_FOR_USER:
-				backgroundResId = R.drawable.button_state_running; // You need to create this drawable
-				break;
+			case WAITING_FOR_USER: colorResId = R.color.yellow; break;
 			case PENDING:
-			default:
-				backgroundResId = R.drawable.button_focus_selector; // Your default button drawable
-				break;
+			default: colorResId = R.color.normal; break;
 		}
-		button.setBackgroundResource(backgroundResId);
+		int backgroundColor = ContextCompat.getColor(this, colorResId);
+
+		// 2. 기본 상태의 드로어블 생성 (색상이 적용된 사각형)
+		GradientDrawable defaultDrawable = new GradientDrawable();
+		defaultDrawable.setShape(GradientDrawable.RECTANGLE);
+		defaultDrawable.setCornerRadius(4 * getResources().getDisplayMetrics().density); // 4dp
+		defaultDrawable.setColor(backgroundColor);
+		defaultDrawable.setStroke((int) (3 * getResources().getDisplayMetrics().density), Color.BLACK);
+		// 3. 포커스 상태의 드로어블 생성 (기본 드로어블 위에 노란 테두리를 덧씌움)
+		Drawable[] focusLayers = new Drawable[2];
+		focusLayers[0] = defaultDrawable; // 아래층: 색상이 적용된 배경
+		focusLayers[1] = ContextCompat.getDrawable(this, R.drawable.button_state_selector); // 위층: 노란 테두리
+		LayerDrawable focusDrawable = new LayerDrawable(focusLayers);
+
+		// 4. StateListDrawable을 만들어 상태별 드로어블을 지정
+		StateListDrawable stateListDrawable = new StateListDrawable();
+		// 포커스 상태일 때는 LayerDrawable을 사용
+		stateListDrawable.addState(new int[]{android.R.attr.state_focused}, focusDrawable);
+		// 기본 상태일 때는 색상만 있는 드로어블을 사용
+		stateListDrawable.addState(new int[]{}, defaultDrawable);
+
+		// 5. 완성된 StateListDrawable을 버튼의 최종 배경으로 설정
+		button.setBackground(stateListDrawable);
 	}
 
 	// This method shows a dialog when user interaction is needed.
@@ -475,7 +493,6 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-
 	private void startFactoryReset() {
 		Intent intent = new Intent(Settings.ACTION_DEVICE_INFO_SETTINGS);
 		try {
@@ -489,6 +506,13 @@ public class MainActivity extends AppCompatActivity {
 			}
 		}
 	}
+
+//	private void startFactoryReset() {
+//		Intent intent = new Intent(Intent.ACTION_FACTORY_RESET);
+//		intent.setPackage("android");
+//		intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+//		this.getApplicationContext().sendBroadcastAsUser(intent, new UserHandle(UserHandle.USER_CURRENT));
+//	}
 
 	private void startReboot() {
 		PowerManager pm = (PowerManager) this.getApplicationContext().getSystemService(Context.POWER_SERVICE);
@@ -516,6 +540,8 @@ public class MainActivity extends AppCompatActivity {
 		final String modelName = si.getModelName();
 		final String serialNumber = si.getSerialNumber();
 		final String date = si.getDate();
+//		final String cpuTemp = si.getCpuTemp();
+		final String cpuTemp = "no permission";
 		final String dataPartition = si.getDataPartition();
 		final String ethernetMac = si.getEthernetMac();
 		final String wifiMac = si.getWifiMac();
@@ -529,7 +555,7 @@ public class MainActivity extends AppCompatActivity {
 		sysInfo.append(" Model Name: ").append(modelName).append("\n");
 		sysInfo.append(" Serial Number: ").append(serialNumber).append("\n");
 		sysInfo.append(" Date: ").append(date).append("\n");
-		sysInfo.append(" CPU Temp: null \n");
+		sysInfo.append(" CPU Temp: " + cpuTemp + "\n");
 		sysInfo.append(" Data Partition: ").append(dataPartition).append("\n");
 		sysInfo.append(" Ethernet MAC: ").append(ethernetMac).append("\n");
 		sysInfo.append(" Wi-Fi MAC: ").append(wifiMac).append("\n");

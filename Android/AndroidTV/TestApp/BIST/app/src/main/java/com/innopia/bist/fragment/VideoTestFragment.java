@@ -2,6 +2,10 @@ package com.innopia.bist.fragment;
 
 import android.app.Application;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -82,11 +86,12 @@ public class VideoTestFragment extends Fragment {
 	private void setupButtonLayout() {
 		layoutButtons.removeAllViews();
 		List<VideoTestViewModel.VideoSample> samples = videoTestViewModel.getVideoSamples();
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0,1);
 		for (VideoTestViewModel.VideoSample sample : samples) {
 			Button btnSample = new Button(getContext());
 			btnSample.setText(sample.getDisplayName());
 			btnSample.setTag(sample.getFileName());
-			btnSample.setBackgroundResource(R.drawable.button_focus_selector);
+			btnSample.setLayoutParams(params);
 			btnSample.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 			btnSample.setOnClickListener(v -> playSample(sample));
 			layoutButtons.addView(btnSample);
@@ -99,22 +104,46 @@ public class VideoTestFragment extends Fragment {
 
 		// 각 비디오 버튼의 상태(PASSED/FAILED)에 따라 UI 변경
 		videoTestViewModel.videoStatuses.observe(getViewLifecycleOwner(), statuses -> {
+			int backgroundColor = 0;
 			for (Map.Entry<String, com.innopia.bist.util.TestStatus> entry : statuses.entrySet()) {
 				Button buttonToUpdate = layoutButtons.findViewWithTag(entry.getKey());
+				GradientDrawable defaultDrawable = new GradientDrawable();
+				defaultDrawable.setShape(GradientDrawable.RECTANGLE);
+				defaultDrawable.setCornerRadius(4 * getResources().getDisplayMetrics().density); // 4dp
+				defaultDrawable.setStroke((int) (3 * getResources().getDisplayMetrics().density), Color.BLACK);
 				if (buttonToUpdate != null) {
 					switch (entry.getValue()) {
 						case PASSED:
 							// MODIFIED: setBackgroundColor를 setBackgroundResource로 수정해야 Drawable이 적용됩니다.
-							buttonToUpdate.setBackgroundResource(R.drawable.button_state_passed);
+//							buttonToUpdate.setBackgroundColor(getResources().getColor(R.color.green, requireContext().getTheme()));
+							backgroundColor = ContextCompat.getColor(requireContext(), R.color.green);
+							defaultDrawable.setColor(backgroundColor);
 							break;
 						case FAILED:
-							buttonToUpdate.setBackgroundResource(R.drawable.button_state_failed);
+//							buttonToUpdate.setBackgroundColor(getResources().getColor(R.color.red, requireContext().getTheme()));
+							backgroundColor = ContextCompat.getColor(requireContext(), R.color.red);
+							defaultDrawable.setColor(backgroundColor);
 							break;
+
 						default:
-							buttonToUpdate.setBackgroundResource(R.drawable.button_focus_selector);
+							//buttonToUpdate.setBackgroundResource(R.drawable.button_focus_selector);
+							backgroundColor = ContextCompat.getColor(requireContext(), R.color.normal);
+							defaultDrawable.setColor(backgroundColor);
 							break;
 					}
 				}
+				Drawable[] focusLayers = new Drawable[2];
+				focusLayers[0] = defaultDrawable; // 아래층: 색상이 적용된 배경
+				focusLayers[1] = ContextCompat.getDrawable(requireContext(), R.drawable.button_state_selector); // 위층: 노란 테두리
+				LayerDrawable focusDrawable = new LayerDrawable(focusLayers);
+
+				// 4. StateListDrawable을 만들어 상태별 드로어블을 지정
+				StateListDrawable stateListDrawable = new StateListDrawable();
+				// 포커스 상태일 때는 LayerDrawable을 사용
+				stateListDrawable.addState(new int[]{android.R.attr.state_focused}, focusDrawable);
+				// 기본 상태일 때는 색상만 있는 드로어블을 사용
+				stateListDrawable.addState(new int[]{}, defaultDrawable);
+				buttonToUpdate.setBackground(stateListDrawable);
 			}
 		});
 
