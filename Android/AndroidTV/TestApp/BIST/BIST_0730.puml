@@ -1,0 +1,164 @@
+@startuml
+title BIST
+
+top to bottom direction
+skinparam linetype ortho
+skinparam wrapWidth 250
+scale max 1200 width
+skinparam classAttributeIconSize 0
+skinparam groupInheritance 2
+
+' --- Class & Interface Definitions ---
+interface "AutoTestListener"
+class "AutoTestManager"
+class "BaseTestViewModel"
+class "BluetoothTest"
+class "BluetoothTestFragment"
+class "BluetoothTestViewModel"
+class "BluetoothTestViewModelFactory"
+class "CpuTest"
+class "CpuTestFragment"
+class "CpuTestViewModel"
+class "CpuTestViewModelFactory"
+class "EthernetTest"
+class "EthernetTestFragment"
+class "EthernetTestViewModel"
+class "EthernetTestViewModelFactory"
+class "FocusControl"
+class "HdmiTest"
+class "HdmiTestFragment"
+class "HdmiTestViewModel"
+class "HwInfo"
+class "LogManager"
+class "LogRepository"
+class "MainActivity"
+class "MainViewModel"
+class "MemoryTest"
+class "MemoryTestFragment"
+class "MemoryTestViewModel"
+class "MemoryTestViewModelFactory"
+class "RcuTest"
+class "RcuTestFragment"
+class "RcuTestViewModel"
+class "RcuTestViewModelFactory"
+class "SecretCodeManager"
+class "ServiceUtils"
+class "SysInfo"
+class "SystemInfo"
+interface "Test"
+class "TestResult"
+class "UsbDetachReceiver"
+class "UsbTest"
+class "UsbTestFragment"
+class "UsbTestViewModel"
+class "UsbTestViewModelFactory"
+class "VideoSample"
+class "VideoTest"
+class "VideoTestFragment"
+class "VideoTestViewModel"
+class "VideoTestViewModelFactory"
+class "WifiTest"
+class "WifiTestFragment"
+class "WifiTestViewModel"
+class "WifiTestViewModelFactory"
+
+AutoTestManager --> MemoryTest
+AutoTestManager --> UsbTest
+AutoTestManager --> RcuTest
+AutoTestManager --> VideoTest
+AutoTestManager --> HdmiTest
+AutoTestManager --> EthernetTest
+AutoTestManager --> WifiTest
+AutoTestManager --> CpuTest
+AutoTestManager --> BluetoothTest
+AutoTestManager --> AutoTestListener
+BaseTestViewModel --> BluetoothTestViewModel
+BluetoothTest --> BluetoothTestFragment
+BluetoothTest --> BluetoothTestViewModelFactory
+BluetoothTest --> BluetoothTestViewModel
+BluetoothTestFragment --> BluetoothTestViewModelFactory
+BluetoothTestFragment --> BluetoothTestViewModel
+BluetoothTestViewModel --> BluetoothTestViewModelFactory
+BluetoothTestViewModel --> BluetoothTest
+BluetoothTestViewModelFactory --> BluetoothTestViewModel
+CpuTest --> CpuTestViewModelFactory
+CpuTest --> CpuTestViewModel
+CpuTest --> CpuTestFragment
+CpuTestFragment --> CpuTestViewModel
+CpuTestFragment --> CpuTestViewModelFactory
+CpuTestViewModel --> CpuTest
+CpuTestViewModel --> CpuTestViewModelFactory
+CpuTestViewModelFactory --> CpuTestViewModel
+EthernetTest --> EthernetTestFragment
+EthernetTest --> EthernetTestViewModelFactory
+EthernetTest --> EthernetTestViewModel
+EthernetTestFragment --> EthernetTestViewModelFactory
+EthernetTestFragment --> EthernetTestViewModel
+EthernetTestViewModel --> EthernetTestViewModelFactory
+EthernetTestViewModel --> EthernetTest
+EthernetTestViewModelFactory --> EthernetTestViewModel
+HdmiTest --> HdmiTestViewModel
+HdmiTest --> HdmiTestFragment
+HdmiTestFragment --> HdmiTestViewModel
+HdmiTestViewModel --> HdmiTest
+MainActivity --> HwInfo
+MainActivity --> HdmiTestFragment
+MainActivity --> EthernetTestFragment
+MainActivity --> SystemInfo
+MainActivity --> BluetoothTestFragment
+MainActivity --> WifiTestFragment
+MainActivity --> UsbDetachReceiver
+MainActivity --> VideoTestFragment
+MainActivity --> RcuTestFragment
+MainActivity --> UsbTestFragment
+MainActivity --> CpuTestFragment
+MainActivity --> MemoryTestFragment
+MainViewModel --> AutoTestManager
+MainViewModel --> MainActivity
+MainViewModel --> BaseTestViewModel
+MemoryTest --> MemoryTestViewModel
+MemoryTest --> MemoryTestFragment
+MemoryTest --> MemoryTestViewModelFactory
+MemoryTestFragment --> MemoryTestViewModel
+MemoryTestFragment --> MemoryTestViewModelFactory
+MemoryTestViewModel --> MemoryTest
+MemoryTestViewModel --> MemoryTestViewModelFactory
+MemoryTestViewModelFactory --> MemoryTestViewModel
+RcuTest --> RcuTestViewModelFactory
+RcuTest --> RcuTestViewModel
+RcuTest --> RcuTestFragment
+RcuTestFragment --> RcuTestViewModel
+RcuTestFragment --> RcuTestViewModelFactory
+RcuTestViewModel --> RcuTestViewModelFactory
+RcuTestViewModel --> RcuTestFragment
+RcuTestViewModel --> RcuTest
+RcuTestViewModelFactory --> RcuTestViewModel
+UsbTest --> UsbTestViewModelFactory
+UsbTest --> UsbTestFragment
+UsbTest --> UsbTestViewModel
+UsbTestFragment --> UsbTestViewModel
+UsbTestFragment --> UsbTestViewModelFactory
+UsbTestViewModel --> UsbTest
+UsbTestViewModel --> UsbTestViewModelFactory
+UsbTestViewModelFactory --> UsbTestViewModel
+VideoTest --> VideoTestViewModel
+VideoTest --> VideoSample
+VideoTest --> VideoTestFragment
+VideoTest --> VideoTestViewModelFactory
+VideoTestFragment --> VideoTestViewModel
+VideoTestFragment --> VideoSample
+VideoTestFragment --> VideoTestViewModelFactory
+VideoTestViewModel --> VideoSample
+VideoTestViewModel --> VideoTest
+VideoTestViewModel --> VideoTestViewModelFactory
+VideoTestViewModelFactory --> VideoTestViewModel
+WifiTest --> WifiTestFragment
+WifiTest --> WifiTestViewModel
+WifiTest --> WifiTestViewModelFactory
+WifiTestFragment --> WifiTestViewModel
+WifiTestFragment --> WifiTestViewModelFactory
+WifiTestViewModel --> WifiTestViewModelFactory
+WifiTestViewModel --> WifiTest
+WifiTestViewModelFactory --> WifiTestViewModel
+
+@enduml

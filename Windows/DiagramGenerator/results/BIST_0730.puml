@@ -1,0 +1,280 @@
+@startuml
+title BIST
+
+top to bottom direction
+skinparam linetype ortho
+skinparam wrapWidth 250
+scale max 1200 width
+skinparam classAttributeIconSize 0
+skinparam groupInheritance 2
+
+' --- Class & Interface Definitions ---
+interface "AutoTestListener"
+class "AutoTestManager"
+class "BaseTestViewModel"
+class "BluetoothTest"
+class "BluetoothTestFragment"
+class "BluetoothTestViewModel"
+class "BluetoothTestViewModelFactory"
+class "CpuTest"
+class "CpuTestFragment"
+class "CpuTestViewModel"
+class "CpuTestViewModelFactory"
+class "EthernetTest"
+class "EthernetTestFragment"
+class "EthernetTestViewModel"
+class "EthernetTestViewModelFactory"
+class "FocusControl"
+class "HdmiTest"
+class "HdmiTestFragment"
+class "HdmiTestViewModel"
+class "HwInfo"
+class "LogManager"
+class "LogRepository"
+class "MainActivity"
+class "MainViewModel"
+class "MemoryTest"
+class "MemoryTestFragment"
+class "MemoryTestViewModel"
+class "MemoryTestViewModelFactory"
+class "RcuTest"
+class "RcuTestFragment"
+class "RcuTestViewModel"
+class "RcuTestViewModelFactory"
+class "SecretCodeManager"
+class "ServiceUtils"
+class "SysInfo"
+class "SystemInfo"
+interface "Test"
+class "TestResult"
+class "UsbDetachReceiver"
+class "UsbTest"
+class "UsbTestFragment"
+class "UsbTestViewModel"
+class "UsbTestViewModelFactory"
+class "VideoSample"
+class "VideoTest"
+class "VideoTestFragment"
+class "VideoTestViewModel"
+class "VideoTestViewModelFactory"
+class "WifiTest"
+class "WifiTestFragment"
+class "WifiTestViewModel"
+class "WifiTestViewModelFactory"
+
+' --- Inheritance & Implementation ---
+Test <|.. BluetoothTest
+BaseTestViewModel <|-- BluetoothTestViewModel
+Test <|.. CpuTest
+BaseTestViewModel <|-- CpuTestViewModel
+Test <|.. EthernetTest
+BaseTestViewModel <|-- EthernetTestViewModel
+Test <|.. HdmiTest
+BaseTestViewModel <|-- HdmiTestViewModel
+Test <|.. MemoryTest
+BaseTestViewModel <|-- MemoryTestViewModel
+Test <|.. RcuTest
+BaseTestViewModel <|-- RcuTestViewModel
+Test <|.. UsbTest
+BaseTestViewModel <|-- UsbTestViewModel
+Test <|.. VideoTest
+BaseTestViewModel <|-- VideoTestViewModel
+Test <|.. WifiTest
+BaseTestViewModel <|-- WifiTestViewModel
+
+' --- Usage / Association ---
+AutoTestManager --> MemoryTest
+AutoTestManager --> for
+AutoTestManager --> UsbTest
+AutoTestManager --> RcuTest
+AutoTestManager --> VideoTest
+AutoTestManager --> HdmiTest
+AutoTestManager --> EthernetTest
+AutoTestManager --> WifiTest
+AutoTestManager --> Test
+AutoTestManager --> CpuTest
+AutoTestManager --> TestResult
+AutoTestManager --> BluetoothTest
+AutoTestManager --> AutoTestListener
+BaseTestViewModel --> Test
+BaseTestViewModel --> for
+BaseTestViewModel --> BluetoothTestViewModel
+BaseTestViewModel --> MainViewModel
+BaseTestViewModel --> TestResult
+BluetoothTest --> MainViewModel
+BluetoothTest --> BluetoothTestFragment
+BluetoothTest --> for
+BluetoothTest --> BluetoothTestViewModelFactory
+BluetoothTest --> BluetoothTestViewModel
+BluetoothTest --> TestResult
+BluetoothTestFragment --> MainViewModel
+BluetoothTestFragment --> for
+BluetoothTestFragment --> BluetoothTestViewModelFactory
+BluetoothTestFragment --> BluetoothTestViewModel
+BluetoothTestFragment --> Test
+BluetoothTestViewModel --> MainViewModel
+BluetoothTestViewModel --> for
+BluetoothTestViewModel --> BluetoothTestViewModelFactory
+BluetoothTestViewModel --> Test
+BluetoothTestViewModel --> TestResult
+BluetoothTestViewModel --> BluetoothTest
+BluetoothTestViewModelFactory --> MainViewModel
+BluetoothTestViewModelFactory --> BluetoothTestViewModel
+CpuTest --> CpuTestViewModelFactory
+CpuTest --> for
+CpuTest --> CpuTestViewModel
+CpuTest --> CpuTestFragment
+CpuTest --> MainViewModel
+CpuTest --> TestResult
+CpuTestFragment --> CpuTestViewModel
+CpuTestFragment --> Test
+CpuTestFragment --> CpuTestViewModelFactory
+CpuTestFragment --> MainViewModel
+CpuTestViewModel --> MainViewModel
+CpuTestViewModel --> CpuTest
+CpuTestViewModel --> CpuTestViewModelFactory
+CpuTestViewModelFactory --> CpuTestViewModel
+CpuTestViewModelFactory --> MainViewModel
+EthernetTest --> EthernetTestFragment
+EthernetTest --> for
+EthernetTest --> EthernetTestViewModelFactory
+EthernetTest --> EthernetTestViewModel
+EthernetTest --> MainViewModel
+EthernetTest --> TestResult
+EthernetTestFragment --> EthernetTestViewModelFactory
+EthernetTestFragment --> EthernetTestViewModel
+EthernetTestFragment --> Test
+EthernetTestFragment --> MainViewModel
+EthernetTestViewModel --> EthernetTestViewModelFactory
+EthernetTestViewModel --> MainViewModel
+EthernetTestViewModel --> EthernetTest
+EthernetTestViewModelFactory --> EthernetTestViewModel
+EthernetTestViewModelFactory --> MainViewModel
+FocusControl --> for
+HdmiTest --> HdmiTestViewModel
+HdmiTest --> HdmiTestFragment
+HdmiTest --> for
+HdmiTest --> MainViewModel
+HdmiTest --> TestResult
+HdmiTestFragment --> HdmiTestViewModel
+HdmiTestFragment --> MainViewModel
+HdmiTestFragment --> Test
+HdmiTestViewModel --> for
+HdmiTestViewModel --> MainViewModel
+HdmiTestViewModel --> HdmiTest
+HwInfo --> SysInfo
+HwInfo --> LogManager
+MainActivity --> HwInfo
+MainActivity --> HdmiTestFragment
+MainActivity --> EthernetTestFragment
+MainActivity --> SystemInfo
+MainActivity --> BluetoothTestFragment
+MainActivity --> WifiTestFragment
+MainActivity --> UsbDetachReceiver
+MainActivity --> VideoTestFragment
+MainActivity --> RcuTestFragment
+MainActivity --> for
+MainActivity --> handles
+MainActivity --> UsbTestFragment
+MainActivity --> ServiceUtils
+MainActivity --> SecretCodeManager
+MainActivity --> CpuTestFragment
+MainActivity --> MainViewModel
+MainActivity --> MemoryTestFragment
+MainViewModel --> LogRepository
+MainViewModel --> SingleLiveEvent
+MainViewModel --> for
+MainViewModel --> AutoTestManager
+MainViewModel --> MainActivity
+MainViewModel --> BaseTestViewModel
+MainViewModel --> Test
+MemoryTest --> MemoryTestViewModel
+MemoryTest --> for
+MemoryTest --> MemoryTestFragment
+MemoryTest --> MemoryTestViewModelFactory
+MemoryTest --> MainViewModel
+MemoryTest --> TestResult
+MemoryTestFragment --> Test
+MemoryTestFragment --> MainViewModel
+MemoryTestFragment --> MemoryTestViewModel
+MemoryTestFragment --> MemoryTestViewModelFactory
+MemoryTestViewModel --> MainViewModel
+MemoryTestViewModel --> MemoryTest
+MemoryTestViewModel --> MemoryTestViewModelFactory
+MemoryTestViewModelFactory --> MainViewModel
+MemoryTestViewModelFactory --> MemoryTestViewModel
+RcuTest --> RcuTestViewModelFactory
+RcuTest --> SingleLiveEvent
+RcuTest --> for
+RcuTest --> RcuTestViewModel
+RcuTest --> RcuTestFragment
+RcuTest --> MainViewModel
+RcuTest --> TestResult
+RcuTestFragment --> RcuTestViewModel
+RcuTestFragment --> RcuTestViewModelFactory
+RcuTestFragment --> MainViewModel
+RcuTestViewModel --> RcuTestViewModelFactory
+RcuTestViewModel --> SingleLiveEvent
+RcuTestViewModel --> for
+RcuTestViewModel --> RcuTestFragment
+RcuTestViewModel --> RcuTest
+RcuTestViewModel --> MainViewModel
+RcuTestViewModel --> TestResult
+RcuTestViewModelFactory --> RcuTestViewModel
+RcuTestViewModelFactory --> MainViewModel
+SecretCodeManager --> for
+ServiceUtils --> for
+Test --> TestResult
+UsbTest --> for
+UsbTest --> UsbTestViewModelFactory
+UsbTest --> UsbTestFragment
+UsbTest --> MainViewModel
+UsbTest --> TestResult
+UsbTest --> UsbTestViewModel
+UsbTestFragment --> Test
+UsbTestFragment --> MainViewModel
+UsbTestFragment --> UsbTestViewModel
+UsbTestFragment --> UsbTestViewModelFactory
+UsbTestViewModel --> UsbTest
+UsbTestViewModel --> MainViewModel
+UsbTestViewModel --> UsbTestViewModelFactory
+UsbTestViewModelFactory --> MainViewModel
+UsbTestViewModelFactory --> UsbTestViewModel
+VideoTest --> VideoTestViewModel
+VideoTest --> VideoSample
+VideoTest --> SingleLiveEvent
+VideoTest --> for
+VideoTest --> VideoTestFragment
+VideoTest --> VideoTestViewModelFactory
+VideoTest --> MainViewModel
+VideoTest --> TestResult
+VideoTestFragment --> VideoTestViewModel
+VideoTestFragment --> VideoSample
+VideoTestFragment --> for
+VideoTestFragment --> VideoTestViewModelFactory
+VideoTestFragment --> MainViewModel
+VideoTestViewModel --> VideoSample
+VideoTestViewModel --> SingleLiveEvent
+VideoTestViewModel --> for
+VideoTestViewModel --> VideoTest
+VideoTestViewModel --> VideoTestViewModelFactory
+VideoTestViewModel --> MainViewModel
+VideoTestViewModelFactory --> MainViewModel
+VideoTestViewModelFactory --> VideoTestViewModel
+WifiTest --> for
+WifiTest --> WifiTestFragment
+WifiTest --> WifiTestViewModel
+WifiTest --> MainViewModel
+WifiTest --> TestResult
+WifiTest --> WifiTestViewModelFactory
+WifiTestFragment --> WifiTestViewModel
+WifiTestFragment --> Test
+WifiTestFragment --> MainViewModel
+WifiTestFragment --> WifiTestViewModelFactory
+WifiTestViewModel --> MainViewModel
+WifiTestViewModel --> WifiTestViewModelFactory
+WifiTestViewModel --> WifiTest
+WifiTestViewModelFactory --> WifiTestViewModel
+WifiTestViewModelFactory --> MainViewModel
+
+@enduml
