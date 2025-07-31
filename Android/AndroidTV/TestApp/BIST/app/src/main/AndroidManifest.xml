@@ -54,6 +54,9 @@
     <uses-permission android:name="android.permission.HDMI_CEC"
 	    tools:ignore="ProtectedPermissions" />
 
+	<uses-permission android:name="android.permission.DEVICE_POWER"
+		tools:ignore="ProtectedPermissions" />
+
     <application
         android:enabled="true" android:exported="true"
         android:extractNativeLibs="false" android:icon="@drawable/ic_launcher"

@@ -75,13 +75,9 @@ public class HdmiTest implements Test {
 		}
 
 		StringBuilder info = new StringBuilder();
-		info.append("== STB (Source) Info ==\n");
-		info.append(String.format("Device Model: %s\n", Build.MODEL));
-		info.append(String.format("Android Version: %s\n", Build.VERSION.RELEASE));
-		info.append("\n== TV (Sink) Info (from EDID) ==\n");
 		info.append("Status: Connected\n");
 		info.append(String.format("Resolution: %dx%d\n", hdmiDisplay.getWidth(), hdmiDisplay.getHeight()));
-		info.append(String.format("Refresh Rate: %.2f Hz\n", hdmiDisplay.getRefreshRate()));
+		info.append(String.format("Refresh Rate: %d Hz\n", (int)hdmiDisplay.getRefreshRate()));
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			Display.HdrCapabilities hdrCapabilities = hdmiDisplay.getHdrCapabilities();
 			int[] supportedHdrTypes = hdrCapabilities.getSupportedHdrTypes();
@@ -101,7 +97,7 @@ public class HdmiTest implements Test {
 			}
 		}
 
-		info.append("\n== HDMI CEC Bus Info ==\n");
+//		info.append("\n== HDMI CEC Bus Info ==\n");
 //        HdmiControlManager hdmiControlManager = (HdmiControlManager) context.getSystemService(Context.HDMI_CONTROL_SERVICE);
 		boolean cecPermissionDenied = false;
 //        if (hdmiControlManager == null) {
@@ -132,7 +128,7 @@ public class HdmiTest implements Test {
 //        }
 
 		info.append("\n== EDID Data Analysis ==\n");
-		info.append("Note: Raw EDID data cannot be shown as standard Android APIs do not provide access to it.\n\n");
+//		info.append("Note: Raw EDID data cannot be shown as standard Android APIs do not provide access to it.\n\n");
 		info.append("Information successfully extracted from EDID:\n");
 		info.append("- Display Resolution & Refresh Rate\n");
 		info.append("- Supported HDR formats (HDR10, HLG, Dolby Vision, etc.)\n");

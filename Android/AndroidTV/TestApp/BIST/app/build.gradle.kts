@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "com.innopia.bist"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.innopia.bist"
         minSdk = 31
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -31,7 +31,8 @@ android {
 }
 
 dependencies {
-
+    implementation ("androidx.media3:media3-exoplayer:1.3.1")
+    implementation ("androidx.media3:media3-ui:1.3.1")
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

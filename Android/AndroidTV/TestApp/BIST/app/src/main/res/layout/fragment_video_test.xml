@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/fragment_video_button_root"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
@@ -30,11 +31,20 @@
 			android:gravity="center"
 			android:layout_marginTop="18dp"/>
 
-		<VideoView
-			android:id="@+id/video_view"
+		<androidx.media3.ui.PlayerView
+			android:id="@+id/player_view"
 			android:layout_width="0dp"
-			android:layout_height="450dp"
+			android:layout_height="wrap_content"
 			android:layout_weight="3"
-			android:layout_marginTop="18dp"/>
+			android:layout_marginTop="18dp"
+			app:hide_on_touch="true"
+			app:resize_mode="fit" />
+
+<!--		<VideoView-->
+<!--			android:id="@+id/video_view"-->
+<!--			android:layout_width="0dp"-->
+<!--			android:layout_height="450dp"-->
+<!--			android:layout_weight="3"-->
+<!--			android:layout_marginTop="18dp"/>-->
 	</LinearLayout>
 </LinearLayout>

@@ -110,10 +110,10 @@ public class VideoTestViewModel extends BaseTestViewModel {
 
 	public List<VideoSample> getVideoSamples() {
 		return Arrays.asList(
-				new VideoSample("AV1/1080p", "bunny_1080_10s_5mb_av1", "H264 1080p 10s"),
-				new VideoSample("H264/1080p", "bunny_1080_10s_5mb_h264", "H265 1080p 10s"),
-				new VideoSample("VP9/1280p", "sample_video_1280x720_1mb", "VP9 1280p 12s"),
-				new VideoSample("AVC/4k", "driving_mountain_4k", "AVC 4k")
+				new VideoSample("AV1/1080p", "sample_bunny_av1_1080_10s_5mb", "AV1 1080p 10s"),
+				new VideoSample("H264/1080p", "sample_anim_h264_1080_10s_1mb", "H264 1080p 10s"),
+				new VideoSample("H265/1080p", "sample_jellyfish_h265_1080_10s_1mb", "H265 1080p 10s"),
+				new VideoSample("VP9/1080p", "sample_vp9_1080_10s_1mb", "VP9 1080p 10s")
 		);
 	}
 

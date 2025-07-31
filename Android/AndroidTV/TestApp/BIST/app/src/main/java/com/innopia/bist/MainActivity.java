@@ -159,7 +159,10 @@ public class MainActivity extends AppCompatActivity {
 		testButtonMap.put(TestType.HDMI, btnHdmiTest);
 
 		Button btnVideoTest = findViewById(R.id.button_video_test);
-		btnVideoTest.setOnClickListener(v -> showTestFragment(VideoTestFragment.newInstance()));
+		btnVideoTest.setOnClickListener(v -> {
+			updateButtonUI(TestType.VIDEO, TestStatus.RUNNING);
+			showTestFragment(VideoTestFragment.newInstance());
+		});
 		mainTestButtons.add(btnVideoTest);
 		testButtonMap.put(TestType.VIDEO, btnVideoTest);
 
@@ -179,7 +182,10 @@ public class MainActivity extends AppCompatActivity {
 		testButtonMap.put(TestType.CPU, btnCpuTest);
 
 		Button btnRcuTest = findViewById(R.id.button_rcu_test);
-		btnRcuTest.setOnClickListener(v -> showTestFragment(RcuTestFragment.newInstance()));
+		btnRcuTest.setOnClickListener(v -> {
+			updateButtonUI(TestType.RCU, TestStatus.RETEST);
+			showTestFragment(RcuTestFragment.newInstance());
+		});
 		mainTestButtons.add(btnRcuTest);
 		testButtonMap.put(TestType.RCU, btnRcuTest);
 

@@ -60,11 +60,13 @@ public class CpuTestFragment extends Fragment {
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_cpu_test, container, false);
 		tvCpuInfo = rootView.findViewById(R.id.text_cpu_info);
-		Button btnCpuTest = rootView.findViewById(R.id.btn_cpu_manual_test);
-		btnCpuTest.setOnClickListener(v -> {
-			mainViewModel.appendLog(getTag(), "CPU Test Start");
-			cpuTestViewModel.startTest();
-		});
+//		Button btnCpuTest = rootView.findViewById(R.id.btn_cpu_manual_test);
+//		btnCpuTest.setOnClickListener(v -> {
+//			mainViewModel.appendLog(getTag(), "CPU Test Start");
+//			cpuTestViewModel.startTest();
+//		});
+		mainViewModel.appendLog(getTag(), "CPU Test Start");
+		cpuTestViewModel.startTest();
 
 		cpuTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
 			tvCpuInfo.setText(result.getMessage());

@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.innopia.bist.R;
+import com.innopia.bist.util.TestStatus;
+import com.innopia.bist.util.TestType;
 import com.innopia.bist.viewmodel.RcuTestViewModel;
 import com.innopia.bist.viewmodel.MainViewModel;
 
@@ -66,13 +68,17 @@ public class RcuTestFragment extends Fragment {
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		rootView = inflater.inflate(R.layout.fragment_rcu_test, container, false);
 		tvRcuTest = rootView.findViewById(R.id.text_rcu_test);
-		btnRcuTest = rootView.findViewById(R.id.btn_rcu_test);
-		btnRcuTest.setOnClickListener(v -> {
-			btnRcuTest.setVisibility(View.GONE);
-			rcuTestViewModel.startTest();
-			setupKeyListener();
-			rootView.requestFocus();
-		});
+//		btnRcuTest = rootView.findViewById(R.id.btn_rcu_test);
+//		btnRcuTest.setOnClickListener(v -> {
+//			btnRcuTest.setVisibility(View.GONE);
+//			rcuTestViewModel.startTest();
+//			setupKeyListener();
+//			rootView.requestFocus();
+//		});
+		rcuTestViewModel.startTest();
+		mainViewModel.updateTestResult(TestType.RCU, TestStatus.RUNNING);
+		setupKeyListener();
+		rootView.requestFocus();
 
 		// Observe the LiveData from the ViewModel to update the UI.
 		rcuTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
@@ -82,8 +88,10 @@ public class RcuTestFragment extends Fragment {
 		});
 
 		rcuTestViewModel.testCompletedEvent.observe(getViewLifecycleOwner(), aVoid -> {
-			btnRcuTest.setVisibility(View.VISIBLE);
-			btnRcuTest.requestFocus();
+//			btnRcuTest.setVisibility(View.VISIBLE);
+//			btnRcuTest.requestFocus();
+			rootView.setFocusable(false);
+
 		});
 
 		return rootView;
@@ -101,7 +109,7 @@ public class RcuTestFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		mainViewModel.setLogAutoScrollEnabled(false);
-		btnRcuTest.requestFocus();
+//		btnRcuTest.requestFocus();
 	}
 
 	@Override

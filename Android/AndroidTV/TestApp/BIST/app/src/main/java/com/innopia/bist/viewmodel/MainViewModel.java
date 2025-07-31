@@ -95,9 +95,7 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 		_testStatusesLiveData.postValue(currentStatuses);
 		Boolean autoTestIsRunning = isAutoTestRunning.getValue();
 		if (autoTestIsRunning != null && autoTestIsRunning && type == TestType.VIDEO) {
-			// 자동 테스트 중 비디오 테스트의 최종 결과(성공 또는 실패)가 나오면,
 			if (status == TestStatus.PASSED || status == TestStatus.FAILED) {
-				// AutoTestManager에게 다음 테스트로 진행하라고 알립니다.
 				appendLog("MainViewModel", "Video auto-test finished. Resuming queue.");
 				autoTestManager.proceedToNextTest();
 			}

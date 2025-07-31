@@ -10,5 +10,21 @@
     "MEMORY",
     "CPU",
     "RCU"
-  ]
+  ],
+
+  "ETHERNET": {
+    "IP": "192.168.11.76",
+    "MASK": "255.255.0.0",
+    "GATEWAY": "192.168.0.1",
+    "DNS": "192.126.63.1"
+  },
+
+  "WIFI": {
+    "ID": "0_5G_tplink",
+    "PW": "0000000000"
+  },
+
+  "BLUETOOTH": {
+    "NAME": "JBL TUNE500BT"
+  }
 }

@@ -196,41 +196,21 @@ public class BluetoothTest implements Test {
 			}
 			String result = testConnection(context, device);
 			if (result.contains("PASS")) {
-				Log.d(TAG, "bluetooth test PASS!!!!!!!!!!!!!!!!!!!!");
 				callback.accept(new TestResult(TestStatus.PASSED, "BT Test pass \n"+result));
 			} else {
 				callback.accept(new TestResult(TestStatus.FAILED, "BT Test fail \n"+result));
 			}
 		});
-
-//        Context context = (Context) params.get("context");
-//        BluetoothDevice device = (BluetoothDevice) params.get("device");
-//        if (device == null || context == null) {
-//            callback.accept(new TestResult(TestStatus.ERROR, "Device or Context is null."));
-//            return;
-//        }
-//
-//        new Thread(() -> {
-//            String result = testConnection(context, device);
-//            if (result.contains("PASS")) {
-//                Log.d(TAG, "bluetooth test PASS!!!!!!!!!!!!!!!!!!!!");
-//                callback.accept(new TestResult(TestStatus.PASSED, "BT Test pass \n"+result));
-//            } else {
-//                callback.accept(new TestResult(TestStatus.FAILED, "BT Test fail \n"+result));
-//            }
-//        }).start();
 	}
 
 	@Override
 	public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
-		// executeTest(params, callback);
 		bluetoothTest(params, callback);
 	}
 
 	@SuppressLint("MissingPermission")
 	@Override
 	public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
-		// executeTest(params, callback);
 		Context context = (Context) params.get("context");
 		Boolean isResume = (Boolean) params.getOrDefault("isResume", false);
 		BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
@@ -284,11 +264,6 @@ public class BluetoothTest implements Test {
 		});
 	}
 
-	/**
-	 * Retrieves detailed information about a given Bluetooth device.
-	 * @param device The BluetoothDevice to inspect.
-	 * @param callback A consumer to return the formatted device information string.
-	 */
 	@SuppressLint("MissingPermission")
 	public void getDeviceInfo(BluetoothDevice device, Consumer<String> callback) {
 		if (device == null) {

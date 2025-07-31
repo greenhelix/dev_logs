@@ -51,12 +51,15 @@ public class HdmiTestFragment extends Fragment {
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_hdmi_test, container, false);
 		tvHdmiInfo = rootView.findViewById(R.id.text_hdmi_info);
-		Button btnHdmiTest = rootView.findViewById(R.id.btn_hdmi_manual_test);
 
-		btnHdmiTest.setOnClickListener(v -> {
-			mainViewModel.appendLog(getTag(), "HDMI Test Start");
-			hdmiTestViewModel.startTest();
-		});
+//		Button btnHdmiTest = rootView.findViewById(R.id.btn_hdmi_manual_test);
+//		btnHdmiTest.setOnClickListener(v -> {
+//			mainViewModel.appendLog(getTag(), "HDMI Test Start");
+//			hdmiTestViewModel.startTest();
+//		});
+
+		mainViewModel.appendLog(getTag(), "HDMI Test Start");
+		hdmiTestViewModel.startTest();
 
 		hdmiTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
 			tvHdmiInfo.setText(result.getMessage());

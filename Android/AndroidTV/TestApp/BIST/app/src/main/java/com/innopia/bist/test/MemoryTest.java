@@ -2,14 +2,22 @@ package com.innopia.bist.test;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Build;
+import android.util.Log;
 
 import com.innopia.bist.util.TestResult;
 import com.innopia.bist.util.TestStatus;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class MemoryTest implements Test {
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -44,41 +52,111 @@ public class MemoryTest implements Test {
 		executor.execute(() -> {
 			Context context = (Context) params.get("context");
 			if (context == null) {
-				callback.accept(new TestResult(TestStatus.ERROR,"Error: Context is null"));
+				callback.accept(new TestResult(TestStatus.ERROR, "Error: Context is null"));
 				return;
 			}
 
-			String memoryUsage = checkMemoryUsage(context);
-			String speedTestResult = runSpeedTest();
+			try {
+				// 1. Get Device Model info
+				String modelInfo = getDeviceModel();
 
-			ActivityManager.MemoryInfo memInfo = getMemoryInfo(context);
-			double writeSpeed = parseSpeed(speedTestResult);
-			boolean isMemoryOk = (memInfo.availMem / 1024 / 1024) > PASS_THRESHOLD_MEMORY_MB;
-			boolean isSpeedOk = writeSpeed > PASS_THRESHOLD_SPEED_MBps;
-			String finalStatus = (isMemoryOk && isSpeedOk) ? "Result: PASS" : "Result: FAIL";
-			String result = "== Memory Test Result ==\n" + memoryUsage + "\n" + speedTestResult + "\n\n" + finalStatus;
+				// 2. Get Memory Usage info
+				String usageInfo = getMemoryUsageInfo(context);
 
-			if (result.contains("PASS")) {
-				callback.accept(new TestResult(TestStatus.PASSED, "Memory Test pass \n"+result));
-			} else {
-				callback.accept(new TestResult(TestStatus.FAILED, "Memory Test fail \n"+result));
+				// 3. Get Storage Read/Write Speed
+				String speedInfo = runStorageSpeedTest(context);
+
+				// 4. Build the final result string
+				StringBuilder resultBuilder = new StringBuilder();
+				resultBuilder.append(modelInfo).append("\n");
+				resultBuilder.append(usageInfo).append("\n");
+				resultBuilder.append(speedInfo);
+
+				// 5. If all information is gathered, the test is considered PASSED
+				callback.accept(new TestResult(TestStatus.PASSED, "Memory Test Pass\n"+resultBuilder));
+
+			} catch (Exception e) {
+				// If any error occurs during info retrieval, the test is FAILED
+				callback.accept(new TestResult(TestStatus.FAILED, "Memory Test Fail\n" + e.getMessage()));
 			}
 		});
 	}
+	private String getSystemProperty(String propName) {
+		try {
+			Process process = Runtime.getRuntime().exec("getprop " + propName);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line = reader.readLine();
+			reader.close();
+			return (line != null && !line.isEmpty()) ? line : null;
+		} catch (Exception e) {
+			Log.w("HardwareInfo", "Failed to read system property: " + propName, e);
+			return null;
+		}
+	}
 
-	private ActivityManager.MemoryInfo getMemoryInfo(Context context) {
+	private String getDeviceModel() {
+		String ddrType = getSystemProperty("ro.runtime.innopia.ddr");
+		return ddrType;
+	}
+
+	/**
+	 * Retrieves current memory usage (Available / Total).
+	 */
+	private String getMemoryUsageInfo(Context context) {
 		ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-		ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
-		activityManager.getMemoryInfo(memoryInfo);
-		return memoryInfo;
+		ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+		if (activityManager != null) {
+			activityManager.getMemoryInfo(memInfo);
+			double totalMemMB = memInfo.totalMem / (1024.0 * 1024.0 );
+			double availMemMB = memInfo.availMem / (1024.0 * 1024.0 );
+			return String.format(Locale.US, "Usage: %d MB / %d MB Available", (int)availMemMB, (int)totalMemMB);
+		}
+		return "Usage: Information not available";
 	}
 
-	private String checkMemoryUsage(Context context) {
-		ActivityManager.MemoryInfo mi = getMemoryInfo(context); // null 체크 하고 null이면 fail
-		long availableMegs = mi.availMem / 1048576L; // 1024*1024
-		long totalMegs = mi.totalMem / 1048576L; // 이게 0이면  Fail
-		return String.format("Memory Usage: %d MB / %d MB", (totalMegs - availableMegs), totalMegs);
+	private String runStorageSpeedTest(Context context) throws Exception {
+		File tempFile = new File(context.getCacheDir(), "speed_test.tmp");
+		byte[] data = new byte[10 * 1024 * 1024]; // 10 MB test file
+		double writeSpeed, readSpeed;
+
+		// Write Test
+		long startTime = System.nanoTime();
+		try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+			fos.write(data);
+		}
+		long endTime = System.nanoTime();
+		double writeDurationSeconds = (endTime - startTime) / 1_000_000_000.0;
+		writeSpeed = data.length / (1024.0 * 1024.0) / writeDurationSeconds; // MB/s
+
+		// Read Test
+		startTime = System.nanoTime();
+		try (FileInputStream fis = new FileInputStream(tempFile)) {
+			while (fis.read(data) != -1) {
+				// Reading data
+			}
+		}
+		endTime = System.nanoTime();
+		double readDurationSeconds = (endTime - startTime) / 1_000_000_000.0;
+		readSpeed = data.length / (1024.0 * 1024.0) / readDurationSeconds; // MB/s
+
+		tempFile.delete(); // Clean up the test file
+
+		return String.format(Locale.US, "Read/Write Speed: Read %d MB/s, Write %d MB/s", (int)readSpeed, (int)writeSpeed);
 	}
+
+//	private ActivityManager.MemoryInfo getMemoryInfo(Context context) {
+//		ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+//		ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+//		activityManager.getMemoryInfo(memoryInfo);
+//		return memoryInfo;
+//	}
+
+//	private String checkMemoryUsage(Context context) {
+//		ActivityManager.MemoryInfo mi = getMemoryInfo(context);
+//		long availableMegs = mi.availMem / 1048576L; // 1024*1024
+//		long totalMegs = mi.totalMem / 1048576L; // 이게 0이면  Fail
+//		return String.format("Memory Usage: %d MB / %d MB", (totalMegs - availableMegs), totalMegs);
+//	}
 
 	private String runSpeedTest() {
 		try {
@@ -106,16 +184,6 @@ public class MemoryTest implements Test {
 
 		} catch (OutOfMemoryError e) {
 			return "Memory Speed: Test Failed (Out of Memory)";
-		}
-	}
-
-	private double parseSpeed(String speedResult) {
-		if (!speedResult.contains("Write")) return 0.0;
-		try {
-			String[] parts = speedResult.split(" ");
-			return Double.parseDouble(parts[2]);
-		} catch(Exception e) {
-			return 0.0;
 		}
 	}
 }

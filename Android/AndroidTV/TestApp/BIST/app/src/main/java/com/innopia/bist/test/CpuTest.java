@@ -1,14 +1,20 @@
 package com.innopia.bist.test;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.CpuUsageInfo;
 import android.os.HardwarePropertiesManager;
+import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 import com.innopia.bist.util.TestResult;
 import com.innopia.bist.util.TestStatus;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,16 +22,15 @@ import java.util.function.Consumer;
 
 public class CpuTest implements Test {
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private static final String TAG = "CpuInfoProvider";
 
 	@Override
 	public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
-//        executeTest(params, callback);
 		cpuTest(params, callback);
 	}
 
 	@Override
 	public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
-//        executeTest(params, callback);
 		cpuTest(params, callback);
 	}
 
@@ -47,17 +52,69 @@ public class CpuTest implements Test {
 				callback.accept(new TestResult(TestStatus.ERROR, "Error: Context is null"));
 				return;
 			}
-			// String temp = checkCpuTemperature();
-			String temp = checkCpuTemperature(context);
+			String cpuInfo = cpuInfo(context);
 			String speed = checkCpuSpeed();
-			String result = "== CPU Test Result ==\n" + temp + "\n" + speed;
-
+			String result = "== CPU Test Result ==\n" + cpuInfo + "\n" + speed;
 			if (result.contains("PASS")) {
 				callback.accept(new TestResult(TestStatus.PASSED, "CPU Test pass \n"+ result));
 			} else {
 				callback.accept(new TestResult(TestStatus.FAILED, "CPU Test fail \n"+ result));
 			}
 		});
+	}
+
+	private String cpuInfo(Context context) {
+		StringBuilder resultBuilder = new StringBuilder();
+
+		// 1. Check API level (Although this is likely guaranteed by the caller, it's added for the function's own robustness)
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+			return "CPU usage information is only supported on Android 8.0 (API 26) and above.";
+		}
+
+		// 2. Check for DEVICE_POWER permission (using the permission name as a string)
+		String devicePowerPermission = "android.permission.DEVICE_POWER";
+		if (ContextCompat.checkSelfPermission(context, devicePowerPermission) != PackageManager.PERMISSION_GRANTED) {
+			String errorMessage = "Error: 'android.permission.DEVICE_POWER' permission is not granted.\nYou must grant it via ADB.";
+			Log.e(TAG, errorMessage);
+			return errorMessage;
+		}
+
+		// 3. Get HardwarePropertiesManager and request CPU info
+		HardwarePropertiesManager hwpm = (HardwarePropertiesManager) context.getSystemService(Context.HARDWARE_PROPERTIES_SERVICE);
+		if (hwpm == null) {
+			return "Error: Could not get HardwarePropertiesManager.";
+		}
+
+		try {
+			// 4. Call the getCpuUsages() API
+			CpuUsageInfo[] cpuUsages = hwpm.getCpuUsages();
+
+			if (cpuUsages == null || cpuUsages.length == 0) {
+				return "CPU usage information was retrieved, but the data is empty.";
+			}
+
+			resultBuilder.append("--- Raw CPU Core Time Info ---\n");
+			// 5. Extract information for each core and build the string
+			for (int i = 0; i < cpuUsages.length; i++) {
+				CpuUsageInfo coreUsage = cpuUsages[i];
+				long activeTime = coreUsage.getActive(); // Time the CPU was in an active state (ms)
+				long totalTime = coreUsage.getTotal();   // Total time since the CPU was powered on (ms)
+
+				resultBuilder.append(String.format(Locale.US, "  Core %d: Active=%d ms, Total=%d ms\n",
+					i, activeTime, totalTime));
+			}
+
+		} catch (SecurityException e) {
+			String securityErrorMessage = "Error: A SecurityException occurred while fetching CPU info. Please check permissions again.";
+			Log.e(TAG, securityErrorMessage, e);
+			return securityErrorMessage;
+		} catch (Exception e) {
+			String generalErrorMessage = "Error: An unknown exception occurred while fetching CPU info.";
+			Log.e(TAG, generalErrorMessage, e);
+			return generalErrorMessage;
+		}
+
+		return resultBuilder.toString();
 	}
 
 	// didn't check cpu temp
