@@ -2,6 +2,8 @@ package com.innopia.bist.fragment;
 
 import android.app.Application;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +17,17 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.innopia.bist.R;
+import com.innopia.bist.util.TestResult;
 import com.innopia.bist.util.TestStatus;
 import com.innopia.bist.util.TestType;
 import com.innopia.bist.viewmodel.RcuTestViewModel;
 import com.innopia.bist.viewmodel.MainViewModel;
+import com.innopia.bist.viewmodel.RcuViewModelFactory;
 
 
 public class RcuTestFragment extends Fragment {
 
-	private static final String TAG = "RcuTestFragment";
+	private static final String TAG = "BIST_RcuTestFragment";
 
 	private RcuTestViewModel rcuTestViewModel;
 	private MainViewModel mainViewModel;
@@ -35,33 +39,12 @@ public class RcuTestFragment extends Fragment {
 		return new RcuTestFragment();
 	}
 
-	public static class RcuTestViewModelFactory implements ViewModelProvider.Factory {
-
-		private final Application application;
-		private final MainViewModel mainViewModel;
-
-		public RcuTestViewModelFactory(@NonNull Application application, @NonNull MainViewModel mainViewModel) {
-			this.application = application;
-			this.mainViewModel = mainViewModel;
-		}
-
-		@NonNull
-		@Override
-		@SuppressWarnings("unchecked")
-		public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-			if (modelClass.isAssignableFrom(RcuTestViewModel.class)) {
-				return (T) new RcuTestViewModel(application, mainViewModel);
-			}
-			throw new IllegalArgumentException("Unknown ViewModel class");
-		}
-	}
-
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-		RcuTestViewModelFactory factory = new RcuTestViewModelFactory(requireActivity().getApplication(), mainViewModel);
-		rcuTestViewModel = new ViewModelProvider(this, factory).get(RcuTestViewModel.class);
+		RcuViewModelFactory factory = new RcuViewModelFactory(requireActivity().getApplication(), mainViewModel);
+		rcuTestViewModel = new ViewModelProvider(requireActivity(), factory).get(RcuTestViewModel.class);
 	}
 
 	@Override
@@ -75,6 +58,7 @@ public class RcuTestFragment extends Fragment {
 //			setupKeyListener();
 //			rootView.requestFocus();
 //		});
+		Log.d(TAG, "start Test RCU");
 		rcuTestViewModel.startTest();
 		mainViewModel.updateTestResult(TestType.RCU, TestStatus.RUNNING);
 		setupKeyListener();
@@ -84,15 +68,14 @@ public class RcuTestFragment extends Fragment {
 		rcuTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
 			if (result != null) {
 				tvRcuTest.setText(result.getMessage());
+				Log.d(TAG, "result Test RCU"+result.getMessage());
 			}
 		});
 
-		rcuTestViewModel.testCompletedEvent.observe(getViewLifecycleOwner(), aVoid -> {
-//			btnRcuTest.setVisibility(View.VISIBLE);
-//			btnRcuTest.requestFocus();
-			rootView.setFocusable(false);
-
-		});
+//		rcuTestViewModel.testCompletedEvent.observe(getViewLifecycleOwner(), aVoid -> {
+//			Log.d(TAG, "==================================================focus");
+//			rootView.setFocusable(false);
+//		});
 
 		return rootView;
 	}
@@ -100,7 +83,13 @@ public class RcuTestFragment extends Fragment {
 	private void setupKeyListener() {
 		rootView.setFocusableInTouchMode(true);
 		rootView.setOnKeyListener((v, keyCode, event) -> {
-			rcuTestViewModel.onKeyEvent(event);
+			TestResult currentResult = rcuTestViewModel.testResultLiveData.getValue();
+			if (currentResult != null && currentResult.getStatus() == TestStatus.PASSED) {
+				return false;
+			}
+			if (event.getAction() == KeyEvent.ACTION_DOWN) {
+				rcuTestViewModel.onKeyEvent(event);
+			}
 			return true;
 		});
 	}

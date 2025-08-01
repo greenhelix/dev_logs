@@ -53,6 +53,9 @@ import com.innopia.bist.util.TestStatus;
 import com.innopia.bist.util.TestType;
 import com.innopia.bist.util.UsbDetachReceiver;
 import com.innopia.bist.viewmodel.MainViewModel;
+import com.innopia.bist.viewmodel.RcuTestViewModel;
+import com.innopia.bist.viewmodel.RcuViewModelFactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,10 +68,11 @@ public class MainActivity extends AppCompatActivity {
 	private static final String TAG_TEST_FRAGMENT = "TEST_FRAGMENT";
 
 	private MainViewModel mainViewModel;
+	private RcuTestViewModel rcuTestViewModel;
 	private BroadcastReceiver appUsbDetachReceiver;
-
 	private List<Button> mainTestButtons;
 	private View defaultFocusButton;
+	private View lastFocusedViewBeforeFragment;
 	private SecretCodeManager secretCodeManager;
 	private boolean isFocusHighlightEnabled = true;
 
@@ -103,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
 
 		secretCodeManager = new SecretCodeManager(this);
 		mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+		RcuViewModelFactory factory = new RcuViewModelFactory(getApplication(), mainViewModel);
+		rcuTestViewModel = new ViewModelProvider(this, factory).get(RcuTestViewModel.class);
 
 		setupViews();
 		setupObservers();
@@ -215,6 +221,27 @@ public class MainActivity extends AppCompatActivity {
 
 		mainViewModel.sysInfoLiveData.observe(this, sysInfoText::setText);
 		mainViewModel.hwInfoLiveData.observe(this, hwInfoText::setText);
+
+		rcuTestViewModel.testCompletedEvent.observe(this, v -> {
+			testButtonMap.get(TestType.RCU).requestFocus();
+			// closeTestFragmentAndFocus();
+		});
+	}
+
+	private void closeTestFragmentAndFocus(View viewToFocus) {
+		Log.d(TAG, "==================closeTestFragmentAndFocus=============");
+		FragmentManager fm = getSupportFragmentManager();
+		Fragment currentFragment = fm.findFragmentByTag(TAG_TEST_FRAGMENT);
+
+		if (currentFragment != null) {
+			fm.beginTransaction().remove(currentFragment).commitNow();
+		}
+
+		if (viewToFocus != null) {
+			viewToFocus.post(() -> viewToFocus.requestFocus());
+		} else if (defaultFocusButton != null) {
+			defaultFocusButton.requestFocus();
+		}
 	}
 
 	private void setupObservers() {
@@ -225,6 +252,8 @@ public class MainActivity extends AppCompatActivity {
 					int bottom = svLog.getHeight();
 					svLog.smoothScrollTo(0, bottom);
 				}
+			} else {
+				tvLogWindow.setText("-------------");
 			}
 		});
 
@@ -316,7 +345,6 @@ public class MainActivity extends AppCompatActivity {
 		if (currentFragment != null) {
 			mainViewModel.appendLog(TAG, "Auto-test finished. Clearing fragment container.");
 			fm.beginTransaction().remove(currentFragment).commit();
-			// Restore focus to a default button if needed
 			if(defaultFocusButton != null) {
 				defaultFocusButton.requestFocus();
 			}
@@ -362,7 +390,6 @@ public class MainActivity extends AppCompatActivity {
 		button.setBackground(stateListDrawable);
 	}
 
-	// This method shows a dialog when user interaction is needed.
 	private void showUserActionDialog(String message) {
 		// Inflate the custom layout
 		LayoutInflater inflater = LayoutInflater.from(this);
@@ -422,12 +449,21 @@ public class MainActivity extends AppCompatActivity {
 			public void handleOnBackPressed() {
 				FragmentManager fm = getSupportFragmentManager();
 				Fragment currentFragment = fm.findFragmentByTag(TAG_TEST_FRAGMENT);
+
 				if (currentFragment != null) {
-					fm.beginTransaction().remove(currentFragment).commit();
-					if(defaultFocusButton != null) {
+					fm.beginTransaction().remove(currentFragment).commitNow();
+					if (lastFocusedViewBeforeFragment != null) {
+						lastFocusedViewBeforeFragment.requestFocus();
+					}
+					return;
+				}
+
+				if (getCurrentFocus() != defaultFocusButton) {
+					if (defaultFocusButton != null) {
 						defaultFocusButton.requestFocus();
 					}
-				} else {
+				}
+				else {
 					showExitConfirmDialog();
 				}
 			}
@@ -436,13 +472,34 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void showExitConfirmDialog() {
-		new AlertDialog.Builder(this)
-				.setTitle("Exit Application")
-				.setMessage("Are you sure you want to exit?")
-				.setPositiveButton("YES", (dialog, which) -> finish())
-				.setNegativeButton("NO", (dialog, which) -> dialog.dismiss())
-				.create()
-				.show();
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View dialogView = inflater.inflate(R.layout.dialog_custom_action, null);
+
+		TextView tvMessage = dialogView.findViewById(R.id.dialog_message);
+		LinearLayout yesNoLayout = dialogView.findViewById(R.id.dialog_yes_no_layout);
+		Button btnYes = dialogView.findViewById(R.id.dialog_button_yes);
+		Button btnNo = dialogView.findViewById(R.id.dialog_button_no);
+		Button btnOk = dialogView.findViewById(R.id.dialog_button_ok);
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+			.setView(dialogView)
+			.setTitle("Exit Application")
+			.setCancelable(false);
+
+		final AlertDialog dialog = builder.create();
+
+		tvMessage.setText("Are you sure you want to exit?");
+		yesNoLayout.setVisibility(View.VISIBLE);
+		btnOk.setVisibility(View.GONE);
+
+		btnYes.setOnClickListener(v -> {
+			dialog.dismiss();
+			finish();
+		});
+		btnNo.setOnClickListener(v -> dialog.dismiss());
+
+		dialog.setOnShowListener(dialogInterface -> btnYes.requestFocus());
+		dialog.show();
 	}
 
 	@Override
@@ -470,11 +527,13 @@ public class MainActivity extends AppCompatActivity {
 
 	private void showTestFragment(Fragment testFragment) {
 		if (testFragment == null) return;
-		mainViewModel.appendLog(TAG, testFragment.getClass().getSimpleName() + " button clicked. Opening fragment...");
+
+		lastFocusedViewBeforeFragment = getCurrentFocus();
+
+		mainViewModel.appendLog(TAG, "Opening fragment: " + testFragment.getClass().getSimpleName());
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.fragment_container, testFragment, TAG_TEST_FRAGMENT)
-				.addToBackStack(null) // Allows returning to the main screen with the back button
-				.commit();
+			.replace(R.id.fragment_container, testFragment, TAG_TEST_FRAGMENT)
+			.commit();
 	}
 
 	private void checkAndLogBistServiceStatus() {

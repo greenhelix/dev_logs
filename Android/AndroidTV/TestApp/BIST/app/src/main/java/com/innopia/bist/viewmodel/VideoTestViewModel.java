@@ -62,12 +62,12 @@ public class VideoTestViewModel extends BaseTestViewModel {
 		videoInfo.postValue(videoFileName + " playback FAILED.");
 		if (autoTestIndex != -1) {
 			mainViewModel.updateTestResult(getTestType(), TestStatus.FAILED);
-			autoTestIndex = -1; // 자동 테스트 종료
+			autoTestIndex = -1;
 		}
 	}
 
 	public void startAutoPlaybackSequence() {
-		if (autoTestIndex == -1) { // 중복 실행 방지
+		if (autoTestIndex == -1) {
 			autoTestIndex = 0;
 			playNextVideoInSequence();
 		}
@@ -76,13 +76,11 @@ public class VideoTestViewModel extends BaseTestViewModel {
 	private void playNextVideoInSequence() {
 		List<VideoSample> samples = getVideoSamples();
 		if (autoTestIndex >= 0 && autoTestIndex < samples.size()) {
-			// 재생할 비디오를 LiveEvent를 통해 Fragment에 전달
 			videoToPlay.postValue(samples.get(autoTestIndex));
 			autoTestIndex++;
 		} else {
-			// 모든 비디오 재생 완료. 전체 테스트를 PASSED 처리
 			mainViewModel.updateTestResult(getTestType(), TestStatus.PASSED);
-			autoTestIndex = -1; // 자동 테스트 종료
+			autoTestIndex = -1;
 		}
 	}
 

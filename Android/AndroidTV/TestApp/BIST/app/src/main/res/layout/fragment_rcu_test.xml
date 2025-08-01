@@ -4,7 +4,8 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical"
 	android:padding="8dp"
-	android:background="#222222">
+	android:background="@drawable/focusable_item_border"
+	>
 
 <!--	<Button-->
 <!--		android:id="@+id/btn_rcu_test"-->
@@ -17,8 +18,7 @@
 		android:id="@+id/text_rcu_test"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:focusable="false"
-		android:focusableInTouchMode="false"
+		android:focusable="true"
 		android:background="@drawable/focusable_item_border"
 		android:textColor="#FFFFFF"
 		android:text="Test RCU by pressing instructed keys:" />

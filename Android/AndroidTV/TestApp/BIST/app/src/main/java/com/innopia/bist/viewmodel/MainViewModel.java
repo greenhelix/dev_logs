@@ -33,12 +33,9 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 	private final MutableLiveData<List<String>> _logLiveData = new MutableLiveData<>();
 	public final LiveData<List<String>> logLiveData = _logLiveData;
 
-	// This LiveData holds the test results (PASSED, FAILED, etc.) for each test type.
-	// MainActivity observes this to change button colors.
 	private final MutableLiveData<Map<TestType, TestStatus>> _testStatusesLiveData = new MutableLiveData<>(new EnumMap<>(TestType.class));
 	public final LiveData<Map<TestType, TestStatus>> testStatusesLiveData = _testStatusesLiveData;
 
-	// This LiveData holds the hardware statuses (ON, OFF) for the top status bar.
 	private final MutableLiveData<Map<TestType, Status>> _hardwareStatusLiveData = new MutableLiveData<>(new EnumMap<>(TestType.class));
 	public final LiveData<Map<TestType, Status>> hardwareStatusLiveData = _hardwareStatusLiveData;
 

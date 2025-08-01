@@ -13,11 +13,15 @@ import com.innopia.bist.util.TestResult;
 import com.innopia.bist.util.TestStatus;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class CpuTest implements Test {
@@ -62,7 +66,59 @@ public class CpuTest implements Test {
 			}
 		});
 	}
+	private final String CMD_DUMP_CPUINFO = "cat /proc/stat";
 
+	private String[] execCommand(String cmd) {
+		Runtime runtime = Runtime.getRuntime();
+
+		List<String> readData = new ArrayList<String>();
+
+		try {
+			Process process = runtime.exec(cmd);
+			process.waitFor();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				readData.add(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		String[] result = new String[readData.size()];
+		readData.toArray(result);
+
+		return result;
+	}
+
+
+	private void getCpuInfo() {
+		try {
+			String[] cmdRetVal = execCommand(CMD_DUMP_CPUINFO);
+			String cpuInfo = cmdRetVal[0];
+			cpuInfo = cpuInfo.replaceAll("\\s+", " ");
+			String[] infos1 = cpuInfo.split(" ");
+
+			TimeUnit.SECONDS.sleep(1);
+
+			cmdRetVal = execCommand(CMD_DUMP_CPUINFO);
+			cpuInfo = cmdRetVal[0];
+			cpuInfo = cpuInfo.replaceAll("\\s+", " ");
+			String[] infos2 = cpuInfo.split(" ");
+
+
+			int delta_total = 0;
+			for (int i = 1; i < infos2.length; i++) {
+				delta_total += Integer.parseInt(infos2[i]) - Integer.parseInt(infos1[i]);
+			}
+			int cpuUsage = (delta_total - (Integer.parseInt(infos2[4]) - Integer.parseInt(infos1[4]))) * 100 / delta_total ;
+			Log.d(TAG, "cpuUsage = " + cpuUsage);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	private String cpuInfo(Context context) {
 		StringBuilder resultBuilder = new StringBuilder();
 

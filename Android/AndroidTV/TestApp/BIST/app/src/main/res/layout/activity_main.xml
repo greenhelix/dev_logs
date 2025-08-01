@@ -357,6 +357,8 @@
 			android:id="@+id/fragment_container"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
+			android:focusable="false"
+			android:focusableInTouchMode="false"
 			android:layout_below="@id/top_info_container"
 			android:layout_above="@id/log_scroll_view" />
 

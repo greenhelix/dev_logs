@@ -19,6 +19,15 @@ public class SecretCodeManager {
             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_RIGHT
     );
 
+    private static final List<Integer> ERROR_RESET = Arrays.asList(
+        KeyEvent.KEYCODE_DPAD_UP,
+        KeyEvent.KEYCODE_DPAD_UP,
+        KeyEvent.KEYCODE_DPAD_CENTER,
+        KeyEvent.KEYCODE_DPAD_CENTER,
+        KeyEvent.KEYCODE_DPAD_DOWN,
+        KeyEvent.KEYCODE_DPAD_DOWN
+    );
+
     private final List<Integer> inputSequence = new ArrayList<>();
 
     /**

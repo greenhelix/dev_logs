@@ -24,13 +24,11 @@ public class RcuTest implements Test {
 
 	@Override
 	public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
-//        executeTest(params, callback);
 		rcuTest(params, callback);
 	}
 
 	@Override
 	public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
-//        executeTest(params, callback);
 		rcuTest(params, callback);
 	}
 
