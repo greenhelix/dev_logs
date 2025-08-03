@@ -73,7 +73,8 @@ public class RcuTestFragment extends Fragment {
 		});
 
 //		rcuTestViewModel.testCompletedEvent.observe(getViewLifecycleOwner(), aVoid -> {
-//			Log.d(TAG, "==================================================focus");
+////			btnRcuTest.setVisibility(View.VISIBLE);
+////			btnRcuTest.requestFocus();
 //			rootView.setFocusable(false);
 //		});
 

@@ -94,7 +94,7 @@ public class RcuTest implements Test {
 		} else {
 			String expectedKeyName = KeyEvent.keyCodeToString(expectedKey);
 			String receivedKeyName = KeyEvent.keyCodeToString(receivedKey);
-			callback.accept(new TestResult(TestStatus.RUNNING, "Wrong key! Pressed " + receivedKeyName + ". Please press: " + expectedKeyName));
+			callback.accept(new TestResult(TestStatus.RETEST, "Wrong key! Pressed " + receivedKeyName + ". Please press: " + expectedKeyName));
 		}
 	}
 }

@@ -46,10 +46,8 @@ package viewmodel <<Node>> {
 package model <<Database>> {
   interface Test {
     +runManualTest(params: Map, callback: (Result) -> Unit)
-    +runAutoTest(callback: (Result) -> Unit)
+    +runAutoTest(params: Map, callback: (Result) -> Unit)
   }
-
-
 
   ' Nested package for all test implementations
   package tests <<Folder>> {
@@ -100,9 +98,9 @@ BluetoothTestFragment ..> MainViewModel : uses
 RCU_TestFragment ..> MainViewModel : uses
 
 ' Activity manages Fragments
-MainActivity ..> WifiTestFragment : shows
-MainActivity ..> BluetoothTestFragment : shows
-MainActivity ..> RCU_TestFragment : shows
+MainActivity ..> WifiTestFragment : contains
+MainActivity ..> BluetoothTestFragment : contains
+MainActivity ..> RCU_TestFragment : contains
 
 
 ' ViewModel -> Model / Util

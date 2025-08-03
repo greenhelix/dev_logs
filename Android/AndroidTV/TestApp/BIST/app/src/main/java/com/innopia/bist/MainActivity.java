@@ -1,6 +1,7 @@
 package com.innopia.bist;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 	private static final String TAG_TEST_FRAGMENT = "TEST_FRAGMENT";
 
 	private MainViewModel mainViewModel;
-	private RcuTestViewModel rcuTestViewModel;
+	private RcuTestViewModel rcuViewModel;
 	private BroadcastReceiver appUsbDetachReceiver;
 	private List<Button> mainTestButtons;
 	private View defaultFocusButton;
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
 			Manifest.permission.READ_EXTERNAL_STORAGE,
 			Manifest.permission.MANAGE_EXTERNAL_STORAGE
 	};
+	private AlertDialog activeUserActionDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 		secretCodeManager = new SecretCodeManager(this);
 		mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 		RcuViewModelFactory factory = new RcuViewModelFactory(getApplication(), mainViewModel);
-		rcuTestViewModel = new ViewModelProvider(this, factory).get(RcuTestViewModel.class);
+		rcuViewModel = new ViewModelProvider(this, factory).get(RcuTestViewModel.class);
 
 		setupViews();
 		setupObservers();
@@ -222,9 +224,8 @@ public class MainActivity extends AppCompatActivity {
 		mainViewModel.sysInfoLiveData.observe(this, sysInfoText::setText);
 		mainViewModel.hwInfoLiveData.observe(this, hwInfoText::setText);
 
-		rcuTestViewModel.testCompletedEvent.observe(this, v -> {
-			testButtonMap.get(TestType.RCU).requestFocus();
-			// closeTestFragmentAndFocus();
+		rcuViewModel.testCompletedEvent.observe(this, v -> {
+			closeTestFragmentAndFocus(testButtonMap.get(TestType.RCU));
 		});
 	}
 
@@ -238,9 +239,11 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		if (viewToFocus != null) {
-			viewToFocus.post(() -> viewToFocus.requestFocus());
+			viewToFocus.requestFocus();
 		} else if (defaultFocusButton != null) {
 			defaultFocusButton.requestFocus();
+		} else {
+			showExitConfirmDialog();
 		}
 	}
 
@@ -252,8 +255,6 @@ public class MainActivity extends AppCompatActivity {
 					int bottom = svLog.getHeight();
 					svLog.smoothScrollTo(0, bottom);
 				}
-			} else {
-				tvLogWindow.setText("-------------");
 			}
 		});
 
@@ -293,6 +294,13 @@ public class MainActivity extends AppCompatActivity {
 		});
 		mainViewModel.clearFragmentContainer.observe(this, aVoid -> {
 			clearFragmentContainer();
+		});
+		mainViewModel.dismissCurrentDialog.observe(this, aVoid -> {
+			if (activeUserActionDialog != null && activeUserActionDialog.isShowing()) {
+				Log.d(TAG, "Dismissing active user action dialog due to timeout or exterent event.");
+				activeUserActionDialog.dismiss();
+				activeUserActionDialog = null;
+			}
 		});
 	}
 
@@ -340,13 +348,12 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void clearFragmentContainer() {
-		FragmentManager fm = getSupportFragmentManager();
-		Fragment currentFragment = fm.findFragmentByTag(TAG_TEST_FRAGMENT);
-		if (currentFragment != null) {
-			mainViewModel.appendLog(TAG, "Auto-test finished. Clearing fragment container.");
-			fm.beginTransaction().remove(currentFragment).commit();
-			if(defaultFocusButton != null) {
-				defaultFocusButton.requestFocus();
+		if (!isFinishing() && !isDestroyed()) {
+			FragmentManager fm = getSupportFragmentManager();
+			Fragment currentFragment = fm.findFragmentByTag(TAG_TEST_FRAGMENT);
+			if (currentFragment != null) {
+				mainViewModel.appendLog(TAG, "Auto-test finished. Clearing fragment container.");
+				closeTestFragmentAndFocus(null);
 			}
 		}
 	}
@@ -391,7 +398,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void showUserActionDialog(String message) {
-		// Inflate the custom layout
+
 		LayoutInflater inflater = LayoutInflater.from(this);
 		View dialogView = inflater.inflate(R.layout.dialog_custom_action, null);
 
@@ -409,6 +416,12 @@ public class MainActivity extends AppCompatActivity {
 				.setCancelable(false);
 
 		final AlertDialog dialog = builder.create();
+
+		this.activeUserActionDialog = dialog;
+		dialog.setOnDismissListener(dialogInterface -> {
+			Log.d(TAG, "User action dialog dismissed. Clearing reference.");
+			this.activeUserActionDialog = null;
+		});
 
 		if (message.contains("?")) {
 			yesNoLayout.setVisibility(View.VISIBLE);

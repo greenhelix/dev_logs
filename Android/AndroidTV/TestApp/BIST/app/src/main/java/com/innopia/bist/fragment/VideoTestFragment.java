@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,6 +35,7 @@ import java.util.Map;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
 
@@ -93,17 +95,15 @@ public class VideoTestFragment extends Fragment {
 		initializePlayer();
 	}
 
-	private void initializePlayer() {
+    @OptIn(markerClass = UnstableApi.class)
+    private void initializePlayer() {
 		player = new ExoPlayer.Builder(requireContext()).build();
 		playerView.setPlayer(player);
 		playerView.setControllerShowTimeoutMs(1000);
-
-		// [수정] 리스너를 한 번만 초기화하고 플레이어에 등록합니다.
 		initializePlayerListener();
 		player.addListener(playerListener);
 	}
 
-	// [추가] 플레이어 리스너의 동작을 정의하는 메서드
 	private void initializePlayerListener() {
 		this.playerListener = new Player.Listener() {
 			@Override

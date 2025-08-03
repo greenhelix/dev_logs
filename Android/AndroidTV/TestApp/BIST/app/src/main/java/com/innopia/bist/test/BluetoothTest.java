@@ -12,15 +12,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.util.Log;
+
+import androidx.annotation.RequiresPermission;
 import androidx.core.app.ActivityCompat;
 
+import com.innopia.bist.util.TestConfig;
 import com.innopia.bist.util.TestResult;
 import com.innopia.bist.util.TestStatus;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -39,6 +46,8 @@ public class BluetoothTest implements Test {
 	private static final String TAG = "BIST_BT_TEST";
 	private static final UUID STANDARD_SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private BroadcastReceiver autoConnectReceiver;
+	private Handler timeoutHandler = new Handler(Looper.getMainLooper());
 
 	/**
 	 * Asynchronously finds all currently connected Bluetooth devices (A2DP and HEADSET profiles).
@@ -212,7 +221,23 @@ public class BluetoothTest implements Test {
 	@Override
 	public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
 		Context context = (Context) params.get("context");
-		Boolean isResume = (Boolean) params.getOrDefault("isResume", false);
+		TestConfig.Bluetooth btConfig = (TestConfig.Bluetooth) params.get("config");
+		if (btConfig != null && btConfig.name != null) {
+			Log.d(TAG, "Bluetooth config found. Target device name: " + btConfig.name);
+			connectToBluetoothWithName(context, btConfig.name, callback);
+		} else {
+			Log.d(TAG, "No Bluetooth config found. Using legacy user-interactive flow.");
+			runLegacyAutoTest(params, callback);
+		}
+	}
+
+	@RequiresPermission(allOf = {Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN})
+    private void connectToBluetoothWithName(Context context, String name, Consumer<TestResult> callback) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+			Log.d(TAG, "Auto-connection is not supported under Android 14. Falling back to normal flow.");
+			runLegacyAutoTest(new HashMap<>() , callback);
+			return;
+		}
 		BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
 		BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
 
@@ -221,28 +246,107 @@ public class BluetoothTest implements Test {
 			return;
 		}
 
-		List<BluetoothDevice> connectedDevices = getProxyConnectedDevices(bluetoothAdapter, context);
+		String deviceName = "";
+		for (BluetoothDevice device : bluetoothAdapter.getBondedDevices()) {
+			if (deviceName.equals(device.getName())) {
+				Log.d(TAG, "Deivce already bonded.. Starting connection test for: "+deviceName);
+				String resultStr = testConnection(context, device);
+				callback.accept(new TestResult(
+						resultStr.contains("PASS") ? TestStatus.PASSED : TestStatus.FAILED,
+						resultStr
+				));
+				return;
+			}
+		}
+
+		Log.d(TAG, "Starting discovery to find device: " + deviceName);
+
+		Runnable timeoutRunnable = () -> {
+			Log.d(TAG, "Discovery timed out. Could not find device: " + deviceName);
+			bluetoothAdapter.cancelDiscovery();
+			try {
+				context.unregisterReceiver(autoConnectReceiver);
+			} catch (IllegalArgumentException e) {
+			}
+
+			callback.accept(new TestResult(TestStatus.FAILED, "Discovery Timeout Device not found: " + deviceName));
+		};
+		autoConnectReceiver = new BroadcastReceiver() {
+			private boolean found = false;
+
+			@RequiresPermission(allOf = {Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT})
+			@Override
+			public void onReceive(Context ctx, Intent intent) {
+				String action = intent.getAction();
+				if (BluetoothDevice.ACTION_FOUND.equals(action) && !found) {
+					BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+					if (device != null && deviceName.equals(device.getName())) {
+						found = true;
+						timeoutHandler.removeCallbacks(timeoutRunnable);
+						Log.d(TAG, "Device found: " + deviceName + ". Cancelling discovery and starting bond.");
+						bluetoothAdapter.cancelDiscovery();
+						device.createBond();
+					}
+				} else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
+					BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+					int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
+
+					if (deviceName.equals(device.getName())) {
+						if (state == BluetoothDevice.BOND_BONDED) {
+							Log.d(TAG, "Bonding successful with " + deviceName);
+							ctx.unregisterReceiver(this);
+							String resultStr = testConnection(context, device);
+							callback.accept(new TestResult(resultStr.contains("PASS") ? TestStatus.PASSED : TestStatus.FAILED, resultStr));
+						} else if (state == BluetoothDevice.BOND_NONE) {
+							Log.d(TAG, "Bonding failed with " + deviceName);
+							ctx.unregisterReceiver(this);
+							callback.accept(new TestResult(TestStatus.FAILED, "Bonding failed with " + deviceName));
+						}
+					}
+				}
+			}
+		};
+		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+		filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+		context.registerReceiver(autoConnectReceiver, filter);
+		bluetoothAdapter.startDiscovery();
+		timeoutHandler.postDelayed(timeoutRunnable, 30000);
+	}
+
+	private void runLegacyAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
+		Context context = (Context) params.get("context");
+		Boolean isResume = (Boolean) params.getOrDefault("isResume", false);
+
+		BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+		BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+
+		if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+			callback.accept(new TestResult(TestStatus.FAILED, "Bluetooth is not enabled."));
+			return;
+		}
 
 		if (!isResume) {
-			if (!connectedDevices.isEmpty()) {
-				Log.d(TAG, "AutoTest: Device already connected. Starting connection test.");
-				String resultStr = testConnection(context, connectedDevices.get(0));
-				if (resultStr.contains("PASS")) {
-					callback.accept(new TestResult(TestStatus.PASSED, resultStr));
+			findConnectedDevices(context, connectedDevices -> {
+				if (!connectedDevices.isEmpty()) {
+					Log.d(TAG, "Legacy AutoTest: Device already connected. Starting connection test.");
+					String resultStr = testConnection(context, connectedDevices.get(0));
+					callback.accept(new TestResult(
+							resultStr.contains("PASS") ? TestStatus.PASSED : TestStatus.FAILED,
+							resultStr
+					));
 				} else {
-					callback.accept(new TestResult(TestStatus.FAILED, resultStr));
+					Log.d(TAG, "Legacy AutoTest: No device connected. Waiting for user action.");
+					callback.accept(new TestResult(TestStatus.WAITING_FOR_USER, "Bluetooth device is not connected. Do you want to scan and connect now?"));
 				}
-			} else {
-				Log.d(TAG, "AutoTest: No device connected. Waiting for user action.");
-				callback.accept(new TestResult(TestStatus.WAITING_FOR_USER, "Bluetooth device is not connected. Do you want to scan and connect now?"));
-			}
+			});
 		} else {
 			Boolean userChoice = (Boolean) params.getOrDefault("userChoice", false);
 			if (userChoice) {
-				Log.d(TAG, "AutoTest: User choose to connect. Waiting for user to pair a device.");
+				Log.d(TAG, "Legacy AutoTest: User chose to connect. Waiting for user to pair a device.");
 				callback.accept(new TestResult(TestStatus.WAITING_FOR_USER, "Please pair a Bluetooth device from Settings, then press OK."));
 			} else {
-				Log.d(TAG, "AutoTest: User choose not to connect.");
+				Log.d(TAG, "Legacy AutoTest: User chose not to connect.");
+				// 사용자가 '아니오'를 선택하면, 재테스트 상태로 변경
 				callback.accept(new TestResult(TestStatus.RETEST, "User skipped Bluetooth Connection. Marked for re-test."));
 			}
 		}

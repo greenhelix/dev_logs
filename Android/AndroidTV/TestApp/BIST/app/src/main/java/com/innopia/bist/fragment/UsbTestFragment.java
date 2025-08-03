@@ -62,12 +62,6 @@ public class UsbTestFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_usb_test, container, false);
 		tvUsbResult = rootView.findViewById(R.id.text_usb_info);
 
-//		Button btnUsbTest = rootView.findViewById(R.id.btn_usb_manual_test);
-//		btnUsbTest.setOnClickListener(v -> {
-//			mainViewModel.appendLog(getTag(), "Usb Test Start");
-//			usbTestViewModel.startTest();
-//		});
-
 		mainViewModel.appendLog(getTag(), "Usb Test Start");
 		usbTestViewModel.startTest();
 

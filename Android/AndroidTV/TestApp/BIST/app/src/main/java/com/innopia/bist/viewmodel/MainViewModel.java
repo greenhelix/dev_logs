@@ -56,6 +56,8 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 
 	private final SingleLiveEvent<Void> _clearFragmentContainer = new SingleLiveEvent<>();
 	public final LiveData<Void> clearFragmentContainer = _clearFragmentContainer;
+	private SingleLiveEvent<Void> _dismissCurrentDialog = new SingleLiveEvent<>();
+	public final LiveData<Void> dismissCurrentDialog = _dismissCurrentDialog;
 
 	public MainViewModel(@NonNull Application application) {
 		super(application);
@@ -181,6 +183,13 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 		appendLog("AutoTest", "Error during auto test: " + errorMessage);
 		_isAutoTestRunning.postValue(false);
 		_clearFragmentContainer.postValue(null);
+	}
+
+	@Override
+	public void onTestTimeout(TestType type) {
+		appendLog("AutoTest", "Time out detected for "+type.name()+": Cleaning up UI");
+		_dismissCurrentDialog.call();
+		_clearFragmentContainer.call();
 	}
 
 	public void setLogAutoScrollEnabled(boolean enabled) {
