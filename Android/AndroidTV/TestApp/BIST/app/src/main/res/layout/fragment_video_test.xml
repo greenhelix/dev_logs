@@ -15,7 +15,8 @@
 		android:layout_height="wrap_content"
 		android:text="select video for play"
 		android:textColor="@color/white"
-		android:textSize="16sp"/>
+		android:textSize="11sp"
+		/>
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -38,7 +39,22 @@
 			android:layout_weight="3"
 			android:layout_marginTop="18dp"
 			app:hide_on_touch="true"
-			app:resize_mode="fit" />
+			app:use_controller="false"
+			app:resize_mode="fit" >
+
+			<TextView
+				android:id="@+id/debug_text_view"
+				android:layout_width="200dp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="bottom|end"
+				android:gravity="start"
+				android:background="#80000000"
+				android:textColor="@color/white"
+				android:textSize="9sp"
+				android:padding="5dp" />
+
+		</androidx.media3.ui.PlayerView>
+
 
 <!--		<VideoView-->
 <!--			android:id="@+id/video_view"-->

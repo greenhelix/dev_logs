@@ -21,6 +21,7 @@ import com.innopia.bist.viewmodel.EthernetTestViewModel;
 import com.innopia.bist.viewmodel.MainViewModel;
 
 public class EthernetTestFragment extends Fragment {
+	private static final String TAG = "BIST_EthernetTestFragment";
 
 	private EthernetTestViewModel ethernetTestViewModel;
 	private MainViewModel mainViewModel;

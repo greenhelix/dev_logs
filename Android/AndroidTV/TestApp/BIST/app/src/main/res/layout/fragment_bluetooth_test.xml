@@ -16,6 +16,7 @@
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
+			android:textSize="11sp"
 			android:background="@drawable/button_focus_selector"
 			android:text="Bluetooth Scan" />
 
@@ -25,6 +26,7 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:layout_marginStart="5dp"
+			android:textSize="11sp"
 			android:background="@drawable/button_focus_selector"
 			android:text="Bluetooth Test" />
 	</LinearLayout>
@@ -34,6 +36,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:padding="8dp"
+		android:textSize="11sp"
 		android:text="Device Info: (Select a device to see details)"
 		android:background="@drawable/focusable_item_border"
 		android:textColor="#FFFFFF" />
@@ -43,6 +46,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:padding="8dp"
+		android:textSize="11sp"
 		android:text="Selected for Test: None"
 		android:background="@drawable/focusable_item_border"
 		android:textColor="#FFFFFF" />
@@ -52,6 +56,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:padding="8dp"
+		android:textSize="11sp"
 		android:text="Test Result: PENDING"
 		android:background="@drawable/focusable_item_border"
 		android:textColor="#FFFFFF" />

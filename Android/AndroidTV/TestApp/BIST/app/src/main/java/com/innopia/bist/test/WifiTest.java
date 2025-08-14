@@ -125,10 +125,11 @@ public class WifiTest implements Test {
 	}
 
 	private void connectToWifiWithConfig(Context context, TestConfig.Wifi config, Consumer<TestResult> callback) {
+		Log.d(TAG, "connectToWifiWithConfig() start");
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
 			Log.d(TAG, "Auto-connection is not supported under Android 14. Falling back to manual flow.");
-			ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-			checkEthernetAndProceed(context, cm, new HashMap<>(), callback);
+			String message = "Wi-Fi auto-connection is not supported. Do you want to open Wi-Fi Settings now?";
+			callback.accept(new TestResult(TestStatus.WAITING_FOR_USER, message));
 			return;
 		}
 

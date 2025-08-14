@@ -28,5 +28,6 @@
 		android:focusable="true"
 		android:background="@drawable/focusable_item_border"
 		android:textColor="#FFFFFF"
+		android:textSize="11sp"
 		android:text="Press 'Scan' to find Ethernet networks." />
 </LinearLayout>

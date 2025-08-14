@@ -19,6 +19,7 @@ import com.innopia.bist.viewmodel.CpuTestViewModel;
 import com.innopia.bist.viewmodel.MainViewModel;
 
 public class CpuTestFragment extends Fragment {
+	private static final String TAG = "BIST_CpuTestFragment";
 
 	private CpuTestViewModel cpuTestViewModel;
 	private MainViewModel mainViewModel;

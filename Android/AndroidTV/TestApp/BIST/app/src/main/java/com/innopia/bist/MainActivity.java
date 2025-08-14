@@ -36,15 +36,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
-import com.innopia.bist.fragment.BluetoothTestFragment;
-import com.innopia.bist.fragment.CpuTestFragment;
-import com.innopia.bist.fragment.EthernetTestFragment;
-import com.innopia.bist.fragment.HdmiTestFragment;
-import com.innopia.bist.fragment.MemoryTestFragment;
-import com.innopia.bist.fragment.RcuTestFragment;
-import com.innopia.bist.fragment.UsbTestFragment;
-import com.innopia.bist.fragment.VideoTestFragment;
-import com.innopia.bist.fragment.WifiTestFragment;
+import com.innopia.bist.fragment.*;
 import com.innopia.bist.info.HwInfo;
 import com.innopia.bist.info.SystemInfo;
 import com.innopia.bist.util.SecretCodeManager;
@@ -145,28 +137,28 @@ public class MainActivity extends AppCompatActivity {
 		mainTestButtons = new ArrayList<>();
 		testButtonMap = new HashMap<>();
 
-		Button btnEthernetTest = findViewById(R.id.button_ethernet_test);
+		Button btnEthernetTest = findViewById(R.id.button_ethernet);
 		btnEthernetTest.setOnClickListener(v -> showTestFragment(EthernetTestFragment.newInstance()));
 		mainTestButtons.add(btnEthernetTest);
 		testButtonMap.put(TestType.ETHERNET, btnEthernetTest);
 		defaultFocusButton = btnEthernetTest;
 
-		Button btnWifiTest = findViewById(R.id.button_wifi_test);
+		Button btnWifiTest = findViewById(R.id.button_wifi);
 		btnWifiTest.setOnClickListener(v -> showTestFragment(WifiTestFragment.newInstance()));
 		mainTestButtons.add(btnWifiTest);
 		testButtonMap.put(TestType.WIFI, btnWifiTest);
 
-		Button btn_BluetoothTest = findViewById(R.id.button_bt_test);
+		Button btn_BluetoothTest = findViewById(R.id.button_bt);
 		btn_BluetoothTest.setOnClickListener(v -> showTestFragment(BluetoothTestFragment.newInstance()));
 		mainTestButtons.add(btn_BluetoothTest);
 		testButtonMap.put(TestType.BLUETOOTH, btn_BluetoothTest);
 
-		Button btnHdmiTest = findViewById(R.id.button_hdmi_test);
+		Button btnHdmiTest = findViewById(R.id.button_hdmi);
 		btnHdmiTest.setOnClickListener(v -> showTestFragment(HdmiTestFragment.newInstance()));
 		mainTestButtons.add(btnHdmiTest);
 		testButtonMap.put(TestType.HDMI, btnHdmiTest);
 
-		Button btnVideoTest = findViewById(R.id.button_video_test);
+		Button btnVideoTest = findViewById(R.id.button_video);
 		btnVideoTest.setOnClickListener(v -> {
 			updateButtonUI(TestType.VIDEO, TestStatus.RUNNING);
 			showTestFragment(VideoTestFragment.newInstance());
@@ -174,22 +166,22 @@ public class MainActivity extends AppCompatActivity {
 		mainTestButtons.add(btnVideoTest);
 		testButtonMap.put(TestType.VIDEO, btnVideoTest);
 
-		Button btnUsbTest = findViewById(R.id.button_usb_test);
+		Button btnUsbTest = findViewById(R.id.button_usb);
 		btnUsbTest.setOnClickListener(v -> showTestFragment(UsbTestFragment.newInstance()));
 		mainTestButtons.add(btnUsbTest);
 		testButtonMap.put(TestType.USB, btnUsbTest);
 
-		Button btnMemoryTest = findViewById(R.id.button_memory_test);
+		Button btnMemoryTest = findViewById(R.id.button_memory);
 		btnMemoryTest.setOnClickListener(v -> showTestFragment(MemoryTestFragment.newInstance()));
 		mainTestButtons.add(btnMemoryTest);
 		testButtonMap.put(TestType.MEMORY, btnMemoryTest);
 
-		Button btnCpuTest = findViewById(R.id.button_cpu_test);
+		Button btnCpuTest = findViewById(R.id.button_cpu);
 		btnCpuTest.setOnClickListener(v -> showTestFragment(CpuTestFragment.newInstance()));
 		mainTestButtons.add(btnCpuTest);
 		testButtonMap.put(TestType.CPU, btnCpuTest);
 
-		Button btnRcuTest = findViewById(R.id.button_rcu_test);
+		Button btnRcuTest = findViewById(R.id.button_rcu);
 		btnRcuTest.setOnClickListener(v -> {
 			updateButtonUI(TestType.RCU, TestStatus.RETEST);
 			showTestFragment(RcuTestFragment.newInstance());
@@ -197,24 +189,32 @@ public class MainActivity extends AppCompatActivity {
 		mainTestButtons.add(btnRcuTest);
 		testButtonMap.put(TestType.RCU, btnRcuTest);
 
-		Button btnFactoryResetTest = findViewById(R.id.button_factory_reset_test);
+		Button btnButton = findViewById(R.id.button_button);
+		btnButton.setOnClickListener(v -> {
+			showTestFragment(ButtonTestFragment.newInstance());
+			defaultFocusButton = btnButton;
+		});
+		mainTestButtons.add(btnButton);
+		testButtonMap.put(TestType.BUTTON, btnButton);
+
+		Button btnFactoryResetTest = findViewById(R.id.button_factory_reset);
 		btnFactoryResetTest.setOnClickListener(v -> startFactoryReset());
 		mainTestButtons.add(btnFactoryResetTest);
 
-		Button btnRebootTest = findViewById(R.id.button_reboot_test);
+		Button btnRebootTest = findViewById(R.id.button_reboot);
 		btnRebootTest.setOnClickListener(v -> startReboot());
 		mainTestButtons.add(btnRebootTest);
 
-		Button btnSettingsTest = findViewById(R.id.button_settings_test);
+		Button btnSettingsTest = findViewById(R.id.button_settings);
 		btnSettingsTest.setOnClickListener(v -> startSettings());
 		mainTestButtons.add(btnSettingsTest);
 
-		Button btnStartAutoTest = findViewById(R.id.button_start_auto_test);
+		Button btnStartAutoTest = findViewById(R.id.button_auto_test);
 		btnStartAutoTest.setOnClickListener(v -> {
 			// mainViewModel.startAutoTest("/storage/usb_storage");
 			mainViewModel.startAutoTest(true); //for testing
 		});
-		Button btnResetTest = findViewById(R.id.button_reset_test);
+		Button btnResetTest = findViewById(R.id.button_clear_results);
 		btnResetTest.setOnClickListener(v -> {
 			mainViewModel.resetAllTests();
 		});
@@ -423,15 +423,26 @@ public class MainActivity extends AppCompatActivity {
 			this.activeUserActionDialog = null;
 		});
 
+		final boolean isWifiManualSetupRequest = message.contains("open Wi-Fi Settings now?");
+
 		if (message.contains("?")) {
 			yesNoLayout.setVisibility(View.VISIBLE);
 			btnOk.setVisibility(View.GONE);
 
 			btnYes.setOnClickListener(v -> {
-				mainViewModel.userActionConfirmed(true);
-				dialog.dismiss();
+				if (isWifiManualSetupRequest) {
+					mainViewModel.appendLog(TAG, "User chose YES. Opening Wi-Fi settings.");
+					mainViewModel.userActionConfirmed(true);
+					dialog.dismiss();
+					startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+				} else {
+					mainViewModel.userActionConfirmed(true);
+					dialog.dismiss();
+				}
 			});
 			btnNo.setOnClickListener(v -> {
+				mainViewModel.appendLog(TAG, "User chose NO. Wi-Fi Test Fail.");
+				mainViewModel.updateTestResult(TestType.WIFI, TestStatus.ERROR);
 				mainViewModel.userActionConfirmed(false);
 				dialog.dismiss();
 			});

@@ -38,7 +38,7 @@ import android.bluetooth.BluetoothDevice; // Import BluetoothDevice
  */
 public class BluetoothTestFragment extends Fragment {
 
-	private static final String TAG = "BluetoothTestFragment";
+	private static final String TAG = "BIST_BluetoothTestFragment";
 	private BluetoothTestViewModel bluetoothTestViewModel;
 	private MainViewModel mainViewModel;
 
@@ -114,7 +114,6 @@ public class BluetoothTestFragment extends Fragment {
 		btnBluetoothScan.setOnClickListener(v -> checkPermissionAndScan());
 		btnBluetoothTest.setOnClickListener(v -> bluetoothTestViewModel.startTest());
 
-		// Start observing LiveData from the ViewModel.
 		observeViewModel();
 		return rootView;
 	}

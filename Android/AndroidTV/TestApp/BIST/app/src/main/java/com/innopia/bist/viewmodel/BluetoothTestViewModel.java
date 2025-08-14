@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 
 public class BluetoothTestViewModel extends BaseTestViewModel {
 
-	private static final String TAG = "BluetoothTestViewModel";
+	private static final String TAG = "BIST_BT_VM";
 	private final BluetoothTest bluetoothTest;
 
 	// LiveData for the currently selected device.

@@ -9,5 +9,6 @@ public enum TestType {
 	VIDEO,
 	HDMI,
 	USB,
-	RCU
+	RCU,
+	BUTTON
 }

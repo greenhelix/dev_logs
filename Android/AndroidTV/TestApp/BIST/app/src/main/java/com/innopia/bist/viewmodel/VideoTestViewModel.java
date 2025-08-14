@@ -38,31 +38,27 @@ public class VideoTestViewModel extends BaseTestViewModel {
 		_videoStatuses.setValue(statusMap);
 	}
 
-	private void updateVideoStatus(String fileName, TestStatus newStatus) {
+	public void onVideoStatusChanged(String fileName, TestStatus status) {
 		Map<String, TestStatus> currentStatuses = _videoStatuses.getValue();
-		if (currentStatuses == null) currentStatuses = new HashMap<>();
-
-		currentStatuses.put(fileName, newStatus);
+		if(currentStatuses == null) {
+			currentStatuses = new HashMap<>();
+		}
+		currentStatuses.put(fileName, status);
 		_videoStatuses.setValue(currentStatuses);
 
-		// Check if all manual tests have passed.
-		checkOverallManualTestStatus(currentStatuses);
-	}
+		String statusMessage = "playback " + status.name();
+		videoInfo.postValue(fileName + " " + statusMessage);
 
-	public void onVideoCompleted(String videoFileName) {
-		updateVideoStatus(videoFileName, TestStatus.PASSED);
-		videoInfo.postValue(videoFileName + " playback PASSED.");
-		if (autoTestIndex != -1) {
-			playNextVideoInSequence();
+		if (autoTestIndex == -1) {
+			checkOverallManualTestStatus(currentStatuses);
 		}
-	}
-
-	public void onVideoFailed(String videoFileName) {
-		updateVideoStatus(videoFileName, TestStatus.FAILED);
-		videoInfo.postValue(videoFileName + " playback FAILED.");
-		if (autoTestIndex != -1) {
-			mainViewModel.updateTestResult(getTestType(), TestStatus.FAILED);
-			autoTestIndex = -1;
+		else {
+			if (status == TestStatus.PASSED) {
+				playNextVideoInSequence();
+			} else if (status == TestStatus.FAILED || status == TestStatus.ERROR) {
+				mainViewModel.updateTestResult(getTestType(), TestStatus.FAILED);
+				autoTestIndex = -1;
+			}
 		}
 	}
 
@@ -106,7 +102,7 @@ public class VideoTestViewModel extends BaseTestViewModel {
 		public String getMetaInfo() { return metaInfo; }
 	}
 
-	public List<VideoSample> getVideoSamples() {
+	public static List<VideoSample> getVideoSamples() {
 		return Arrays.asList(
 				new VideoSample("AV1/1080p", "sample_bunny_av1_1080_10s_5mb", "AV1 1080p 10s"),
 				new VideoSample("H264/1080p", "sample_anim_h264_1080_10s_1mb", "H264 1080p 10s"),

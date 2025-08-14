@@ -19,6 +19,7 @@ import com.innopia.bist.viewmodel.MainViewModel;
  * It allows the user to start the test and shows the results.
  */
 public class HdmiTestFragment extends Fragment {
+	private static final String TAG = "BIST_HdmiTestFragment";
 
 	private HdmiTestViewModel hdmiTestViewModel;
 	private MainViewModel mainViewModel;

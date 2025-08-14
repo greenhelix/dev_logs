@@ -8,6 +8,8 @@ import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,10 +39,12 @@ import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.util.DebugTextViewHelper;
 import androidx.media3.ui.PlayerView;
+import androidx.media3.common.VideoSize;
 
 public class VideoTestFragment extends Fragment {
-	private static final String TAG = "VideoTestButtonFragment";
+	private static final String TAG = "BIST_VideoTestFragment";
 	private VideoTestViewModel videoTestViewModel;
 	private MainViewModel mainViewModel;
 
@@ -48,9 +52,14 @@ public class VideoTestFragment extends Fragment {
 	private ExoPlayer player;
 	private TextView tvVideoInfo;
 	private LinearLayout layoutButtons;
-
-	// [추가] 재사용할 플레이어 리스너
+	private TextView debugTextView;
+	private DebugTextViewHelper debugViewHelper;
+	private final Handler playbackHandler = new Handler(Looper.getMainLooper());
 	private Player.Listener playerListener;
+	private static final boolean PLAY_FULL_VIDEO_MANUAL = false;
+	private static final long MANUAL_PLAY_DURATION_MS = 10000L;
+	private final Handler debugUpdateHandler = new Handler(Looper.getMainLooper());
+	private Runnable debugUpdateRunnable;
 
 	public static VideoTestFragment newInstance() {
 		return new VideoTestFragment();
@@ -84,6 +93,8 @@ public class VideoTestFragment extends Fragment {
 		tvVideoInfo = root.findViewById(R.id.tv_video_info_button);
 		layoutButtons = root.findViewById(R.id.layout_video_buttons);
 		playerView = root.findViewById(R.id.player_view);
+		debugTextView = root.findViewById(R.id.debug_text_view);
+
 		setupButtonLayout();
 		observeViewModel();
 		return root;
@@ -93,29 +104,87 @@ public class VideoTestFragment extends Fragment {
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		initializePlayer();
+		debugUpdateHandler.post(debugUpdateRunnable);
 	}
 
     @OptIn(markerClass = UnstableApi.class)
     private void initializePlayer() {
 		player = new ExoPlayer.Builder(requireContext()).build();
 		playerView.setPlayer(player);
-		playerView.setControllerShowTimeoutMs(1000);
+		playerView.setUseController(false);
+//		playerView.setControllerShowTimeoutMs(1000);
+
+		debugViewHelper = new DebugTextViewHelper(player, debugTextView);
+		debugViewHelper.start();
+
 		initializePlayerListener();
 		player.addListener(playerListener);
 	}
-
+	private String formatDebugString(String originalString) {
+		if (originalString == null) return "";
+		// " r:", " colr:" 등 특정 키워드 앞에 줄바꿈 문자를 추가하여 가독성을 높입니다.
+		return originalString
+			.replace(" r:", "\nr:")
+			.replace(" colr:", "\ncolr:")
+			.replace(" sib:", "\nsib:")
+			.replace(" decoder:", "\ndecoder:");
+	}
 	private void initializePlayerListener() {
 		this.playerListener = new Player.Listener() {
+
+			@Override
+			public void onVideoSizeChanged(VideoSize videoSize) {
+				MediaItem mediaItem = player.getCurrentMediaItem();
+				if (mediaItem != null && mediaItem.localConfiguration != null) {
+					VideoTestViewModel.VideoSample sample = (VideoTestViewModel.VideoSample) mediaItem.localConfiguration.tag;
+					if (sample != null) {
+						String specInfo = "Spec: " + videoSize.width + "x" + videoSize.height;
+						mainViewModel.appendLog(TAG, sample.getDisplayName() + " - " + specInfo);
+					}
+				}
+			}
+
+			@Override
+			public void onRenderedFirstFrame() {
+				MediaItem mediaItem = player.getCurrentMediaItem();
+				if (mediaItem == null || mediaItem.localConfiguration == null) return;
+				VideoTestViewModel.VideoSample sample = (VideoTestViewModel.VideoSample) mediaItem.localConfiguration.tag;
+				if (sample == null) return;
+
+				// 이미 통과된 항목은 중복 처리 방지
+				Map<String, TestStatus> currentStatuses = videoTestViewModel.videoStatuses.getValue();
+				if (currentStatuses != null && currentStatuses.get(sample.getFileName()) == TestStatus.PASSED) {
+					return;
+				}
+
+				String logMsg = "I-Frame detected, PASSED: " + sample.getDisplayName();
+				mainViewModel.appendLog(TAG, logMsg);
+				videoTestViewModel.onVideoStatusChanged(sample.getFileName(), TestStatus.PASSED);
+
+				// [수정] 설정 값에 따라 재생 정지 정책을 분기
+				if (PLAY_FULL_VIDEO_MANUAL) {
+					// 옵션 1: 전체 재생 (아무것도 하지 않으면 끝까지 재생됨)
+					mainViewModel.appendLog(TAG, "Playing full video for " + sample.getDisplayName());
+				} else {
+					// 옵션 2: 지정된 시간(10초)만큼 추가 재생 후 정지
+					mainViewModel.appendLog(TAG, "Playing for an extra " + (MANUAL_PLAY_DURATION_MS / 1000) + "s.");
+					playbackHandler.postDelayed(() -> {
+						if (player != null) {
+							mainViewModel.appendLog(TAG, sample.getDisplayName() + " stopped after 3s.");
+							player.stop();
+						}
+					}, MANUAL_PLAY_DURATION_MS);
+				}
+			}
+
 			@Override
 			public void onPlaybackStateChanged(int playbackState) {
 				if (playbackState == Player.STATE_ENDED) {
-					// 재생이 끝났을 때 현재 MediaItem에서 태그를 가져옵니다.
 					MediaItem mediaItem = player.getCurrentMediaItem();
 					if (mediaItem != null && mediaItem.localConfiguration != null) {
 						VideoTestViewModel.VideoSample completedSample = (VideoTestViewModel.VideoSample) mediaItem.localConfiguration.tag;
 						if (completedSample != null) {
-							mainViewModel.appendLog(TAG, completedSample.getDisplayName() + " completed");
-							videoTestViewModel.onVideoCompleted(completedSample.getFileName());
+							mainViewModel.appendLog(TAG, completedSample.getDisplayName() + " playback completed.");
 						}
 					}
 				}
@@ -128,10 +197,10 @@ public class VideoTestFragment extends Fragment {
 				if (mediaItem != null && mediaItem.localConfiguration != null) {
 					VideoTestViewModel.VideoSample failedSample = (VideoTestViewModel.VideoSample) mediaItem.localConfiguration.tag;
 					if (failedSample != null) {
-						String errorMsg = "Video play error: " + error.getMessage();
+						String errorMsg = "Video play error for " + failedSample.getDisplayName() + ": " + error.getMessage();
 						tvVideoInfo.setText(errorMsg);
 						mainViewModel.appendLog(TAG, errorMsg);
-						videoTestViewModel.onVideoFailed(failedSample.getFileName());
+						videoTestViewModel.onVideoStatusChanged(failedSample.getFileName(), TestStatus.FAILED);
 					}
 				}
 			}
@@ -141,11 +210,13 @@ public class VideoTestFragment extends Fragment {
 	private void playSample(VideoTestViewModel.VideoSample sample) {
 		if (player == null) return;
 
+		// 새 영상 재생 전, 예약된 'stop' 명령이 있다면 취소
+		playbackHandler.removeCallbacksAndMessages(null);
+
 		try {
 			int resId = getResources().getIdentifier(sample.getFileName(), "raw", requireContext().getPackageName());
 			Uri videoUri = Uri.parse("android.resource://" + requireContext().getPackageName() + "/" + resId);
 
-			// [수정] MediaItem을 만들 때 VideoSample 객체를 태그로 설정합니다.
 			MediaItem mediaItem = new MediaItem.Builder()
 				.setUri(videoUri)
 				.setTag(sample) // 이 태그를 통해 리스너가 어떤 영상인지 식별합니다.
@@ -160,14 +231,15 @@ public class VideoTestFragment extends Fragment {
 		} catch (Exception e) {
 			String errorMsg = "Can't play sample: " + e.getMessage();
 			mainViewModel.appendLog(TAG, errorMsg);
-			videoTestViewModel.onVideoFailed(sample.getFileName());
+			videoTestViewModel.onVideoStatusChanged(sample.getFileName(), TestStatus.ERROR);
 		}
 	}
 
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		// [수정] Fragment가 소멸될 때 등록했던 리스너를 제거하고 플레이어를 해제합니다.
+		// Fragment 종료 시 핸들러 콜백 제거 및 디버그 헬퍼, 플레이어 자원 해제
+		playbackHandler.removeCallbacksAndMessages(null);
 		if (player != null) {
 			if (playerListener != null) {
 				player.removeListener(playerListener);

@@ -338,6 +338,9 @@ public class AutoTestManager {
 
 		if ( listener != null) {
 			listener.onTestStatusChanged(currentTestType, TestStatus.RUNNING, "Resuming after user action ...");
+			if (!userConfirmed){
+				listener.onTestStatusChanged(currentTestType, TestStatus.ERROR, "ERROR after user action...");
+			}
 		}
 		runTestAsync(currentTestType, currentParams);
 	}

@@ -22,43 +22,21 @@
 			android:layout_weight="1">
 
 			<Button
-				android:id="@+id/button_ethernet_test"
+				android:id="@+id/button_ethernet"
 				android:layout_height="match_parent"
 				android:textColor="@color/white"
-				android:text="Ethernet Test"
+				android:background="@drawable/button_focus_selector"
+				android:text="Ethernet"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
 
 			<Button
-				android:id="@+id/button_video_test"
+				android:id="@+id/button_wifi"
 				android:layout_height="match_parent"
 				android:textColor="@color/white"
-				android:text="Video Test"
-				android:gravity="start|center_vertical"
-				android:paddingStart="12dp"
-				android:paddingEnd="12dp" />
-		</TableRow>
-
-		<TableRow
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_weight="1">
-
-			<Button
-				android:id="@+id/button_wifi_test"
-				android:layout_height="match_parent"
-				android:textColor="@color/white"
-				android:text="Wi-Fi Test"
-				android:gravity="start|center_vertical"
-				android:paddingStart="12dp"
-				android:paddingEnd="12dp" />
-
-			<Button
-				android:id="@+id/button_bt_test"
-				android:layout_height="match_parent"
-				android:textColor="@color/white"
-				android:text="Bluetooth Test"
+				android:background="@drawable/button_focus_selector"
+				android:text="Wi-Fi"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
@@ -70,43 +48,21 @@
 			android:layout_weight="1">
 
 			<Button
-				android:id="@+id/button_hdmi_test"
+				android:id="@+id/button_bt"
 				android:layout_height="match_parent"
 				android:textColor="@color/white"
-				android:text="HDMI Test"
+				android:background="@drawable/button_focus_selector"
+				android:text="Bluetooth"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
 
 			<Button
-				android:id="@+id/button_usb_test"
+				android:id="@+id/button_usb"
 				android:layout_height="match_parent"
 				android:textColor="@color/white"
-				android:text="USB Test"
-				android:gravity="start|center_vertical"
-				android:paddingStart="12dp"
-				android:paddingEnd="12dp" />
-		</TableRow>
-
-		<TableRow
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_weight="1">
-
-			<Button
-				android:id="@+id/button_memory_test"
-				android:layout_height="match_parent"
-				android:textColor="@color/white"
-				android:text="Memory Test"
-				android:gravity="start|center_vertical"
-				android:paddingStart="12dp"
-				android:paddingEnd="12dp" />
-
-			<Button
-				android:id="@+id/button_cpu_test"
-				android:layout_height="match_parent"
-				android:textColor="@color/white"
-				android:text="CPU Test"
+				android:background="@drawable/button_focus_selector"
+				android:text="USB"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
@@ -118,19 +74,73 @@
 			android:layout_weight="1">
 
 			<Button
-				android:id="@+id/button_rcu_test"
+				android:id="@+id/button_hdmi"
 				android:layout_height="match_parent"
 				android:textColor="@color/white"
-				android:text="RCU Test"
+				android:background="@drawable/button_focus_selector"
+				android:text="HDMI"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
 
 			<Button
+				android:id="@+id/button_cpu"
 				android:layout_height="match_parent"
 				android:textColor="@color/white"
-				android:text="5-2"
-				android:visibility="invisible"
+				android:background="@drawable/button_focus_selector"
+				android:text="CPU"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
+
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
+
+			<Button
+				android:id="@+id/button_memory"
+				android:layout_height="match_parent"
+				android:textColor="@color/white"
+				android:background="@drawable/button_focus_selector"
+				android:text="Memory"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+
+			<Button
+				android:id="@+id/button_video"
+				android:layout_height="match_parent"
+				android:textColor="@color/white"
+				android:background="@drawable/button_focus_selector"
+				android:text="Video"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+		</TableRow>
+
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
+
+			<Button
+				android:id="@+id/button_rcu"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="RCU"
+				android:gravity="start|center_vertical"
+				android:paddingStart="12dp"
+				android:paddingEnd="12dp" />
+
+			<Button
+				android:id="@+id/button_button"
+				android:layout_height="match_parent"
+				android:background="@drawable/button_focus_selector"
+				android:textColor="@color/white"
+				android:text="Button"
 				android:gravity="start|center_vertical"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
@@ -143,7 +153,7 @@
 			android:layout_weight="1">
 
 			<Button
-				android:id="@+id/button_factory_reset_test"
+				android:id="@+id/button_factory_reset"
 				android:layout_height="match_parent"
 				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
@@ -153,12 +163,13 @@
 				android:paddingEnd="12dp" />
 
 			<Button
-				android:id="@+id/button_reboot_test"
+				android:id="@+id/button_reboot"
 				android:layout_height="match_parent"
 				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="Reboot"
 				android:gravity="start|center_vertical"
+				android:nextFocusDown="@id/button_clear_results"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
 		</TableRow>
@@ -169,12 +180,13 @@
 			android:layout_weight="1">
 
 			<Button
-				android:id="@+id/button_settings_test"
+				android:id="@+id/button_settings"
 				android:layout_height="match_parent"
 				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="Settings"
 				android:gravity="start|center_vertical"
+				android:nextFocusDown="@id/button_auto_test"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
 
@@ -243,22 +255,24 @@
 			android:layout_weight="1">
 
 			<Button
-				android:id="@+id/button_start_auto_test"
+				android:id="@+id/button_auto_test"
 				android:layout_height="match_parent"
 				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
 				android:text="Auto Test"
 				android:gravity="start|center_vertical"
+				android:nextFocusUp="@id/button_settings"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
 
 			<Button
-				android:id="@+id/button_reset_test"
+				android:id="@+id/button_clear_results"
 				android:layout_height="match_parent"
 				android:background="@drawable/button_focus_selector"
 				android:textColor="@color/white"
-				android:text="Reset Test"
+				android:text="Clear Results"
 				android:gravity="start|center_vertical"
+				android:nextFocusUp="@id/button_reboot"
 				android:paddingStart="12dp"
 				android:paddingEnd="12dp" />
 		</TableRow>
@@ -357,8 +371,6 @@
 			android:id="@+id/fragment_container"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:focusable="false"
-			android:focusableInTouchMode="false"
 			android:layout_below="@id/top_info_container"
 			android:layout_above="@id/log_scroll_view" />
 
@@ -370,7 +382,7 @@
 			android:focusable="false"
 			android:background="@drawable/focusable_scrollview_border"
 			android:focusableInTouchMode="false"
-			android:nextFocusUp="@+id/button_reboot_test"
+			android:nextFocusUp="@+id/button_reboot"
 			android:padding="4dp">
 
 			<TextView
@@ -380,7 +392,7 @@
 				android:focusable="false"
 				android:text="Logging Start..."
 				android:textColor="#00FF00"
-				android:textSize="10sp"
+				android:textSize="11sp"
 				android:typeface="monospace" />
 		</ScrollView>
 	</RelativeLayout>

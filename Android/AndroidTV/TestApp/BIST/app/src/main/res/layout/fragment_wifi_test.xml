@@ -17,6 +17,7 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:background="@drawable/button_focus_selector"
+			android:textSize="11sp"
 			android:text="Wi-Fi Scan" />
 
 		<Button
@@ -26,6 +27,7 @@
 			android:layout_weight="1"
 			android:layout_marginStart="5dp"
 			android:background="@drawable/button_focus_selector"
+			android:textSize="11sp"
 			android:text="Wi-Fi Test" />
 	</LinearLayout>
 
@@ -36,5 +38,6 @@
 		android:focusable="true"
 		android:background="@drawable/focusable_item_border"
 		android:textColor="#FFFFFF"
+		android:textSize="11sp"
 		android:text="Press 'Scan' to find Wi-Fi networks." />
 </LinearLayout>
