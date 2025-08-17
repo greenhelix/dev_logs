@@ -1,4 +1,4 @@
-package com.ik.test.kt.bist.model
+package com.ik.test.kt.bist.util
 
 data class TestTempData(
     val currentTemperature: Float,
