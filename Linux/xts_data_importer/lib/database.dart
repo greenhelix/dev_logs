@@ -13,7 +13,6 @@ class TestResults extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get category => text().withDefault(const Constant('ETC'))();
   TextColumn get testDate => text().named('test_date')();
-  TextColumn get abi => text()();
   TextColumn get module => text()();
   TextColumn get testName => text().named('test_name')();
   TextColumn get result => text()();
@@ -23,6 +22,7 @@ class TestResults extends Table {
   TextColumn get testToolVersion => text().named('test_tool_version').nullable()();
   TextColumn get securityPatch => text().named('security_patch').nullable()();
   TextColumn get sdkVersion => text().named('sdk_version').nullable()();
+  TextColumn get abi => text().named('abi').nullable()();
 
   @override
   List<String> get customConstraints => ['UNIQUE(test_name, abi)'];

@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
 
       // [핵심 수정 1] CSV 헤더를 DB 컬럼명(snake_case) 형식으로 정규화
       final header = rows[0]
-          .map((cell) => cell.toString().toLowerCase().replaceAll(RegExp(r'[\s/]+'), '_'))
+          .map((cell) => cell.toString().trim().toLowerCase().replaceAll(RegExp(r'[\s/]+'), '_'))
           .toList();
 
       // [핵심 수정 2] columnIndex의 키를 DB 컬럼명(snake_case)과 일치시킴
@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage> {
         'result': header.indexOf('result'),
         'detail': header.indexOf('detail'),
         'description': header.indexOf('description'),
-        'f_w_ver': header.indexOf('f_w_ver'),
+        'f_w_ver': header.indexOf('fw_ver'),
         'test_tool_ver': header.indexOf('test_tool_ver'),
         'security_patch': header.indexOf('security_patch'),
         'sdk_ver': header.indexOf('sdk_ver'),
@@ -192,7 +192,7 @@ class _HomePageState extends State<HomePage> {
             result: row[columnIndex['result']!].toString(),
             detail: drift.Value(row[columnIndex['detail']!]?.toString()),
             description: drift.Value(row[columnIndex['description']!]?.toString()),
-            fwVersion: drift.Value(row[columnIndex['f_w_ver']!]?.toString()),
+            fwVersion: drift.Value(row[columnIndex['fw_ver']!]?.toString()),
             testToolVersion: drift.Value(row[columnIndex['test_tool_ver']!]?.toString()),
             securityPatch: drift.Value(row[columnIndex['security_patch']!]?.toString()),
             sdkVersion: drift.Value(row[columnIndex['sdk_ver']!]?.toString()),

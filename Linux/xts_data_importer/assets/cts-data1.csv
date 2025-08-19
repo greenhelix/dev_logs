@@ -1,4 +1,4 @@
-Test Date,Module,Test,result,Detail,desc,F/W ver,TestTool ver,SecurityPatch,SDK ver,ABI
+Test_Date,Module,Test,result,Detail,description,FW_ver,Test_Tool_ver,Security_Patch,SDK_ver,ABI
 2025-05-07,CtsLibcoreTestCases,libcore.java.text.DateFormatTest#testFormat_forBug266731719,pass,"junit.framework.ComparisonFailure: expected:&lt;Jan 1, 2023 [9:55:48 PM]&gt; but was:&lt;Jan 1, 2023 [21:55:48]&gt;",retry >> PASS,204_A,14_r7 / 13033356,2025-03-01,1.2.0,arm64-v8a
 2025-05-07,CtsLibcoreTestCases,libcore.java.text.DateFormatTest#testParse_lenient_en,pass,junit.framework.AssertionFailedError: expected:&lt;1672610148000&gt; but was:&lt;1672566948000&gt;,retry >> PASS,204_A,14_r7 / 13033356,2025-03-01,1.2.0,arm64-v8a
 2025-05-07,CtsLibcoreTestCases,libcore.java.text.DateFormatTest#testFormat_forBug266731719,pass,"junit.framework.ComparisonFailure: expected:&lt;Jan 1, 2023 [9:55:48 PM]&gt; but was:&lt;Jan 1, 2023 [21:55:48]&gt;",retry >> PASS,204_A,14_r7 / 13033356,2025-03-01,1.2.0,armeabi-v7a

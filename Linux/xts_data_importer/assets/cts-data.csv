@@ -1,4 +1,4 @@
-Test Date,Module,Test,result,Detail,description,F/W ver,TestTool ver,SecurityPatch,SDK ver,ABI
+Test_Date,Module,Test,result,Detail,description,FW_ver,Test_Tool_ver,Security_Patch,SDK_ver,ABI
 2025-01-06,CtsAppSecurityHostTestCases,android.appsecurity.cts.AdoptableHostTest#testPrimaryStorage,pass,java.lang.AssertionError: Expected success string but found Failure [-6],,v12.G8V_DE.131B_20250106_user,android-cts-12_r14-linux_x86 / 12458034,2025-01-01,1.10.9,armeabi-v7a
 2025-01-06,CtsAppTestCases,android.app.cts.SystemFeaturesTest#testCameraFeatures,pass,java.lang.AssertionError: PackageManager#hasSystemFeature should NOT return true for android.hardware.camera.any,,v12.G8V_DE.131B_20250106_user,android-cts-12_r14-linux_x86 / 12458034,2025-01-01,1.10.9,armeabi-v7a
 2025-01-06, CtsAppTestCases[instant],android.app.cts.SystemFeaturesTest#testCameraFeatures,pass,java.lang.AssertionError: PackageManager#hasSystemFeature should NOT return true for android.hardware.camera.any,,v12.G8V_DE.131B_20250106_user,android-cts-12_r14-linux_x86 / 12458034,2025-01-01,1.10.9,armeabi-v7a
