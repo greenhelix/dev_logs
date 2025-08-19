@@ -84,38 +84,63 @@ class _HomePageState extends State<HomePage> {
       }
 
       if (result == null) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('파일 선택이 취소되었습니다.')));
-        setState(() => _message = '버튼을 눌러 CSV 데이터 가져오기를 시작하세요.');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('파일 선택이 취소되었습니다.')));
+          setState(() => _message = '버튼을 눌러 CSV 데이터 가져오기를 시작하세요.');
+        }
         return;
       }
 
       if (result.files.single.extension?.toLowerCase() != 'csv') {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('오류: CSV 파일만 선택 가능합니다.')));
-        setState(() => _isLoading = false);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('오류: CSV 파일만 선택 가능합니다.')));
+          setState(() => _isLoading = false);
+        }
         return;
       }
 
-      setState(() { _message = '선택된 CSV 파일을 분석하고 있습니다...'; });
-      
+      setState(() {
+        _isLoading = true;
+        _message = '선택된 CSV 파일을 분석하고 있습니다...'; 
+      });
+
       final file = File(result.files.single.path!);
       final rawCsv = await file.readAsString();
       List<List<dynamic>> rows;
       try {
-        // CsvToListConverter의 eol 파라미터를 제거하여 \n과 \r\n 모두 자동 처리하도록 함
         rows = const CsvToListConverter(shouldParseNumbers: false).convert(rawCsv);
       } catch (e) {
         throw Exception('CSV 파일 파싱 중 오류가 발생했습니다: $e');
       }
 
       if (rows.length < 2) throw Exception('유효한 데이터가 없는 파일입니다. (헤더 포함 최소 2줄 필요)');
-      
-      final bool hasCategoryRow = !(rows[0].any((cell) => cell.toString().toLowerCase() == 'test date'));
-      final String suiteName = rows[0][0].toString();
-      final String category = _getCategoryFromModule(suiteName);
+
+      final header = rows[0].map((cell) => cell.toString().toLowerCase().trim()).toList();
+      final Map<String, int> columnIndex = {
+        'test date'     :header.indexOf('test') ,
+        'module'        :header.indexOf('module') ,
+        'test'          :header.indexOf('test') ,
+        'result'        :header.indexOf('result') ,
+        'detail'        :header.indexOf('detail') ,
+        'description'   :header.indexOf('description') ,
+        'f/w ver'       :header.indexOf('f/w ver') ,
+        'testtool ver'  :header.indexOf('testtool ver') ,
+        'security patch':header.indexOf('security patch') ,
+        'sdk ver'       :header.indexOf('sdk ver') ,
+        'abi'           :header.indexOf('abi') ,
+      };
+
+      if (columnIndex.containsValue(-1)) {
+        final missingCols = columnIndex.entries.where((e) => e.value == -1).map((e) => e.key).join(', ');
+        throw Exception('CSV 파일에 필수 컬럼이 없습니다: $missingCols');
+      }
+
+      final dataRows = rows.sublist(1); // 헤더를 제외한 데이터 행
+
+      final String firstModule = dataRows.isNotEmpty ? dataRows[0][columnIndex['module']!].toString() : '';
+      final String category = _getCategoryFromModule(firstModule);
       final String dbName = 'xts_${category.toLowerCase()}.sqlite';
       final AppDatabase importDb = AppDatabase(dbName: dbName);
-      
-      final dataRows = hasCategoryRow ? rows.sublist(2) : rows.sublist(1); // 카테고리 행 유무에 따라 데이터 시작 위치 조정
 
       setState(() => _message = '총 ${dataRows.length}개 행을 \'${dbName}\'에 저장합니다...');
 
@@ -131,19 +156,20 @@ class _HomePageState extends State<HomePage> {
           continue;
         }
         try {
+          // [수정 4] 동적으로 찾은 인덱스를 사용하여 정확한 데이터를 매핑합니다.
           final entry = TestResultsCompanion.insert(
             category: drift.Value(category),
-            testDate: row.toString(),
-            abi: row[3].toString(),
-            module: row[4].toString(),
-            testName: row[5].toString(),
-            result: row[6].toString(),
-            detail: drift.Value(row[7]?.toString()),
-            description: drift.Value(row[8]?.toString()),
-            fwVersion: drift.Value(row[9]?.toString()),
-            testToolVersion: drift.Value(row[10]?.toString()),
-            securityPatch: drift.Value(row[11]?.toString()),
-            sdkVersion: drift.Value(row[1]?.toString()),
+            testDate: row[columnIndex['test date']!].toString(),
+            abi: row[columnIndex['abi']!].toString(),
+            module: row[columnIndex['module']!].toString(),
+            testName: row[columnIndex['test']!].toString(),
+            result: row[columnIndex['result']!].toString(),
+            detail: drift.Value(row[columnIndex['detail']!]?.toString()),
+            description: drift.Value(row[columnIndex['description']!]?.toString()),
+            fwVersion: drift.Value(row[columnIndex['f/w ver']!]?.toString()),
+            testToolVersion: drift.Value(row[columnIndex['testtool ver']!]?.toString()),
+            securityPatch: drift.Value(row[columnIndex['securitypatch']!]?.toString()),
+            sdkVersion: drift.Value(row[columnIndex['sdk ver']!]?.toString()),
           );
           entriesToInsert.add(entry);
         } catch (e) {
@@ -167,7 +193,6 @@ class _HomePageState extends State<HomePage> {
         finalMessage += '\n$failedCount개 행은 형식이 맞지 않아 건너뛰었습니다.';
       }
       setState(() => _message = finalMessage);
-
     } catch (e, s) {
       print('CSV 처리 중 심각한 오류 발생: $e\n$s');
       setState(() => _message = '오류 발생: $e');
