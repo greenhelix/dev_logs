@@ -117,14 +117,14 @@ class _HomePageState extends State<HomePage> {
 
       final header = rows[0].map((cell) => cell.toString().toLowerCase().trim()).toList();
       final Map<String, int> columnIndex = {
-        'test date'     :header.indexOf('test') ,
+        'test date'     :header.indexOf('test date') ,
         'module'        :header.indexOf('module') ,
         'test'          :header.indexOf('test') ,
         'result'        :header.indexOf('result') ,
         'detail'        :header.indexOf('detail') ,
         'description'   :header.indexOf('description') ,
         'f/w ver'       :header.indexOf('f/w ver') ,
-        'testtool ver'  :header.indexOf('testtool ver') ,
+        'test tool ver' :header.indexOf('test tool ver') ,
         'security patch':header.indexOf('security patch') ,
         'sdk ver'       :header.indexOf('sdk ver') ,
         'abi'           :header.indexOf('abi') ,
@@ -149,7 +149,7 @@ class _HomePageState extends State<HomePage> {
       final List<TestResultsCompanion> entriesToInsert = [];
 
       for (final row in dataRows) {
-        if (row.length > 12) {
+        if (row.length <= columnIndex['abi']!) {
           failedCount++;
           // [핵심 수정 2] 문제의 행을 정확히 출력하여 디버깅 지원
           print("SKIPPING ROW: Column count is ${row.length}. Row data: $row");
@@ -160,16 +160,16 @@ class _HomePageState extends State<HomePage> {
           final entry = TestResultsCompanion.insert(
             category: drift.Value(category),
             testDate: row[columnIndex['test date']!].toString(),
-            abi: row[columnIndex['abi']!].toString(),
             module: row[columnIndex['module']!].toString(),
             testName: row[columnIndex['test']!].toString(),
             result: row[columnIndex['result']!].toString(),
             detail: drift.Value(row[columnIndex['detail']!]?.toString()),
             description: drift.Value(row[columnIndex['description']!]?.toString()),
             fwVersion: drift.Value(row[columnIndex['f/w ver']!]?.toString()),
-            testToolVersion: drift.Value(row[columnIndex['testtool ver']!]?.toString()),
-            securityPatch: drift.Value(row[columnIndex['securitypatch']!]?.toString()),
+            testToolVersion: drift.Value(row[columnIndex['test tool ver']!]?.toString()),
+            securityPatch: drift.Value(row[columnIndex['security patch']!]?.toString()),
             sdkVersion: drift.Value(row[columnIndex['sdk ver']!]?.toString()),
+            abi: row[columnIndex['abi']!].toString(),
           );
           entriesToInsert.add(entry);
         } catch (e) {
