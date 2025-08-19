@@ -63,11 +63,10 @@ class _HomePageState extends State<HomePage> {
     if (_isLoading) return;
 
     try {
+      // --- 파일 선택 및 읽기 로직 (이전과 동일) ---
       if (Platform.isAndroid || Platform.isIOS) {
         var status = await Permission.storage.status;
-        if (!status.isGranted) {
-          status = await Permission.storage.request();
-        }
+        if (!status.isGranted) status = await Permission.storage.request();
         if (!status.isGranted) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -101,7 +100,8 @@ class _HomePageState extends State<HomePage> {
         }
         return;
       }
-
+      
+      // ... 파일 확장자 체크 등 (이전과 동일)
       if (result.files.single.extension?.toLowerCase() != 'csv') {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -119,8 +119,9 @@ class _HomePageState extends State<HomePage> {
       final file = File(result.files.single.path!);
       final rawCsv = await file.readAsString();
       List<List<dynamic>> rows;
+
       try {
-        rows = const CsvToListConverter(shouldParseNumbers: false, eol: '\\n').convert(rawCsv);
+        rows = const CsvToListConverter(shouldParseNumbers: false, eol: '\n').convert(rawCsv);
       } catch (e) {
         throw Exception('CSV 파일 파싱 중 오류가 발생했습니다: $e');
       }
@@ -129,34 +130,36 @@ class _HomePageState extends State<HomePage> {
         throw Exception('유효한 데이터가 없는 파일입니다. (헤더 포함 최소 2줄 필요)');
       }
 
-      // [핵심 수정 1] 헤더를 정규화 (소문자 변환 및 공백 제거)
+      // [핵심 수정 1] CSV 헤더를 DB 컬럼명(snake_case) 형식으로 정규화
       final header = rows[0]
-          .map((cell) => cell.toString().toLowerCase().replaceAll(RegExp(r'\\s+'), ''))
+          .map((cell) => cell.toString().toLowerCase().replaceAll(RegExp(r'[\s/]+'), '_'))
           .toList();
 
-      // [핵심 수정 2] 코드상의 키도 정규화된 형식으로 통일
+      // [핵심 수정 2] columnIndex의 키를 DB 컬럼명(snake_case)과 일치시킴
       final Map<String, int> columnIndex = {
-        'testdate': header.indexOf('testdate'),
+        'test_date': header.indexOf('test_date'),
         'module': header.indexOf('module'),
         'test': header.indexOf('test'),
         'result': header.indexOf('result'),
         'detail': header.indexOf('detail'),
         'description': header.indexOf('description'),
-        'f/wver': header.indexOf('f/wver'),
-        'testtoolver': header.indexOf('testtoolver'),
-        'securitypatch': header.indexOf('securitypatch'),
-        'sdkver': header.indexOf('sdkver'),
+        'f_w_ver': header.indexOf('f_w_ver'),
+        'test_tool_ver': header.indexOf('test_tool_ver'),
+        'security_patch': header.indexOf('security_patch'),
+        'sdk_ver': header.indexOf('sdk_ver'),
         'abi': header.indexOf('abi'),
       };
-      
+
       if (columnIndex.containsValue(-1)) {
         final missingCols = columnIndex.entries
             .where((e) => e.value == -1)
             .map((e) => e.key)
             .join(', ');
-        throw Exception('CSV 파일에 필수 컬럼이 없습니다: $missingCols');
+        // 좀 더 친절한 오류 메시지
+        print(' 인식된 헤더: $header');
+        throw Exception('CSV 파일에 필수 컬럼이 없거나 헤더명이 일치하지 않습니다: $missingCols');
       }
-
+      
       final dataRows = rows.sublist(1);
       final String firstModule = dataRows.isNotEmpty ? dataRows[0][columnIndex['module']!].toString() : '';
       final String category = _getCategoryFromModule(firstModule);
@@ -170,32 +173,35 @@ class _HomePageState extends State<HomePage> {
       final List<TestResultsCompanion> entriesToInsert = [];
 
       for (final row in dataRows) {
+        // ABI 컬럼 인덱스를 기준으로 행의 유효성 검사
         if (row.length <= columnIndex['abi']!) {
           failedCount++;
           print("SKIPPING ROW: Column count is ${row.length}, which is insufficient. Row data: $row");
           continue;
         }
-
+        
         try {
-          // [핵심 수정 3] 정규화된 키로 데이터 추출
+          // [핵심 수정 3] DB 컬럼명과 일치하는 키로 데이터 추출
           final entry = TestResultsCompanion.insert(
             category: drift.Value(category),
-            testDate: row[columnIndex['testdate']!].toString(),
+            testDate: row[columnIndex['test_date']!].toString(),
             abi: row[columnIndex['abi']!].toString(),
             module: row[columnIndex['module']!].toString(),
-            testName: row[columnIndex['test']!].toString(),
+            // 'test' 헤더를 'testName' 필드에 매핑
+            testName: row[columnIndex['test']!].toString(), 
             result: row[columnIndex['result']!].toString(),
             detail: drift.Value(row[columnIndex['detail']!]?.toString()),
             description: drift.Value(row[columnIndex['description']!]?.toString()),
-            fwVersion: drift.Value(row[columnIndex['f/wver']!]?.toString()),
-            testToolVersion: drift.Value(row[columnIndex['testtoolver']!]?.toString()),
-            securityPatch: drift.Value(row[columnIndex['securitypatch']!]?.toString()),
-            sdkVersion: drift.Value(row[columnIndex['sdkver']!]?.toString()),
+            fwVersion: drift.Value(row[columnIndex['f_w_ver']!]?.toString()),
+            testToolVersion: drift.Value(row[columnIndex['test_tool_ver']!]?.toString()),
+            securityPatch: drift.Value(row[columnIndex['security_patch']!]?.toString()),
+            sdkVersion: drift.Value(row[columnIndex['sdk_ver']!]?.toString()),
           );
           entriesToInsert.add(entry);
-        } catch (e) {
+        } catch (e, s) {
           failedCount++;
           print("Error processing row: $row, error: $e");
+          print(s);
         }
       }
 
@@ -216,6 +222,7 @@ class _HomePageState extends State<HomePage> {
       }
 
       setState(() => _message = finalMessage);
+
     } catch (e, s) {
       print('CSV 처리 중 심각한 오류 발생: $e\n$s');
       setState(() => _message = '오류 발생: $e');
