@@ -65,27 +65,38 @@ class _HomePageState extends State<HomePage> {
     try {
       if (Platform.isAndroid || Platform.isIOS) {
         var status = await Permission.storage.status;
-        if (!status.isGranted) status = await Permission.storage.request();
         if (!status.isGranted) {
-          if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('저장소 권한이 필요합니다.')));
+          status = await Permission.storage.request();
+        }
+        if (!status.isGranted) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('저장소 권한이 필요합니다.')));
+          }
           return;
         }
       }
 
-      setState(() { _isLoading = true; _message = '파일 선택기를 여는 중...'; });
+      setState(() {
+        _isLoading = true;
+        _message = '파일 선택기를 여는 중...';
+      });
 
       FilePickerResult? result;
       try {
         result = await FilePicker.platform.pickFiles(type: FileType.any);
       } on PlatformException catch (e) {
-        setState(() { _message = '파일 선택기를 열 수 없습니다.\nLinux에서는 \'zenity\'가 설치되어 있는지 확인하세요.'; });
+        setState(() {
+          _message = '파일 선택기를 열 수 없습니다.\nLinux에서는 \'zenity\'가 설치되어 있는지 확인하세요.';
+        });
         print('File Picker PlatformException: $e');
         return;
       }
 
       if (result == null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('파일 선택이 취소되었습니다.')));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('파일 선택이 취소되었습니다.')));
           setState(() => _message = '버튼을 눌러 CSV 데이터 가져오기를 시작하세요.');
         }
         return;
@@ -93,7 +104,8 @@ class _HomePageState extends State<HomePage> {
 
       if (result.files.single.extension?.toLowerCase() != 'csv') {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('오류: CSV 파일만 선택 가능합니다.')));
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('오류: CSV 파일만 선택 가능합니다.')));
           setState(() => _isLoading = false);
         }
         return;
@@ -101,42 +113,51 @@ class _HomePageState extends State<HomePage> {
 
       setState(() {
         _isLoading = true;
-        _message = '선택된 CSV 파일을 분석하고 있습니다...'; 
+        _message = '선택된 CSV 파일을 분석하고 있습니다...';
       });
 
       final file = File(result.files.single.path!);
       final rawCsv = await file.readAsString();
       List<List<dynamic>> rows;
       try {
-        rows = const CsvToListConverter(shouldParseNumbers: false).convert(rawCsv);
+        rows = const CsvToListConverter(shouldParseNumbers: false, eol: '\\n').convert(rawCsv);
       } catch (e) {
         throw Exception('CSV 파일 파싱 중 오류가 발생했습니다: $e');
       }
 
-      if (rows.length < 2) throw Exception('유효한 데이터가 없는 파일입니다. (헤더 포함 최소 2줄 필요)');
+      if (rows.length < 2) {
+        throw Exception('유효한 데이터가 없는 파일입니다. (헤더 포함 최소 2줄 필요)');
+      }
 
-      final header = rows[0].map((cell) => cell.toString().toLowerCase().trim()).toList();
+      // [핵심 수정 1] 헤더를 정규화 (소문자 변환 및 공백 제거)
+      final header = rows[0]
+          .map((cell) => cell.toString().toLowerCase().replaceAll(RegExp(r'\\s+'), ''))
+          .toList();
+
+      // [핵심 수정 2] 코드상의 키도 정규화된 형식으로 통일
       final Map<String, int> columnIndex = {
-        'test date'     :header.indexOf('test date') ,
-        'module'        :header.indexOf('module') ,
-        'test'          :header.indexOf('test') ,
-        'result'        :header.indexOf('result') ,
-        'detail'        :header.indexOf('detail') ,
-        'description'   :header.indexOf('description') ,
-        'f/w ver'       :header.indexOf('f/w ver') ,
-        'test tool ver' :header.indexOf('test tool ver') ,
-        'security patch':header.indexOf('security patch') ,
-        'sdk ver'       :header.indexOf('sdk ver') ,
-        'abi'           :header.indexOf('abi') ,
+        'testdate': header.indexOf('testdate'),
+        'module': header.indexOf('module'),
+        'test': header.indexOf('test'),
+        'result': header.indexOf('result'),
+        'detail': header.indexOf('detail'),
+        'description': header.indexOf('description'),
+        'f/wver': header.indexOf('f/wver'),
+        'testtoolver': header.indexOf('testtoolver'),
+        'securitypatch': header.indexOf('securitypatch'),
+        'sdkver': header.indexOf('sdkver'),
+        'abi': header.indexOf('abi'),
       };
-
+      
       if (columnIndex.containsValue(-1)) {
-        final missingCols = columnIndex.entries.where((e) => e.value == -1).map((e) => e.key).join(', ');
+        final missingCols = columnIndex.entries
+            .where((e) => e.value == -1)
+            .map((e) => e.key)
+            .join(', ');
         throw Exception('CSV 파일에 필수 컬럼이 없습니다: $missingCols');
       }
 
-      final dataRows = rows.sublist(1); // 헤더를 제외한 데이터 행
-
+      final dataRows = rows.sublist(1);
       final String firstModule = dataRows.isNotEmpty ? dataRows[0][columnIndex['module']!].toString() : '';
       final String category = _getCategoryFromModule(firstModule);
       final String dbName = 'xts_${category.toLowerCase()}.sqlite';
@@ -151,25 +172,25 @@ class _HomePageState extends State<HomePage> {
       for (final row in dataRows) {
         if (row.length <= columnIndex['abi']!) {
           failedCount++;
-          // [핵심 수정 2] 문제의 행을 정확히 출력하여 디버깅 지원
-          print("SKIPPING ROW: Column count is ${row.length}. Row data: $row");
+          print("SKIPPING ROW: Column count is ${row.length}, which is insufficient. Row data: $row");
           continue;
         }
+
         try {
-          // [수정 4] 동적으로 찾은 인덱스를 사용하여 정확한 데이터를 매핑합니다.
+          // [핵심 수정 3] 정규화된 키로 데이터 추출
           final entry = TestResultsCompanion.insert(
             category: drift.Value(category),
-            testDate: row[columnIndex['test date']!].toString(),
+            testDate: row[columnIndex['testdate']!].toString(),
+            abi: row[columnIndex['abi']!].toString(),
             module: row[columnIndex['module']!].toString(),
             testName: row[columnIndex['test']!].toString(),
             result: row[columnIndex['result']!].toString(),
             detail: drift.Value(row[columnIndex['detail']!]?.toString()),
             description: drift.Value(row[columnIndex['description']!]?.toString()),
-            fwVersion: drift.Value(row[columnIndex['f/w ver']!]?.toString()),
-            testToolVersion: drift.Value(row[columnIndex['test tool ver']!]?.toString()),
-            securityPatch: drift.Value(row[columnIndex['security patch']!]?.toString()),
-            sdkVersion: drift.Value(row[columnIndex['sdk ver']!]?.toString()),
-            abi: row[columnIndex['abi']!].toString(),
+            fwVersion: drift.Value(row[columnIndex['f/wver']!]?.toString()),
+            testToolVersion: drift.Value(row[columnIndex['testtoolver']!]?.toString()),
+            securityPatch: drift.Value(row[columnIndex['securitypatch']!]?.toString()),
+            sdkVersion: drift.Value(row[columnIndex['sdkver']!]?.toString()),
           );
           entriesToInsert.add(entry);
         } catch (e) {
@@ -180,7 +201,8 @@ class _HomePageState extends State<HomePage> {
 
       if (entriesToInsert.isNotEmpty) {
         await importDb.batch((batch) {
-          batch.insertAll(importDb.testResults, entriesToInsert, mode: drift.InsertMode.insertOrIgnore);
+          batch.insertAll(importDb.testResults, entriesToInsert,
+              mode: drift.InsertMode.insertOrIgnore);
         });
         successCount = entriesToInsert.length;
       }
@@ -192,6 +214,7 @@ class _HomePageState extends State<HomePage> {
       if (failedCount > 0) {
         finalMessage += '\n$failedCount개 행은 형식이 맞지 않아 건너뛰었습니다.';
       }
+
       setState(() => _message = finalMessage);
     } catch (e, s) {
       print('CSV 처리 중 심각한 오류 발생: $e\n$s');
