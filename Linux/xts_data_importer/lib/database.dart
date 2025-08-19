@@ -22,7 +22,7 @@ class TestResults extends Table {
   TextColumn get testToolVersion => text().named('test_tool_version').nullable()();
   TextColumn get securityPatch => text().named('security_patch').nullable()();
   TextColumn get sdkVersion => text().named('sdk_version').nullable()();
-  TextColumn get abi => text().named('abi').nullable()();
+  TextColumn get abi => text()();
 
   @override
   List<String> get customConstraints => ['UNIQUE(test_name, abi)'];

@@ -32,11 +32,6 @@ class $TestResultsTable extends TestResults
   late final GeneratedColumn<String> testDate = GeneratedColumn<String>(
       'test_date', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _abiMeta = const VerificationMeta('abi');
-  @override
-  late final GeneratedColumn<String> abi = GeneratedColumn<String>(
-      'abi', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _moduleMeta = const VerificationMeta('module');
   @override
   late final GeneratedColumn<String> module = GeneratedColumn<String>(
@@ -88,12 +83,16 @@ class $TestResultsTable extends TestResults
   late final GeneratedColumn<String> sdkVersion = GeneratedColumn<String>(
       'sdk_version', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _abiMeta = const VerificationMeta('abi');
+  @override
+  late final GeneratedColumn<String> abi = GeneratedColumn<String>(
+      'abi', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
         category,
         testDate,
-        abi,
         module,
         testName,
         result,
@@ -102,7 +101,8 @@ class $TestResultsTable extends TestResults
         fwVersion,
         testToolVersion,
         securityPatch,
-        sdkVersion
+        sdkVersion,
+        abi
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -126,12 +126,6 @@ class $TestResultsTable extends TestResults
           testDate.isAcceptableOrUnknown(data['test_date']!, _testDateMeta));
     } else if (isInserting) {
       context.missing(_testDateMeta);
-    }
-    if (data.containsKey('abi')) {
-      context.handle(
-          _abiMeta, abi.isAcceptableOrUnknown(data['abi']!, _abiMeta));
-    } else if (isInserting) {
-      context.missing(_abiMeta);
     }
     if (data.containsKey('module')) {
       context.handle(_moduleMeta,
@@ -183,6 +177,12 @@ class $TestResultsTable extends TestResults
           sdkVersion.isAcceptableOrUnknown(
               data['sdk_version']!, _sdkVersionMeta));
     }
+    if (data.containsKey('abi')) {
+      context.handle(
+          _abiMeta, abi.isAcceptableOrUnknown(data['abi']!, _abiMeta));
+    } else if (isInserting) {
+      context.missing(_abiMeta);
+    }
     return context;
   }
 
@@ -198,8 +198,6 @@ class $TestResultsTable extends TestResults
           .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
       testDate: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}test_date'])!,
-      abi: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}abi'])!,
       module: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}module'])!,
       testName: attachedDatabase.typeMapping
@@ -218,6 +216,8 @@ class $TestResultsTable extends TestResults
           .read(DriftSqlType.string, data['${effectivePrefix}security_patch']),
       sdkVersion: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}sdk_version']),
+      abi: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}abi'])!,
     );
   }
 
@@ -231,7 +231,6 @@ class TestResult extends DataClass implements Insertable<TestResult> {
   final int id;
   final String category;
   final String testDate;
-  final String abi;
   final String module;
   final String testName;
   final String result;
@@ -241,11 +240,11 @@ class TestResult extends DataClass implements Insertable<TestResult> {
   final String? testToolVersion;
   final String? securityPatch;
   final String? sdkVersion;
+  final String abi;
   const TestResult(
       {required this.id,
       required this.category,
       required this.testDate,
-      required this.abi,
       required this.module,
       required this.testName,
       required this.result,
@@ -254,14 +253,14 @@ class TestResult extends DataClass implements Insertable<TestResult> {
       this.fwVersion,
       this.testToolVersion,
       this.securityPatch,
-      this.sdkVersion});
+      this.sdkVersion,
+      required this.abi});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['category'] = Variable<String>(category);
     map['test_date'] = Variable<String>(testDate);
-    map['abi'] = Variable<String>(abi);
     map['module'] = Variable<String>(module);
     map['test_name'] = Variable<String>(testName);
     map['result'] = Variable<String>(result);
@@ -283,6 +282,7 @@ class TestResult extends DataClass implements Insertable<TestResult> {
     if (!nullToAbsent || sdkVersion != null) {
       map['sdk_version'] = Variable<String>(sdkVersion);
     }
+    map['abi'] = Variable<String>(abi);
     return map;
   }
 
@@ -291,7 +291,6 @@ class TestResult extends DataClass implements Insertable<TestResult> {
       id: Value(id),
       category: Value(category),
       testDate: Value(testDate),
-      abi: Value(abi),
       module: Value(module),
       testName: Value(testName),
       result: Value(result),
@@ -312,6 +311,7 @@ class TestResult extends DataClass implements Insertable<TestResult> {
       sdkVersion: sdkVersion == null && nullToAbsent
           ? const Value.absent()
           : Value(sdkVersion),
+      abi: Value(abi),
     );
   }
 
@@ -322,7 +322,6 @@ class TestResult extends DataClass implements Insertable<TestResult> {
       id: serializer.fromJson<int>(json['id']),
       category: serializer.fromJson<String>(json['category']),
       testDate: serializer.fromJson<String>(json['testDate']),
-      abi: serializer.fromJson<String>(json['abi']),
       module: serializer.fromJson<String>(json['module']),
       testName: serializer.fromJson<String>(json['testName']),
       result: serializer.fromJson<String>(json['result']),
@@ -332,6 +331,7 @@ class TestResult extends DataClass implements Insertable<TestResult> {
       testToolVersion: serializer.fromJson<String?>(json['testToolVersion']),
       securityPatch: serializer.fromJson<String?>(json['securityPatch']),
       sdkVersion: serializer.fromJson<String?>(json['sdkVersion']),
+      abi: serializer.fromJson<String>(json['abi']),
     );
   }
   @override
@@ -341,7 +341,6 @@ class TestResult extends DataClass implements Insertable<TestResult> {
       'id': serializer.toJson<int>(id),
       'category': serializer.toJson<String>(category),
       'testDate': serializer.toJson<String>(testDate),
-      'abi': serializer.toJson<String>(abi),
       'module': serializer.toJson<String>(module),
       'testName': serializer.toJson<String>(testName),
       'result': serializer.toJson<String>(result),
@@ -351,6 +350,7 @@ class TestResult extends DataClass implements Insertable<TestResult> {
       'testToolVersion': serializer.toJson<String?>(testToolVersion),
       'securityPatch': serializer.toJson<String?>(securityPatch),
       'sdkVersion': serializer.toJson<String?>(sdkVersion),
+      'abi': serializer.toJson<String>(abi),
     };
   }
 
@@ -358,7 +358,6 @@ class TestResult extends DataClass implements Insertable<TestResult> {
           {int? id,
           String? category,
           String? testDate,
-          String? abi,
           String? module,
           String? testName,
           String? result,
@@ -367,12 +366,12 @@ class TestResult extends DataClass implements Insertable<TestResult> {
           Value<String?> fwVersion = const Value.absent(),
           Value<String?> testToolVersion = const Value.absent(),
           Value<String?> securityPatch = const Value.absent(),
-          Value<String?> sdkVersion = const Value.absent()}) =>
+          Value<String?> sdkVersion = const Value.absent(),
+          String? abi}) =>
       TestResult(
         id: id ?? this.id,
         category: category ?? this.category,
         testDate: testDate ?? this.testDate,
-        abi: abi ?? this.abi,
         module: module ?? this.module,
         testName: testName ?? this.testName,
         result: result ?? this.result,
@@ -385,13 +384,13 @@ class TestResult extends DataClass implements Insertable<TestResult> {
         securityPatch:
             securityPatch.present ? securityPatch.value : this.securityPatch,
         sdkVersion: sdkVersion.present ? sdkVersion.value : this.sdkVersion,
+        abi: abi ?? this.abi,
       );
   TestResult copyWithCompanion(TestResultsCompanion data) {
     return TestResult(
       id: data.id.present ? data.id.value : this.id,
       category: data.category.present ? data.category.value : this.category,
       testDate: data.testDate.present ? data.testDate.value : this.testDate,
-      abi: data.abi.present ? data.abi.value : this.abi,
       module: data.module.present ? data.module.value : this.module,
       testName: data.testName.present ? data.testName.value : this.testName,
       result: data.result.present ? data.result.value : this.result,
@@ -407,6 +406,7 @@ class TestResult extends DataClass implements Insertable<TestResult> {
           : this.securityPatch,
       sdkVersion:
           data.sdkVersion.present ? data.sdkVersion.value : this.sdkVersion,
+      abi: data.abi.present ? data.abi.value : this.abi,
     );
   }
 
@@ -416,7 +416,6 @@ class TestResult extends DataClass implements Insertable<TestResult> {
           ..write('id: $id, ')
           ..write('category: $category, ')
           ..write('testDate: $testDate, ')
-          ..write('abi: $abi, ')
           ..write('module: $module, ')
           ..write('testName: $testName, ')
           ..write('result: $result, ')
@@ -425,7 +424,8 @@ class TestResult extends DataClass implements Insertable<TestResult> {
           ..write('fwVersion: $fwVersion, ')
           ..write('testToolVersion: $testToolVersion, ')
           ..write('securityPatch: $securityPatch, ')
-          ..write('sdkVersion: $sdkVersion')
+          ..write('sdkVersion: $sdkVersion, ')
+          ..write('abi: $abi')
           ..write(')'))
         .toString();
   }
@@ -435,7 +435,6 @@ class TestResult extends DataClass implements Insertable<TestResult> {
       id,
       category,
       testDate,
-      abi,
       module,
       testName,
       result,
@@ -444,7 +443,8 @@ class TestResult extends DataClass implements Insertable<TestResult> {
       fwVersion,
       testToolVersion,
       securityPatch,
-      sdkVersion);
+      sdkVersion,
+      abi);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -452,7 +452,6 @@ class TestResult extends DataClass implements Insertable<TestResult> {
           other.id == this.id &&
           other.category == this.category &&
           other.testDate == this.testDate &&
-          other.abi == this.abi &&
           other.module == this.module &&
           other.testName == this.testName &&
           other.result == this.result &&
@@ -461,14 +460,14 @@ class TestResult extends DataClass implements Insertable<TestResult> {
           other.fwVersion == this.fwVersion &&
           other.testToolVersion == this.testToolVersion &&
           other.securityPatch == this.securityPatch &&
-          other.sdkVersion == this.sdkVersion);
+          other.sdkVersion == this.sdkVersion &&
+          other.abi == this.abi);
 }
 
 class TestResultsCompanion extends UpdateCompanion<TestResult> {
   final Value<int> id;
   final Value<String> category;
   final Value<String> testDate;
-  final Value<String> abi;
   final Value<String> module;
   final Value<String> testName;
   final Value<String> result;
@@ -478,11 +477,11 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
   final Value<String?> testToolVersion;
   final Value<String?> securityPatch;
   final Value<String?> sdkVersion;
+  final Value<String> abi;
   const TestResultsCompanion({
     this.id = const Value.absent(),
     this.category = const Value.absent(),
     this.testDate = const Value.absent(),
-    this.abi = const Value.absent(),
     this.module = const Value.absent(),
     this.testName = const Value.absent(),
     this.result = const Value.absent(),
@@ -492,12 +491,12 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
     this.testToolVersion = const Value.absent(),
     this.securityPatch = const Value.absent(),
     this.sdkVersion = const Value.absent(),
+    this.abi = const Value.absent(),
   });
   TestResultsCompanion.insert({
     this.id = const Value.absent(),
     this.category = const Value.absent(),
     required String testDate,
-    required String abi,
     required String module,
     required String testName,
     required String result,
@@ -507,16 +506,16 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
     this.testToolVersion = const Value.absent(),
     this.securityPatch = const Value.absent(),
     this.sdkVersion = const Value.absent(),
+    required String abi,
   })  : testDate = Value(testDate),
-        abi = Value(abi),
         module = Value(module),
         testName = Value(testName),
-        result = Value(result);
+        result = Value(result),
+        abi = Value(abi);
   static Insertable<TestResult> custom({
     Expression<int>? id,
     Expression<String>? category,
     Expression<String>? testDate,
-    Expression<String>? abi,
     Expression<String>? module,
     Expression<String>? testName,
     Expression<String>? result,
@@ -526,12 +525,12 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
     Expression<String>? testToolVersion,
     Expression<String>? securityPatch,
     Expression<String>? sdkVersion,
+    Expression<String>? abi,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (category != null) 'category': category,
       if (testDate != null) 'test_date': testDate,
-      if (abi != null) 'abi': abi,
       if (module != null) 'module': module,
       if (testName != null) 'test_name': testName,
       if (result != null) 'result': result,
@@ -541,6 +540,7 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
       if (testToolVersion != null) 'test_tool_version': testToolVersion,
       if (securityPatch != null) 'security_patch': securityPatch,
       if (sdkVersion != null) 'sdk_version': sdkVersion,
+      if (abi != null) 'abi': abi,
     });
   }
 
@@ -548,7 +548,6 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
       {Value<int>? id,
       Value<String>? category,
       Value<String>? testDate,
-      Value<String>? abi,
       Value<String>? module,
       Value<String>? testName,
       Value<String>? result,
@@ -557,12 +556,12 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
       Value<String?>? fwVersion,
       Value<String?>? testToolVersion,
       Value<String?>? securityPatch,
-      Value<String?>? sdkVersion}) {
+      Value<String?>? sdkVersion,
+      Value<String>? abi}) {
     return TestResultsCompanion(
       id: id ?? this.id,
       category: category ?? this.category,
       testDate: testDate ?? this.testDate,
-      abi: abi ?? this.abi,
       module: module ?? this.module,
       testName: testName ?? this.testName,
       result: result ?? this.result,
@@ -572,6 +571,7 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
       testToolVersion: testToolVersion ?? this.testToolVersion,
       securityPatch: securityPatch ?? this.securityPatch,
       sdkVersion: sdkVersion ?? this.sdkVersion,
+      abi: abi ?? this.abi,
     );
   }
 
@@ -586,9 +586,6 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
     }
     if (testDate.present) {
       map['test_date'] = Variable<String>(testDate.value);
-    }
-    if (abi.present) {
-      map['abi'] = Variable<String>(abi.value);
     }
     if (module.present) {
       map['module'] = Variable<String>(module.value);
@@ -617,6 +614,9 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
     if (sdkVersion.present) {
       map['sdk_version'] = Variable<String>(sdkVersion.value);
     }
+    if (abi.present) {
+      map['abi'] = Variable<String>(abi.value);
+    }
     return map;
   }
 
@@ -626,7 +626,6 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
           ..write('id: $id, ')
           ..write('category: $category, ')
           ..write('testDate: $testDate, ')
-          ..write('abi: $abi, ')
           ..write('module: $module, ')
           ..write('testName: $testName, ')
           ..write('result: $result, ')
@@ -635,7 +634,8 @@ class TestResultsCompanion extends UpdateCompanion<TestResult> {
           ..write('fwVersion: $fwVersion, ')
           ..write('testToolVersion: $testToolVersion, ')
           ..write('securityPatch: $securityPatch, ')
-          ..write('sdkVersion: $sdkVersion')
+          ..write('sdkVersion: $sdkVersion, ')
+          ..write('abi: $abi')
           ..write(')'))
         .toString();
   }
@@ -657,7 +657,6 @@ typedef $$TestResultsTableCreateCompanionBuilder = TestResultsCompanion
   Value<int> id,
   Value<String> category,
   required String testDate,
-  required String abi,
   required String module,
   required String testName,
   required String result,
@@ -667,13 +666,13 @@ typedef $$TestResultsTableCreateCompanionBuilder = TestResultsCompanion
   Value<String?> testToolVersion,
   Value<String?> securityPatch,
   Value<String?> sdkVersion,
+  required String abi,
 });
 typedef $$TestResultsTableUpdateCompanionBuilder = TestResultsCompanion
     Function({
   Value<int> id,
   Value<String> category,
   Value<String> testDate,
-  Value<String> abi,
   Value<String> module,
   Value<String> testName,
   Value<String> result,
@@ -683,6 +682,7 @@ typedef $$TestResultsTableUpdateCompanionBuilder = TestResultsCompanion
   Value<String?> testToolVersion,
   Value<String?> securityPatch,
   Value<String?> sdkVersion,
+  Value<String> abi,
 });
 
 class $$TestResultsTableFilterComposer
@@ -702,9 +702,6 @@ class $$TestResultsTableFilterComposer
 
   ColumnFilters<String> get testDate => $composableBuilder(
       column: $table.testDate, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get abi => $composableBuilder(
-      column: $table.abi, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get module => $composableBuilder(
       column: $table.module, builder: (column) => ColumnFilters(column));
@@ -733,6 +730,9 @@ class $$TestResultsTableFilterComposer
 
   ColumnFilters<String> get sdkVersion => $composableBuilder(
       column: $table.sdkVersion, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get abi => $composableBuilder(
+      column: $table.abi, builder: (column) => ColumnFilters(column));
 }
 
 class $$TestResultsTableOrderingComposer
@@ -752,9 +752,6 @@ class $$TestResultsTableOrderingComposer
 
   ColumnOrderings<String> get testDate => $composableBuilder(
       column: $table.testDate, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get abi => $composableBuilder(
-      column: $table.abi, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get module => $composableBuilder(
       column: $table.module, builder: (column) => ColumnOrderings(column));
@@ -784,6 +781,9 @@ class $$TestResultsTableOrderingComposer
 
   ColumnOrderings<String> get sdkVersion => $composableBuilder(
       column: $table.sdkVersion, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get abi => $composableBuilder(
+      column: $table.abi, builder: (column) => ColumnOrderings(column));
 }
 
 class $$TestResultsTableAnnotationComposer
@@ -803,9 +803,6 @@ class $$TestResultsTableAnnotationComposer
 
   GeneratedColumn<String> get testDate =>
       $composableBuilder(column: $table.testDate, builder: (column) => column);
-
-  GeneratedColumn<String> get abi =>
-      $composableBuilder(column: $table.abi, builder: (column) => column);
 
   GeneratedColumn<String> get module =>
       $composableBuilder(column: $table.module, builder: (column) => column);
@@ -833,6 +830,9 @@ class $$TestResultsTableAnnotationComposer
 
   GeneratedColumn<String> get sdkVersion => $composableBuilder(
       column: $table.sdkVersion, builder: (column) => column);
+
+  GeneratedColumn<String> get abi =>
+      $composableBuilder(column: $table.abi, builder: (column) => column);
 }
 
 class $$TestResultsTableTableManager extends RootTableManager<
@@ -861,7 +861,6 @@ class $$TestResultsTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String> category = const Value.absent(),
             Value<String> testDate = const Value.absent(),
-            Value<String> abi = const Value.absent(),
             Value<String> module = const Value.absent(),
             Value<String> testName = const Value.absent(),
             Value<String> result = const Value.absent(),
@@ -871,12 +870,12 @@ class $$TestResultsTableTableManager extends RootTableManager<
             Value<String?> testToolVersion = const Value.absent(),
             Value<String?> securityPatch = const Value.absent(),
             Value<String?> sdkVersion = const Value.absent(),
+            Value<String> abi = const Value.absent(),
           }) =>
               TestResultsCompanion(
             id: id,
             category: category,
             testDate: testDate,
-            abi: abi,
             module: module,
             testName: testName,
             result: result,
@@ -886,12 +885,12 @@ class $$TestResultsTableTableManager extends RootTableManager<
             testToolVersion: testToolVersion,
             securityPatch: securityPatch,
             sdkVersion: sdkVersion,
+            abi: abi,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> category = const Value.absent(),
             required String testDate,
-            required String abi,
             required String module,
             required String testName,
             required String result,
@@ -901,12 +900,12 @@ class $$TestResultsTableTableManager extends RootTableManager<
             Value<String?> testToolVersion = const Value.absent(),
             Value<String?> securityPatch = const Value.absent(),
             Value<String?> sdkVersion = const Value.absent(),
+            required String abi,
           }) =>
               TestResultsCompanion.insert(
             id: id,
             category: category,
             testDate: testDate,
-            abi: abi,
             module: module,
             testName: testName,
             result: result,
@@ -916,6 +915,7 @@ class $$TestResultsTableTableManager extends RootTableManager<
             testToolVersion: testToolVersion,
             securityPatch: securityPatch,
             sdkVersion: sdkVersion,
+            abi: abi,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

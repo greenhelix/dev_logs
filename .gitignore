@@ -48,3 +48,4 @@ Linux/xts_data_importer/.metadata
 /Linux/xts_data_importer/web
 /Linux/xts_data_importer/windows
 /Linux/xts_data_importer/test
+Linux/xts_data_importer/lib/database.g.dart
