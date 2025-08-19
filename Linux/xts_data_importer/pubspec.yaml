@@ -29,7 +29,7 @@ dependencies:
 
   cupertino_icons: ^1.0.6
 
-  flutter_riverpd: ^2.4.0
+  flutter_riverpod: ^2.4.0
   riverpod_annotation: ^2.2.0
 
 dev_dependencies:
