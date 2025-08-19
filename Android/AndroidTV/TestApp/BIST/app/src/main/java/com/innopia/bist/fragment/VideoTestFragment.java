@@ -31,14 +31,18 @@ import com.innopia.bist.viewmodel.MainViewModel;
 import com.innopia.bist.viewmodel.VideoTestViewModel;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 // ExoPlayer 관련 클래스 임포트
+import androidx.media3.common.Format;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
+import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.analytics.AnalyticsListener;
 import androidx.media3.exoplayer.util.DebugTextViewHelper;
 import androidx.media3.ui.PlayerView;
 import androidx.media3.common.VideoSize;
@@ -58,8 +62,13 @@ public class VideoTestFragment extends Fragment {
 	private Player.Listener playerListener;
 	private static final boolean PLAY_FULL_VIDEO_MANUAL = false;
 	private static final long MANUAL_PLAY_DURATION_MS = 10000L;
+
 	private final Handler debugUpdateHandler = new Handler(Looper.getMainLooper());
 	private Runnable debugUpdateRunnable;
+	private String videoFormatString = "N/A";
+	private String videoDecoderName = "N/A";
+	private int droppedFrames = 0;
+	private AnalyticsListener analyticsListener;
 
 	public static VideoTestFragment newInstance() {
 		return new VideoTestFragment();
@@ -112,23 +121,106 @@ public class VideoTestFragment extends Fragment {
 		player = new ExoPlayer.Builder(requireContext()).build();
 		playerView.setPlayer(player);
 		playerView.setUseController(false);
-//		playerView.setControllerShowTimeoutMs(1000);
 
-		debugViewHelper = new DebugTextViewHelper(player, debugTextView);
-		debugViewHelper.start();
+		//debugViewHelper = new DebugTextViewHelper(player, debugTextView);
+		//debugViewHelper.start();
 
+		initializeAnalyticsListener();
 		initializePlayerListener();
+
+		player.addAnalyticsListener(analyticsListener);
 		player.addListener(playerListener);
+
+		this.debugUpdateRunnable = new Runnable() {
+			@Override
+			public void run() {
+				if (player != null && debugTextView != null ) {
+					StringBuilder debugInfo = new StringBuilder();
+					// 1. 플레이어 기본 상태
+					debugInfo.append(String.format(Locale.US, "playWhenReady:%s\nplaybackState:%s\n",
+						player.getPlayWhenReady(), getPlayerStateString(player.getPlaybackState())));
+
+					// 2. 비디오 상세 정보 (AnalyticsListener에서 저장한 값 사용)
+					debugInfo.append("video info:")
+						.append("\n- format: ").append(videoFormatString)
+						.append("\n- decoder: ").append(videoDecoderName)
+						.append("\n- dropped: ").append(droppedFrames)
+						.append("\n");
+
+					// 3. 버퍼 정보
+					debugInfo.append(String.format(Locale.US, "\nbuffer: %d%%", player.getBufferedPercentage()));
+
+					debugTextView.setText(debugInfo.toString());
+
+					debugUpdateHandler.postDelayed(this, 1000);
+
+				}
+			}
+		};
 	}
-	private String formatDebugString(String originalString) {
-		if (originalString == null) return "";
-		// " r:", " colr:" 등 특정 키워드 앞에 줄바꿈 문자를 추가하여 가독성을 높입니다.
-		return originalString
-			.replace(" r:", "\nr:")
-			.replace(" colr:", "\ncolr:")
-			.replace(" sib:", "\nsib:")
-			.replace(" decoder:", "\ndecoder:");
+
+	@OptIn(markerClass = UnstableApi.class)
+	private void initializeAnalyticsListener() {
+		this.analyticsListener = new AnalyticsListener() {
+			@Override
+			public void onVideoInputFormatChanged(@NonNull EventTime eventTime, @NonNull Format format) {
+				// 비디오 포맷이 확정될 때 해상도와 MIME 타입 저장
+				videoFormatString = String.format(Locale.US, "\n    W x H: %dx%d\n    MIME: %s", format.width, format.height, format.sampleMimeType);
+			}
+
+			@Override
+			public void onVideoDecoderInitialized(@NonNull EventTime eventTime, @NonNull String decoderName, long initializedTimestampMs) {
+				// 사용될 디코더 이름 저장
+				videoDecoderName = decoderName;
+			}
+
+			@Override
+			public void onTracksChanged(EventTime eventTime, Tracks tracks) {
+				for (Tracks.Group trackGroupInfo : tracks.getGroups()) {
+//					if (trackGroupInfo.getType() == Player.)
+					if (trackGroupInfo.isSelected()) {
+						for (int i = 0; i < trackGroupInfo.length; i++) {
+							if(trackGroupInfo.isTrackSelected(i)) {
+								Format videoFormat = trackGroupInfo.getTrackFormat(i);
+								videoFormatString = String.format(Locale.US, "\n    W x H: %dx%d\n    MIME: %s", videoFormat.width, videoFormat.height, videoFormat.sampleMimeType);
+								return;
+							}
+						}
+					}
+				}
+			}
+
+			@Override
+			public void onDroppedVideoFrames(@NonNull EventTime eventTime, int droppedFrames, long elapsedMs) {
+				// 드롭된 프레임 수 누적
+				VideoTestFragment.this.droppedFrames += droppedFrames;
+			}
+
+			@Override
+			public void onPlaybackStateChanged(@NonNull EventTime eventTime, int state) {
+				// 재생이 끝나면 드롭 프레임 카운트 초기화
+				if (state == Player.STATE_IDLE || state == Player.STATE_ENDED) {
+					droppedFrames = 0;
+				}
+			}
+		};
 	}
+
+	private String getPlayerStateString(int state) {
+		switch (state) {
+			case Player.STATE_IDLE:
+				return "IDLE";
+			case Player.STATE_BUFFERING:
+				return "BUFFERING";
+			case Player.STATE_READY:
+				return "READY";
+			case Player.STATE_ENDED:
+				return "ENDED";
+			default:
+				return "UNKNOWN";
+		}
+	}
+
 	private void initializePlayerListener() {
 		this.playerListener = new Player.Listener() {
 
@@ -210,6 +302,10 @@ public class VideoTestFragment extends Fragment {
 	private void playSample(VideoTestViewModel.VideoSample sample) {
 		if (player == null) return;
 
+		videoFormatString = "N/A";
+		videoDecoderName = "N/A";
+		droppedFrames = 0;
+
 		// 새 영상 재생 전, 예약된 'stop' 명령이 있다면 취소
 		playbackHandler.removeCallbacksAndMessages(null);
 
@@ -239,6 +335,11 @@ public class VideoTestFragment extends Fragment {
 	public void onDestroyView() {
 		super.onDestroyView();
 		// Fragment 종료 시 핸들러 콜백 제거 및 디버그 헬퍼, 플레이어 자원 해제
+		debugUpdateHandler.removeCallbacks(debugUpdateRunnable);
+		if (player != null) {
+			player.release();
+			player = null;
+		}
 		playbackHandler.removeCallbacksAndMessages(null);
 		if (player != null) {
 			if (playerListener != null) {
@@ -248,8 +349,6 @@ public class VideoTestFragment extends Fragment {
 			player = null;
 		}
 	}
-
-	// --- 아래 코드는 변경 사항 없습니다. ---
 
 	private void setupButtonLayout() {
 		layoutButtons.removeAllViews();
