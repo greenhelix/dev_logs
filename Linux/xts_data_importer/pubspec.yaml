@@ -29,6 +29,9 @@ dependencies:
 
   cupertino_icons: ^1.0.6
 
+  flutter_riverpd: ^2.4.0
+  riverpod_annotation: ^2.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -38,6 +41,7 @@ dev_dependencies:
   drift_dev: ^2.17.0
 
   flutter_lints: ^3.0.0
+  riverpod_generator: ^2.3.0
 
 flutter:
   uses-material-design: true

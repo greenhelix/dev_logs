@@ -1,5 +1,4 @@
 // lib/database.dart
-
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -7,6 +6,9 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
+
+// 데이터베이스 파일명을 상수로 정의
+const String kDatabaseName = 'xts_data.sqlite';
 
 @DataClassName('TestResult')
 class TestResults extends Table {
@@ -25,15 +27,15 @@ class TestResults extends Table {
   TextColumn get abi => text()();
 
   @override
-  List<String> get customConstraints => ['UNIQUE(test_name, abi)'];
+  List<String> get customConstraints => ['UNIQUE(test_name, abi, category)'];
 }
 
 @DriftDatabase(tables: [TestResults])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase({String dbName = 'xts_default.sqlite'}) : super(_openConnection(dbName));
+  AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2; // 'category' 컬럼이 포함된 버전
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration {
@@ -48,35 +50,13 @@ class AppDatabase extends _$AppDatabase {
       },
     );
   }
-
-  Future<List<TestResult>> getAllResults() => select(testResults).get();
-
-  Future<List<String>> getCategories() async {
-    final query = selectOnly(testResults, distinct: true)..addColumns([testResults.category]);
-    return await query.map((row) => row.read(testResults.category)!).get();
-  }
 }
 
-LazyDatabase _openConnection(String dbName) {
+LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, dbName));
+    final file = File(p.join(dbFolder.path, kDatabaseName));
     print('DB File Path: ${file.path}');
-    return NativeDatabase(file);
+    return NativeDatabase.new(file);
   });
-}
-
-// 생성된 모든 XTS 데이터베이스 파일 목록을 찾는 헬퍼 함수
-Future<List<String>> findXtsDatabaseFiles() async {
-  try {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final files = dbFolder.listSync();
-    return files
-        .where((f) => f is File && p.basename(f.path).startsWith('xts_') && p.basename(f.path).endsWith('.sqlite'))
-        .map((f) => p.basename(f.path))
-        .toList();
-  } catch (e) {
-    print("Error finding database files: $e");
-    return [];
-  }
 }

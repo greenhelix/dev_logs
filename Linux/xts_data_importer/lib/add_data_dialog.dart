@@ -1,17 +1,18 @@
 // lib/add_data_dialog.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import 'database.dart';
+import 'providers.dart';
 
-class AddDataDialog extends StatefulWidget {
-  final AppDatabase db;
-  const AddDataDialog({super.key, required this.db});
+class AddDataDialog extends ConsumerStatefulWidget {
+  const AddDataDialog({super.key});
 
   @override
-  State<AddDataDialog> createState() => _AddDataDialogState();
+  ConsumerState<AddDataDialog> createState() => _AddDataDialogState();
 }
 
-class _AddDataDialogState extends State<AddDataDialog> {
+class _AddDataDialogState extends ConsumerState<AddDataDialog> {
   final _formKey = GlobalKey<FormState>();
   final _controllers = {
     'category': TextEditingController(text: 'ETC'),
@@ -30,29 +31,24 @@ class _AddDataDialogState extends State<AddDataDialog> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
+      final repo = ref.read(databaseRepositoryProvider);
+      final newEntry = TestResultsCompanion.insert(
+        category: drift.Value(_controllers['category']!.text),
+        testDate: _controllers['testDate']!.text,
+        abi: _controllers['abi']!.text,
+        module: _controllers['module']!.text,
+        testName: _controllers['testName']!.text,
+        result: _controllers['result']!.text,
+      );
+
       try {
-        await widget.db.into(widget.db.testResults).insert(
-          TestResultsCompanion.insert(
-            // 기본값이 있는 category는 Value()로 감쌉니다.
-            category: drift.Value(_controllers['category']!.text),
-            
-            // 필수 항목들은 원본 타입 그대로 전달합니다.
-            testDate: _controllers['testDate']!.text,
-            abi: _controllers['abi']!.text,
-            module: _controllers['module']!.text,
-            testName: _controllers['testName']!.text,
-            result: _controllers['result']!.text,
-            
-            // nullable 필드들은 비어있을 수 있으므로 Value()로 감싸야 합니다.
-            // 여기서는 폼에 없으므로 기본값(null)으로 들어갑니다.
-          ),
-        );
-        Navigator.of(context).pop(true); // 성공적으로 추가됨을 알림
+        await repo.addTestResult(newEntry);
+        if (mounted) Navigator.of(context).pop();
       } catch (e) {
-        Navigator.of(context).pop(); // 창을 닫고
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('데이터 추가 실패: $e')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('데이터 추가 실패: $e')));
+        }
       }
     }
   }
@@ -72,26 +68,16 @@ class _AddDataDialogState extends State<AddDataDialog> {
                 decoration: const InputDecoration(labelText: 'Test Name'),
                 validator: (value) => value!.isEmpty ? '필수 항목입니다.' : null,
               ),
+              // ... 다른 TextFormField들 ...
               TextFormField(
                 controller: _controllers['module'],
                 decoration: const InputDecoration(labelText: 'Module'),
-                 validator: (value) => value!.isEmpty ? '필수 항목입니다.' : null,
+                validator: (value) => value!.isEmpty ? '필수 항목입니다.' : null,
               ),
               TextFormField(
                 controller: _controllers['abi'],
                 decoration: const InputDecoration(labelText: 'ABI'),
-              ),
-              TextFormField(
-                controller: _controllers['category'],
-                decoration: const InputDecoration(labelText: 'Category'),
-              ),
-               TextFormField(
-                controller: _controllers['result'],
-                decoration: const InputDecoration(labelText: 'Result'),
-              ),
-              TextFormField(
-                controller: _controllers['testDate'],
-                decoration: const InputDecoration(labelText: 'Test Date'),
+                validator: (value) => value!.isEmpty ? '필수 항목입니다.' : null,
               ),
             ],
           ),
