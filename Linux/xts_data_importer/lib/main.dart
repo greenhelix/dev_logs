@@ -184,15 +184,14 @@ class _HomePageState extends State<HomePage> {
         try {
           // 필수 값들이 비어있는지 확인하고 건너뛰기
           final testDate = safeValue(row, columnIndex['test_date']);
-          final abi = safeValue(row, columnIndex['abi']);
           final module = safeValue(row, columnIndex['module']);
-          final testName = safeValue(row, columnIndex['test']);
           final result = safeValue(row, columnIndex['result']);
 
           // ABI 컬럼 인덱스를 기준으로 행의 유효성 검사
-          if (testDate == null || abi == null || module == null || testName == null || result == null) {
+          if (module == null || testDate == null || result == null) {
+          // if (testDate == null || abi == null || module == null || testName == null || result == null) {
             failedCount++;
-            print("SKIPPING ROW: 필수 필드가 비어있습니다. Row data: $row");
+            print("SKIPPING ROW: 필수 필드(module, testDate, result) 중 하나가 비어있습니다. Row data: $row");
             continue;
           }
 
@@ -200,16 +199,16 @@ class _HomePageState extends State<HomePage> {
           final entry = TestResultsCompanion.insert(
             category: drift.Value(category),
             testDate: testDate,
-            abi: abi,
             module: module,
-            testName: testName, 
+            testName: drift.Value(safeValue(row, columnIndex['test'])), 
             result: result,
             detail: drift.Value(safeValue(row, columnIndex['detail'])),
             description: drift.Value(safeValue(row, columnIndex['description'])),
-            fwVersion: drift.Value(safeValue(row, columnIndex['f_w_ver'])),
+            fwVersion: drift.Value(safeValue(row, columnIndex['fw_ver'])),
             testToolVersion: drift.Value(safeValue(row, columnIndex['test_tool_ver'])),
             securityPatch: drift.Value(safeValue(row, columnIndex['security_patch'])),
             sdkVersion: drift.Value(safeValue(row, columnIndex['sdk_ver']))
+            abi: drift.Value(safeValue(row, columnIndex['abi'])),
           );
           entriesToInsert.add(entry);
         } catch (e, s) {
