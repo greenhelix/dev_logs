@@ -40,3 +40,11 @@ Windows/DiagramGenerator/dist/UML/_internal/settings/pythonw.exe
 Windows/DiagramGenerator/build/BIST_UML/localpycs/pyimod04_pywin32.pyc
 Windows/DiagramGenerator/build/UML/localpycs/pyimod04_pywin32.pyc
 Windows/DiagramGenerator/dist/UML/_internal/settings/python3w.exe
+Linux/xts_data_importer/.metadata
+/Linux/xts_data_importer/android
+/Linux/xts_data_importer/ios
+/Linux/xts_data_importer/linux
+/Linux/xts_data_importer/macos
+/Linux/xts_data_importer/web
+/Linux/xts_data_importer/windows
+/Linux/xts_data_importer/test
