@@ -23,8 +23,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 		setState(() => _isLoading = true);
 
 		try {
-			final result = await FilePicker.platform.pickFiles(
-			type: FileType.custom, allowedExtensions: ['csv']);
+			final result = await FilePicker.platform.pickFiles(type: FileType.any);
 
 			if (result == null) {
 				setState(() => _message = '파일 선택이 취소되었습니다.');
