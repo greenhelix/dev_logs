@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
     if (_isLoading) return;
 
     try {
-      // --- 파일 선택 및 읽기 로직 (이전과 동일) ---
+      // 파일 선택 및 읽기 로직
       if (Platform.isAndroid || Platform.isIOS) {
         var status = await Permission.storage.status;
         if (!status.isGranted) status = await Permission.storage.request();
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
         return;
       }
       
-      // ... 파일 확장자 체크 등 (이전과 동일)
+      // 파일 확장자 체크 등 (이전과 동일)
       if (result.files.single.extension?.toLowerCase() != 'csv') {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -130,12 +130,12 @@ class _HomePageState extends State<HomePage> {
         throw Exception('유효한 데이터가 없는 파일입니다. (헤더 포함 최소 2줄 필요)');
       }
 
-      // [핵심 수정 1] CSV 헤더를 DB 컬럼명(snake_case) 형식으로 정규화
+      // CSV 헤더를 DB 컬럼명(snake_case) 형식으로 정규화
       final header = rows[0]
           .map((cell) => cell.toString().trim().toLowerCase().replaceAll(RegExp(r'[\s/]+'), '_'))
           .toList();
 
-      // [핵심 수정 2] columnIndex의 키를 DB 컬럼명(snake_case)과 일치시킴
+      // columnIndex의 키를 DB 컬럼명(snake_case)과 일치시킴
       final Map<String, int> columnIndex = {
         'test_date': header.indexOf('test_date'),
         'module': header.indexOf('module'),
@@ -155,11 +155,10 @@ class _HomePageState extends State<HomePage> {
             .where((e) => e.value == -1)
             .map((e) => e.key)
             .join(', ');
-        // 좀 더 친절한 오류 메시지
         print(' 인식된 헤더: $header');
         throw Exception('CSV 파일에 필수 컬럼이 없거나 헤더명이 일치하지 않습니다: $missingCols');
       }
-      
+
       final dataRows = rows.sublist(1);
       final String firstModule = dataRows.isNotEmpty ? dataRows[0][columnIndex['module']!].toString() : '';
       final String category = _getCategoryFromModule(firstModule);
@@ -172,30 +171,45 @@ class _HomePageState extends State<HomePage> {
       int failedCount = 0;
       final List<TestResultsCompanion> entriesToInsert = [];
 
-      for (final row in dataRows) {
-        // ABI 컬럼 인덱스를 기준으로 행의 유효성 검사
-        if (row.length <= columnIndex['abi']!) {
-          failedCount++;
-          print("SKIPPING ROW: Column count is ${row.length}, which is insufficient. Row data: $row");
-          continue;
+      String? safeValue(List<dynamic> row, int? index) {
+        if (index == null || index < 0 || index >= row.length || row[index] == null) {
+          return null;
         }
-        
+        final value = row[index].toString().trim();
+        return value.isEmpty ? null : value;
+      }
+
+      for (final row in dataRows) {
+
         try {
-          // [핵심 수정 3] DB 컬럼명과 일치하는 키로 데이터 추출
+          // 필수 값들이 비어있는지 확인하고 건너뛰기
+          final testDate = safeValue(row, columnIndex['test_date']);
+          final abi = safeValue(row, columnIndex['abi']);
+          final module = safeValue(row, columnIndex['module']);
+          final testName = safeValue(row, columnIndex['test']);
+          final result = safeValue(row, columnIndex['result']);
+
+          // ABI 컬럼 인덱스를 기준으로 행의 유효성 검사
+          if (testDate == null || abi == null || module == null || testName == null || result == null) {
+            failedCount++;
+            print("SKIPPING ROW: 필수 필드가 비어있습니다. Row data: $row");
+            continue;
+          }
+
+          // DB 컬럼명과 일치하는 키로 데이터 추출
           final entry = TestResultsCompanion.insert(
             category: drift.Value(category),
-            testDate: row[columnIndex['test_date']!].toString(),
-            abi: row[columnIndex['abi']!].toString(),
-            module: row[columnIndex['module']!].toString(),
-            // 'test' 헤더를 'testName' 필드에 매핑
-            testName: row[columnIndex['test']!].toString(), 
-            result: row[columnIndex['result']!].toString(),
-            detail: drift.Value(row[columnIndex['detail']!]?.toString()),
-            description: drift.Value(row[columnIndex['description']!]?.toString()),
-            fwVersion: drift.Value(row[columnIndex['fw_ver']!]?.toString()),
-            testToolVersion: drift.Value(row[columnIndex['test_tool_ver']!]?.toString()),
-            securityPatch: drift.Value(row[columnIndex['security_patch']!]?.toString()),
-            sdkVersion: drift.Value(row[columnIndex['sdk_ver']!]?.toString()),
+            testDate: testDate,
+            abi: abi,
+            module: module,
+            testName: testName, 
+            result: result,
+            detail: drift.Value(safeValue(row, columnIndex['detail'])),
+            description: drift.Value(safeValue(row, columnIndex['description'])),
+            fwVersion: drift.Value(safeValue(row, columnIndex['f_w_ver'])),
+            testToolVersion: drift.Value(safeValue(row, columnIndex['test_tool_ver'])),
+            securityPatch: drift.Value(safeValue(row, columnIndex['security_patch'])),
+            sdkVersion: drift.Value(safeValue(row, columnIndex['sdk_ver']))
           );
           entriesToInsert.add(entry);
         } catch (e, s) {
