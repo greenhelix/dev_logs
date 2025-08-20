@@ -44,6 +44,7 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.analytics.AnalyticsListener;
 import androidx.media3.exoplayer.util.DebugTextViewHelper;
+import androidx.media3.ui.AspectRatioFrameLayout;
 import androidx.media3.ui.PlayerView;
 import androidx.media3.common.VideoSize;
 
@@ -121,7 +122,7 @@ public class VideoTestFragment extends Fragment {
 		player = new ExoPlayer.Builder(requireContext()).build();
 		playerView.setPlayer(player);
 		playerView.setUseController(false);
-
+		playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
 		//debugViewHelper = new DebugTextViewHelper(player, debugTextView);
 		//debugViewHelper.start();
 
@@ -162,18 +163,6 @@ public class VideoTestFragment extends Fragment {
 	@OptIn(markerClass = UnstableApi.class)
 	private void initializeAnalyticsListener() {
 		this.analyticsListener = new AnalyticsListener() {
-			@Override
-			public void onVideoInputFormatChanged(@NonNull EventTime eventTime, @NonNull Format format) {
-				// 비디오 포맷이 확정될 때 해상도와 MIME 타입 저장
-				videoFormatString = String.format(Locale.US, "\n    W x H: %dx%d\n    MIME: %s", format.width, format.height, format.sampleMimeType);
-			}
-
-			@Override
-			public void onVideoDecoderInitialized(@NonNull EventTime eventTime, @NonNull String decoderName, long initializedTimestampMs) {
-				// 사용될 디코더 이름 저장
-				videoDecoderName = decoderName;
-			}
-
 			@Override
 			public void onTracksChanged(EventTime eventTime, Tracks tracks) {
 				for (Tracks.Group trackGroupInfo : tracks.getGroups()) {
