@@ -17,10 +17,11 @@ class _AddDataDialogState extends ConsumerState<AddDataDialog> {
   final _controllers = {
     'category': TextEditingController(text: 'ETC'),
     'testDate': TextEditingController(text: DateTime.now().toIso8601String().substring(0, 10)),
-    'abi': TextEditingController(text: 'arm64-v8a'),
     'module': TextEditingController(),
     'testName': TextEditingController(),
     'result': TextEditingController(text: 'pass'),
+    'description': TextEditingController(),
+    'abi': TextEditingController(text: 'arm64-v8a'),
   };
 
   @override
@@ -35,10 +36,11 @@ class _AddDataDialogState extends ConsumerState<AddDataDialog> {
       final newEntry = TestResultsCompanion.insert(
         category: drift.Value(_controllers['category']!.text),
         testDate: _controllers['testDate']!.text,
-        abi: _controllers['abi']!.text,
         module: _controllers['module']!.text,
         testName: _controllers['testName']!.text,
         result: _controllers['result']!.text,
+        abi: _controllers['abi']!.text,
+        description: _controllers['description']!.text,
       );
 
       try {
@@ -64,20 +66,34 @@ class _AddDataDialogState extends ConsumerState<AddDataDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
-                controller: _controllers['testName'],
-                decoration: const InputDecoration(labelText: 'Test Name'),
-                validator: (value) => value!.isEmpty ? '필수 항목입니다.' : null,
+                controller: _controllers['category'],
+                decoration: const InputDecoration(labelText: 'Category'),
+                validator: (value) => value!.isEmpty ? '카테고리 항목입니다.' : null,
               ),
-              // ... 다른 TextFormField들 ...
               TextFormField(
                 controller: _controllers['module'],
                 decoration: const InputDecoration(labelText: 'Module'),
                 validator: (value) => value!.isEmpty ? '필수 항목입니다.' : null,
               ),
               TextFormField(
-                controller: _controllers['abi'],
-                decoration: const InputDecoration(labelText: 'ABI'),
+                controller: _controllers['testName'],
+                decoration: const InputDecoration(labelText: 'Test Name'),
                 validator: (value) => value!.isEmpty ? '필수 항목입니다.' : null,
+              ),
+              TextFormField(
+                controller: _controllers['result'],
+                decoration: const InputDecoration(labelText: 'Result'),
+                validator: (value) => value!.isEmpty ? '결과 항목입니다.' : null,
+              ),
+              TextFormField(
+                controller: _controllers['description'],
+                decoration: const InputDecoration(labelText: 'Description'),
+                validator: (value) => value!.isEmpty ? '설명 항목입니다.' : null,
+              )
+              TextFormField(
+                controller: _controllers['testDate'],
+                decoration: const InputDecoration(labelText: 'Test Date'),
+                validator: (value) => value!.isEmpty ? '날짜 항목입니다.' : null,
               ),
             ],
           ),

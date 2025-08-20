@@ -23,7 +23,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 		setState(() => _isLoading = true);
 
 		try {
-			final result = await FilePicker.platform.pickFiles(type: FileType.any);
+			final result = await FilePicker.platform.pickFiles(type: FileType.any); //파일타입을 FileType.custom 으로 하면 csv파일이 안보임
 
 			if (result == null) {
 				setState(() => _message = '파일 선택이 취소되었습니다.');
@@ -31,7 +31,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 			}
 
 			final file = File(result.files.single.path!);
-			final category = await _promptForCategory(context, 'ETC');
+			final category = await _promptForCategory(context, 'ETC'); // 카테고리 입력창 (입력 안하면 ETC 기본값)
 
 			if (category == null) {
 				setState(() => _message = '카테고리 입력이 취소되었습니다.');
@@ -54,6 +54,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 		}
 	}
 
+  // 카테고리 입력창
 	Future<String?> _promptForCategory(BuildContext context, String suggested) async {
 		final controller = TextEditingController(text: suggested);
 		return showDialog<String>(
