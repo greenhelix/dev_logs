@@ -57,14 +57,12 @@ LazyDatabase _openConnection() {
     final file = File(p.join(dbFolder.path, kDatabaseName));
     print('DB File Path: ${file.path}');
     // singleInstance:true로 잠금 이슈 방지
-    final native = NativeDatabase(
+    return NativeDatabase(
       file,
-      setup: (rawDb) async {
-        // WAL 모드 사용 시 동시성 개선
-        await rawDb.execute('PRAGMA journal_mode = WAL;');
-        await rawDb.execute('PRAGMA foreign_keys = ON;');
+      sqlitePragma: const {
+        'journal_mode': 'WAL',
+        'foreign_keys': 'ON',
       },
     );
-    return native;
   });
 }
