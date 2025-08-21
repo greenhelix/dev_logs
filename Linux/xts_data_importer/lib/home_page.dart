@@ -1,3 +1,4 @@
+// lib/home_page.dart
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -14,54 +15,53 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   bool _isLoading = false;
-  String _message = '버튼을 눌러 CSV 데이터 가져오기를 시작하세요.';
+  String _message = 'Press the button to start importing CSV data.';
 
   Future<void> _importCsvData() async {
     if (_isLoading) return;
     setState(() => _isLoading = true);
+
     try {
       final result = await FilePicker.platform.pickFiles(type: FileType.any);
       if (result == null) {
-        setState(() => _message = '파일 선택이 취소되었습니다.');
+        setState(() => _message = 'File selection was canceled.');
         return;
       }
 
       final file = File(result.files.single.path!);
-      final category = await _promptForCategory(context, 'ETC');
-      if (category == null) {
-        setState(() => _message = '카테고리 입력이 취소되었습니다.');
+      final suggestedCategory = result.files.single.name.split('.').first.toUpperCase();
+      final category = await _promptForCategory(context, suggestedCategory);
+
+      if (category == null || category.trim().isEmpty) {
+        setState(() => _message = 'Category input was canceled.');
         return;
       }
 
-      setState(() => _message = "'$category' 카테고리로 데이터 가져오는 중...");
+      setState(() => _message = "Importing data for category '$category'...");
       final importService = ref.read(csvImportServiceProvider);
       final (success, failed) = await importService.importFromCsv(file, category);
-
-      // 완료 후 즉시 재조회
+      
       ref.invalidate(testResultsProvider);
       ref.invalidate(categoriesProvider);
 
-      setState(() {
-        _message = '$success개 데이터 처리 완료. (실패: $failed개)';
-      });
+      setState(() => _message = 'Import complete: $success succeeded, $failed failed');
     } catch (e) {
-      setState(() => _message = '오류 발생: $e');
+      setState(() => _message = 'An error occurred: $e');
     } finally {
-      setState(() => _isLoading = false);
+      if(mounted) setState(() => _isLoading = false);
     }
   }
 
-  // 카테고리 입력창
   Future<String?> _promptForCategory(BuildContext context, String suggested) async {
     final controller = TextEditingController(text: suggested);
-    return showDialog<String?>(
+    return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('카테고리 입력'),
-        content: TextFormField(controller: controller, autofocus: true),
+        title: const Text('Enter Category'),
+        content: TextFormField(controller: controller, autofocus: true, decoration: const InputDecoration(hintText: 'e.g., CTS, GTS...')),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('취소')),
-          ElevatedButton(onPressed: () => Navigator.of(context).pop(controller.text), child: const Text('확인')),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+          ElevatedButton(onPressed: () => Navigator.of(context).pop(controller.text), child: const Text('OK')),
         ],
       ),
     );
@@ -69,37 +69,40 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final dbFileCount = ref.watch(testResultsProvider).asData?.value.length ?? 0;
+    final totalCount = ref.watch(testResultsProvider).asData?.value.length ?? 0;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('XTS 데이터베이스 구축')),
+      appBar: AppBar(title: const Text('XTS Database Setup')),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('저장된 총 데이터 수:', style: TextStyle(fontSize: 18)),
+              const Text('Total number of stored data entries:', style: TextStyle(fontSize: 18)),
               const SizedBox(height: 10),
-              Text('$dbFileCount', style: Theme.of(context).textTheme.headlineMedium),
+              Text('$totalCount', style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 40),
               if (_isLoading)
                 const CircularProgressIndicator()
               else
                 ElevatedButton.icon(
                   icon: const Icon(Icons.file_upload),
-                  label: const Text('CSV 파일 가져오기'),
+                  label: const Text('Import CSV File'),
                   onPressed: _importCsvData,
+                  style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
                 ),
               const SizedBox(height: 20),
               Text(_message, textAlign: TextAlign.center),
               const SizedBox(height: 50),
               OutlinedButton.icon(
                 icon: const Icon(Icons.storage),
-                label: const Text('저장된 데이터 조회하기'),
+                label: const Text('View Stored Data'),
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const DataViewPage()),
                 ),
+                style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
               ),
             ],
           ),

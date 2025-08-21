@@ -1,3 +1,4 @@
+// lib/database.dart
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -6,9 +7,9 @@ import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
 
-// 데이터베이스 파일명을 상수로 정의
 const String kDatabaseName = 'xts_data.sqlite';
 
+// ... (TestResults table definition is unchanged) ...
 @DataClassName('TestResult')
 class TestResults extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -29,6 +30,7 @@ class TestResults extends Table {
   List<String> get customConstraints => ['UNIQUE(test_name, abi, category)'];
 }
 
+
 @DriftDatabase(tables: [TestResults])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -39,10 +41,12 @@ class AppDatabase extends _$AppDatabase {
   @override
   MigrationStrategy get migration {
     return MigrationStrategy(
-      onCreate: (m) async {
-        await m.createAll();
+      onCreate: (m) {
+        print('[Database] Creating all tables...');
+        return m.createAll();
       },
       onUpgrade: (m, from, to) async {
+        print('[Database] Upgrading schema from $from to $to...');
         if (from < 2) {
           await m.addColumn(testResults, testResults.category);
         }
@@ -55,13 +59,19 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, kDatabaseName));
-    print('DB File Path: ${file.path}');
-    // singleInstance:true로 잠금 이슈 방지
-    return NativeDatabase(
+    
+    print('[Database] Opening connection to ${file.path}');
+
+    return NativeDatabase.createInBackground(
       file,
-      sqlitePragma: const {
-        'journal_mode': 'WAL',
-        'foreign_keys': 'ON',
+      // logStatements: true will print all executed SQL statements
+      logStatements: true, 
+      setup: (db) {
+        print('[Database] Configuring connection...');
+        db.execute('PRAGMA busy_timeout = 5000;');
+        db.execute('PRAGMA journal_mode = WAL;');
+        db.execute('PRAGMA foreign_keys = ON;');
+        print('[Database] Configuration complete.');
       },
     );
   });

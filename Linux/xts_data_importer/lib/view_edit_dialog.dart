@@ -1,95 +1,117 @@
+// lib/view_edit_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'add_data_dialog.dart';
-import 'view_edit_dialog.dart';
+import 'package:drift/drift.dart' as drift;
+import 'database.dart';
 import 'providers.dart';
 
-class DataViewPage extends ConsumerWidget {
-  const DataViewPage({super.key});
+class ViewEditDialog extends ConsumerStatefulWidget {
+  final TestResult item;
+  const ViewEditDialog({super.key, required this.item});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final filteredResults = ref.watch(filteredResultsProvider);
-    final asyncCategories = ref.watch(categoriesProvider);
-    final selectedCategory = ref.watch(selectedCategoryProvider);
+  ConsumerState<ViewEditDialog> createState() => _ViewEditDialogState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('DB 데이터 조회 (${filteredResults.length}개)'),
+class _ViewEditDialogState extends ConsumerState<ViewEditDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final Map<String, TextEditingController> _controllers;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = {
+      'category': TextEditingController(text: widget.item.category),
+      'testDate': TextEditingController(text: widget.item.testDate),
+      'module': TextEditingController(text: widget.item.module),
+      'testName': TextEditingController(text: widget.item.testName),
+      'result': TextEditingController(text: widget.item.result),
+      'description': TextEditingController(text: widget.item.description ?? ''),
+      'abi': TextEditingController(text: widget.item.abi),
+    };
+  }
+
+  @override
+  void dispose() {
+    _controllers.forEach((_, controller) => controller.dispose());
+    super.dispose();
+  }
+
+  Future<void> _submitUpdate() async {
+    if (_formKey.currentState!.validate()) {
+      final updatedEntry = TestResultsCompanion(
+        category: drift.Value(_controllers['category']!.text),
+        testDate: drift.Value(_controllers['testDate']!.text),
+        module: drift.Value(_controllers['module']!.text),
+        testName: drift.Value(_controllers['testName']!.text),
+        result: drift.Value(_controllers['result']!.text),
+        description: drift.Value(_controllers['description']!.text),
+        abi: drift.Value(_controllers['abi']!.text),
+      );
+
+      try {
+        await ref.read(databaseRepositoryProvider).updateTestResult(widget.item.id, updatedEntry);
+        if (mounted) Navigator.of(context).pop(true); // Notify that a change was made
+      } catch (e) {
+        if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Update failed: $e')));
+      }
+    }
+  }
+
+  Future<void> _submitDelete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Deletion'),
+        content: const Text('Are you sure you want to delete this item?'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => ref.invalidate(testResultsProvider),
-            tooltip: '새로고침',
-          ),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Delete'), style: TextButton.styleFrom(foregroundColor: Colors.red)),
         ],
       ),
-      body: Column(
-        children: [
-          asyncCategories.when(
-            data: (categories) => SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(8.0),
-              child: Wrap(
-                spacing: 8.0,
-                children: ['All', ...categories].map((category) {
-                  return FilterChip(
-                    label: Text(category),
-                    selected: selectedCategory == category,
-                    onSelected: (selected) {
-                      ref.read(selectedCategoryProvider.notifier).set(category);
-                    },
-                  );
-                }).toList(),
-              ),
-            ),
-            loading: () => const SizedBox.shrink(),
-            error: (e, s) => Text('카테고리 로딩 실패: $e'),
-          ),
-          Expanded(
-            child: filteredResults.isEmpty
-                ? const Center(child: Text('표시할 데이터가 없습니다.'))
-                : ListView.builder(
-                    itemCount: filteredResults.length,
-                    itemBuilder: (context, index) {
-                      final item = filteredResults[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        child: ListTile(
-                          onTap: () async {
-                            final changed = await showDialog<bool>(
-                              context: context,
-                              builder: (context) => ViewEditDialog(item: item),
-                            );
-                            if (changed == true) {
-                              // 변경/삭제 후 즉시 재조회 유도
-                              ref.invalidate(testResultsProvider);
-                              ref.invalidate(categoriesProvider);
-                            }
-                          },
-                          leading: CircleAvatar(
-                            backgroundColor:
-                                item.result.toLowerCase() == 'pass' ? Colors.green : Colors.red,
-                            child: Text(item.category.substring(0, 1).toUpperCase()),
-                          ),
-                          title: Text(item.testName, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text("${item.module} | ${item.result.toUpperCase()}"),
-                          trailing: const Icon(Icons.chevron_right),
-                        ),
-                      );
-                    },
+    );
+
+    if (confirmed == true) {
+      try {
+        await ref.read(databaseRepositoryProvider).deleteTestResult(widget.item.id);
+        if (mounted) Navigator.of(context).pop(true); // Notify that a change was made
+      } catch (e) {
+        if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Deletion failed: $e')));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('View/Edit Data'),
+      content: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: _controllers.entries.map((entry) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: TextFormField(
+                  controller: entry.value,
+                  decoration: InputDecoration(
+                    labelText: entry.key[0].toUpperCase() + entry.key.substring(1),
+                    border: const OutlineInputBorder(),
                   ),
+                  validator: (value) => value!.isEmpty ? 'This field is required.' : null,
+                ),
+              );
+            }).toList(),
           ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showDialog(
-          context: context,
-          builder: (context) => const AddDataDialog(),
         ),
-        tooltip: '새 데이터 추가',
-        child: const Icon(Icons.add),
       ),
+      actions: [
+        IconButton(onPressed: _submitDelete, icon: const Icon(Icons.delete), color: Colors.red),
+        const Spacer(),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+        ElevatedButton(onPressed: _submitUpdate, child: const Text('Save')),
+      ],
     );
   }
 }

@@ -1,3 +1,4 @@
+// lib/providers.dart
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'database.dart';
 import 'database_repository.dart';
@@ -7,7 +8,6 @@ part 'providers.g.dart';
 
 @Riverpod(keepAlive: true)
 AppDatabase appDatabase(AppDatabaseRef ref) {
-  // AppDatabase를 앱 전체에서 하나만 유지
   return AppDatabase();
 }
 
@@ -35,8 +35,13 @@ Future<List<String>> categories(CategoriesRef ref) {
 class SelectedCategory extends _$SelectedCategory {
   @override
   String build() => 'All';
+
   void set(String category) {
-    state = category;
+    if (state != category) {
+      state = category;
+    } else {
+      state = 'All'; // Return to 'All' if the same chip is tapped again
+    }
   }
 }
 

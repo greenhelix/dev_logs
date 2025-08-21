@@ -1,9 +1,11 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // Wrap the entire app in a ProviderScope to enable Riverpod
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -15,7 +17,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'XTS Data Importer',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),

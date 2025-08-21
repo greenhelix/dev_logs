@@ -1,3 +1,4 @@
+// lib/data_view_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'add_data_dialog.dart';
@@ -15,12 +16,12 @@ class DataViewPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('DB 데이터 조회 (${filteredResults.length}개)'),
+        title: Text('View DB Data (${filteredResults.length})'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.invalidate(testResultsProvider),
-            tooltip: '새로고침',
+            tooltip: 'Refresh',
           ),
         ],
       ),
@@ -36,19 +37,17 @@ class DataViewPage extends ConsumerWidget {
                   return FilterChip(
                     label: Text(category),
                     selected: selectedCategory == category,
-                    onSelected: (selected) {
-                      ref.read(selectedCategoryProvider.notifier).set(category);
-                    },
+                    onSelected: (selected) => ref.read(selectedCategoryProvider.notifier).set(category),
                   );
                 }).toList(),
               ),
             ),
-            loading: () => const SizedBox.shrink(),
-            error: (e, s) => Text('카테고리 로딩 실패: $e'),
+            loading: () => const Center(child: Padding(padding: EdgeInsets.all(8.0), child: CircularProgressIndicator())),
+            error: (e, s) => Text('Failed to load categories: $e'),
           ),
           Expanded(
             child: filteredResults.isEmpty
-                ? const Center(child: Text('표시할 데이터가 없습니다.'))
+                ? const Center(child: Text('No data to display.'))
                 : ListView.builder(
                     itemCount: filteredResults.length,
                     itemBuilder: (context, index) {
@@ -56,20 +55,12 @@ class DataViewPage extends ConsumerWidget {
                       return Card(
                         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         child: ListTile(
-                          onTap: () async {
-                            final changed = await showDialog<bool>(
-                              context: context,
-                              builder: (context) => ViewEditDialog(item: item),
-                            );
-                            if (changed == true) {
-                              // 변경/삭제 후 즉시 재조회 유도
-                              ref.invalidate(testResultsProvider);
-                              ref.invalidate(categoriesProvider);
-                            }
-                          },
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (context) => ViewEditDialog(item: item),
+                          ),
                           leading: CircleAvatar(
-                            backgroundColor:
-                                item.result.toLowerCase() == 'pass' ? Colors.green : Colors.red,
+                            backgroundColor: item.result.toLowerCase() == 'pass' ? Colors.green : Colors.red,
                             child: Text(item.category.substring(0, 1).toUpperCase()),
                           ),
                           title: Text(item.testName, style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -87,7 +78,7 @@ class DataViewPage extends ConsumerWidget {
           context: context,
           builder: (context) => const AddDataDialog(),
         ),
-        tooltip: '새 데이터 추가',
+        tooltip: 'Add New Data',
         child: const Icon(Icons.add),
       ),
     );

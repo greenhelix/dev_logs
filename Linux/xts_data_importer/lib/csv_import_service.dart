@@ -1,26 +1,29 @@
+// lib/csv_import_service.dart
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:drift/drift.dart' as drift;
 import 'database.dart';
 import 'database_repository.dart';
 
-// CSV 임포트 관련 비즈니스 로직을 담당합니다.
 class CsvImportService {
   final DatabaseRepository _repo;
   CsvImportService(this._repo);
 
   Future<(int success, int failed)> importFromCsv(File file, String category) async {
+    print('[CsvImportService] Starting import for category \'$category\' from file: ${file.path}');
+    
     final rawCsv = await file.readAsString();
-    final rows =
-        const CsvToListConverter(shouldParseNumbers: false, eol: '\n').convert(rawCsv);
+    print('[CsvImportService] File read successfully. Parsing CSV content...');
+    
+    final rows = const CsvToListConverter(shouldParseNumbers: false, eol: '\n').convert(rawCsv);
+    print('[CsvImportService] Parsed ${rows.length} total rows.');
 
     if (rows.length < 2) {
-      throw Exception('유효한 데이터가 없는 파일입니다. (헤더 포함 최소 2줄 필요)');
+      throw Exception('Invalid data file. (Requires at least 2 rows including header)');
     }
 
-    final header = rows[0]
-        .map((cell) => cell.toString().trim().toLowerCase().replaceAll(RegExp(r'[\s/]+'), '_'))
-        .toList();
+    final header = rows[0].map((cell) => cell.toString().trim().toLowerCase().replaceAll(RegExp(r'[\s/]+'), '_')).toList();
+    print('[CsvImportService] Processed header: $header');
 
     final columnIndex = {
       'test_date': header.indexOf('test_date'),
@@ -28,26 +31,19 @@ class CsvImportService {
       'test_name': header.indexOf('test'),
       'result': header.indexOf('result'),
       'detail': header.indexOf('detail'),
-      'description': header.indexOf('description'),
-      'fw_version': header.indexOf('fw_ver'),
+      'description': header.indexOf('desc'),
+      'fw_version': header.indexOf('f_w_ver'),
       'test_tool_version': header.indexOf('test_tool_ver'),
-      'security_patch': header.indexOf('security_patch'),
+      'security_patch': header.indexOf('securitypatch'),
       'sdk_version': header.indexOf('sdk_ver'),
       'abi': header.indexOf('abi'),
     };
-
-    final missingCols = columnIndex.entries
-        .where((e) => ['test_date', 'module', 'result'].contains(e.key) && e.value == -1)
-        .map((e) => e.key)
-        .toList();
-
-    if (missingCols.isNotEmpty) {
-      throw Exception('필수 컬럼 없음: ${missingCols.join(', ')}');
-    }
-
+    print('[CsvImportService] Column index map: $columnIndex');
+    
     int failedCount = 0;
     final List<TestResultsCompanion> entriesToInsert = [];
     final dataRows = rows.sublist(1);
+    print('[CsvImportService] Processing ${dataRows.length} data rows...');
 
     String? safeValue(List row, int? index) {
       if (index == null || index < 0 || index >= row.length || row[index] == null) return null;
@@ -55,11 +51,13 @@ class CsvImportService {
       return value.isEmpty ? null : value;
     }
 
-    for (final row in dataRows) {
+    for (var i = 0; i < dataRows.length; i++) {
+      final row = dataRows[i];
       final testName = safeValue(row, columnIndex['test_name']);
       final abi = safeValue(row, columnIndex['abi']);
 
       if (testName == null || abi == null) {
+        print('[CsvImportService] Skipping row ${i+1}: Missing essential data (testName or abi).');
         failedCount++;
         continue;
       }
@@ -80,8 +78,9 @@ class CsvImportService {
       ));
     }
 
-    // 트랜잭션으로 일괄 처리하여 잠금 이슈 최소화
+    print('[CsvImportService] Processed all rows. ${entriesToInsert.length} entries are ready for insertion.');
     final successCount = await _repo.bulkInsert(entriesToInsert);
+    print('[CsvImportService] Import finished. Success: $successCount, Failed: $failedCount');
     return (successCount, failedCount);
   }
 }
