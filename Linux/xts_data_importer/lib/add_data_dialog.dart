@@ -1,4 +1,3 @@
-// lib/add_data_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
@@ -9,7 +8,7 @@ class AddDataDialog extends ConsumerStatefulWidget {
   const AddDataDialog({super.key});
 
   @override
-  ConsumerState<AddDataDialog> createState() => _AddDataDialogState();
+  ConsumerState createState() => _AddDataDialogState();
 }
 
 class _AddDataDialogState extends ConsumerState<AddDataDialog> {
@@ -40,9 +39,10 @@ class _AddDataDialogState extends ConsumerState<AddDataDialog> {
         testName: _controllers['testName']!.text,
         result: _controllers['result']!.text,
         abi: _controllers['abi']!.text,
-        description: _controllers['description']!.text,
+        description: _controllers['description']!.text.isEmpty
+            ? const drift.Value.absent()
+            : drift.Value(_controllers['description']!.text),
       );
-
       try {
         await repo.addTestResult(newEntry);
         if (mounted) Navigator.of(context).pop();
@@ -88,12 +88,16 @@ class _AddDataDialogState extends ConsumerState<AddDataDialog> {
               TextFormField(
                 controller: _controllers['description'],
                 decoration: const InputDecoration(labelText: 'Description'),
-                validator: (value) => value!.isEmpty ? '설명 항목입니다.' : null,
-              )
+              ),
               TextFormField(
                 controller: _controllers['testDate'],
                 decoration: const InputDecoration(labelText: 'Test Date'),
                 validator: (value) => value!.isEmpty ? '날짜 항목입니다.' : null,
+              ),
+              TextFormField(
+                controller: _controllers['abi'],
+                decoration: const InputDecoration(labelText: 'ABI'),
+                validator: (value) => value!.isEmpty ? '필수 항목입니다.' : null,
               ),
             ],
           ),

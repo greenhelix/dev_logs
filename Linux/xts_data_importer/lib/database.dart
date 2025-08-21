@@ -1,4 +1,3 @@
-// lib/database.dart
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -57,6 +56,15 @@ LazyDatabase _openConnection() {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, kDatabaseName));
     print('DB File Path: ${file.path}');
-    return NativeDatabase.new(file);
+    // singleInstance:true로 잠금 이슈 방지
+    final native = NativeDatabase(
+      file,
+      setup: (rawDb) async {
+        // WAL 모드 사용 시 동시성 개선
+        await rawDb.execute('PRAGMA journal_mode = WAL;');
+        await rawDb.execute('PRAGMA foreign_keys = ON;');
+      },
+    );
+    return native;
   });
 }
