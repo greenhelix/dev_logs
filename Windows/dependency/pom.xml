@@ -1,0 +1,25 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>test-dependencies</artifactId>
+  <version>1.0</version>
+  <dependencies>
+    <dependency>
+      <groupId>androidx.media3</groupId>
+      <artifactId>media3-session</artifactId>
+      <version>1.8.0</version>
+      <type>aar</type>
+    </dependency>
+  </dependencies>
+  <repositories>
+    <repository>
+        <id>google</id>
+        <url>https://maven.google.com</url>
+    </repository>
+    <repository>
+        <id>maven-central</id>
+        <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+</repositories>
+
+</project>
