@@ -29,10 +29,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
-
 dependencies {
     implementation ("androidx.media3:media3-exoplayer:1.3.1")
     implementation ("androidx.media3:media3-ui:1.3.1")
+//    implementation("com.google.android.exoplayer:exoplayer-ui:2.19.1")
+//    implementation("com.google.android.exoplayer:exoplayer:2.19.1")
+//    implementation("com.google.android.exoplayer:exoplayer-common:2.19.1")
+//    implementation("com.google.android.exoplayer:exoplayer-core:2.19.1")
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

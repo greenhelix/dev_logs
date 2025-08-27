@@ -63,7 +63,6 @@ public class VideoTestFragment extends Fragment {
 	private Player.Listener playerListener;
 	private static final boolean PLAY_FULL_VIDEO_MANUAL = false;
 	private static final long MANUAL_PLAY_DURATION_MS = 10000L;
-
 	private final Handler debugUpdateHandler = new Handler(Looper.getMainLooper());
 	private Runnable debugUpdateRunnable;
 	private String videoFormatString = "N/A";
@@ -71,6 +70,23 @@ public class VideoTestFragment extends Fragment {
 	private int droppedFrames = 0;
 	private AnalyticsListener analyticsListener;
 
+	@OptIn(markerClass = UnstableApi.class)
+	private void initializeAnalyticsListener() {
+		analyticsListener = new AnalyticsListener() {
+			@Override
+			public void onVideoInputFormatChanged(@NonNull EventTime eventTime, @NonNull Format format) {
+				videoFormatString = format.width + "x" + format.height;
+			}
+			@Override
+			public void onVideoDecoderInitialized(@NonNull EventTime eventTime, @NonNull String decoderName, long initializedTimestampMs) {
+				videoDecoderName = decoderName;
+			}
+			@Override
+			public void onDroppedVideoFrames(@NonNull EventTime eventTime, int droppedFrames, long elapsedMs) {
+				VideoTestFragment.this.droppedFrames += droppedFrames;
+			}
+		};
+	}
 	public static VideoTestFragment newInstance() {
 		return new VideoTestFragment();
 	}
@@ -122,14 +138,10 @@ public class VideoTestFragment extends Fragment {
 		player = new ExoPlayer.Builder(requireContext()).build();
 		playerView.setPlayer(player);
 		playerView.setUseController(false);
-		playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-		//debugViewHelper = new DebugTextViewHelper(player, debugTextView);
-		//debugViewHelper.start();
+//		playerView.setControllerShowTimeoutMs(1000);
 
 		initializeAnalyticsListener();
 		initializePlayerListener();
-
-		player.addAnalyticsListener(analyticsListener);
 		player.addListener(playerListener);
 
 		this.debugUpdateRunnable = new Runnable() {
@@ -180,7 +192,7 @@ public class VideoTestFragment extends Fragment {
 			}
 
 			@Override
-			public void onDroppedVideoFrames(@NonNull EventTime eventTime, int droppedFrames, long elapsedMs) {
+			public void onDroppedVideoFrames(@NonNull AnalyticsListener.EventTime eventTime, int droppedFrames, long elapsedMs) {
 				// 드롭된 프레임 수 누적
 				VideoTestFragment.this.droppedFrames += droppedFrames;
 			}
