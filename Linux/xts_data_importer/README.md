@@ -91,3 +91,7 @@ Riverpod의 역할: Riverpod는 단순한 상태 관리를 넘어, 강력한 의
 
 
 ### 사용한 도구
+
+
+$FLUTTER_DIR = "D:\Android\Flutter" 
+New-Item -ItemType Directory -Force -Path $FLUTTER_DIR | Out-Null
