@@ -1,0 +1,150 @@
+java_import {
+    name: "androidx_annotation_annotation_1_6_0",
+    jars: ["androidx.annotation.annotation-1.6.0.jar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_annotation_annotation_experimental_1_3_1",
+    aars: ["androidx.annotation.annotation-experimental-1.3.1.aar"],
+    sdk_version: "current",}
+
+java_import {
+    name: "androidx_arch_core_core_common_2_1_0",
+    jars: ["androidx.arch.core.core-common-2.1.0.jar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_arch_core_core_runtime_2_1_0",
+    aars: ["androidx.arch.core.core-runtime-2.1.0.aar"],
+    sdk_version: "current",}
+
+java_import {
+    name: "androidx_collection_collection_1_2_0",
+    jars: ["androidx.collection.collection-1.2.0.jar"],
+    sdk_version: "current",}
+
+java_import {
+    name: "androidx_concurrent_concurrent_futures_1_0_0",
+    jars: ["androidx.concurrent.concurrent-futures-1.0.0.jar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_core_core_1_8_0",
+    aars: ["androidx.core.core-1.8.0.aar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_exifinterface_exifinterface_1_3_6",
+    aars: ["androidx.exifinterface.exifinterface-1.3.6.aar"],
+    sdk_version: "current",}
+
+java_import {
+    name: "androidx_lifecycle_lifecycle_common_2_5_1",
+    jars: ["androidx.lifecycle.lifecycle-common-2.5.1.jar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_lifecycle_lifecycle_runtime_2_3_1",
+    aars: ["androidx.lifecycle.lifecycle-runtime-2.3.1.aar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_media3_media3_common_1_8_0",
+    aars: ["androidx.media3.media3-common-1.8.0.aar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_media3_media3_container_1_8_0",
+    aars: ["androidx.media3.media3-container-1.8.0.aar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_media3_media3_database_1_8_0",
+    aars: ["androidx.media3.media3-database-1.8.0.aar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_media3_media3_datasource_1_8_0",
+    aars: ["androidx.media3.media3-datasource-1.8.0.aar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_media3_media3_decoder_1_8_0",
+    aars: ["androidx.media3.media3-decoder-1.8.0.aar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_media3_media3_exoplayer_1_8_0",
+    aars: ["androidx.media3.media3-exoplayer-1.8.0.aar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_media3_media3_extractor_1_8_0",
+    aars: ["androidx.media3.media3-extractor-1.8.0.aar"],
+    sdk_version: "current",}
+
+android_library_import {
+    name: "androidx_versionedparcelable_versionedparcelable_1_1_1",
+    aars: ["androidx.versionedparcelable.versionedparcelable-1.1.1.aar"],
+    sdk_version: "current",}
+
+java_import {
+    name: "com_google_guava_failureaccess_1_0_2",
+    jars: ["com.google.guava.failureaccess-1.0.2.jar"],
+    sdk_version: "current",}
+
+java_import {
+    name: "com_google_guava_guava_33_3_1_android",
+    jars: ["com.google.guava.guava-33.3.1-android.jar"],
+    sdk_version: "current",}
+
+java_import {
+    name: "com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava",
+    jars: ["com.google.guava.listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"],
+    sdk_version: "current",}
+
+java_import {
+    name: "org_jetbrains_annotations_13_0",
+    jars: ["org.jetbrains.annotations-13.0.jar"],
+    sdk_version: "current",}
+
+java_import {
+    name: "org_jetbrains_kotlin_kotlin_stdlib_1_8_0",
+    jars: ["org.jetbrains.kotlin.kotlin-stdlib-1.8.0.jar"],
+    sdk_version: "current",}
+
+java_import {
+    name: "org_jetbrains_kotlin_kotlin_stdlib_common_1_8_0",
+    jars: ["org.jetbrains.kotlin.kotlin-stdlib-common-1.8.0.jar"],
+    sdk_version: "current",}
+
+android_library {
+    name: "androidx.media3_media3-exoplayer_dependencies",
+    export_package_resources: true,
+    static_libs: [
+        "androidx_annotation_annotation_1_6_0",
+        "androidx_annotation_annotation_experimental_1_3_1",
+        "androidx_arch_core_core_common_2_1_0",
+        "androidx_arch_core_core_runtime_2_1_0",
+        "androidx_collection_collection_1_2_0",
+        "androidx_concurrent_concurrent_futures_1_0_0",
+        "androidx_core_core_1_8_0",
+        "androidx_exifinterface_exifinterface_1_3_6",
+        "androidx_lifecycle_lifecycle_common_2_5_1",
+        "androidx_lifecycle_lifecycle_runtime_2_3_1",
+        "androidx_media3_media3_common_1_8_0",
+        "androidx_media3_media3_container_1_8_0",
+        "androidx_media3_media3_database_1_8_0",
+        "androidx_media3_media3_datasource_1_8_0",
+        "androidx_media3_media3_decoder_1_8_0",
+        "androidx_media3_media3_exoplayer_1_8_0",
+        "androidx_media3_media3_extractor_1_8_0",
+        "androidx_versionedparcelable_versionedparcelable_1_1_1",
+        "com_google_guava_failureaccess_1_0_2",
+        "com_google_guava_guava_33_3_1_android",
+        "com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava",
+        "org_jetbrains_annotations_13_0",
+        "org_jetbrains_kotlin_kotlin_stdlib_1_8_0",
+        "org_jetbrains_kotlin_kotlin_stdlib_common_1_8_0",
+    ],
+}

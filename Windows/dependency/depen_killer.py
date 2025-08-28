@@ -42,6 +42,8 @@ def print_setup_guide():
         print("1. Install Python, a JDK (e.g., Adoptium Temurin), and Apache Maven.")
         print("   - Python: from python.org or Microsoft Store.")
         print("   - JDK/Maven: Download and extract to a folder like C:\\tools\\")
+        print("   - Maven : Powershell Run as administrator")
+        print("   - Maven : command 👉👉👉 choco install maven")
         print("\n2. Edit System Environment Variables:")
         print("   - Open 'Edit the system environment variables' control panel.")
         print("   - Click 'Environment Variables...' button.")
@@ -142,9 +144,9 @@ def generate_bp_file(source_dir: str, main_dependency_name: str):
         module_names.append(module_name)
         
         if filename.endswith(".aar"):
-            bp_content += f'android_prebuilt_aar {{\n    name: "{module_name}",\n    srcs: ["{filename}"],\n}}\n\n'
+            bp_content += f'android_library_import {{\n    name: "{module_name}",\n    aars: ["{filename}"],\n    sdk_version: "current",}}\n\n'
         elif filename.endswith(".jar"):
-            bp_content += f'java_import {{\n    name: "{module_name}",\n    jars: ["{filename}"],\n}}\n\n'
+            bp_content += f'java_import {{\n    name: "{module_name}",\n    jars: ["{filename}"],\n    sdk_version: "current",}}\n\n'
 
     if module_names:
         aggregate_module_name = main_dependency_name + "_dependencies"
