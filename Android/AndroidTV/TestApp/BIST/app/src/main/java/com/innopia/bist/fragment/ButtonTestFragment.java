@@ -19,7 +19,7 @@ import com.innopia.bist.viewmodel.ButtonTestViewModel;
 import com.innopia.bist.viewmodel.MainViewModel;
 
 public class ButtonTestFragment extends Fragment {
-	private static final String TAG = "BIST_ButtonTestFragment";
+
 	private ButtonTestViewModel buttonTestViewModel;
 	private MainViewModel mainViewModel;
 	private View rootView;

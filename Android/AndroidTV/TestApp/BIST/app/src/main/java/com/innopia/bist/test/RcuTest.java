@@ -8,9 +8,9 @@ import com.innopia.bist.util.TestStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -24,11 +24,13 @@ public class RcuTest implements Test {
 
 	@Override
 	public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
+//        executeTest(params, callback);
 		rcuTest(params, callback);
 	}
 
 	@Override
 	public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
+//        executeTest(params, callback);
 		rcuTest(params, callback);
 	}
 
@@ -57,11 +59,8 @@ public class RcuTest implements Test {
 				KeyEvent.KEYCODE_DPAD_LEFT,
 				KeyEvent.KEYCODE_DPAD_RIGHT
 		);
-		List<Integer> result = new ArrayList<>();
-		Random rand = new Random();
-		for (int i = 0; i < 4; i++) {
-			result.add(allKeys.get(rand.nextInt(allKeys.size())));
-		}
+		List<Integer> result = new ArrayList<>(allKeys);
+		Collections.shuffle(result);
 		return result;
 	}
 
@@ -91,10 +90,12 @@ public class RcuTest implements Test {
 		if (receivedKey == expectedKey) {
 			currentIndex++;
 			showNextKey();
+		} else if (receivedKey == KeyEvent.KEYCODE_BACK) {
+			callback.accept(new TestResult(TestStatus.FAILED, "Test Exited. BACK key pressed."));
 		} else {
 			String expectedKeyName = KeyEvent.keyCodeToString(expectedKey);
 			String receivedKeyName = KeyEvent.keyCodeToString(receivedKey);
-			callback.accept(new TestResult(TestStatus.RETEST, "Wrong key! Pressed " + receivedKeyName + ". Please press: " + expectedKeyName));
+			callback.accept(new TestResult(TestStatus.RUNNING, "Wrong key! Pressed " + receivedKeyName + ". Please press: " + expectedKeyName));
 		}
 	}
 }

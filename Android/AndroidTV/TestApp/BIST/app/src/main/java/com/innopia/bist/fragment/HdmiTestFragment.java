@@ -19,7 +19,6 @@ import com.innopia.bist.viewmodel.MainViewModel;
  * It allows the user to start the test and shows the results.
  */
 public class HdmiTestFragment extends Fragment {
-	private static final String TAG = "BIST_HdmiTestFragment";
 
 	private HdmiTestViewModel hdmiTestViewModel;
 	private MainViewModel mainViewModel;
@@ -53,19 +52,13 @@ public class HdmiTestFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_hdmi_test, container, false);
 		tvHdmiInfo = rootView.findViewById(R.id.text_hdmi_info);
 
-//		Button btnHdmiTest = rootView.findViewById(R.id.btn_hdmi_manual_test);
-//		btnHdmiTest.setOnClickListener(v -> {
-//			mainViewModel.appendLog(getTag(), "HDMI Test Start");
-//			hdmiTestViewModel.startTest();
-//		});
-
-		mainViewModel.appendLog(getTag(), "HDMI Test Start");
-		hdmiTestViewModel.startTest();
-
 		hdmiTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
 			tvHdmiInfo.setText(result.getMessage());
 			mainViewModel.appendLog(getTag(), "HDMI Result \n" + result);
 		});
+
+		mainViewModel.appendLog(getTag(), "HDMI Test Start");
+		hdmiTestViewModel.startTest();
 
 		return rootView;
 	}

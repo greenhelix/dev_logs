@@ -2,8 +2,8 @@ package com.innopia.bist.test;
 
 import android.content.Context;
 import android.hardware.display.DisplayManager;
-//import android.hardware.hdmi.HdmiControlManager;
-//import android.hardware.hdmi.HdmiDeviceInfo;
+import android.hardware.hdmi.HdmiControlManager;
+import android.hardware.hdmi.HdmiDeviceInfo;
 import android.os.Build;
 import android.view.Display;
 
@@ -42,10 +42,10 @@ public class HdmiTest implements Test {
 				return;
 			}
 			String result = getHdmiInfo(context);
-			if (result.contains("PASS")) {
-				callback.accept(new TestResult(TestStatus.PASSED, "HDMI Test pass \n"+ result));
-			} else {
+			if (result.contains("FAIL")) {
 				callback.accept(new TestResult(TestStatus.FAILED, "HDMI Test fail \n"+ result));
+			} else {
+				callback.accept(new TestResult(TestStatus.PASSED, "HDMI Test pass \n"+ result));
 			}
 		});
 	}
@@ -77,7 +77,7 @@ public class HdmiTest implements Test {
 		StringBuilder info = new StringBuilder();
 		info.append("Status: Connected\n");
 		info.append(String.format("Resolution: %dx%d\n", hdmiDisplay.getWidth(), hdmiDisplay.getHeight()));
-		info.append(String.format("Refresh Rate: %d Hz\n", (int)hdmiDisplay.getRefreshRate()));
+		info.append(String.format("Refresh Rate: %.2f Hz\n", hdmiDisplay.getRefreshRate()));
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			Display.HdrCapabilities hdrCapabilities = hdmiDisplay.getHdrCapabilities();
 			int[] supportedHdrTypes = hdrCapabilities.getSupportedHdrTypes();
@@ -97,68 +97,51 @@ public class HdmiTest implements Test {
 			}
 		}
 
-//		info.append("\n== HDMI CEC Bus Info ==\n");
-//        HdmiControlManager hdmiControlManager = (HdmiControlManager) context.getSystemService(Context.HDMI_CONTROL_SERVICE);
+		HdmiControlManager hdmiControlManager = (HdmiControlManager) context.getSystemService(Context.HDMI_CONTROL_SERVICE);
 		boolean cecPermissionDenied = false;
-//        if (hdmiControlManager == null) {
-//            info.append("CEC Status: Service unavailable\n");
-//        } else {
-		try {
-//			List<HdmiDeviceInfo> devices = hdmiControlManager.getConnectedDevices();
-			info.append("CEC Status: Supported\n");
-//                if (devices.isEmpty()) {
-//                    info.append("- No active CEC devices found.\nHDMI connect directly to STB");
-//                } else {
-			info.append("Connected Devices:\n");
-//                    for (HdmiDeviceInfo device : devices) {
-//                        info.append(String.format("- %s (Type: %s, CEC: %s, Address: %d)\n",
-//                                device.getDisplayName(),
-//                                getDeviceTypeString(device.getDeviceType()),
-//                                // **FIXED LINE**
-//                                getCecVersionString(device.getCecVersion()),
-//                                device.getLogicalAddress()));
-//                    }
-			info.append("MagentaTV (Type: TV, CEC: ON, Address: 1234");
-//                }
-		} catch (SecurityException e) {
-			cecPermissionDenied = true;
-			info.append("CEC Status: FAILED (Permission Denied)\n");
-			info.append("Reason: App lacks the required system-level privileges to access HDMI CEC.\n");
-		}
-//        }
-
-		info.append("\n== EDID Data Analysis ==\n");
-//		info.append("Note: Raw EDID data cannot be shown as standard Android APIs do not provide access to it.\n\n");
-		info.append("Information successfully extracted from EDID:\n");
-		info.append("- Display Resolution & Refresh Rate\n");
-		info.append("- Supported HDR formats (HDR10, HLG, Dolby Vision, etc.)\n");
-		info.append("- Basic luminance data for HDR\n\n");
-		info.append("Information NOT extracted (due to API limitations):\n");
-		info.append("- TV Manufacturer Name & Product ID (e.g., 'SONY TV')\n");
-		info.append("- Detailed audio capabilities (supported codecs, channel count)\n");
-		info.append("- Specific colorimetry details (e.g., color primaries)\n");
-		info.append("\nResult: ").append(cecPermissionDenied ? "FAIL" : "PASS");
+		if (hdmiControlManager == null) {
+			info.append("CEC Status: Service unavailable\n");
+		} else {
+			try {
+				List<HdmiDeviceInfo> devices = hdmiControlManager.getConnectedDevices();
+				info.append("CEC Status: Supported\n");
+				if (devices.isEmpty()) {
+					info.append("- No active CEC devices found.\nHDMI connect directly to STB");
+				} else {
+					info.append("Connected Devices:\n");
+					for (HdmiDeviceInfo device : devices) {
+						info.append(String.format("- %s (Type: %s, CEC: %s, Address: %d)\n",
+						device.getDisplayName(),
+						getDeviceTypeString(device.getDeviceType()),
+						getCecVersionString(device.getCecVersion()),
+						device.getLogicalAddress()));
+					}
+				}
+			} catch (SecurityException e) {
+				cecPermissionDenied = true;
+				info.append("CEC Status: FAILED (Permission Denied)\n");
+				info.append("Reason: App lacks the required system-level privileges to access HDMI CEC.\n");
+			}
+		}	
 		return info.toString();
 	}
 
 	private String getDeviceTypeString(int deviceType) {
-//        switch (deviceType) {
-//            case HdmiDeviceInfo.DEVICE_TV: return "TV";
-//            case HdmiDeviceInfo.DEVICE_RECORDER: return "Recorder";
-//            case HdmiDeviceInfo.DEVICE_PLAYBACK: return "Playback";
-//            case HdmiDeviceInfo.DEVICE_TUNER: return "Tuner";
-//            case HdmiDeviceInfo.DEVICE_AUDIO_SYSTEM: return "Audio System";
-//            default: return "Unknown";
-//        }
-		return "TV";
+		switch (deviceType) {
+			case HdmiDeviceInfo.DEVICE_TV: return "TV";
+			case HdmiDeviceInfo.DEVICE_RECORDER: return "Recorder";
+			case HdmiDeviceInfo.DEVICE_PLAYBACK: return "Playback";
+			case HdmiDeviceInfo.DEVICE_TUNER: return "Tuner";
+			case HdmiDeviceInfo.DEVICE_AUDIO_SYSTEM: return "Audio System";
+			default: return "Unknown";
+		}
 	}
 
 	private String getCecVersionString(int version) {
 		if (version < 0) return "N/A";
-		// CEC version constants are defined in HdmiControlManager
 		switch (version) {
-			case 0x05: return "1.4b"; // Corresponds to HdmiControlManager.HDMI_CEC_VERSION_1_4_B
-			case 0x06: return "2.0";  // Corresponds to HdmiControlManager.HDMI_CEC_VERSION_2_0
+			case 0x05: return "1.4b";
+			case 0x06: return "2.0";
 			default: return String.format("Unknown (0x%02X)", version);
 		}
 	}

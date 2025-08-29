@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.bluetooth.BluetoothDevice; // Import BluetoothDevice
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -23,14 +25,15 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.innopia.bist.R;
 import com.innopia.bist.util.Status;
 import com.innopia.bist.util.TestType;
 import com.innopia.bist.viewmodel.BluetoothTestViewModel;
 import com.innopia.bist.viewmodel.MainViewModel;
+
 import java.util.List;
 import java.util.stream.Collectors;
-import android.bluetooth.BluetoothDevice; // Import BluetoothDevice
 
 /**
  * Fragment for displaying and running Bluetooth tests.
@@ -44,8 +47,8 @@ public class BluetoothTestFragment extends Fragment {
 
 	// TextViews are now separated for different purposes.
 	private TextView tvBluetoothInfo; // For detailed device info
-	private TextView tvSelectedDevice; // For the name of the device selected for the test
-	private TextView tvTestResult; // ADDED: For displaying the connection test result
+	//private TextView tvSelectedDevice; // For the name of the device selected for the test
+	//private TextView tvTestResult; // ADDED: For displaying the connection test result
 
 	public static BluetoothTestFragment newInstance() {
 		return new BluetoothTestFragment();
@@ -53,16 +56,16 @@ public class BluetoothTestFragment extends Fragment {
 
 	// Launcher for requesting the BLUETOOTH_CONNECT permission.
 	private final ActivityResultLauncher<String> requestPermissionLauncher =
-			registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-				if (isGranted) {
-					String msg = "BLUETOOTH_CONNECT permission granted.";
-					mainViewModel.appendLog(getTag(), msg);
-					Log.d(TAG, msg);
-					bluetoothTestViewModel.onScanClicked();
-				} else {
-					Toast.makeText(getContext(), "Bluetooth Connect permission is required to scan for devices.", Toast.LENGTH_SHORT).show();
-				}
-			});
+		registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+			if (isGranted) {
+				String msg = "BLUETOOTH_CONNECT permission granted.";
+				mainViewModel.appendLog(getTag(), msg);
+				Log.d(TAG, msg);
+				bluetoothTestViewModel.onScanClicked();
+			} else {
+				Toast.makeText(getContext(), "Bluetooth Connect permission is required to scan for devices.", Toast.LENGTH_SHORT).show();
+			}
+		});
 
 	/**
 	 * Custom ViewModelFactory to pass MainViewModel instance into BluetoothTestViewModel.
@@ -105,16 +108,18 @@ public class BluetoothTestFragment extends Fragment {
 
 		// Initialize all three TextViews.
 		tvBluetoothInfo = rootView.findViewById(R.id.text_bluetooth_info);
-		tvSelectedDevice = rootView.findViewById(R.id.text_selected_device);
-		tvTestResult = rootView.findViewById(R.id.text_bluetooth_test_result); // ADDED
+		//tvSelectedDevice = rootView.findViewById(R.id.text_selected_device);
+		//tvTestResult = rootView.findViewById(R.id.text_bluetooth_test_result); // ADDED
 
 		// Setup buttons and their click listeners.
 		Button btnBluetoothScan = rootView.findViewById(R.id.btn_bluetooth_scan);
-		Button btnBluetoothTest = rootView.findViewById(R.id.btn_bluetooth_test);
 		btnBluetoothScan.setOnClickListener(v -> checkPermissionAndScan());
-		btnBluetoothTest.setOnClickListener(v -> bluetoothTestViewModel.startTest());
 
+		// Start observing LiveData from the ViewModel.
 		observeViewModel();
+		if (!mainViewModel.isAutoTestRunning.getValue()) {
+			checkForConnectedDevicesOnStart();
+		}
 		return rootView;
 	}
 
@@ -124,14 +129,15 @@ public class BluetoothTestFragment extends Fragment {
 		bluetoothTestViewModel.deviceInfo.observe(getViewLifecycleOwner(), info -> tvBluetoothInfo.setText(info));
 
 		bluetoothTestViewModel.selectedDevice.observe(getViewLifecycleOwner(), device -> {
-			if (device != null) {
-				tvSelectedDevice.setText("Selected for Test: " + device.getName());
-			} else {
-				tvSelectedDevice.setText("Selected for Test: None");
-			}
+			//if (device != null) {
+			//	tvSelectedDevice.setText("Selected for Test: " + device.getName());
+			//} else {
+			//	tvSelectedDevice.setText("Selected for Test: None");
+			//}
 		});
 
-		bluetoothTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> tvTestResult.setText(result.getMessage()));
+		//bluetoothTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> tvTestResult.setText(result.getMessage()));
+		bluetoothTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {});
 
 		bluetoothTestViewModel.devicesForDialog.observe(getViewLifecycleOwner(), devices -> {
 			if (devices != null && !devices.isEmpty()) {
@@ -154,6 +160,13 @@ public class BluetoothTestFragment extends Fragment {
 		});
 	}
 
+	private void checkForConnectedDevicesOnStart() {
+		String logMsg = "Fragment created. Checking for pre-connected devices...";
+		mainViewModel.appendLog(getTag(), logMsg);
+		Log.d(TAG, logMsg);
+		bluetoothTestViewModel.findConnectedDevices();
+	}
+
 	private void checkPermissionAndScan() {
 		if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
 			bluetoothTestViewModel.onScanClicked();
@@ -168,8 +181,8 @@ public class BluetoothTestFragment extends Fragment {
 
 		// Get a list of device names for the dialog.
 		List<String> deviceNames = devices.stream()
-				.map(BluetoothDevice::getName)
-				.collect(Collectors.toList());
+			.map(BluetoothDevice::getName)
+			.collect(Collectors.toList());
 		deviceNames.add("Scan for other devices..."); // Option to go to settings.
 
 		LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -178,8 +191,8 @@ public class BluetoothTestFragment extends Fragment {
 		LinearLayout container = dialogView.findViewById(R.id.dialog_list_container);
 		title.setText("Select Test Device");
 		AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
-				.setView(dialogView)
-				.setCancelable(true);
+			.setView(dialogView)
+			.setCancelable(true);
 		final AlertDialog dialog = builder.create();
 		for (BluetoothDevice device : devices) {
 			Button deviceButton = new Button(getContext());
@@ -188,6 +201,7 @@ public class BluetoothTestFragment extends Fragment {
 			deviceButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 			deviceButton.setOnClickListener(v -> {
 				bluetoothTestViewModel.onDeviceSelected(device);
+				bluetoothTestViewModel.startTest();
 				dialog.dismiss();
 			});
 			container.addView(deviceButton);

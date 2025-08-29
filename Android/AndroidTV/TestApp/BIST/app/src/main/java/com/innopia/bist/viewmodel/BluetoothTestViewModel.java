@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.bluetooth.BluetoothDevice;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
 import com.innopia.bist.test.BluetoothTest;
 import com.innopia.bist.util.TestResult;
 import com.innopia.bist.util.TestStatus;
@@ -19,7 +21,7 @@ import java.util.function.Consumer;
 
 public class BluetoothTestViewModel extends BaseTestViewModel {
 
-	private static final String TAG = "BIST_BT_VM";
+	private static final String TAG = "BluetoothTestViewModel";
 	private final BluetoothTest bluetoothTest;
 
 	// LiveData for the currently selected device.
@@ -41,7 +43,6 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
 	public BluetoothTestViewModel(@NonNull Application application, MainViewModel mainViewModel) {
 		super(application, new BluetoothTest(), mainViewModel);
 		this.bluetoothTest = (BluetoothTest) new BluetoothTest();
-		checkForConnectedDevicesOnStart();
 	}
 
 	public void onScanClicked() {
@@ -64,11 +65,8 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
 		});
 	}
 
-	private void checkForConnectedDevicesOnStart() {
-		String logMsg = "ViewModel initialized. Checking for pre-connected devices...";
-		mainViewModel.appendLog(getTag(), logMsg);
-		Log.d(getTag(), logMsg);
 
+	public void findConnectedDevices() {
 		bluetoothTest.findConnectedDevices(getApplication(), devices -> {
 			if (devices != null && !devices.isEmpty()) {
 				if (devices.size() == 1) {
@@ -79,6 +77,7 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
 					Log.d(getTag(), autoSelectMsg);
 					// onDeviceSelected will handle updating LiveData for both device info and selection state.
 					onDeviceSelected(device);
+					startTest();
 				} else {
 					// If multiple devices are connected, show the selection dialog.
 					String multiDeviceMsg = "Found multiple connected devices. Prompting user for selection.";
@@ -98,14 +97,15 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
 	@SuppressLint("MissingPermission")
 	public void onDeviceSelected(BluetoothDevice device) {
 		_selectedDevice.postValue(device);
-		//``_testResultLiveData.postValue(new TestResult(TestStatus.RUNNING, "Bluetooth Test Status: RUNNING")); // Reset test result on new selection
+		//_testResultLiveData.postValue(new TestResult(TestStatus.RUNNING, "Bluetooth Test Status: RUNNING")); // Reset test result on new selection
 
 		if (device != null) {
-
 			String logMsg = "Device selected: " + device.getName() + ". Fetching details.";
 			mainViewModel.appendLog(getTag(), logMsg);
 			Log.d(getTag(), logMsg);
 			bluetoothTest.getDeviceInfo(device, info -> _deviceInfo.postValue(info));
+
+			// update test results
 		} else {
 			_deviceInfo.postValue("Device Info: (Select a device to see details)");
 		}
@@ -122,9 +122,9 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
 	// override start Test from MainViewModel
 	@Override
 	public void startTest() {
-		String initialLog = "Manual test button clicked.";
-		mainViewModel.appendLog(getTag(), initialLog);
-		Log.d(getTag(), initialLog);
+		//String initialLog = "Manual test button clicked.";
+		//mainViewModel.appendLog(getTag(), initialLog);
+		//Log.d(getTag(), initialLog);
 
 		BluetoothDevice device = _selectedDevice.getValue();
 		if (device == null) {
@@ -150,7 +150,7 @@ public class BluetoothTestViewModel extends BaseTestViewModel {
 		String startMsg = "Starting manual test for device: " + device.getName();
 		mainViewModel.appendLog(getTag(), startMsg);
 		Log.d(getTag(), startMsg);
-		bluetoothTest.runManualTest(params, callback);
+		//bluetoothTest.runManualTest(params, callback);
 	}
 
 	@Override

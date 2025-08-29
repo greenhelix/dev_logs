@@ -20,6 +20,7 @@ import com.innopia.bist.viewmodel.UsbTestViewModel;
 
 public class UsbTestFragment extends Fragment {
 
+	private static final String TAG = "BIST_UsbTestFragment";
 	private UsbTestViewModel usbTestViewModel;
 	private MainViewModel mainViewModel;
 	private TextView tvUsbResult;
@@ -61,10 +62,13 @@ public class UsbTestFragment extends Fragment {
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_usb_test, container, false);
 		tvUsbResult = rootView.findViewById(R.id.text_usb_info);
-
+		// Button btnUsbTest = rootView.findViewById(R.id.btn_usb_manual_test);
+		// btnUsbTest.setOnClickListener(v -> {
+		// 	mainViewModel.appendLog(getTag(), "Usb Test Start");
+		// 	usbTestViewModel.startTest();
+		// });
 		mainViewModel.appendLog(getTag(), "Usb Test Start");
 		usbTestViewModel.startTest();
-
 		usbTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
 			tvUsbResult.setText(result.getMessage());
 			mainViewModel.appendLog(getTag(), "Usb Result \n" + result);

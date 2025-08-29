@@ -1,6 +1,8 @@
 package com.innopia.bist.viewmodel;
 
 import android.app.Application;
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -14,6 +16,7 @@ import com.innopia.bist.util.SingleLiveEvent;
 import com.innopia.bist.util.Status;
 import com.innopia.bist.util.TestStatus;
 import com.innopia.bist.util.TestType;
+import com.innopia.bist.util.TestResult;
 
 import java.security.Signature;
 import java.text.SimpleDateFormat;
@@ -22,6 +25,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class MainViewModel extends AndroidViewModel implements AutoTestManager.AutoTestListener {
 
@@ -33,9 +37,12 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 	private final MutableLiveData<List<String>> _logLiveData = new MutableLiveData<>();
 	public final LiveData<List<String>> logLiveData = _logLiveData;
 
+	// This LiveData holds the test results (PASSED, FAILED, etc.) for each test type.
+	// MainActivity observes this to change button colors.
 	private final MutableLiveData<Map<TestType, TestStatus>> _testStatusesLiveData = new MutableLiveData<>(new EnumMap<>(TestType.class));
 	public final LiveData<Map<TestType, TestStatus>> testStatusesLiveData = _testStatusesLiveData;
 
+	// This LiveData holds the hardware statuses (ON, OFF) for the top status bar.
 	private final MutableLiveData<Map<TestType, Status>> _hardwareStatusLiveData = new MutableLiveData<>(new EnumMap<>(TestType.class));
 	public final LiveData<Map<TestType, Status>> hardwareStatusLiveData = _hardwareStatusLiveData;
 
@@ -56,13 +63,14 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 
 	private final SingleLiveEvent<Void> _clearFragmentContainer = new SingleLiveEvent<>();
 	public final LiveData<Void> clearFragmentContainer = _clearFragmentContainer;
-	private SingleLiveEvent<Void> _dismissCurrentDialog = new SingleLiveEvent<>();
-	public final LiveData<Void> dismissCurrentDialog = _dismissCurrentDialog;
+
+	private Consumer<TestResult> videoTestCallback;
+	public final SingleLiveEvent<Void> startVideoPlaybackSequence = new SingleLiveEvent<>();
 
 	public MainViewModel(@NonNull Application application) {
 		super(application);
-		this.autoTestManager = new AutoTestManager(application.getApplicationContext(), this);
-		resetAllTests();
+		this.autoTestManager = new AutoTestManager(application.getApplicationContext(), this, this);
+		clearResults();
 	}
 
 	public void setSysInfo(String info) { _sysInfoLiveData.postValue(info); }
@@ -90,16 +98,6 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 		// Get the current map of statuses from the LiveData.
 		Map<TestType, TestStatus> currentStatuses = _testStatusesLiveData.getValue();
 		if (currentStatuses == null) currentStatuses = new EnumMap<>(TestType.class);
-		currentStatuses.put(type, status);
-		_testStatusesLiveData.postValue(currentStatuses);
-		Boolean autoTestIsRunning = isAutoTestRunning.getValue();
-		if (autoTestIsRunning != null && autoTestIsRunning && type == TestType.VIDEO) {
-			if (status == TestStatus.PASSED || status == TestStatus.FAILED) {
-				appendLog("MainViewModel", "Video auto-test finished. Resuming queue.");
-				autoTestManager.proceedToNextTest();
-			}
-		}
-		// Ensure the map is not null.
 		if (currentStatuses != null) {
 			// Update the status for the given test type.
 			currentStatuses.put(type, status);
@@ -122,12 +120,15 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 		}
 	}
 
-	public void resetAllTests() {
+	public void clearResults() {
 		appendLog("MainViewModel", "All tests and logs have been reset.");
 		Map<TestType, TestStatus> initialStatuses = new EnumMap<>(TestType.class);
 		for (TestType type : TestType.values()) {
 			initialStatuses.put(type, TestStatus.PENDING);
 		}
+		updateHardwareStatus(TestType.ETHERNET, Status.OFF);
+		updateHardwareStatus(TestType.WIFI, Status.OFF);
+		updateHardwareStatus(TestType.BLUETOOTH, Status.OFF);
 		_testStatusesLiveData.setValue(initialStatuses);
 		logRepository.clearLogs();
 		_logLiveData.postValue(logRepository.getLogs());
@@ -135,17 +136,24 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 	}
 
 	public void startAutoTest(String usbPath) {
-		resetAllTests();
+		clearResults();
 		_isAutoTestRunning.setValue(true);
 		appendLog("AutoTest", "Starting auto test sequence...");
 		autoTestManager.startAutoTestFromUsb(usbPath);
 	}
 
 	public void startAutoTest(boolean test) {
-		resetAllTests();
+		clearResults();
 		_isAutoTestRunning.setValue(true);
 		appendLog("AutoTest", "Starting auto test by button ...");
 		autoTestManager.startAutoTestFromRawResource(getApplication().getApplicationContext(), R.raw.test_config);
+	}
+
+	public void startAutoTest(Bundle config) {
+		clearResults();
+		_isAutoTestRunning.setValue(true);
+		appendLog("AutoTest", "Starting auto test upon create ...");
+		autoTestManager.startAutoTestFromConfig(config);
 	}
 
 	public void userActionConfirmed(boolean confirmed) {
@@ -153,9 +161,25 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 		autoTestManager.resumeTestAfterUserAction(confirmed);
 	}
 
+	public void startVideoAutoTest(Consumer<TestResult> callback) {
+		this.videoTestCallback = callback;
+		appendLog("MainViewModel", "Received request to start video auto test. Notifying fragment...");
+		startVideoPlaybackSequence.postValue(null);
+	}
+
+	public void onVideoTestCompleted(TestResult result) {
+		appendLog("MainViewModel", "Video auto test completed with status: " + result.getStatus());
+		if (videoTestCallback != null) {
+			videoTestCallback.accept(result);
+			videoTestCallback = null;
+		}
+		autoTestManager.proceedToNextTest();
+	}
+
 	@Override
 	public void onTestStatusChanged(TestType type, TestStatus status, String message) {
 		// This method is for AUTO-TESTS. It updates the same LiveData as the manual test method.
+		appendLog("MainViewModel", "type=" + type.name() + ", status=" + status.name() + ", message=" + message);
 		updateTestResult(type, status);
 
 		if (status == TestStatus.RUNNING) {
@@ -166,6 +190,9 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 			appendLog("AutoTest", "Waiting for user action: " + message);
 			_userActionRequired.postValue(message);
 		} else {
+			if (type == TestType.ETHERNET || type == TestType.WIFI || type == TestType.BLUETOOTH) {
+				updateHardwareStatus(type, status == TestStatus.PASSED ? Status.ON : Status.OFF);
+			}
 			appendLog("AutoTest", "Test " + type.name() + " is now " + status.name());
 		}
 	}
@@ -183,13 +210,6 @@ public class MainViewModel extends AndroidViewModel implements AutoTestManager.A
 		appendLog("AutoTest", "Error during auto test: " + errorMessage);
 		_isAutoTestRunning.postValue(false);
 		_clearFragmentContainer.postValue(null);
-	}
-
-	@Override
-	public void onTestTimeout(TestType type) {
-		appendLog("AutoTest", "Time out detected for "+type.name()+": Cleaning up UI");
-		_dismissCurrentDialog.call();
-		_clearFragmentContainer.call();
 	}
 
 	public void setLogAutoScrollEnabled(boolean enabled) {

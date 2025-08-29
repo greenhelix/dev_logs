@@ -1,7 +1,6 @@
 package com.innopia.bist;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -27,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -36,9 +36,20 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
-import com.innopia.bist.fragment.*;
+
+import com.innopia.bist.fragment.BluetoothTestFragment;
+import com.innopia.bist.fragment.ButtonTestFragment;
+import com.innopia.bist.fragment.CpuTestFragment;
+import com.innopia.bist.fragment.EthernetTestFragment;
+import com.innopia.bist.fragment.HdmiTestFragment;
+import com.innopia.bist.fragment.MemoryTestFragment;
+import com.innopia.bist.fragment.RcuTestFragment;
+import com.innopia.bist.fragment.UsbTestFragment;
+import com.innopia.bist.fragment.VideoTestFragment;
+import com.innopia.bist.fragment.WifiTestFragment;
 import com.innopia.bist.info.HwInfo;
 import com.innopia.bist.info.SystemInfo;
+import com.innopia.bist.util.FileUtils;
 import com.innopia.bist.util.SecretCodeManager;
 import com.innopia.bist.util.ServiceUtils;
 import com.innopia.bist.util.Status;
@@ -46,8 +57,6 @@ import com.innopia.bist.util.TestStatus;
 import com.innopia.bist.util.TestType;
 import com.innopia.bist.util.UsbDetachReceiver;
 import com.innopia.bist.viewmodel.MainViewModel;
-import com.innopia.bist.viewmodel.RcuTestViewModel;
-import com.innopia.bist.viewmodel.RcuViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,13 +70,13 @@ public class MainActivity extends AppCompatActivity {
 	private static final String TAG_TEST_FRAGMENT = "TEST_FRAGMENT";
 
 	private MainViewModel mainViewModel;
-	private RcuTestViewModel rcuViewModel;
 	private BroadcastReceiver appUsbDetachReceiver;
+
 	private List<Button> mainTestButtons;
 	private View defaultFocusButton;
-	private View lastFocusedViewBeforeFragment;
 	private SecretCodeManager secretCodeManager;
 	private boolean isFocusHighlightEnabled = true;
+	private View lastFocusedViewBeforeFragment;
 
 	private ImageView ivWifiStatus;
 	private ImageView ivBtStatus;
@@ -92,7 +101,8 @@ public class MainActivity extends AppCompatActivity {
 			Manifest.permission.READ_EXTERNAL_STORAGE,
 			Manifest.permission.MANAGE_EXTERNAL_STORAGE
 	};
-	private AlertDialog activeUserActionDialog;
+
+	private AlertDialog mAutoTestInProgressDialog = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -101,8 +111,6 @@ public class MainActivity extends AppCompatActivity {
 
 		secretCodeManager = new SecretCodeManager(this);
 		mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-		RcuViewModelFactory factory = new RcuViewModelFactory(getApplication(), mainViewModel);
-		rcuViewModel = new ViewModelProvider(this, factory).get(RcuTestViewModel.class);
 
 		setupViews();
 		setupObservers();
@@ -123,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
 		};
 
 		checkAndLogBistServiceStatus();
+		checkConfigAndStartAutoTests();
 	}
 
 	private void setupViews() {
@@ -137,57 +146,79 @@ public class MainActivity extends AppCompatActivity {
 		mainTestButtons = new ArrayList<>();
 		testButtonMap = new HashMap<>();
 
-		Button btnEthernetTest = findViewById(R.id.button_ethernet);
-		btnEthernetTest.setOnClickListener(v -> showTestFragment(EthernetTestFragment.newInstance()));
-		mainTestButtons.add(btnEthernetTest);
-		testButtonMap.put(TestType.ETHERNET, btnEthernetTest);
-		defaultFocusButton = btnEthernetTest;
+		Button btnEthernet = findViewById(R.id.button_ethernet);
+		btnEthernet.setOnClickListener(v -> {
+			showTestFragment(EthernetTestFragment.newInstance());
+			defaultFocusButton = btnEthernet;
+		});
+		mainTestButtons.add(btnEthernet);
+		testButtonMap.put(TestType.ETHERNET, btnEthernet);
+		defaultFocusButton = btnEthernet;
 
-		Button btnWifiTest = findViewById(R.id.button_wifi);
-		btnWifiTest.setOnClickListener(v -> showTestFragment(WifiTestFragment.newInstance()));
-		mainTestButtons.add(btnWifiTest);
-		testButtonMap.put(TestType.WIFI, btnWifiTest);
+		Button btnWifi = findViewById(R.id.button_wifi);
+		btnWifi.setOnClickListener(v -> {
+			showTestFragment(WifiTestFragment.newInstance());
+			defaultFocusButton = btnWifi;
+		});
+		mainTestButtons.add(btnWifi);
+		testButtonMap.put(TestType.WIFI, btnWifi);
 
-		Button btn_BluetoothTest = findViewById(R.id.button_bt);
-		btn_BluetoothTest.setOnClickListener(v -> showTestFragment(BluetoothTestFragment.newInstance()));
-		mainTestButtons.add(btn_BluetoothTest);
-		testButtonMap.put(TestType.BLUETOOTH, btn_BluetoothTest);
+		Button btnBt = findViewById(R.id.button_bt);
+		btnBt.setOnClickListener(v -> {
+			showTestFragment(BluetoothTestFragment.newInstance());
+			defaultFocusButton = btnBt;
+		});
+		mainTestButtons.add(btnBt);
+		testButtonMap.put(TestType.BLUETOOTH, btnBt);
 
-		Button btnHdmiTest = findViewById(R.id.button_hdmi);
-		btnHdmiTest.setOnClickListener(v -> showTestFragment(HdmiTestFragment.newInstance()));
-		mainTestButtons.add(btnHdmiTest);
-		testButtonMap.put(TestType.HDMI, btnHdmiTest);
+		Button btnUsb = findViewById(R.id.button_usb);
+		btnUsb.setOnClickListener(v -> {
+			showTestFragment(UsbTestFragment.newInstance());
+			defaultFocusButton = btnUsb;
+		});
+		mainTestButtons.add(btnUsb);
+		testButtonMap.put(TestType.USB, btnUsb);
 
-		Button btnVideoTest = findViewById(R.id.button_video);
-		btnVideoTest.setOnClickListener(v -> {
+		Button btnHdmi = findViewById(R.id.button_hdmi);
+		btnHdmi.setOnClickListener(v -> {
+			showTestFragment(HdmiTestFragment.newInstance());
+			defaultFocusButton = btnHdmi;
+		});
+		mainTestButtons.add(btnHdmi);
+		testButtonMap.put(TestType.HDMI, btnHdmi);
+
+		Button btnCpu = findViewById(R.id.button_cpu);
+		btnCpu.setOnClickListener(v -> {
+			showTestFragment(CpuTestFragment.newInstance());
+			defaultFocusButton = btnCpu;
+		});
+		mainTestButtons.add(btnCpu);
+		testButtonMap.put(TestType.CPU, btnCpu);
+
+		Button btnMemory = findViewById(R.id.button_memory);
+		btnMemory.setOnClickListener(v -> {
+			showTestFragment(MemoryTestFragment.newInstance());
+			defaultFocusButton = btnMemory;
+		});
+		mainTestButtons.add(btnMemory);
+		testButtonMap.put(TestType.MEMORY, btnMemory);
+
+		Button btnVideo = findViewById(R.id.button_video);
+		btnVideo.setOnClickListener(v -> {
 			updateButtonUI(TestType.VIDEO, TestStatus.RUNNING);
 			showTestFragment(VideoTestFragment.newInstance());
+			defaultFocusButton = btnVideo;
 		});
-		mainTestButtons.add(btnVideoTest);
-		testButtonMap.put(TestType.VIDEO, btnVideoTest);
+		mainTestButtons.add(btnVideo);
+		testButtonMap.put(TestType.VIDEO, btnVideo);
 
-		Button btnUsbTest = findViewById(R.id.button_usb);
-		btnUsbTest.setOnClickListener(v -> showTestFragment(UsbTestFragment.newInstance()));
-		mainTestButtons.add(btnUsbTest);
-		testButtonMap.put(TestType.USB, btnUsbTest);
-
-		Button btnMemoryTest = findViewById(R.id.button_memory);
-		btnMemoryTest.setOnClickListener(v -> showTestFragment(MemoryTestFragment.newInstance()));
-		mainTestButtons.add(btnMemoryTest);
-		testButtonMap.put(TestType.MEMORY, btnMemoryTest);
-
-		Button btnCpuTest = findViewById(R.id.button_cpu);
-		btnCpuTest.setOnClickListener(v -> showTestFragment(CpuTestFragment.newInstance()));
-		mainTestButtons.add(btnCpuTest);
-		testButtonMap.put(TestType.CPU, btnCpuTest);
-
-		Button btnRcuTest = findViewById(R.id.button_rcu);
-		btnRcuTest.setOnClickListener(v -> {
-			updateButtonUI(TestType.RCU, TestStatus.RETEST);
+		Button btnRcu = findViewById(R.id.button_rcu);
+		btnRcu.setOnClickListener(v -> {
 			showTestFragment(RcuTestFragment.newInstance());
+			defaultFocusButton = btnRcu;
 		});
-		mainTestButtons.add(btnRcuTest);
-		testButtonMap.put(TestType.RCU, btnRcuTest);
+		mainTestButtons.add(btnRcu);
+		testButtonMap.put(TestType.RCU, btnRcu);
 
 		Button btnButton = findViewById(R.id.button_button);
 		btnButton.setOnClickListener(v -> {
@@ -197,64 +228,45 @@ public class MainActivity extends AppCompatActivity {
 		mainTestButtons.add(btnButton);
 		testButtonMap.put(TestType.BUTTON, btnButton);
 
-		Button btnFactoryResetTest = findViewById(R.id.button_factory_reset);
-		btnFactoryResetTest.setOnClickListener(v -> startFactoryReset());
-		mainTestButtons.add(btnFactoryResetTest);
+		Button btnFactoryReset = findViewById(R.id.button_factory_reset);
+		btnFactoryReset.setOnClickListener(v -> startFactoryReset());
+		mainTestButtons.add(btnFactoryReset);
 
-		Button btnRebootTest = findViewById(R.id.button_reboot);
-		btnRebootTest.setOnClickListener(v -> startReboot());
-		mainTestButtons.add(btnRebootTest);
+		Button btnReboot = findViewById(R.id.button_reboot);
+		btnReboot.setOnClickListener(v -> startReboot());
+		mainTestButtons.add(btnReboot);
 
-		Button btnSettingsTest = findViewById(R.id.button_settings);
-		btnSettingsTest.setOnClickListener(v -> startSettings());
-		mainTestButtons.add(btnSettingsTest);
+		Button btnSettings = findViewById(R.id.button_settings);
+		btnSettings.setOnClickListener(v -> startSettings());
+		mainTestButtons.add(btnSettings);
 
-		Button btnStartAutoTest = findViewById(R.id.button_auto_test);
-		btnStartAutoTest.setOnClickListener(v -> {
+		Button btnAutoTest = findViewById(R.id.button_auto_test);
+		btnAutoTest.setOnClickListener(v -> {
 			// mainViewModel.startAutoTest("/storage/usb_storage");
-			mainViewModel.startAutoTest(true); //for testing
-		});
-		Button btnResetTest = findViewById(R.id.button_clear_results);
-		btnResetTest.setOnClickListener(v -> {
-			mainViewModel.resetAllTests();
+			//mainViewModel.startAutoTest(true); //for testing
+			checkConfigAndStartAutoTests();
 		});
 
-		mainTestButtons.add(btnStartAutoTest);
+		Button btnClearResults = findViewById(R.id.button_clear_results);
+		btnClearResults.setOnClickListener(v -> {
+			mainViewModel.clearResults();
+			defaultFocusButton = btnClearResults;
+		});
+
+		mainTestButtons.add(btnClearResults);
 
 		mainViewModel.sysInfoLiveData.observe(this, sysInfoText::setText);
 		mainViewModel.hwInfoLiveData.observe(this, hwInfoText::setText);
-
-		rcuViewModel.testCompletedEvent.observe(this, v -> {
-			closeTestFragmentAndFocus(testButtonMap.get(TestType.RCU));
-		});
-	}
-
-	private void closeTestFragmentAndFocus(View viewToFocus) {
-		Log.d(TAG, "==================closeTestFragmentAndFocus=============");
-		FragmentManager fm = getSupportFragmentManager();
-		Fragment currentFragment = fm.findFragmentByTag(TAG_TEST_FRAGMENT);
-
-		if (currentFragment != null) {
-			fm.beginTransaction().remove(currentFragment).commitNow();
-		}
-
-		if (viewToFocus != null) {
-			viewToFocus.requestFocus();
-		} else if (defaultFocusButton != null) {
-			defaultFocusButton.requestFocus();
-		} else {
-			showExitConfirmDialog();
-		}
 	}
 
 	private void setupObservers() {
 		mainViewModel.logLiveData.observe(this, logs -> {
-			if (logs != null) {
-				tvLogWindow.setText(String.join("\n", logs));
-				if (mainViewModel.isLogAutoScrollEnabled() && svLog.hasFocus()) {
-					int bottom = svLog.getHeight();
-					svLog.smoothScrollTo(0, bottom);
-				}
+			View view = getCurrentFocus();
+			List<String> logsCopy = new ArrayList<>(logs);
+			tvLogWindow.setText(String.join("\n", logsCopy));
+			svLog.fullScroll(ScrollView.FOCUS_DOWN);
+			if (view != null) {
+				view.requestFocus();
 			}
 		});
 
@@ -271,6 +283,12 @@ public class MainActivity extends AppCompatActivity {
 			for (Button button : mainTestButtons) {
 				if (button != null) button.setEnabled(!isRunning);
 			}
+			if (isRunning == false) {
+				// remove dialog
+				if (mAutoTestInProgressDialog != null) {
+					mAutoTestInProgressDialog.dismiss();
+				}
+			}
 		});
 
 		// Observer for individual test statuses to update button colors.
@@ -279,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
 			for (Map.Entry<TestType, TestStatus> entry : statuses.entrySet()) {
 				updateButtonUI(entry.getKey(), entry.getValue());
 			}
+			defaultFocusButton.requestFocus();
 		});
 
 		// Observer for user action requests to show dialogs during auto-test.
@@ -289,18 +308,14 @@ public class MainActivity extends AppCompatActivity {
 		});
 		mainViewModel.navigateToTestFragment.observe(this, testType -> {
 			if (testType != null) {
+				if (testType == TestType.VIDEO && mAutoTestInProgressDialog != null && mAutoTestInProgressDialog.isShowing()) {
+					mAutoTestInProgressDialog.dismiss();
+				}
 				showFragmentForAutoTest(testType);
 			}
 		});
 		mainViewModel.clearFragmentContainer.observe(this, aVoid -> {
 			clearFragmentContainer();
-		});
-		mainViewModel.dismissCurrentDialog.observe(this, aVoid -> {
-			if (activeUserActionDialog != null && activeUserActionDialog.isShowing()) {
-				Log.d(TAG, "Dismissing active user action dialog due to timeout or exterent event.");
-				activeUserActionDialog.dismiss();
-				activeUserActionDialog = null;
-			}
 		});
 	}
 
@@ -343,25 +358,24 @@ public class MainActivity extends AppCompatActivity {
 		mainViewModel.appendLog(TAG, "Auto-test showing fragment for: " + type.name());
 		getSupportFragmentManager().beginTransaction()
 				.replace(R.id.fragment_container, fragmentToShow, TAG_TEST_FRAGMENT)
-				// DO NOT add to back stack for auto-test navigation
 				.commit();
 	}
 
 	private void clearFragmentContainer() {
-		if (!isFinishing() && !isDestroyed()) {
-			FragmentManager fm = getSupportFragmentManager();
-			Fragment currentFragment = fm.findFragmentByTag(TAG_TEST_FRAGMENT);
-			if (currentFragment != null) {
-				mainViewModel.appendLog(TAG, "Auto-test finished. Clearing fragment container.");
-				closeTestFragmentAndFocus(null);
-			}
+		FragmentManager fm = getSupportFragmentManager();
+		Fragment currentFragment = fm.findFragmentByTag(TAG_TEST_FRAGMENT);
+		if (currentFragment != null) {
+			mainViewModel.appendLog(TAG, "Auto-test finished. Clearing fragment container.");
+			fm.beginTransaction().remove(currentFragment).commit();
+			//if(defaultFocusButton != null) {
+			//	defaultFocusButton.requestFocus();
+			//}
 		}
 	}
 
 	private void updateButtonUI(TestType type, TestStatus status) {
 		Button button = testButtonMap.get(type);
 		if (button == null) return;
-
 		int colorResId;
 		switch (status) {
 			case PASSED: colorResId = R.color.green; break;
@@ -373,32 +387,26 @@ public class MainActivity extends AppCompatActivity {
 			default: colorResId = R.color.normal; break;
 		}
 		int backgroundColor = ContextCompat.getColor(this, colorResId);
-
-		// 2. 기본 상태의 드로어블 생성 (색상이 적용된 사각형)
 		GradientDrawable defaultDrawable = new GradientDrawable();
 		defaultDrawable.setShape(GradientDrawable.RECTANGLE);
-		defaultDrawable.setCornerRadius(4 * getResources().getDisplayMetrics().density); // 4dp
+		defaultDrawable.setCornerRadius(4 * getResources().getDisplayMetrics().density);
 		defaultDrawable.setColor(backgroundColor);
 		defaultDrawable.setStroke((int) (3 * getResources().getDisplayMetrics().density), Color.BLACK);
-		// 3. 포커스 상태의 드로어블 생성 (기본 드로어블 위에 노란 테두리를 덧씌움)
 		Drawable[] focusLayers = new Drawable[2];
-		focusLayers[0] = defaultDrawable; // 아래층: 색상이 적용된 배경
-		focusLayers[1] = ContextCompat.getDrawable(this, R.drawable.button_state_selector); // 위층: 노란 테두리
+		focusLayers[0] = defaultDrawable;
+		focusLayers[1] = ContextCompat.getDrawable(this, R.drawable.button_state_selector);
 		LayerDrawable focusDrawable = new LayerDrawable(focusLayers);
-
-		// 4. StateListDrawable을 만들어 상태별 드로어블을 지정
 		StateListDrawable stateListDrawable = new StateListDrawable();
-		// 포커스 상태일 때는 LayerDrawable을 사용
 		stateListDrawable.addState(new int[]{android.R.attr.state_focused}, focusDrawable);
-		// 기본 상태일 때는 색상만 있는 드로어블을 사용
 		stateListDrawable.addState(new int[]{}, defaultDrawable);
-
-		// 5. 완성된 StateListDrawable을 버튼의 최종 배경으로 설정
 		button.setBackground(stateListDrawable);
+		//if (status == TestStatus.PASSED || status == TestStatus.FAILED) {
+		//	button.post(() -> button.requestFocus());
+		//}
 	}
 
 	private void showUserActionDialog(String message) {
-
+		// Inflate the custom layout
 		LayoutInflater inflater = LayoutInflater.from(this);
 		View dialogView = inflater.inflate(R.layout.dialog_custom_action, null);
 
@@ -417,37 +425,19 @@ public class MainActivity extends AppCompatActivity {
 
 		final AlertDialog dialog = builder.create();
 
-		this.activeUserActionDialog = dialog;
-		dialog.setOnDismissListener(dialogInterface -> {
-			Log.d(TAG, "User action dialog dismissed. Clearing reference.");
-			this.activeUserActionDialog = null;
-		});
-
-		final boolean isWifiManualSetupRequest = message.contains("open Wi-Fi Settings now?");
-
 		if (message.contains("?")) {
 			yesNoLayout.setVisibility(View.VISIBLE);
 			btnOk.setVisibility(View.GONE);
 
 			btnYes.setOnClickListener(v -> {
-				if (isWifiManualSetupRequest) {
-					mainViewModel.appendLog(TAG, "User chose YES. Opening Wi-Fi settings.");
-					mainViewModel.userActionConfirmed(true);
-					dialog.dismiss();
-					startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-				} else {
-					mainViewModel.userActionConfirmed(true);
-					dialog.dismiss();
-				}
+				mainViewModel.userActionConfirmed(true);
+				dialog.dismiss();
 			});
 			btnNo.setOnClickListener(v -> {
-				mainViewModel.appendLog(TAG, "User chose NO. Wi-Fi Test Fail.");
-				mainViewModel.updateTestResult(TestType.WIFI, TestStatus.ERROR);
 				mainViewModel.userActionConfirmed(false);
 				dialog.dismiss();
 			});
 
-			// Set default focus on the YES button when the dialog appears
 			dialog.setOnShowListener(dialogInterface -> btnYes.requestFocus());
 
 		} else {
@@ -455,12 +445,10 @@ public class MainActivity extends AppCompatActivity {
 			btnOk.setVisibility(View.VISIBLE);
 
 			btnOk.setOnClickListener(v -> {
-				// For informational dialogs, "OK" implies the user has acknowledged or performed the action.
 				mainViewModel.userActionConfirmed(true);
 				dialog.dismiss();
 			});
 
-			// Set default focus on the OK button when the dialog appears
 			dialog.setOnShowListener(dialogInterface -> btnOk.requestFocus());
 		}
 
@@ -473,7 +461,6 @@ public class MainActivity extends AppCompatActivity {
 			public void handleOnBackPressed() {
 				FragmentManager fm = getSupportFragmentManager();
 				Fragment currentFragment = fm.findFragmentByTag(TAG_TEST_FRAGMENT);
-
 				if (currentFragment != null) {
 					fm.beginTransaction().remove(currentFragment).commitNow();
 					if (lastFocusedViewBeforeFragment != null) {
@@ -486,8 +473,7 @@ public class MainActivity extends AppCompatActivity {
 					if (defaultFocusButton != null) {
 						defaultFocusButton.requestFocus();
 					}
-				}
-				else {
+				} else {
 					showExitConfirmDialog();
 				}
 			}
@@ -551,13 +537,11 @@ public class MainActivity extends AppCompatActivity {
 
 	private void showTestFragment(Fragment testFragment) {
 		if (testFragment == null) return;
-
 		lastFocusedViewBeforeFragment = getCurrentFocus();
-
-		mainViewModel.appendLog(TAG, "Opening fragment: " + testFragment.getClass().getSimpleName());
+		mainViewModel.appendLog(TAG, testFragment.getClass().getSimpleName() + " button clicked. Opening fragment...");
 		getSupportFragmentManager().beginTransaction()
-			.replace(R.id.fragment_container, testFragment, TAG_TEST_FRAGMENT)
-			.commit();
+				.replace(R.id.fragment_container, testFragment, TAG_TEST_FRAGMENT)
+				.commit();
 	}
 
 	private void checkAndLogBistServiceStatus() {
@@ -565,6 +549,27 @@ public class MainActivity extends AppCompatActivity {
 		boolean isRunning = ServiceUtils.isServiceRunning(this, bistServiceClassName);
 		String statusMessage = "BIST Service is " + (isRunning ? "running." : "not running.");
 		mainViewModel.appendLog(TAG, statusMessage);
+	}
+
+	private void checkConfigAndStartAutoTests() {
+		// check whether config exists
+		Bundle config = FileUtils.getConfigValues(this.getApplicationContext(), "config.xml");
+		// if it exists, start auto tests
+		if (config == null) {
+			mainViewModel.appendLog(TAG, "config not found");
+			return;
+		}
+		mainViewModel.startAutoTest(config);
+
+		// need to show a dialog saying running auto tests
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
+				.setTitle("Auto Test")
+				.setMessage("Auto Test In Progress...")
+				.setCancelable(false);
+		mAutoTestInProgressDialog = dialogBuilder.create();
+		mAutoTestInProgressDialog.show();
+
+		// TODO: able to be cancelable with back key
 	}
 
 	private void checkAndRequestPermissions() {
@@ -583,38 +588,39 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void startFactoryReset() {
-		Intent intent = new Intent(Settings.ACTION_DEVICE_INFO_SETTINGS);
-		try {
-			startActivity(intent);
-		} catch (ActivityNotFoundException e) {
-			Log.e("NavigationError", "Device Info settings activity not found.", e);
-			try {
-				startActivity(new Intent(Settings.ACTION_SETTINGS));
-			} catch (ActivityNotFoundException e2) {
-				Log.e("NavigationError", "Main settings activity not found.", e2);
-			}
-		}
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
+				.setTitle("Factory Reset")
+				.setMessage("Start Factory Reset?")
+				.setPositiveButton("Yes", (dialog, which) -> {
+					Intent intent = new Intent(Intent.ACTION_FACTORY_RESET);
+					intent.setPackage("android");
+					intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+					this.getApplicationContext().sendBroadcastAsUser(intent, new UserHandle(UserHandle.USER_CURRENT));
+				})
+				.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+		AlertDialog dialog = dialogBuilder.create();
+		dialog.show();
+		dialog.getButton(AlertDialog.BUTTON_NEGATIVE).requestFocus();
 	}
 
-//	private void startFactoryReset() {
-//		Intent intent = new Intent(Intent.ACTION_FACTORY_RESET);
-//		intent.setPackage("android");
-//		intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-//		this.getApplicationContext().sendBroadcastAsUser(intent, new UserHandle(UserHandle.USER_CURRENT));
-//	}
-
 	private void startReboot() {
-		PowerManager pm = (PowerManager) this.getApplicationContext().getSystemService(Context.POWER_SERVICE);
-		pm.reboot("bist");
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
+				.setTitle("Reboot")
+				.setMessage("Start Reboot?")
+				.setPositiveButton("Yes", (dialog, which) -> {
+					 PowerManager pm = (PowerManager) this.getApplicationContext().getSystemService(Context.POWER_SERVICE);
+					 pm.reboot("bist");
+				})
+				.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+		AlertDialog dialog = dialogBuilder.create();
+		dialog.show();
+		dialog.getButton(AlertDialog.BUTTON_NEGATIVE).requestFocus();
 	}
 
 	private void startSettings() {
-		Intent intent = new Intent(Settings.ACTION_SETTINGS);
-		if (intent.resolveActivity(this.getApplicationContext().getPackageManager()) != null) {
-			this.getApplicationContext().startActivity(intent);
-		} else {
-			Log.e(TAG, "Settings app cannot be found.");
-		}
+		Intent intent = new Intent();
+		intent.setClassName("com.android.tv.settings", "com.android.tv.settings.MainSettings");
+		startActivity(intent);
 	}
 
 	public void updateStatusIcon(ImageView imageView, boolean isConnected, int onIconResId, int offIconResId) {
@@ -629,13 +635,13 @@ public class MainActivity extends AppCompatActivity {
 		final String modelName = si.getModelName();
 		final String serialNumber = si.getSerialNumber();
 		final String date = si.getDate();
-//		final String cpuTemp = si.getCpuTemp();
-		final String cpuTemp = "no permission";
+		final int cpuTemp = si.getCpuTemp();
 		final String dataPartition = si.getDataPartition();
 		final String ethernetMac = si.getEthernetMac();
 		final String wifiMac = si.getWifiMac();
 		final String btMac = si.getBtMac();
 		final String ipAddress = si.getIpAddress();
+
 		StringBuilder sysInfo = new StringBuilder();
 		sysInfo.append("SystemInfo:\n");
 		sysInfo.append(" HW Ver: ").append(hwVersion).append("\n");
@@ -644,7 +650,7 @@ public class MainActivity extends AppCompatActivity {
 		sysInfo.append(" Model Name: ").append(modelName).append("\n");
 		sysInfo.append(" Serial Number: ").append(serialNumber).append("\n");
 		sysInfo.append(" Date: ").append(date).append("\n");
-		sysInfo.append(" CPU Temp: " + cpuTemp + "\n");
+		sysInfo.append(" CPU Temp: ").append(cpuTemp).append("°C\n");
 		sysInfo.append(" Data Partition: ").append(dataPartition).append("\n");
 		sysInfo.append(" Ethernet MAC: ").append(ethernetMac).append("\n");
 		sysInfo.append(" Wi-Fi MAC: ").append(wifiMac).append("\n");
@@ -654,13 +660,14 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private String getHwInfo() {
-		final String chipId = HwInfo.getChipId();
+		final String cpu = HwInfo.getCpu();
 		final String ddr = HwInfo.getDdr();
 		final String emmc = HwInfo.getEmmc();
 		final String wifi = HwInfo.getWifi();
+
 		StringBuilder hwInfo = new StringBuilder();
 		hwInfo.append("HwInfo:\n");
-		hwInfo.append(" Chip ID: ").append(chipId).append("\n");
+		hwInfo.append(" CPU: ").append(cpu).append("\n");
 		hwInfo.append(" DDR: ").append(ddr).append("\n");
 		hwInfo.append(" EMMC: ").append(emmc).append("\n");
 		hwInfo.append(" Wi-Fi: ").append(wifi);

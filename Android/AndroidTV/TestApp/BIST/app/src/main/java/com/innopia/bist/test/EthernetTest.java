@@ -1,31 +1,25 @@
 package com.innopia.bist.test;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
-import android.net.LinkAddress;
-import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-//import com.innopia.bist.util.FileReadHelper; // allow sign app
-import com.innopia.bist.util.TestConfig;
+import com.innopia.bist.util.FileUtils; // allow sign app
 import com.innopia.bist.util.TestResult;
 import com.innopia.bist.util.TestStatus;
-
+import com.innopia.bist.info.SystemInfo;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class EthernetTest implements Test {
@@ -47,113 +41,34 @@ public class EthernetTest implements Test {
 
 	@Override
 	public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
-		Context context = (Context) params.get("context");
-		TestConfig.Ethernet ethConfig = (TestConfig.Ethernet) params.get("config");
+		executeTest(params, callback);
+		//Context context = (Context) params.get("context");
+		//if (!(boolean) params.getOrDefault("isResume", false)) {
+		//	checkWifiAndProceed(context, params, callback);
+		//} else {
+		//	int state = (int) params.getOrDefault("state", STATE_CHECK_WIFI);
+		//	boolean userChoice = (boolean) params.getOrDefault("userChoice", false);
 
-		if (ethConfig != null && ethConfig.ip != null) {
-			Log.d(TAG, "Ethernet config found. Expected IP: " + ethConfig.ip);
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-				Log.d(TAG, "Auto-verification is not supported under Android 14. Falling back to manual flow.");
-				runLegacyAutoTest(params, callback);
-				return;
-			}
-			ethernetTestWithVerification(context, ethConfig, callback);
-		} else {
-			Log.d(TAG, "No Ethernet config found. Using legacy user-interactive flow.");
-			runLegacyAutoTest(params, callback);
-		}
+		//	switch (state) {
+		//		case STATE_CHECK_WIFI:
+		//			if (userChoice) {
+		//				WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+		//				wifiManager.setWifiEnabled(false); // Requires CHANGE_WIFI_STATE permission
+		//				Log.d(TAG, "User agreed. Turning Wi-Fi off.");
+		//				// Give it a moment to turn off before re-checking.
+		//				handler.postDelayed(() -> checkEthernetAndTest(context, params, callback), 1000);
+		//			} else {
+		//				Log.w(TAG, "User refused to turn off Wi-Fi.");
+		//				callback.accept(new TestResult(TestStatus.FAILED, "Test cannot run while Wi-Fi is active. User declined to turn it off."));
+		//			}
+		//			break;
+		//		case STATE_WAIT_FOR_ETHERNET_CONNECT:
+		//			// User pressed OK on "Connect Ethernet" dialog. Start polling.
+		//			pollForEthernetConnect(context, params, callback);
+		//			break;
+		//	}
+		//}
 	}
-
-	private void ethernetTestWithVerification(Context context, TestConfig.Ethernet ethConfig, Consumer<TestResult> callback) {
-		executor.execute(() -> {
-			ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-			Network ethNetwork = null;
-
-			for (Network network : cm.getAllNetworks()) {
-				NetworkCapabilities caps = cm.getNetworkCapabilities(network);
-				if (caps != null && caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-					ethNetwork = network;
-					break;
-				}
-			}
-
-			if (ethNetwork == null) {
-				callback.accept(new TestResult(TestStatus.FAILED, "Ethernet is not connected."));
-				return;
-			}
-
-			LinkProperties linkProperties = cm.getLinkProperties(ethNetwork);
-			boolean ipMatch = false;
-			if (linkProperties != null) {
-				for (LinkAddress addr : linkProperties.getLinkAddresses()) {
-					if (addr.getAddress().getHostAddress().equals(ethConfig.ip)) {
-						ipMatch = true;
-						break;
-					}
-				}
-			}
-
-			if (!ipMatch) {
-				callback.accept(new TestResult(TestStatus.FAILED, "IP mismatch. Expected: " + ethConfig.ip + ", but was not found."));
-				return;
-			}
-
-			boolean isInternetOk = isInternetAvailable(ethNetwork);
-			String info = "IP Address Verified: " + ethConfig.ip + "\n" +
-					"Internet Status: " + (isInternetOk ? "OK" : "No Internet");
-
-			if (isInternetOk) {
-				callback.accept(new TestResult(TestStatus.PASSED, info));
-			} else {
-				callback.accept(new TestResult(TestStatus.FAILED, info));
-			}
-		});
-	}
-
-	private void runLegacyAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
-		Context context = (Context) params.get("context");
-
-		// 테스트 재개가 아닌 최초 실행 시
-		if (!(boolean) params.getOrDefault("isResume", false)) {
-			checkWifiAndProceed(context, params, callback);
-		} else { // 사용자 응답 후 테스트 재개 시
-			int state = (int) params.getOrDefault("state", STATE_CHECK_WIFI);
-			boolean userChoice = (boolean) params.getOrDefault("userChoice", false);
-
-			switch (state) {
-				case STATE_CHECK_WIFI: // "Wi-Fi를 끄시겠습니까?" 에 대한 응답 처리
-					if (userChoice) {
-						WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-						if (isSystemApp(context)) { // 시스템 앱 권한 확인
-							wifiManager.setWifiEnabled(false);
-						}
-						Log.d(TAG, "User agreed. Turning Wi-Fi off.");
-						// Wi-Fi가 꺼질 시간을 잠시 기다린 후 이더넷 확인
-						handler.postDelayed(() -> checkEthernetAndTest(context, params, callback), 1000);
-					} else {
-						Log.w(TAG, "User refused to turn off Wi-Fi.");
-						callback.accept(new TestResult(TestStatus.FAILED, "Test cannot run while Wi-Fi is active. User declined."));
-					}
-					break;
-				case STATE_WAIT_FOR_ETHERNET_CONNECT: // "이더넷 케이블을 연결하세요" 에 대한 응답 처리
-					// 사용자가 OK를 누르면, 이더넷 연결 폴링 시작
-					pollForEthernetConnect(context, params, callback);
-					break;
-			}
-		}
-	}
-
-	public boolean isSystemApp(Context context) {
-		PackageManager pm = context.getPackageManager();
-		try {
-			ApplicationInfo appInfo = pm.getApplicationInfo(context.getPackageName(), 0);
-			return (appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
-		} catch (PackageManager.NameNotFoundException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
 
 	private void pollForEthernetConnect(Context context, Map<String, Object> params, Consumer<TestResult> callback) {
 		final long timeout = 15000; // 15 seconds
@@ -213,64 +128,74 @@ public class EthernetTest implements Test {
 	}
 
 	private void executeTest(Map<String, Object> params, Consumer<TestResult> callback) {
-		executor.execute(() -> {
-			Context context = (Context) params.get("context");
-			if (context == null) {
-				callback.accept(new TestResult(TestStatus.ERROR, "Error: Context is null"));
-				return;
-			}
-			callback.accept(new TestResult(TestStatus.PASSED, "Ethernet Test pass"));
-		});
-	}
-	private void ethernetTest(Map<String, Object> params, Consumer<TestResult> callback) {
 		Context context = (Context) params.get("context");
 		if (context == null) {
-			callback.accept(new TestResult(TestStatus.ERROR, "Error: Context is null."));
+			callback.accept(new TestResult(TestStatus.FAILED, "Error: Context is null"));
 			return;
 		}
 		executor.execute(() -> {
 			checkCurrentConnection(context, callback);
 		});
 	}
+
+	private void ethernetTest(Map<String, Object> params, Consumer<TestResult> callback) {
+		Context context = (Context) params.get("context");
+		if (context == null) {
+			callback.accept(new TestResult(TestStatus.FAILED, "Error: Context is null."));
+			return;
+		}
+		executor.execute(() -> {
+			checkCurrentConnection(context, callback);
+		});
+	}
+
 	private void checkCurrentConnection(Context context, Consumer<TestResult> callback) {
+		// delay until ethernet is back
+		try {
+			TimeUnit.SECONDS.sleep(5);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		if (cm == null) {
-			callback.accept(new TestResult(TestStatus.ERROR, "ConnectivityManager is null."));
+			callback.accept(new TestResult(TestStatus.FAILED, "ConnectivityManager is null."));
 			return;
 		}
 
 		Network network = cm.getActiveNetwork();
 		if (network == null) {
-			callback.accept(new TestResult(TestStatus.ERROR,"No active networks."));
+			callback.accept(new TestResult(TestStatus.FAILED, "No active networks."));
 			return;
 		}
 
 		NetworkCapabilities nc = cm.getNetworkCapabilities(network);
 		if (nc == null) {
-			callback.accept(new TestResult(TestStatus.ERROR,"NetworkCapabilities is null."));
+			callback.accept(new TestResult(TestStatus.FAILED, "NetworkCapabilities is null."));
 			return;
 		}
 		if (!nc.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-			callback.accept(new TestResult(TestStatus.ERROR,"Current active network is not Ethernet."));
+			callback.accept(new TestResult(TestStatus.FAILED, "Current active network is not Ethernet."));
 			return;
 		}
 
-//        String speed = getEthernetSpeed();
-		String speed = "getEthernetSpeed() fake run 100Mbps";
+
 		boolean isValidated = isInternetAvailable(network);
+		SystemInfo si = new SystemInfo(context);
+		String ip = si.getIpAddress();
+		String speed = getEthernetSpeed();
 		String info = "Status: " + (isValidated ? "Connected (Internet OK)" : "Connected (No Internet)") + "\n" +
-				"Link Speed: " + speed + " Mbps";
-		if(isValidated) {
+					  "Link Speed: " + speed + " Mbps";
+		if (isValidated) {
 			callback.accept(new TestResult(TestStatus.PASSED, info));
-		}else {
+		} else {
 			callback.accept(new TestResult(TestStatus.FAILED, info));
 		}
 	}
 
-// allow in system sign app
-//    private String getEthernetSpeed() {
-//        return FileReadHelper.readFromFile(SYSFS_ETH0_SPEED);
-//    }
+	// allow in system sign app
+	private String getEthernetSpeed() {
+		return FileUtils.readFromFile(SYSFS_ETH0_SPEED);
+	}
 
 	private boolean isInternetAvailable(Network network) {
 		try {

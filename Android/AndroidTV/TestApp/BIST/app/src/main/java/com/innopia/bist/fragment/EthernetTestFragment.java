@@ -21,7 +21,6 @@ import com.innopia.bist.viewmodel.EthernetTestViewModel;
 import com.innopia.bist.viewmodel.MainViewModel;
 
 public class EthernetTestFragment extends Fragment {
-	private static final String TAG = "BIST_EthernetTestFragment";
 
 	private EthernetTestViewModel ethernetTestViewModel;
 	private MainViewModel mainViewModel;
@@ -68,23 +67,20 @@ public class EthernetTestFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_ethernet_test, container, false);
 		tvEthernetInfo = rootView.findViewById(R.id.text_ethernet_info);
 
-		Button btnEthernetTest = rootView.findViewById(R.id.btn_ethernet_test);
-		btnEthernetTest.setOnClickListener(v -> {
-			tvEthernetInfo.setText("Running Ethernet Test...");
-			ethernetTestViewModel.startTest();
-		});
-
 		ethernetTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
 			tvEthernetInfo.setText(result.getMessage());
-			boolean isConnected = result != null && !result.getMessage().contains("not connected");
+			boolean isConnected = result != null && result.getMessage().contains("Connected (Internet OK)");
 			mainViewModel.updateHardwareStatus(TestType.ETHERNET, isConnected ? Status.ON : Status.OFF);
 		});
+		tvEthernetInfo.setText("Running Ethernet Test...");
+		if (!mainViewModel.isAutoTestRunning.getValue()) {
+			ethernetTestViewModel.startTest();
+		}
 		return rootView;
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		ethernetTestViewModel.startTest();
 	}
 }

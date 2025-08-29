@@ -3,7 +3,7 @@ package com.innopia.bist.test;
 import android.content.Context;
 import android.view.KeyEvent;
 
-//import com.innopia.bist.util.FileReadHelper;
+//import com.innopia.bist.util.FileUtils;
 import com.innopia.bist.util.TestResult;
 import com.innopia.bist.util.TestStatus;
 
@@ -43,7 +43,7 @@ public class ButtonTest implements Test {
 
 	private void buttonTest(Map<String, Object> params, Consumer<TestResult> callback) {
 		this.callback = callback;
-		//boolean isMuted = MIC_MUTE.equals(FileReadHelper.readFromFile(SYSFS_MIC_STATUS));
+		//boolean isMuted = MIC_MUTE.equals(FileUtils.readFromFile(SYSFS_MIC_STATUS));
 		//keySequence = generateRandomKeys(isMuted);
 		keySequence = generateRandomKeys();
 		currentIndex = 0;
@@ -53,9 +53,9 @@ public class ButtonTest implements Test {
 	//private List<Integer> generateRandomKeys(boolean isMuted) {
 	private List<Integer> generateRandomKeys() {
 		List<Integer> result = new ArrayList<>(Arrays.asList(
-			KeyEvent.KEYCODE_BUTTON_10, // pin
-			KeyEvent.KEYCODE_BUTTON_13, // mute
-			KeyEvent.KEYCODE_BUTTON_14 // unmute
+				KeyEvent.KEYCODE_BUTTON_10, // pin
+				KeyEvent.KEYCODE_BUTTON_13, // mute
+				KeyEvent.KEYCODE_BUTTON_14 // unmute
 		));
 		Collections.shuffle(result);
 		//int keyToSwap;

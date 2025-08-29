@@ -60,17 +60,14 @@ public class MemoryTestFragment extends Fragment {
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_memory_test, container, false);
 		tvMemoryInfo = rootView.findViewById(R.id.text_memory_info);
-//		Button btnMemoryManTest = rootView.findViewById(R.id.btn_memory_manual_test);
-//		btnMemoryManTest.setOnClickListener(v -> {
-//			mainViewModel.appendLog(getTag(), "Memory Test Start");
-//			memoryTestViewModel.startTest();
-//		});
-		mainViewModel.appendLog(getTag(), "Memory Test Start");
-		memoryTestViewModel.startTest();
+
 		memoryTestViewModel.testResultLiveData.observe(getViewLifecycleOwner(), result -> {
 			tvMemoryInfo.setText(result.getMessage());
 			mainViewModel.appendLog(getTag(), "Memory Result \n"+ result);
 		});
+
+		mainViewModel.appendLog(getTag(), "Memory Test Start");
+		memoryTestViewModel.startTest();
 
 		return rootView;
 	}

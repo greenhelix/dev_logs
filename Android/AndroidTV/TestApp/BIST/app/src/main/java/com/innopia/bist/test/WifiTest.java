@@ -1,33 +1,31 @@
 package com.innopia.bist.test;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.InterfaceConfiguration;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.net.wifi.WifiNetworkSpecifier;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.INetworkManagementService;
 import android.os.Looper;
+import android.os.ServiceManager;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import com.innopia.bist.util.TestResult;
 import com.innopia.bist.util.TestStatus;
-import com.innopia.bist.util.TestConfig;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class WifiTest implements Test {
@@ -40,150 +38,105 @@ public class WifiTest implements Test {
 	private static final int STATE_WAIT_FOR_ETHERNET_DISCONNECT = 1;
 	private static final int STATE_CHECK_WIFI = 2;
 	private static final int STATE_WAIT_FOR_WIFI_CONNECT = 3;
-	private ConnectivityManager.NetworkCallback networkCallback;
 
 	@Override
 	public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
-		Context context = (Context) params.get("context");
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-		if (!(boolean) params.getOrDefault("isResume", false)) {
-			checkEthernetAndProceed(context, cm, params, callback);
-		} else {
-			int state = (int) params.getOrDefault("state", STATE_CHECK_ETHERNET);
-			boolean userChoice = (boolean) params.getOrDefault("userChoice", false);
-
-			switch (state) {
-				case STATE_WAIT_FOR_ETHERNET_DISCONNECT:
-					pollForEthernetDisconnect(context, cm, params, callback);
-					break;
-
-				case STATE_CHECK_WIFI:
-					if (userChoice) {
-						params.put("state", STATE_WAIT_FOR_WIFI_CONNECT);
-						callback.accept(new TestResult(TestStatus.WAITING_FOR_USER, "Please connect to a Wi-Fi network from Settings and press OK."));
-					} else {
-						callback.accept(new TestResult(TestStatus.RETEST, "User skipped Wi-Fi connection. Marked for re-test"));
-					}
-					break;
-				case STATE_WAIT_FOR_WIFI_CONNECT:
-					checkWifiAndTest(context, cm, params, callback);
-					break;
-			}
-		}
+		executeTest(params, callback);
 	}
 
 	@Override
 	public void runAutoTest(Map<String, Object> params, Consumer<TestResult> callback) {
+		configureEthernet(false);
+		// delay
+		try {
+			TimeUnit.SECONDS.sleep(2);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// executeTest(params, callback);
 		Context context = (Context) params.get("context");
 		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		TestConfig.Wifi wifiConfig = (TestConfig.Wifi) params.get("config");
-		if (wifiConfig != null && wifiConfig.id != null) {
-			Log.d(TAG, "Wi-Fi config found. SSID: " + wifiConfig.id + ". Attempting auto-connection.");
-
-			connectToWifiWithConfig(context, wifiConfig, callback);
-
-		} else {
-			Log.d(TAG, "No Wi-Fi config found. Using legacy user-interactive flow.");
-			if (!(boolean) params.getOrDefault("isResume", false)) {
-				checkEthernetAndProceed(context, cm, params, callback);
-			} else {
-				int state = (int) params.getOrDefault("state", STATE_CHECK_ETHERNET);
-				boolean userChoice = (boolean) params.getOrDefault("userChoice", false);
-
-				switch (state) {
-					case STATE_WAIT_FOR_ETHERNET_DISCONNECT:
-						pollForEthernetDisconnect(context, cm, params, callback);
-						break;
-
-					case STATE_CHECK_WIFI:
-						if (userChoice) {
-							params.put("state", STATE_WAIT_FOR_WIFI_CONNECT);
-							callback.accept(new TestResult(TestStatus.WAITING_FOR_USER, "Please connect to a Wi-Fi network from Settings and press OK."));
-						} else {
-							callback.accept(new TestResult(TestStatus.RETEST, "User skipped Wi-Fi connection. Marked for re-test"));
-						}
-						break;
-					case STATE_WAIT_FOR_WIFI_CONNECT:
-						checkWifiAndTest(context, cm, params, callback);
-						break;
-				}
-			}
-		}
-	}
-
-	public boolean isSystemApp(Context context) {
-		PackageManager pm = context.getPackageManager();
-		try {
-			ApplicationInfo appInfo = pm.getApplicationInfo(context.getPackageName(), 0);
-			// FLAG_SYSTEM 비트가 설정되어 있는지 확인
-			return (appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
-		} catch (PackageManager.NameNotFoundException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	private void connectToWifiWithConfig(Context context, TestConfig.Wifi config, Consumer<TestResult> callback) {
-		Log.d(TAG, "connectToWifiWithConfig() start");
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-			Log.d(TAG, "Auto-connection is not supported under Android 14. Falling back to manual flow.");
-			String message = "Wi-Fi auto-connection is not supported. Do you want to open Wi-Fi Settings now?";
-			callback.accept(new TestResult(TestStatus.WAITING_FOR_USER, message));
-			return;
-		}
-
-		WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-		if (!wifiManager.isWifiEnabled()) {
-			if (isSystemApp(context)) {
-				Log.d(TAG, "System App detected. Enabling Wi-Fi programmatically.");
-				wifiManager.setWifiEnabled(true);
-			} else {
-				Log.d(TAG, "Not a System App. Cannot enable Wi-Fi programmatically. Requesting user action.");
-				// TODO: 일반 앱일 경우 설정 화면으로 유도하는 로직 추가
-				callback.accept(new TestResult(TestStatus.FAILED, "Cannot enable Wi-Fi. Please enable it manually."));
+		Bundle config = (Bundle) params.get("config");
+		if (config != null) {
+			String configSsid = (String) config.get("wifi_ssid");
+			String configPassword = (String) config.get("wifi_password");
+			WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+			if (wm == null) {
+				callback.accept(new TestResult(TestStatus.FAILED, "WifiManager is null"));
 				return;
 			}
-		}
-		WifiNetworkSpecifier specifier = new WifiNetworkSpecifier.Builder().setSsid(config.id).setWpa2Passphrase(config.pw).build();
-		NetworkRequest request = new NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI).setNetworkSpecifier(specifier).build();
-		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (networkCallback != null) {
-			try {
-				connectivityManager.unregisterNetworkCallback(networkCallback);
-			} catch (Exception e) {
-				Log.d(TAG, "Before setting callback unregister Fail!!!\nReason: "+e);
-			}
-		}
-		Handler timeoutHandler = new Handler(Looper.getMainLooper());
-		Runnable timeoutRunnable = () -> {
-			Log.d(TAG, "Wi-Fi connection timed out.");
-			connectivityManager.unregisterNetworkCallback(networkCallback);
-			callback.accept(new TestResult(TestStatus.FAILED, "Wi-Fi connection timed out for SSID: "+config.id));
-		};
-
-		networkCallback = new ConnectivityManager.NetworkCallback() {
-			@Override
-			public void onAvailable(@NonNull Network network) {
-				super.onAvailable(network);
-				timeoutHandler.removeCallbacks(timeoutRunnable);
-				Log.d(TAG, "Wi-Fi network available: " + config.id);
-				connectivityManager.bindProcessToNetwork(network);
-				wifiTest(Map.of("context", context), callback);
-				connectivityManager.unregisterNetworkCallback(this);
+			// turn on wifi, if currently off
+			if (!wm.isWifiEnabled()) {
+				wm.setWifiEnabled(true);
+				try { // a delay for wifi to turn on
+					TimeUnit.SECONDS.sleep(2);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 
-			@Override
-			public void onUnavailable() {
-				super.onUnavailable();
-				timeoutHandler.removeCallbacks(timeoutRunnable);
-				Log.d(TAG, "Could not connect to Wi-Fi network: " + config.id);
-				callback.accept(new TestResult(TestStatus.FAILED, "Failed to connect. Check SSID/PW for: "+ config.id));
-				connectivityManager.unregisterNetworkCallback(this);
+			WifiConfiguration wifiConfig = new WifiConfiguration();
+			wifiConfig.SSID = String.format("\"%s\"", configSsid);
+			wifiConfig.preSharedKey = String.format("\"%s\"", configPassword);
+			// remove existing network configuration
+			int networkId = -1;
+			for (WifiConfiguration existingConfig : wm.getConfiguredNetworks()) {
+				if (existingConfig.SSID != null && existingConfig.SSID.equals(wifiConfig.SSID)) {
+					wm.removeNetwork(existingConfig.networkId);
+					wm.saveConfiguration();
+					break;
+				}
 			}
-		};
-		connectivityManager.requestNetwork(request, networkCallback);
-		timeoutHandler.postDelayed(timeoutRunnable, 30000);
+
+			networkId = wm.addNetwork(wifiConfig);
+			if (networkId == -1) {
+				callback.accept(new TestResult(TestStatus.FAILED, "Failed to add network configuration for " + configSsid));
+				return;
+			}
+
+			boolean disconnectResult = wm.disconnect();
+			boolean enableResult = wm.enableNetwork(networkId, true);
+			boolean reconnectResult = wm.reconnect();
+
+			if (enableResult && reconnectResult) {
+				// delay
+				try {
+					TimeUnit.SECONDS.sleep(5);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				checkCurrentConnection(context, callback); // callback handled inside
+			} else {
+				callback.accept(new TestResult(TestStatus.FAILED, "Failed to connect to network: " + configSsid));
+			}
+		}
+
+		//if (!(boolean) params.getOrDefault("isResume", false)) {
+		//	checkEthernetAndProceed(context, cm, params, callback);
+		//} else {
+		//	int state = (int) params.getOrDefault("state", STATE_CHECK_ETHERNET);
+		//	boolean userChoice = (boolean) params.getOrDefault("userChoice", false);
+		//	
+
+		//	switch (state) {
+		//		case STATE_WAIT_FOR_ETHERNET_DISCONNECT:
+		//			pollForEthernetDisconnect(context, cm, params, callback);
+		//			break;
+
+		//		case STATE_CHECK_WIFI:
+		//			if (userChoice) {
+		//				params.put("state", STATE_WAIT_FOR_WIFI_CONNECT);
+		//				callback.accept(new TestResult(TestStatus.WAITING_FOR_USER, "Please connect to a Wi-Fi network from Settings and press OK."));
+		//			} else {
+		//				callback.accept(new TestResult(TestStatus.RETEST, "User skipped Wi-Fi connection. Marked for re-test"));
+		//			}
+		//			break;
+		//		case STATE_WAIT_FOR_WIFI_CONNECT:
+		//			checkWifiAndTest(context, cm, params, callback);
+		//			break;
+		//	}
+		//}
+		configureEthernet(true);
 	}
 
 	private void checkWifiAndTest(Context context, ConnectivityManager cm, Map<String, Object> params, Consumer<TestResult> callback) {
@@ -249,13 +202,21 @@ public class WifiTest implements Test {
 	}
 
 	private void executeTest(Map<String, Object> params, Consumer<TestResult> callback) {
+		Context context = (Context) params.get("context");
+		if (context == null) {
+			callback.accept(new TestResult(TestStatus.ERROR, "Error: Context is null"));
+			return;
+		}
 		executor.execute(() -> {
-			Context context = (Context) params.get("context");
-			if (context == null) {
-				callback.accept(new TestResult(TestStatus.ERROR, "Error: Context is null"));
-				return;
+			configureEthernet(false);
+			// delay
+			try {
+				TimeUnit.SECONDS.sleep(2);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			callback.accept(new TestResult(TestStatus.PASSED, "Wifi Test pass"));
+			checkCurrentConnection(context, callback);
+			configureEthernet(true);
 		});
 	}
 
@@ -266,18 +227,27 @@ public class WifiTest implements Test {
 			return;
 		}
 		executor.execute(() -> {
+			configureEthernet(false);
+			// delay
+			try {
+				TimeUnit.SECONDS.sleep(2);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			checkCurrentConnection(context, callback);
+			configureEthernet(true);
 		});
 	}
 
 	private void checkCurrentConnection(Context context, Consumer<TestResult> callback) {
 		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-
+		WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 		Network activeNetwork = connectivityManager.getActiveNetwork();
 		if (activeNetwork == null) {
-			callback.accept(new TestResult(TestStatus.FAILED, "No active network connection."));
-			return;
+			// turn on wifi
+			if (!wm.isWifiEnabled()) {
+				wm.setWifiEnabled(true);
+			}
 		}
 
 		NetworkCapabilities caps = connectivityManager.getNetworkCapabilities(activeNetwork);
@@ -286,7 +256,7 @@ public class WifiTest implements Test {
 			return;
 		}
 
-		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		WifiInfo wifiInfo = wm.getConnectionInfo();
 		String ssid = wifiInfo.getSSID().replace("\"", "");
 		String bssid = wifiInfo.getBSSID();
 		int rssi = wifiInfo.getRssi();
@@ -299,15 +269,18 @@ public class WifiTest implements Test {
 				"Signal Strength (RSSI): " + rssi + " dBm\n" +
 				"Link Speed: " + linkSpeed + " Mbps";
 
+		String message;
+		TestStatus status;
 		if (isInternetValidated) {
-			String message = "Status: Connected (Internet OK)\n" + details;
+			message = "Status: Connected (Internet OK)\n" + details;
+			status = TestStatus.PASSED;
 			Log.d("BIST_WIFI", "Test Result: PASSED. " + message);
-			callback.accept(new TestResult(TestStatus.PASSED, message));
 		} else {
-			String message = "Status: Connected (No Internet)\n" + details;
+			message = "Status: Connected (No Internet)\n" + details;
+			status = TestStatus.FAILED;
 			Log.e("BIST_WIFI", "Test Result: FAILED. " + message);
-			callback.accept(new TestResult(TestStatus.FAILED, message));
 		}
+		callback.accept(new TestResult(status, message));
 	}
 
 	private boolean isInternetAvailable(Network network) {
@@ -325,6 +298,30 @@ public class WifiTest implements Test {
 		} catch (IOException e) {
 			Log.w("BIST_WIFI", "Internet availability check failed.", e);
 			return false;
+		}
+	}
+
+	private void configureEthernet(boolean isUp) {
+		Log.d(TAG, "configureEthernet : " + isUp);
+		IBinder binder = ServiceManager.getService(Context.NETWORKMANAGEMENT_SERVICE);
+		INetworkManagementService service = INetworkManagementService.Stub.asInterface(binder);
+		String iface = "eth0";
+
+		try {
+			InterfaceConfiguration interfaceConfiguration = service.getInterfaceConfig(iface);
+			if (interfaceConfiguration != null) {
+				if (isUp) {
+					interfaceConfiguration.setInterfaceUp();
+				} else {
+					interfaceConfiguration.setInterfaceDown();
+				}
+				interfaceConfiguration.clearFlag("running");
+				service.setInterfaceConfig(iface, interfaceConfiguration);
+			} else {
+				Log.d(TAG, "interfaceConfiguration is null");
+			}
+		} catch (Exception e) {
+			Log.d(TAG,"Exception : " + e);
 		}
 	}
 }

@@ -1,19 +1,19 @@
 package com.innopia.bist.test;
 
 import android.content.Context;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 
 import com.innopia.bist.util.TestResult;
 import com.innopia.bist.util.TestStatus;
 
+import java.util.HashMap;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 public class UsbTest implements Test {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private static final int TEST_FILE_SIZE_MB = 20;
+	private static final String TAG = "BIST_USB_TEST";
 
     private File getUsbDrive(Context context) {
         StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
@@ -31,40 +32,6 @@ public class UsbTest implements Test {
             }
         }
         return null;
-    }
-
-    private String getUsbInfo(Context context) {
-        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-        if (usbManager == null) {
-            return "Can't Get UsbManager.";
-        }
-
-        HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
-        StringBuilder builder = new StringBuilder();
-
-        if (deviceList.isEmpty()) {
-            builder.append("No Connected USB.\n");
-        } else {
-            builder.append("--- Connected USB List ---\n\n");
-            for (UsbDevice device : deviceList.values()) {
-                builder.append("============================\n");
-
-                builder.append("Device Name: ").append(device.getDeviceName()).append("\n");
-                builder.append("Device ID: ").append(device.getDeviceId()).append("\n");
-                builder.append("Vendor ID: ").append(device.getVendorId()).append("\n");
-                builder.append("Product ID: ").append(device.getProductId()).append("\n");
-                builder.append("Manufacturer Name: ").append(device.getManufacturerName()).append("\n");
-                builder.append("Product Name: ").append(device.getProductName()).append("\n");
-
-                try {
-                    builder.append("Serial Number: ").append(device.getSerialNumber()).append("\n");
-                } catch (SecurityException e) {
-                    builder.append("Serial Number: no permission.\n");
-                }
-                builder.append("============================\n\n");
-            }
-        }
-        return builder.toString();
     }
 
     private String performSpeedTest(File path) {
@@ -99,6 +66,36 @@ public class UsbTest implements Test {
         }
     }
 
+    private String getUsbInfo(Context context) {
+        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        if (usbManager == null) {
+            return "Can't Get UsbManager.";
+        }
+
+        HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
+        StringBuilder builder = new StringBuilder();
+
+        if (deviceList.isEmpty()) {
+            builder.append("No Connected USB.\n");
+        } else {
+            builder.append("--- Connected USB Info. ---\n\n");
+            for (UsbDevice device : deviceList.values()) {
+                builder.append("Device Name: ").append(device.getDeviceName()).append("\n");
+                builder.append("Device ID: ").append(device.getDeviceId()).append("\n");
+                builder.append("Vendor ID: ").append(device.getVendorId()).append("\n");
+                builder.append("Product ID: ").append(device.getProductId()).append("\n");
+                builder.append("Manufacturer Name: ").append(device.getManufacturerName()).append("\n");
+                builder.append("Product Name: ").append(device.getProductName()).append("\n");
+                try {
+                    builder.append("Serial Number: ").append(device.getSerialNumber()).append("\n\n");
+                } catch (SecurityException e) {
+                    builder.append("Serial Number: no permission.\n\n");
+                }
+            }
+        }
+        return builder.toString();
+    }
+
     @Override
     public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
         usbTest(params, callback);
@@ -128,11 +125,11 @@ public class UsbTest implements Test {
                 return;
             }
             String result = getUsbInfo(context);
-			if (result.contains("PASS"))  {
-				callback.accept(new TestResult(TestStatus.PASSED, "USB Test Pass \n"+result));
-			} else {
-				callback.accept(new TestResult(TestStatus.FAILED, "USB Test Fail \n"+result));
-			}
+            if (result == null || result.contains("No Connected USB")) {
+                callback.accept(new TestResult(TestStatus.FAILED, "USB drive not found or not accessible."));
+                return;
+            }
+            callback.accept(new TestResult(TestStatus.PASSED, result));
         });
     }
 }
