@@ -10,7 +10,7 @@ public class SysInfo {
 
 	private static final String TAG = "BIST_SYS_INFO";
 
-	private static String getSystemProperty(String propName) {
+	public static String getSystemProperty(String propName) {
 		try {
 			Process process = Runtime.getRuntime().exec("getprop " + propName);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

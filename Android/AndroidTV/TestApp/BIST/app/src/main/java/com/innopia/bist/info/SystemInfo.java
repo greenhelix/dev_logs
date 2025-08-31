@@ -9,11 +9,12 @@ import android.net.LinkProperties;
 import android.net.Network;
 import android.os.Build;
 import android.os.HardwarePropertiesManager;
-import android.os.SystemProperties;
+//import android.os.SystemProperties;
 import android.provider.Settings;
 
 import com.innopia.bist.util.FileUtils;
 import com.innopia.bist.util.LogManager;
+import com.innopia.bist.util.SysInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,14 +53,16 @@ public class SystemInfo {
 
 	public static String getHwVersion() {
 		LogManager.d(TAG, "getHwVersion ++");
-		String version = SystemProperties.get(PROP_HW_VERSION, "");
+//		String version = SystemProperties.get(PROP_HW_VERSION, "");
+		String version = SysInfo.getSystemProperty(PROP_HW_VERSION);
 		LogManager.d(TAG, "getHwVersion(version=" + version + ") --");
 		return version;
 	}
 
 	public static String getSwVersion() {
 		LogManager.d(TAG, "getSwVersion ++");
-		String version = SystemProperties.get(PROP_SW_VERSION, "");
+//		String version = SystemProperties.get(PROP_SW_VERSION, "");
+		String version = SysInfo.getSystemProperty(PROP_SW_VERSION);
 		LogManager.d(TAG, "getSwVersion(version=" + version + ") --");
 		return version;
 	}
@@ -81,7 +84,8 @@ public class SystemInfo {
 
 	public static String getModelName() {
 		LogManager.d(TAG, "getModelName ++");
-		String name = SystemProperties.get(PROP_MODEL, "");
+//		String name = SystemProperties.get(PROP_MODEL, "");
+		String name = SysInfo.getSystemProperty(PROP_MODEL);
 		LogManager.d(TAG, "getModleName(name=" + name + ") --");
 		return name;
 	}
@@ -146,7 +150,7 @@ public class SystemInfo {
 		}
 
 		LinkProperties lps = cm.getLinkProperties(network);
-		Iterator<LinkAddress> iter = lps.getAllLinkAddresses().iterator();
+		Iterator<LinkAddress> iter = lps.getLinkAddresses().iterator();
 		if (!iter.hasNext()) {
 			LogManager.d(TAG, "getIpAddress !iter --");
 		}

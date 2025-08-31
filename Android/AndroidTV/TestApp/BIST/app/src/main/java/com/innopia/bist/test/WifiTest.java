@@ -2,7 +2,7 @@ package com.innopia.bist.test;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.InterfaceConfiguration;
+//import android.net.InterfaceConfiguration;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.wifi.WifiConfiguration;
@@ -20,6 +20,7 @@ import com.innopia.bist.util.TestResult;
 import com.innopia.bist.util.TestStatus;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
@@ -39,6 +40,8 @@ public class WifiTest implements Test {
 	private static final int STATE_CHECK_WIFI = 2;
 	private static final int STATE_WAIT_FOR_WIFI_CONNECT = 3;
 
+	private Context context;
+
 	@Override
 	public void runManualTest(Map<String, Object> params, Consumer<TestResult> callback) {
 		executeTest(params, callback);
@@ -54,7 +57,7 @@ public class WifiTest implements Test {
 			e.printStackTrace();
 		}
 		// executeTest(params, callback);
-		Context context = (Context) params.get("context");
+		context = (Context) params.get("context");
 		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		Bundle config = (Bundle) params.get("config");
 		if (config != null) {
@@ -303,25 +306,46 @@ public class WifiTest implements Test {
 
 	private void configureEthernet(boolean isUp) {
 		Log.d(TAG, "configureEthernet : " + isUp);
+		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
 		IBinder binder = ServiceManager.getService(Context.NETWORKMANAGEMENT_SERVICE);
 		INetworkManagementService service = INetworkManagementService.Stub.asInterface(binder);
+
 		String iface = "eth0";
 
+		if(isEthernetConnected(cm)) {
+
+		}
+
 		try {
-			InterfaceConfiguration interfaceConfiguration = service.getInterfaceConfig(iface);
-			if (interfaceConfiguration != null) {
-				if (isUp) {
-					interfaceConfiguration.setInterfaceUp();
-				} else {
-					interfaceConfiguration.setInterfaceDown();
-				}
-				interfaceConfiguration.clearFlag("running");
-				service.setInterfaceConfig(iface, interfaceConfiguration);
-			} else {
-				Log.d(TAG, "interfaceConfiguration is null");
-			}
+			// ServiceManager는 여전히 숨겨져 있으므로 리플렉션으로 호출
+			// 개새끼 코드 개같이 짜났네 시발럼이
+			Class<?> smClass = Class.forName("android.os.ServiceManager");
+			Method getServiceMethod = smClass.getMethod("getService", String.class);
+			IBinder binder = (IBinder) getServiceMethod.invoke(null, Context.NETWORKMANAGEMENT_SERVICE);
+
+			// AIDL을 추가했기 때문에 Stub.asInterface는 직접 호출 가능
+			INetworkManagementService networkManagementService = INetworkManagementService.Stub.asInterface(binder);
+
+		try {
+			//InterfaceConfiguration interfaceConfiguration = service.getInterfaceConfig(iface);
+			//if (interfaceConfiguration != null) {
+				//if (isUp) {
+					//interfaceConfiguration.setInterfaceUp();
+				//} else {
+					//interfaceConfiguration.setInterfaceDown();
+				//}
+				//interfaceConfiguration.clearFlag("running");
+				//service.setInterfaceConfig(iface, interfaceConfiguration);
+			//} else {
+			//	Log.d(TAG, "interfaceConfiguration is null");
+			//}
 		} catch (Exception e) {
 			Log.d(TAG,"Exception : " + e);
 		}
-	}
-}
+	} catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
