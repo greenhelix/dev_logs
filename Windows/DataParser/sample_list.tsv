@@ -1,0 +1,18 @@
+| Module                                           | ABI         | Total Tests |
+| :--------------------------------------------    |:----------- | :---------- |
+| [[ApkVerityTest]]                                | armeabi-v7a | 19          |
+| [[CtsPackageWatchdogTestCases]]                  | armeabi-v7a | 1           |
+| [[CtsUffdGcTestCases]]                           | armeabi-v7a | 5           |
+| [[CtsUsbManagerTestCases]]                       | armeabi-v7a | 22          |
+| [[FastbootGetvarUserspaceTest]]                  | armeabi-v7a | 9           |
+| [[FastbootVerifyUserspaceTest]]                  | armeabi-v7a | 5           |
+| [[FirmwareBootHeaderVerification]]               | armeabi-v7a | 2           |
+| [[FirmwareDtboVerification]]                     | armeabi-v7a | 2           |
+| [[GpuServiceVendorTests]]                        | armeabi-v7a | 2           |
+| [[HalAudioV6_0GeneratorTest]]                    | armeabi-v7a | 4           |
+| [[HalAudioV7_0GeneratorTest]]                    | armeabi-v7a | 5           |
+| [[HalUsbGadgetV1_0HostTest]]                     | armeabi-v7a | 4           |
+| [[KernelAbilistTest]]                            | armeabi-v7a | 1           |
+| [[KernelApiSysfsTest]]                           | armeabi-v7a | 12          |
+| [[KernelDynamicPartitionsTest]]                  | armeabi-v7a | 1           |
+| [[KernelLibcutilsTest]]                          | armeabi-v7a | 6           |
