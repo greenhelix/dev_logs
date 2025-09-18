@@ -51,3 +51,11 @@ Linux/xts_data_importer/.metadata
 Linux/xts_data_importer/lib/database.g.dart
 Linux/xts_data_importer/lib/providers.g.dart
 Windows/dependency/media3_ui_libs/Android.mk
+/Windows/AdbController/build/ADB Control Tool/localpycs
+Windows/AdbController/build/ADB Control Tool/PYZ-00.toc
+Windows/AdbController/build/ADB Control Tool/PYZ-00.pyz
+Windows/AdbController/build/ADB Control Tool/PKG-00.toc
+Windows/AdbController/build/ADB Control Tool/EXE-00.toc
+/Windows/AdbController/build
+/Windows/AdbController/dist
+Windows/AdbController/ADB Control Tool.spec
