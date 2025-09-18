@@ -1,0 +1,6 @@
+armeabi-v7a GtsAppUpdateOwnerDeviceTests
+com.google.android.appupdateowner.gts.GtsAppUpdateOwnerTests#testUpdateOwnership	fail	java.lang.AssertionError: Google apps must have an update owner that is either null or Play Store. The following apps do not qualify: com.google.android.gms at org.junit.Assert.fail(Assert.java:89) at com.google.android.appupdateowner.gts.GtsAppUpdateOwnerTests.testUpdateOwnership(GtsAppUpdateOwnerTests.java:114)
+armeabi-v7a GtsMediaTestCases
+com.google.android.media.gts.RtcVideoCodecTest#testParallelDecoderQualityVp8	fail	java.util.concurrent.TimeoutException: Test timed out after 1200000 milliseconds
+armeabi-v7a WvtsDeviceTestCases
+com.google.android.wvts.WidevineVP9WebMPlaybackTests#testVP9WebMCencSubSampleL1WithUHD60	fail	java.lang.Exception: Failed components: < Video Reached Seconds: The Video only played to 12850 ms instead of 20000 ms > at com.google.android.wvts.WVTSTestBase.run(WVTSTestBase.java:158) at com.google.android.wvts.WidevineVP9WebMPlaybackTests.testVP9WebMCencSubSampleL1WithUHD60(WidevineVP9WebMPlaybackTests.java:234)
