@@ -1,0 +1,659 @@
+#!/bin/bash
+
+function get_dirs()
+{
+  cmdstart=`dirname $0|cut -c 1`
+  if  [ $cmdstart = '/' ]; then
+    scripts_dir=`dirname $0`
+  else
+    scripts_dir="`pwd`/`dirname $0`"
+  fi
+  work_dir=`pwd`
+}
+
+function usage()
+{
+  cat <<-EOF
+  usage: ./vendor/synaptics/build/build_androidtv <-p PRODUCT> [-m SDK_PATH] [-n JOB_NUM] [-s STEPS] [-c] [-h] [-e OVERRIDE]
+  -p PRODUCT    Select designate product config file
+  -m SDK_PATH   Where is synaptics-sdk
+  -n JOB_NUM    CPU number when compiling, default CPU number is 24.
+  -s STEPS      Allowed steps are sdk,install,prepare,patch,android,copy_result
+  -b VARIANT    Android build variant: "eng", "userdebug" or "user" "user_cl" "userdebug_cl"
+  -v BUILD_NUMBER
+  -c            Enable extra compiler checks
+  -e OVERRIDE   [optional]Select override config for vssdk
+  -h            Print help info.
+
+  Example:      ./vendor/synaptics/build/build_androidtv -p ./vendor/synaptics/sequoia/configs/sequoia -m sdk_path -e linux_debug
+EOF
+  exit 0
+}
+
+function build_patch()
+{
+  shellCheckCall cd $work_dir
+  shellCall repo forall -c "rm -rf .git/rebase-apply"
+  if [ -f $work_dir/vendor/synaptics/${target_device}/overlays/$config_name.apply_patches.sh ]; then
+    set_env
+    shellCheckCall $work_dir/vendor/synaptics/${target_device}/overlays/$config_name.apply_patches.sh
+  else
+    shellCheckCall echo "[NOTICE] Cannot find $config_name.apply_patches.sh, ignore"
+  fi
+}
+
+function build_extra()
+{
+  shellCheckCall cd $work_dir
+  if [ -f $work_dir/vendor/synaptics/${target_device}/overlays/$config_name.apply_patches.sh ]; then
+    set_env
+    shellCheckCall $work_dir/vendor/synaptics/${target_device}/overlays/$config_name.apply_patches.sh extra
+  else
+    shellCheckCall echo "[NOTICE] Cannot find $config_name.apply_patches.sh, ignore"
+  fi
+
+}
+function build_sdk()
+{
+  shellCheckCall cd $SDK_PATH
+  if [ "${clean_sdk}" == "yes" ]; then
+    rm -rf $SDK_PATH/out
+  fi
+  if [ "is$out_of_tree" != "is" ]; then
+    shellCheckCall make list-defconfigs EXTERNAL_TREE=./cust/${out_of_tree}
+  fi
+  if [ "${extended}" == "yes" ]; then
+    shellCheckCall make ${android_device}_defconfig ${sdk_override} -j$CPU_NUM
+  else
+    shellCheckCall make ${sdk_config} ${sdk_override} -j$CPU_NUM
+  fi
+  shellCheckCall make -j$CPU_NUM
+}
+
+function build_sdk64()
+{
+  shellCheckCall cd $SDK_PATH
+  if [ "${clean_sdk}" == "yes" ]; then
+    rm -rf $SDK_PATH/out
+  fi
+  if [ "is$out_of_tree" != "is" ]; then
+    shellCheckCall make list-defconfigs EXTERNAL_TREE=./cust/${out_of_tree}
+  fi
+  if [ "${extended}" == "yes" ]; then
+    shellCheckCall make ${android_device}_defconfig ${sdk_override} -j$CPU_NUM
+  else
+    shellCheckCall make ${sdk_config} ${sdk_override} -j$CPU_NUM
+  fi
+  shellCheckCall make -j$CPU_NUM
+}
+
+function build_sdk32()
+{
+  shellCheckCall cd $SDK_PATH
+  if [ "${clean_sdk}" == "yes" ]; then
+    rm -rf $SDK_PATH/out
+  fi
+  if [ "is$out_of_tree" != "is" ]; then
+    shellCheckCall make list-defconfigs EXTERNAL_TREE=./cust/${out_of_tree}
+  fi
+  if [ "${extended}" == "yes" ]; then
+    shellCheckCall make ${android_device}_defconfig ${sdk_override} -j$CPU_NUM
+  else
+    shellCheckCall make ${sdk_config} ${sdk_override} -j$CPU_NUM
+  fi
+  shellCheckCall make -j$CPU_NUM
+}
+
+
+function build_android()
+{
+  shellCheckCall cd $work_dir
+  if [ "${clean_android}" == "yes" ]; then
+    shellCheckCall rm ./out -rf
+  fi
+  set_env
+  if [ "${enable_static_analysis}" == "yes" ]; then
+    export RUN_ERROR_PRONE=true
+    export WITH_TIDY=true
+  fi
+  shellCheckCall make custom_images dist -j$CPU_NUM
+  shellCheckCall make dist -j$CPU_NUM
+  if [ "${enable_static_analysis}" == "yes" ]; then
+    python build/make/tools/warn.py $ErrorLogFile > $log_base_dir/build_android_warnings.html
+    out=out/target/product/${android_device}
+    shellCheckCall python vendor/synaptics/build/tasks/tools/check_dynsyms.py -b $out/vendor/bin/ -l $out/vendor/lib/ -l $out/system/lib/ -l $out/system/apex/com.android.vndk.current/lib/ -l $out/system/apex/com.android.neuralnetworks/lib/
+  fi
+}
+
+function build_install()
+{
+  shellCheckCall cd $work_dir
+  shellCheckCall ./vendor/synaptics/build/install_vssdk $work_dir ${target_device} $SDK_PATH
+}
+
+function build_install64()
+{
+  shellCheckCall cd $work_dir
+  shellCheckCall ./vendor/synaptics/build/install_vssdk64 $work_dir ${target_device} $SDK_PATH
+}
+
+function build_install32()
+{
+  shellCheckCall cd $work_dir
+  shellCheckCall ./vendor/synaptics/build/install_vssdk32 $work_dir ${target_device} $SDK_PATH
+}
+
+function build_prepare64()
+{
+    sed -i 's/32b/64b/g' $PRODUCT
+    build_prepare
+}
+
+function build_prepare32()
+{
+    sed -i 's/64b/32b/g' $PRODUCT
+    build_prepare
+}
+
+function build_prepare()
+{
+  shellCheckCall cd $work_dir
+  shellCheckCall rm -f vendor/synaptics/${target_device}/proprietary/BoardConfig-${android_product}.mk
+  shellCheckCall rm -f vendor/synaptics/${target_device}/products/device.mk
+  shellCheckCall rm -f vendor/synaptics/${target_device}/products/device-${android_product}.mk
+
+  if [ "${extended}" == "yes" ]; then
+    python3 vendor/synaptics/build/tasks/tools/prepare_profile.py -p vendor/synaptics/${target_device}/configs/$config_name -r $android_product -d $target_device -v vendor/synaptics -s $SDK_PATH -b ${sdk_config} -a ${android_first_api_level}
+  fi
+
+  if [ ! -f vendor/synaptics/${target_device}/proprietary/BoardConfig-${android_product}.mk ]; then
+    if [ -f $config_dir/boards/BoardConfig-$config_name.mk ]; then
+      shellCheckCall cp -Lrfv $config_dir/boards/BoardConfig-$config_name.mk vendor/synaptics/${target_device}/proprietary/BoardConfig-${android_product}.mk
+    fi
+  fi
+
+  if [ ! -f vendor/synaptics/${target_device}/products/device.mk ]; then
+    if [ -f $config_dir/boards/device-$config_name.mk ]; then
+      shellCheckCall cp -Lrfv $config_dir/boards/device-$config_name.mk vendor/synaptics/${target_device}/products/device.mk
+    fi
+  fi
+
+  if [ ! -f vendor/synaptics/${target_device}/products/device-${android_product}.mk ]; then
+    if [ -f $config_dir/boards/$config_name.mk ]; then
+      shellCheckCall cp -Lrfv $config_dir/boards/$config_name.mk vendor/synaptics/${target_device}/products/device-${android_product}.mk
+    fi
+  fi
+
+  if [ "${target_device}" != "${android_device}" ]; then
+    shellCheckCall cd device/synaptics
+    shellCheckCall rm -f ${android_device}
+    shellCheckCall ln -s ${target_device} ${android_device}
+  fi
+}
+
+# CONFIG_INNOPIATECH YHLEE
+function build_pack_IMTM840A()
+{
+	SOURCE_OTA=${work_dir}/out/dist/${android_product}-ota-${BUILD_NUMBER}.zip
+	SOURCE_FLASHING=${work_dir}/out/target/product/${android_device}/eMMCimg
+	SOURCE_TARGET_FILES=${work_dir}/out/dist/${android_product}-target_files-${BUILD_NUMBER}.zip
+	SOURCE_RESIGNED_TARGET_FILES=${work_dir}/out/dist/${android_product}-target_files-${BUILD_NUMBER}_resigned.zip
+
+	TARGET_DIR=${path_to_top}/images/${INNO_SW_VERSION}
+	TARGET_UNSIGNED_DIR=${TARGET_DIR}/unsigned
+	TARGET_SIGNED_DIR=${TARGET_DIR}/signed
+	TARGET_FACTORY_DIR=${TARGET_DIR}/factory
+
+	echo "INNO_PRODUCT: ${product}"
+	echo "INNO_SW_VERSION: ${INNO_SW_VERSION}"
+	echo "INNO_FACTORY: ${INNO_FACTORY}"
+
+	cd $work_dir
+	rm -rf ${TARGET_DIR}
+	mkdir -p ${TARGET_DIR}
+
+	set_env
+
+	if  [ "is$VARIANT" = "isuser" ]; then
+		android_certs=${work_dir}/vendor/innopia/security/
+		apex_certs=${work_dir}/vendor/innopia/security/
+		apex_signed_dir=${config_dir}/../build/${config_name}/images/apex-signed
+
+		rm -rf ${apex_signed_dir}
+		mkdir -p ${apex_signed_dir}/factory_img
+
+		# apex sign
+		shellCheckCall vendor/synaptics/build/tasks/tools/releasetools/sign_factory_image \
+			${work_dir} ${android_certs} ${apex_certs} ${android_product} ${apex_signed_dir}
+		mv ${apex_signed_dir}/signed-target_files.zip ${apex_signed_dir}/apex-signed-target_files.zip
+		mv ${apex_signed_dir}/signed-img.zip ${apex_signed_dir}/apex-signed-img.zip
+
+		# apex signed ota package
+		ota_from_target_files ${apex_signed_dir}/apex-signed-target_files.zip ${apex_signed_dir}/apex-signed-ota_update.zip
+
+		# apex signed eMMCimg
+		dest_emmc=${apex_signed_dir}/apex-eMMCimg
+		emmc_zip=$(basename $(ls out/dist/${android_product}-syna-image*.zip))
+		cp -r ${SOURCE_FLASHING} $dest_emmc
+		unzip ${apex_signed_dir}/apex-signed-img.zip -d $dest_emmc
+		for img in `find $dest_emmc -name *.img`
+		do
+			mv $img ${img%.img}.subimg
+		done
+		cd ${dest_emmc} && rm -rf \
+			super.subimg super_empty.subimg system.subimg system_dlkm.subimg system_ext.subimg \
+			product.subimg vendor.subimg system_other.subimg android-info.txt && cd -
+		python3 ./build/make/tools/releasetools/build_super_image.py \
+			-v ${apex_signed_dir}/apex-signed-target_files.zip ${dest_emmc}/super.subimg
+
+		# reset sources for MP sign
+		SOURCE_OTA=${work_dir}/${apex_signed_dir}/apex-signed-ota_update.zip
+		SOURCE_FLASHING=${work_dir}/${apex_signed_dir}/apex-eMMCimg
+		SOURCE_TARGET_FILES=${work_dir}/${apex_signed_dir}/apex-signed-target_files.zip
+		SOURCE_RESIGNED_TARGET_FILES=${work_dir}/${apex_signed_dir}/apex-signed-target_files_resigned.zip
+	fi
+
+	# unsigned
+	mkdir -p ${TARGET_UNSIGNED_DIR}
+	cp ${SOURCE_OTA} ${TARGET_UNSIGNED_DIR}/${INNO_SW_VERSION}_UNSIGNED.zip
+	cp -r ${SOURCE_FLASHING} ${TARGET_UNSIGNED_DIR}/eMMCimg_UNSIGNED
+	touch ${TARGET_UNSIGNED_DIR}/eMMCimg_UNSIGNED/+${INNO_SW_VERSION}_UNSIGNED
+	cd ${TARGET_UNSIGNED_DIR} && \
+		zip -r -1 -q ${INNO_SW_VERSION}_emmc_UNSIGNED.zip eMMCimg_UNSIGNED && cd -
+	mv ${TARGET_UNSIGNED_DIR}/eMMCimg_UNSIGNED ${TARGET_UNSIGNED_DIR}/${INNO_SW_VERSION}_eMMCimg_UNSIGNED
+
+	# signed
+	mkdir -p ${TARGET_SIGNED_DIR}
+	rm -rf ${SOURCE_RESIGNED_TARGET_FILES}
+	cd PRODUCTION_X && /usr/bin/python2.7 ./resign_from_target_files.py \
+		${SOURCE_TARGET_FILES} \
+		${SOURCE_RESIGNED_TARGET_FILES} --android_AB && cd -
+	ota_from_target_files \
+		${SOURCE_RESIGNED_TARGET_FILES} \
+		${TARGET_SIGNED_DIR}/${INNO_SW_VERSION}.zip
+	cd PRODUCTION_X && /usr/bin/python2.7 ./gen_production_image.py \
+		${SOURCE_FLASHING} \
+		--android_AB -o ${TARGET_SIGNED_DIR}/eMMCimg && cd -
+	touch ${TARGET_SIGNED_DIR}/eMMCimg/+${INNO_SW_VERSION}
+	if [ "is$VARIANT" = "isuser" ]; then
+		cd ${TARGET_UNSIGNED_DIR}/${INNO_SW_VERSION}_eMMCimg_UNSIGNED && \
+			zip -1 -q ${TARGET_SIGNED_DIR}/eMMCimg/factory.subimg \
+			bl.subimg fastboot.subimg fastlogo.subimg firmware.subimg key.subimg preboot.subimg && cd -
+	fi
+	cd ${TARGET_SIGNED_DIR} && \
+		zip -r -1 -q ${INNO_SW_VERSION}_emmc.zip eMMCimg && cd -
+	mv ${TARGET_SIGNED_DIR}/eMMCimg ${TARGET_SIGNED_DIR}/${INNO_SW_VERSION}_eMMCimg
+
+	# factory
+	if [ "${INNO_FACTORY}" = "Y" ]; then
+		mkdir -p ${TARGET_FACTORY_DIR}
+		cd PRODUCTION_X && /usr/bin/python2.7 ./gen_factory_image.py \
+			${SOURCE_FLASHING} \
+			--android_AB -o ${TARGET_FACTORY_DIR}/eMMCimg_FACTORY && cd -
+		touch ${TARGET_FACTORY_DIR}/eMMCimg_FACTORY/+${INNO_SW_VERSION}_eMMCimg_FACTORY
+		cd ${TARGET_FACTORY_DIR} && \
+			zip -r -1 -q ${INNO_SW_VERSION}_emmc_FACTORY.zip eMMCimg_FACTORY && cd -
+		mv ${TARGET_FACTORY_DIR}/eMMCimg_FACTORY ${TARGET_FACTORY_DIR}/${INNO_SW_VERSION}_eMMCimg_FACTORY
+	fi
+}
+# YHLEE
+
+# CONFIG_INNOPIATECH LEKAIL
+# khs971 fixed for apex
+function m8300_pack() {
+
+	TARGET_DIR=${path_to_top}/images/${INNO_SW_VERSION}
+	TARGET_UNSIGNED_DIR=${TARGET_DIR}/unsigned
+	TARGET_SIGNED_DIR=${TARGET_DIR}/signed
+	TARGET_FACTORY_DIR=${TARGET_DIR}/factory
+
+	echo "INNO_PRODUCT: ${product}"
+	echo "INNO_SW_VERSION: ${INNO_SW_VERSION}"
+	echo "INNO_FACTORY: ${INNO_FACTORY}"
+	echo "INNO_RECOVERY: ${INNO_RECOVERY}"
+
+	cd $work_dir
+	rm -rf ${TARGET_DIR}
+	mkdir -p ${TARGET_DIR}
+	Green='\033[0;32m'
+	Yellow='\033[0;33m'
+	NC='\033[0m'
+	
+	mkdir -p ${TARGET_UNSIGNED_DIR}
+	pushd $work_dir
+	image_location=$config_dir/../build/$config_name/release
+	target_files=""
+	
+	
+	
+	sync
+	
+	if  [ "is$VARIANT" = "isuser" ]; then
+    	# 1. re-signing apex to target_files when the build is user
+    	echo "build_apexsign_target_files"
+    	android_certs=$work_dir/build/target/product/security/
+		apex_certs=$work_dir/build/target/product/security/	
+		
+		# sign factory image
+		shellCheckCall rm -rf $image_location/signed/factory_img
+		shellCheckCall mkdir -p $image_location/signed/factory_img
+		shellCheckCall vendor/synaptics/build/tasks/tools/releasetools/sign_factory_image $work_dir $android_certs $apex_certs ${android_product} $image_location
+		
+    	sync
+    	mv $image_location/signed-target_files.zip $image_location/apex-signed-target_files.zip
+    	target_files=$image_location/apex-signed-target_files.zip
+	    	
+	    	        
+	   #2. make unsigned emmc image by apex-signed target file
+	    
+	    dest_emmc=$image_location/eMMCimg/eMMCimg
+	    shellCall rm -rf $dest_emmc
+	    
+	    shellCheckCall cp -rvfp out/target/product/${android_device}/eMMCimg $dest_emmc
+	    shellCheckCall unzip $image_location/signed-img.zip -d $dest_emmc
+	    for img in `find $dest_emmc -name *.img`
+	    do
+	        shellCheckCall mv $img ${img%.img}.subimg
+	    done
+	    shellCall rm -rf $image_location/signed-img.zip
+		if [ -f $image_location/eMMCimg/eMMCimg/super.subimg ]; then
+			shellCheckCall rm -rf $image_location/eMMCimg/eMMCimg/super.subimg
+			shellCheckCall rm -rf $image_location/eMMCimg/eMMCimg/super_empty.subimg
+			shellCheckCall rm -rf $image_location/eMMCimg/eMMCimg/system.subimg
+			shellCheckCall rm -rf $image_location/eMMCimg/eMMCimg/system_dlkm.subimg
+			shellCheckCall rm -rf $image_location/eMMCimg/eMMCimg/system_ext.subimg
+			shellCheckCall rm -rf $image_location/eMMCimg/eMMCimg/product.subimg
+			shellCheckCall rm -rf $image_location/eMMCimg/eMMCimg/vendor.subimg
+			shellCheckCall python3 ./build/make/tools/releasetools/build_super_image.py -v $target_files $image_location/eMMCimg/eMMCimg/super.subimg
+			#shellCheckCall rm -rf $image_location/unsigned/signed-target_files.zip
+		fi
+	
+		split_super_image_to_slices $image_location/eMMCimg/eMMCimg/
+	    	
+    else
+    	# 1. just copy the target files.
+    	echo "copy target_files"
+    	cp out/dist/*-target_files-*.zip $image_location/target_files.zip	
+    	target_files=$image_location/target_files.zip
+    	
+    	#2. eMMCimg folder is already created.
+    fi
+    
+    mkdir $image_location/factory_img
+	
+	shellCheckCall cd $work_dir
+	cp -r $image_location/eMMCimg ${TARGET_UNSIGNED_DIR}
+	mv ${TARGET_UNSIGNED_DIR}/eMMCimg ${TARGET_UNSIGNED_DIR}/eMMCimg_UNSIGNED
+	echo -e "${Green}===> UNSIGNED eMMCimg generated${NC}"
+	
+	
+	if  [ "is$VARIANT" = "isuser" ]; then
+		# 3. make unsigned ota package by apex-signed target file
+	
+		shellCheckCall rm -rf $image_location/over_air_img
+		shellCheckCall mkdir -p $image_location/over_air_img
+		ota_from_target_files  $target_files $image_location/over_air_img/signed-ota_update.zip
+	else
+		# 3. just copy unsigned ota package from dist.
+		cp -rf out/dist/${android_product}-ota-*.zip $config_dir/../build/$config_name/release/over_air_img/signed-ota_update.zip
+	fi
+    cp $image_location/over_air_img/signed-ota_update.zip ${TARGET_UNSIGNED_DIR}/${INNO_SW_VERSION}_UNSIGNED.zip
+
+
+	# 4. unsigned board image generation done. make signed board target image.
+	 
+	echo -e "${Green}===> UNSIGNED IMAGE GENERATION IS DONE => ${Yellow}${TARGET_UNSIGNED_DIR}${NC}"
+
+	if [ "${INNO_FACTORY}" = "Y" ]; then
+		mkdir -p ${TARGET_FACTORY_DIR}
+		cd ${post_processing_path} && \
+		./gen_innofactory_img.sh
+		mkdir -p ${TARGET_UNSIGNED_DIR}
+		mv ${release_emmc}/eMMCimg_Factory ${TARGET_UNSIGNED_DIR}/
+		touch ${TARGET_UNSIGNED_DIR}/eMMCimg_Factory/+${INNO_SW_VERSION}
+	fi
+
+	if [ "${INNO_RECOVERY}" = "Y" ]; then
+		cd ${post_processing_path} && \
+		./gen_innorecovery_img.sh
+		mkdir -p ${TARGET_SIGNED_DIR}
+		mv ${release_emmc}/eMMCimg_Recovery ${TARGET_SIGNED_DIR}/
+		touch ${TARGET_SIGNED_DIR}/eMMCimg_Recovery/+${INNO_SW_VERSION}
+	        echo -e "${Green}===> eMMC Image Signing is DONE => ${Yellow}${TARGET_SIGNED_DIR}/eMMCimg_Recovery${NC}"
+
+	fi
+
+	if [ "${INNO_OTA_SIGN}" = "Y" ]; then
+		mkdir -p ${TARGET_SIGNED_DIR}
+
+		cd ${path_to_android} && \
+		${post_processing_path}/resign_rootrsa_signk7_from_target_files.py \
+		--root-signk-store ${inno_sign_keys}/rootrsa_signk7.keystore \
+		$target_files \
+		${TARGET_SIGNED_DIR}/out_target.zip
+
+		echo ${TARGET_SIGNED_DIR}/out_target.zip
+		echo ${TARGET_SIGNED_DIR}/${INNO_SW_VERSION}.zip
+
+		set_env
+		cd ${path_to_android} && \
+		./build/tools/releasetools/ota_from_target_files.py \
+		--path ${path_to_android}/out \
+		--signapk_shared_library_path host/linux-x86/lib64 \
+		--signapk_path dist/signapk.jar \
+		${TARGET_SIGNED_DIR}/out_target.zip \
+		${TARGET_SIGNED_DIR}/${INNO_SW_VERSION}.zip
+		rm ${TARGET_SIGNED_DIR}/out_target.zip
+	        echo -e "${Green}===> OTA Signing is DONE => ${Yellow}${TARGET_SIGNED_DIR}/${INNO_SW_VERSION}.zip${NC}"
+	fi
+}
+
+#LEKAIL
+
+function build_copy_result()
+{
+  # CONFIG_INNOPIATECH YHLEE
+  if [ "${product}" = "IMTM840A" ]; then
+    return
+  fi
+
+  shellCheckCall cd $work_dir
+  shellCheckCall rm -rf $config_dir/../build/$config_name/release/*
+  shellCheckCall mkdir -p $config_dir/../build/$config_name/release/eMMCimg/ $config_dir/../build/$config_name/release/over_air_img/ $config_dir/../build/$config_name/release/factory_img/
+  shellCheckCall vendor/synaptics/build/tasks/tools/releasetools/generate_factory_image $work_dir $config_dir/../build/$config_name/release/factory_img/ ${android_product}
+  shellCheckCall cp -rf out/dist/factory_setting.img $config_dir/../build/$config_name/release/eMMCimg/factory_setting.subimg
+  #cp -rf out/dist/${android_product}-ota-*.zip $config_dir/../build/$config_name/release/over_air_img/
+  emmc_zip=$(ls out/dist/${android_product}-syna-image*.zip)
+  shellCheckCall unzip $emmc_zip -d $config_dir/../build/$config_name/release/eMMCimg/
+  split_super_image_to_slices $config_dir/../build/$config_name/release/eMMCimg/eMMCimg/
+
+  if [[ $product == IMTM8300* ]]; then
+    m8300_pack
+    return
+  fi
+
+  shellCheckCall cd $work_dir/$config_dir/../build/$config_name/release/eMMCimg/
+  shellCheckCall zip -r $(basename $emmc_zip) eMMCimg
+  # CONFIG_INNOPIATECH
+  OTA_FILE=$INNO_SW_VERSION.zip
+  EMMC_FILE=$INNO_SW_VERSION.emmc.zip
+  shellCheckCall mv ../over_air_img/${android_product}-ota-${BUILD_NUMBER}.zip ../over_air_img/$OTA_FILE
+  shellCheckCall mv $(basename $emmc_zip) $EMMC_FILE
+
+  shellCall rm -rf eMMCimg
+}
+
+function build_sign()
+{
+  # CONFIG_INNOPIATECH YHLEE
+  if [ "${product}" = "IMTM840A" ]; then
+    return
+  fi
+
+  set_env
+  android_certs=$work_dir/vendor/synaptics/build/tasks/tools/releasetools/android-certs/
+  apex_certs=$work_dir/vendor/synaptics/build/tasks/tools/releasetools/apex-certs/
+  image_location=$config_dir/../build/$config_name/release
+  shellCheckCall cd $work_dir
+  # sign factory image
+  shellCheckCall rm -rf $image_location/signed/factory_img
+  shellCheckCall mkdir -p $image_location/signed/factory_img
+  shellCheckCall vendor/synaptics/build/tasks/tools/releasetools/sign_factory_image $work_dir $android_certs $apex_certs ${android_product} $image_location/signed
+
+  # sign ota package
+  shellCheckCall rm -rf $image_location/signed/over_air_img
+  shellCheckCall mkdir -p $image_location/signed/over_air_img
+  ota_from_target_files  $image_location/signed/signed-target_files.zip $image_location/signed/over_air_img/signed-ota_update.zip
+
+  # signed eMMCimg
+  dest_emmc=$image_location/signed/eMMCimg
+  emmc_zip=$(basename $(ls out/dist/${android_product}-syna-image*.zip))
+  shellCall rm -rf $dest_emmc
+  shellCheckCall cp -rvfp out/target/product/${android_device}/eMMCimg $dest_emmc
+  shellCheckCall unzip $image_location/signed/signed-img.zip -d $dest_emmc
+  for img in `find $dest_emmc -name *.img`
+  do
+    shellCheckCall mv $img ${img%.img}.subimg
+  done
+  shellCall rm -rf $image_location/signed/signed-img.zip
+
+  if [ -f $image_location/signed/eMMCimg/super.subimg ]; then
+     shellCheckCall rm -rf $image_location/signed/eMMCimg/super.subimg
+     shellCheckCall rm -rf $image_location/signed/eMMCimg/super_empty.subimg
+     shellCheckCall rm -rf $image_location/signed/eMMCimg/system.subimg
+     shellCheckCall rm -rf $image_location/signed/eMMCimg/system_dlkm.subimg
+     shellCheckCall rm -rf $image_location/signed/eMMCimg/system_ext.subimg
+     shellCheckCall rm -rf $image_location/signed/eMMCimg/product.subimg
+     shellCheckCall rm -rf $image_location/signed/eMMCimg/vendor.subimg
+     shellCheckCall python3 ./build/make/tools/releasetools/build_super_image.py -v $image_location/signed/signed-target_files.zip $image_location/signed/eMMCimg/super.subimg
+     shellCheckCall rm -rf $image_location/signed/signed-target_files.zip
+  fi
+  split_super_image_to_slices $image_location/signed/eMMCimg/
+  shellCheckCall cd $work_dir/$image_location/signed
+  shellCall rm -f eMMCimg/android-info.txt
+  shellCheckCall zip -r $emmc_zip eMMCimg
+  shellCall rm -rf eMMCimg
+  shellCheckCall mkdir eMMCimg
+  shellCheckCall mv $emmc_zip eMMCimg/
+  # CONFIG_INNOPIATECH
+  EMMC_FILE=$INNO_SW_VERSION.emmc.zip
+  shellCheckCall mv eMMCimg/$(basename $emmc_zip) eMMCimg/$EMMC_FILE
+}
+
+main()
+{
+  get_dirs
+  . $scripts_dir/modules
+
+  SDK_PATH=""
+  PRODUCT=""
+  STEPS=""
+  CPU_NUM="12"
+  VARIANT=""
+  enable_static_analysis=""
+  sdk_override=""
+  while getopts m:p:s:n:t:b:v:e:ch arg
+    do case $arg in
+      m)  SDK_PATH=$OPTARG;;
+      p)  PRODUCT=$OPTARG;;
+      s)  STEPS=$OPTARG;;
+      n)  CPU_NUM=$OPTARG;;
+      b)  VARIANT=$OPTARG;;
+      v)  export BUILD_NUMBER=$OPTARG;;
+      c)  enable_static_analysis=yes;;
+      e)  sdk_override=$OPTARG;;
+      h)  usage
+          exit 0;;
+      *)  usage
+          exit 1;;
+    esac
+  done
+
+  if [ "is$PRODUCT" == "is" ]; then
+    usage
+    exit 1
+  fi
+
+  . $PRODUCT
+  if [ $? -ne 0 ] ; then
+    echo "[ERROR] can not read config file: $PRODUCT"
+    exit 1
+  fi
+
+  config_name=`basename $PRODUCT`
+  config_dir=`dirname $PRODUCT`
+
+  target_device=${android_device}
+  if [ "a$refer_device" != "a" ]; then
+    target_device=$refer_device
+  fi
+
+  # create log folder and clean it.
+  log_base_dir="$work_dir/$config_dir/../build/$config_name/log"
+  mkdir -p $log_base_dir
+  rm -f $log_base_dir/*
+
+  if [ "a$STEPS" = "a" ]; then
+    STEPS=$build_steps
+  fi
+
+  if [ "a$VARIANT" = "a" ]; then
+    VARIANT=${android_variant}
+  fi
+
+  local has_sdk=`echo "$STEPS" | grep sdk`
+  if [ "$has_sdk" != "" ] && [ "is$SDK_PATH" == "is" ]; then
+    echo "[ERROR] -m must be set to build synaptics-sdk"
+    exit 1
+  fi
+  
+  if  [ "is$VARIANT" = "isuser" ]; then
+    # CONFIG_INNOPIATECH
+    if [[ $product == IMTM8300* ]]; then
+	    :
+    else
+    	STEPS="$STEPS,sign"
+    fi
+  fi
+  
+  if  [ "is$VARIANT" = "isuser_cl" ]; then
+    # CONFIG_INNOPIATECH
+    if [[ $product == IMTM8300* ]]; then
+      :
+    else
+	  STEPS=`echo "$STEPS" | sed 's/patch/patch\,extra/g'`
+	  STEPS="$STEPS,sign"
+	fi
+	export MV_ENABLE_ADB_KEY=TRUE
+	VARIANT="user"
+  fi
+
+  # CONFIG_INNOPIATECH YHLEE
+  if [ "${product}" = "IMTM840A" ]; then
+    STEPS=`echo "$STEPS" | sed 's/patch/patch\,extra/g'`
+    STEPS="$STEPS,pack_${product}"
+  fi
+
+  if  [ "is$VARIANT" = "isuserdebug_cl" ]; then
+    STEPS=`echo "$STEPS" | sed 's/patch/patch\,extra/g'`
+    export MV_ENABLE_ADB_KEY=TRUE
+    VARIANT="userdebug"
+  fi
+
+  for step in `echo "$STEPS" | sed 's/,/\n/g'`
+    do
+      print_head "Begin build $step"
+      ErrorLogFile=$log_base_dir/build_$step.log
+      echo "log is generated in $ErrorLogFile"
+      echo "$step:build_$step.log" > $log_base_dir/current_step
+      timeStart=$(date +%s)
+      build_$step
+      timeEnd=$(date +%s)
+      delta=`expr $timeEnd - $timeStart`
+      echo "Time Elapsed $step: $delta"
+      print_tail "Finish $step"
+    done
+}
+
+main "$@"
+
