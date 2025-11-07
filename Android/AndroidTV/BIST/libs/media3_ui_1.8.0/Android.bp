@@ -1,0 +1,137 @@
+java_import {
+    name: "androidx_annotation_annotation_1_6_0",
+    jars: ["androidx.annotation.annotation-1.6.0.jar"],
+}
+
+android_library_import  {
+    name: "androidx_annotation_annotation_experimental_1_3_1_ui",
+    aars: ["androidx.annotation.annotation-experimental-1.3.1.aar"],
+}
+
+java_import {
+    name: "androidx_arch_core_core_common_2_1_0",
+    jars: ["androidx.arch.core.core-common-2.1.0.jar"],
+}
+
+android_library_import  {
+    name: "androidx_arch_core_core_runtime_2_1_0",
+    aars: ["androidx.arch.core.core-runtime-2.1.0.aar"],
+}
+
+java_import {
+    name: "androidx_collection_collection_1_0_0",
+    jars: ["androidx.collection.collection-1.0.0.jar"],
+}
+
+java_import {
+    name: "androidx_concurrent_concurrent_futures_1_0_0",
+    jars: ["androidx.concurrent.concurrent-futures-1.0.0.jar"],
+}
+
+android_library_import  {
+    name: "androidx_core_core_1_7_0",
+    aars: ["androidx.core.core-1.7.0.aar"],
+}
+
+android_library_import  {
+    name: "androidx_core_core_ktx_1_5_0",
+    aars: ["androidx.core.core-ktx-1.5.0.aar"],
+}
+
+android_library_import  {
+    name: "androidx_customview_customview_1_0_0",
+    aars: ["androidx.customview.customview-1.0.0.aar"],
+}
+
+android_library_import  {
+    name: "androidx_customview_customview_poolingcontainer_1_0_0",
+    aars: ["androidx.customview.customview-poolingcontainer-1.0.0.aar"],
+}
+
+java_import {
+    name: "androidx_lifecycle_lifecycle_common_2_5_1",
+    jars: ["androidx.lifecycle.lifecycle-common-2.5.1.jar"],
+}
+
+android_library_import  {
+    name: "androidx_lifecycle_lifecycle_runtime_2_3_1",
+    aars: ["androidx.lifecycle.lifecycle-runtime-2.3.1.aar"],
+}
+
+android_library_import  {
+    name: "androidx_media3_media3_common_1_8_0_ui",
+    aars: ["androidx.media3.media3-common-1.8.0.aar"],
+}
+
+android_library_import  {
+    name: "androidx_media3_media3_ui_1_8_0",
+    aars: ["androidx.media3.media3-ui-1.8.0.aar"],
+}
+
+android_library_import  {
+    name: "androidx_recyclerview_recyclerview_1_3_0",
+    aars: ["androidx.recyclerview.recyclerview-1.3.0.aar"],
+}
+
+android_library_import  {
+    name: "androidx_versionedparcelable_versionedparcelable_1_1_1",
+    aars: ["androidx.versionedparcelable.versionedparcelable-1.1.1.aar"],
+}
+
+java_import {
+    name: "com_google_guava_failureaccess_1_0_2_ui",
+    jars: ["com.google.guava.failureaccess-1.0.2.jar"],
+}
+
+java_import {
+    name: "com_google_guava_guava_33_3_1_android_ui",
+    jars: ["com.google.guava.guava-33.3.1-android.jar"],
+}
+
+java_import {
+    name: "com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava_ui",
+    jars: ["com.google.guava.listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"],
+}
+
+java_import {
+    name: "org_jetbrains_annotations_13_0_ui",
+    jars: ["org.jetbrains.annotations-13.0.jar"],
+}
+
+java_import {
+    name: "org_jetbrains_kotlin_kotlin_stdlib_1_8_0_ui",
+    jars: ["org.jetbrains.kotlin.kotlin-stdlib-1.8.0.jar"],
+}
+
+java_import {
+    name: "org_jetbrains_kotlin_kotlin_stdlib_common_1_8_0_ui",
+    jars: ["org.jetbrains.kotlin.kotlin-stdlib-common-1.8.0.jar"],
+}
+
+android_library {
+    name: "androidx.media3_media3-ui_dependencies",
+    static_libs: [
+        "androidx_annotation_annotation_1_6_0",
+        "androidx_annotation_annotation_experimental_1_3_1_ui",
+        "androidx_arch_core_core_common_2_1_0",
+        "androidx_arch_core_core_runtime_2_1_0",
+        "androidx_collection_collection_1_0_0",
+        "androidx_concurrent_concurrent_futures_1_0_0",
+        "androidx_core_core_1_7_0",
+        "androidx_core_core_ktx_1_5_0",
+        "androidx_customview_customview_1_0_0",
+        "androidx_customview_customview_poolingcontainer_1_0_0",
+        "androidx_lifecycle_lifecycle_common_2_5_1",
+        "androidx_lifecycle_lifecycle_runtime_2_3_1",
+        "androidx_media3_media3_common_1_8_0_ui",
+        "androidx_media3_media3_ui_1_8_0",
+        "androidx_recyclerview_recyclerview_1_3_0",
+        "androidx_versionedparcelable_versionedparcelable_1_1_1",
+        "com_google_guava_failureaccess_1_0_2_ui",
+        "com_google_guava_guava_33_3_1_android_ui",
+        "com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava_ui",
+        "org_jetbrains_annotations_13_0_ui",
+        "org_jetbrains_kotlin_kotlin_stdlib_1_8_0_ui",
+        "org_jetbrains_kotlin_kotlin_stdlib_common_1_8_0_ui",
+    ],
+}

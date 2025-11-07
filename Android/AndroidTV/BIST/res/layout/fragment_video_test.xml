@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/fragment_video_button_root"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:gravity="start"
+	android:orientation="vertical"
+	android:padding="10dp">
+
+	<TextView
+		android:id="@+id/tv_video_info_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="select video for play"
+		android:textColor="@color/white"
+		android:textSize="11sp"/>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		>
+		<LinearLayout
+			android:id="@+id/layout_video_buttons"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:orientation="vertical"
+			android:gravity="center"
+			android:layout_marginTop="18dp"/>
+
+		<androidx.media3.ui.PlayerView
+			android:id="@+id/player_view"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="3"
+			android:layout_marginTop="18dp">
+
+			<TextView
+				android:id="@+id/debug_text_view"
+				android:layout_width="200dp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="bottom|end"
+				android:gravity="start"
+				android:background="#80000000"
+				android:textColor="@color/white"
+				android:textSize="9sp"
+				android:padding="5dp" />
+		</androidx.media3.ui.PlayerView>
+	</LinearLayout>
+</LinearLayout>

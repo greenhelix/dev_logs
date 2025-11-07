@@ -1,0 +1,19 @@
+android_app {
+    name: "BIST",
+    srcs: ["src/**/*.java"],
+    resource_dirs: ["res"],
+    manifest: "AndroidManifest.xml",
+    static_libs: [
+        "androidx.appcompat_appcompat",
+        "androidx.startup_startup-runtime",
+        "androidx_media3_media3-exoplayer_dependencies",
+        "androidx.media3_media3-ui_dependencies",
+    ],
+    certificate: "platform",
+    dex_preopt: {
+        enabled: false,
+    },
+    system_ext_specific: true,
+    privileged: true,
+    platform_apis: true,
+}
