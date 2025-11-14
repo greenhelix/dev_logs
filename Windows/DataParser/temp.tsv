@@ -1,0 +1,12 @@
+armeabi-v7a CtsAppExitTestCases[instant]		
+Test	Result	Details
+android.app.cts.ActivityManagerAppExitInfoTest#testLmkdKill	fail	java.lang.AssertionError
+armeabi-v7a CtsHdmiCecHostTestCases		
+Test	Result	Details
+android.hdmicec.cts.common.HdmiCecSystemStandbyTest#cect_HandleBroadcastStandby	fail	com.android.tradefed.device.DeviceNotAvailableException[DEVICE_UNAVAILABLE|520750|LOST_SYSTEM_UNDER_TEST]: Could not find device 92210000003S70000005
+android.hdmicec.cts.playback.HdmiCecDeviceOsdNameTest#cect_11_2_11_1a_GiveOsdNameTest	fail	value of: trim()
+android.hdmicec.cts.playback.HdmiCecDeviceOsdNameTest#cectGiveOsdNameTestInStandby	fail	expected: MagentaTV Stic
+armeabi-v7a CtsHostsideNetworkTests[instant]		
+Test	Result	Details
+com.android.cts.net.HostsideRestrictBackgroundNetworkTests#testMeteredNetworkAccess_expeditedJob	fail	java.lang.AssertionError: on-device tests failed:
+com.android.cts.net.HostsideRestrictBackgroundNetworkTests#testNonMeteredNetworkAccess_expeditedJob	fail	java.lang.AssertionError: on-device tests failed:
