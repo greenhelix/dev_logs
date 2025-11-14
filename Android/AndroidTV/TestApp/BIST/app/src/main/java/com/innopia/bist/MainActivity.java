@@ -118,7 +118,8 @@ public class MainActivity extends AppCompatActivity {
 		checkAndRequestPermissions();
 
 		mainViewModel.appendLog(TAG, "Activity starting.");
-		mainViewModel.setSysInfo(getSysInfo());
+//		mainViewModel.setSysInfo(getSysInfo());
+		mainViewModel.setHwInfo(getHwInfo());
 		mainViewModel.setHwInfo(getHwInfo());
 
 		appUsbDetachReceiver = new BroadcastReceiver() {
@@ -552,14 +553,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void checkConfigAndStartAutoTests() {
-		// check whether config exists
-		Bundle config = FileUtils.getConfigValues(this.getApplicationContext(), "config.xml");
-		// if it exists, start auto tests
-		if (config == null) {
-			mainViewModel.appendLog(TAG, "config not found");
-			return;
-		}
-		mainViewModel.startAutoTest(config);
+		mainViewModel.startAutoTest(true);
 
 		// need to show a dialog saying running auto tests
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this)
@@ -569,7 +563,12 @@ public class MainActivity extends AppCompatActivity {
 		mAutoTestInProgressDialog = dialogBuilder.create();
 		mAutoTestInProgressDialog.show();
 
-		// TODO: able to be cancelable with back key
+		// check whether config exists
+		Bundle config = FileUtils.getConfigValues(this.getApplicationContext(), "config.xml");
+		// if it exists, start auto tests
+		if (config != null) {
+			mainViewModel.startAutoTest(config);
+		}
 	}
 
 	private void checkAndRequestPermissions() {
@@ -592,10 +591,10 @@ public class MainActivity extends AppCompatActivity {
 				.setTitle("Factory Reset")
 				.setMessage("Start Factory Reset?")
 				.setPositiveButton("Yes", (dialog, which) -> {
-					Intent intent = new Intent(Intent.ACTION_FACTORY_RESET);
-					intent.setPackage("android");
-					intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-					this.getApplicationContext().sendBroadcastAsUser(intent, new UserHandle(UserHandle.USER_CURRENT));
+//					Intent intent = new Intent(Intent.ACTION_FACTORY_RESET);
+//					intent.setPackage("android");
+//					intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+//					this.getApplicationContext().sendBroadcastAsUser(intent, new UserHandle(UserHandle.USER_CURRENT));
 				})
 				.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
 		AlertDialog dialog = dialogBuilder.create();

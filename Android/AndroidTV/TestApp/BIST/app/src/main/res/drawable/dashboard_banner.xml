@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 배경 그라디언트 -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="135"
+                android:startColor="#4CAF50"
+                android:centerColor="#45A049"
+                android:endColor="#388E3C"
+                android:type="linear"/>
+        </shape>
+    </item>
+
+    <!-- 오버레이 패턴 (선택사항) -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#20000000"/>
+        </shape>
+    </item>
+
+</layer-list>

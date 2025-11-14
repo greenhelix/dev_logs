@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 배경 요소 (overscan 밖에 배치 가능) -->
+
+    <!-- Overscan-safe 영역 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="27dp"
+        android:layout_marginBottom="27dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp">
+
+        <!-- TV 안전 영역 내부 UI 요소 -->
+
+    </RelativeLayout>
+</RelativeLayout>

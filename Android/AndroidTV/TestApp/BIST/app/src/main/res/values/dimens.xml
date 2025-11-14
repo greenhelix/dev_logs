@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Overscan margins -->
+    <dimen name="overscan_margin_top">27dp</dimen>
+    <dimen name="overscan_margin_bottom">27dp</dimen>
+    <dimen name="overscan_margin_start">48dp</dimen>
+    <dimen name="overscan_margin_end">48dp</dimen>
+
+    <!-- 카드 크기 -->
+    <dimen name="card_width">220dp</dimen>
+    <dimen name="card_height">300dp</dimen>
+    <dimen name="stats_card_width">280dp</dimen>
+    <dimen name="stats_card_height">160dp</dimen>
+
+    <!-- 간격 -->
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+
+    <!-- 텍스트 크기 -->
+    <dimen name="text_size_title">28sp</dimen>
+    <dimen name="text_size_subtitle">18sp</dimen>
+    <dimen name="text_size_body">16sp</dimen>
+    <dimen name="text_size_caption">14sp</dimen>
+</resources>

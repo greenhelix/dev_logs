@@ -11,9 +11,9 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.INetworkManagementService;
+//import android.os.INetworkManagementService;
+//import android.os.ServiceManager;
 import android.os.Looper;
-import android.os.ServiceManager;
 import android.util.Log;
 
 import com.innopia.bist.util.TestResult;
@@ -308,8 +308,8 @@ public class WifiTest implements Test {
 		Log.d(TAG, "configureEthernet : " + isUp);
 		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		IBinder binder = ServiceManager.getService(Context.NETWORKMANAGEMENT_SERVICE);
-		INetworkManagementService service = INetworkManagementService.Stub.asInterface(binder);
+//		IBinder binder = ServiceManager.getService(Context.NETWORKMANAGEMENT_SERVICE);
+//		INetworkManagementService service = INetworkManagementService.Stub.asInterface(binder);
 
 		String iface = "eth0";
 
@@ -319,13 +319,12 @@ public class WifiTest implements Test {
 
 		try {
 			// ServiceManager는 여전히 숨겨져 있으므로 리플렉션으로 호출
-			// 개새끼 코드 개같이 짜났네 시발럼이
 			Class<?> smClass = Class.forName("android.os.ServiceManager");
 			Method getServiceMethod = smClass.getMethod("getService", String.class);
-			IBinder binder = (IBinder) getServiceMethod.invoke(null, Context.NETWORKMANAGEMENT_SERVICE);
+//			IBinder binder = (IBinder) getServiceMethod.invoke(null, Context.NETWORKMANAGEMENT_SERVICE);
 
 			// AIDL을 추가했기 때문에 Stub.asInterface는 직접 호출 가능
-			INetworkManagementService networkManagementService = INetworkManagementService.Stub.asInterface(binder);
+//			INetworkManagementService networkManagementService = INetworkManagementService.Stub.asInterface(binder);
 
 		try {
 			//InterfaceConfiguration interfaceConfiguration = service.getInterfaceConfig(iface);
@@ -349,3 +348,4 @@ public class WifiTest implements Test {
             throw new RuntimeException(e);
         }
     }
+	}

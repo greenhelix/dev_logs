@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 포커스 상태 -->
+    <item android:state_focused="true">
+        <shape android:shape="oval">
+            <solid android:color="#4CAF50"/>
+        </shape>
+    </item>
+
+    <!-- 기본 상태 -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#3A3A3A"/>
+        </shape>
+    </item>
+
+</selector>

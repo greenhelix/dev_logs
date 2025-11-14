@@ -1,7 +1,9 @@
 # BIST 
 Built In Self Test
 
-MVVM (Model View ViewModel) Architecture 
+MVVM (Model View ViewModel) Architecture
+
+
 
 ## 코드 설명 
 - src 폴더 구성

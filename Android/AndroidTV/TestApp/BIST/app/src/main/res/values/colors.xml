@@ -16,4 +16,27 @@
 	<color name="purple">#7B12CC</color>
 	<color name="yellow">#FFEB3B</color>
 	<color name="normal">#777777</color>
+
+	<!-- 배경 색상 -->
+	<color name="background_dark">#1A1A1A</color>
+	<color name="card_background">#2A2A2A</color>
+
+	<!-- 텍스트 색상 -->
+	<color name="text_primary">#FFFFFF</color>
+	<color name="text_secondary">#AAAAAA</color>
+	<color name="text_tertiary">#888888</color>
+
+	<!-- 브랜드 색상 -->
+	<color name="brand_color">#4CAF50</color>
+	<color name="search_color">#2196F3</color>
+
+	<!-- 통계 색상 -->
+	<color name="stat_revenue">#4CAF50</color>
+	<color name="stat_users">#2196F3</color>
+	<color name="stat_orders">#FF9800</color>
+	<color name="stat_growth">#E91E63</color>
+
+	<!-- 포커스 색상 -->
+	<color name="focus_color">#4CAF50</color>
+	<color name="pressed_color">#30FFFFFF</color>
 </resources>

@@ -1,4 +1,19 @@
 <resources>
-    <string name="app_name">BIST</string>
+<!--    <string name="app_name">BIST</string>-->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="app_name">TV Dashboard</string>
+    <string name="dashboard_title">Analytics Dashboard</string>
+    <string name="search_hint">Search...</string>
+
+    <!-- 통계 라벨 -->
+    <string name="stat_revenue">Total Revenue</string>
+    <string name="stat_users">Active Users</string>
+    <string name="stat_orders">Total Orders</string>
+    <string name="stat_growth">Growth Rate</string>
+
+    <!-- 섹션 헤더 -->
+    <string name="header_statistics">Dashboard Statistics</string>
+    <string name="header_activity">Recent Activity</string>
+    <string name="header_analytics">Analytics</string>
 </resources>
