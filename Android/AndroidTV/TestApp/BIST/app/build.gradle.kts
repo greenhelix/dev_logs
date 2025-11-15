@@ -4,16 +4,28 @@ plugins {
 
 
 android {
-    namespace = "com.innopia.bist"
+    namespace = "com.innopia.bist.ver2"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.innopia.bist"
+        applicationId = "com.innopia.bist.ver2"
         minSdk = 31
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
+    }
+
+    flavorDimensions += "version"
+
+    productFlavors {
+        create("ver1") {
+            dimension = "version"
+            // ver1 전용 설정을 추가할 수 있습니다 (예: applicationIdSuffix ".ver1")
+        }
+        create ("ver2") {
+            dimension = "version"
+        }
     }
 
     buildTypes {
@@ -55,5 +67,8 @@ dependencies {
 
     // Glide (이미지 로딩)
     implementation ("com.github.bumptech.glide:glide:5.0.5")
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
 }

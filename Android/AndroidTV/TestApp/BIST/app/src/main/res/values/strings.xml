@@ -1,5 +1,5 @@
 <resources>
-<!--    <string name="app_name">BIST</string>-->
+    <!--    <string name="app_name">BIST</string>-->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="app_name">TV Dashboard</string>
@@ -16,4 +16,6 @@
     <string name="header_statistics">Dashboard Statistics</string>
     <string name="header_activity">Recent Activity</string>
     <string name="header_analytics">Analytics</string>
+    <string name="navigation_drawer_open">test</string>
+    <string name="navigation_drawer_close">close</string>
 </resources>

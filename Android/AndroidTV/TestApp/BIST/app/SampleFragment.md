@@ -1,9 +1,7 @@
-# Sample Fragment 
-
-
+# Sample Fragment
 
 ```java
-package com.innopia.bist.fragment;
+package com.innopia.bist.ver1.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,20 +10,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.innopia.bist.R;
-import com.innopia.bist.viewmodel.MainViewModel;
-import com.innopia.bist.viewmodel.SampleTestViewModel;
+import com.innopia.bist.ver1.viewmodel.MainViewModel;
+import com.innopia.bist.ver1.viewmodel.SampleTestViewModel;
 
 /**
  * Fragment for the Sample Test. It provides UI for user input and displays results.
  * It interacts with SampleTestViewModel.
  */
 public class SampleTestFragment extends Fragment {
-    
+
     private SampleTestViewModel viewModel;
     private EditText etTestInput;
     private TextView tvTestResult;
@@ -73,7 +73,7 @@ public class SampleTestFragment extends Fragment {
         });
 
         observeViewModel();
-        
+
         return rootView;
     }
 

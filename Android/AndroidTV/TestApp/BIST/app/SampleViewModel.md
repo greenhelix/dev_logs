@@ -1,12 +1,14 @@
 # Sample ViewModel
 
-
 ```java
-package com.innopia.bist.viewmodel;
+package com.innopia.bist.ver1.viewmodel;
 
 import android.app.Application;
+
 import androidx.annotation.NonNull;
-import com.innopia.bist.test.SampleTest;
+
+import com.innopia.bist.ver1.test.SampleTest;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -29,7 +31,7 @@ public class SampleTestViewModel extends BaseTestViewModel {
      */
     public void startManualTest(@NonNull String inputString) {
         mainViewModel.appendLog(getTag(), "Manual test started with input: " + inputString);
-        
+
         // The callback logic is handled by the base class, but you can customize it.
         // Here, we just define how to pass parameters.
         Consumer<String> callback = result -> {
@@ -37,16 +39,16 @@ public class SampleTestViewModel extends BaseTestViewModel {
             _testResultLiveData.postValue(result);
             mainViewModel.appendLog(getTag(), "Manual test finished. Result: " + result);
         };
-        
+
         // Prepare parameters for the test model.
         Map<String, Object> params = new HashMap<>();
         params.put("context", getApplication().getApplicationContext());
         params.put(SampleTest.PARAM_INPUT_STRING, inputString); // Add the custom parameter.
-        
+
         // Call the test model's execution method.
         testModel.runManualTest(params, callback);
     }
-    
+
     @Override
     protected String getTag() {
         return TAG;
