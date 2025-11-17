@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BIST Dashboard</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- 상태 정보 -->
+    <string name="status_online">Status: System Online</string>
+    <string name="last_update">Last Update: %1$s</string>
+    <string name="notice_maintenance">Notice: System maintenance scheduled</string>
+</resources>

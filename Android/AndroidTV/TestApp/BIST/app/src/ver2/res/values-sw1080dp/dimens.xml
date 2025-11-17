@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 1080p 기준 (1920x1080) -->
+    <dimen name="card_width">220dp</dimen>
+    <dimen name="card_height">150dp</dimen>
+    <dimen name="card_margin">12dp</dimen>
+    <dimen name="card_padding">8dp</dimen>
+    <dimen name="card_corner_radius">8dp</dimen>
+    <dimen name="card_elevation">6dp</dimen>
+    <dimen name="card_max_elevation">24dp</dimen>
+
+    <dimen name="card_image_height">75dp</dimen>
+    <dimen name="card_title_size">14sp</dimen>
+    <dimen name="card_subtitle_size">11sp</dimen>
+    <dimen name="card_text_margin_top">6dp</dimen>
+
+    <dimen name="recyclerview_padding">24dp</dimen>
+    <dimen name="info_card_margin">12dp</dimen>
+
+    <!-- AutoFit 계산용 -->
+    <dimen name="column_width">240dp</dimen>
+</resources>

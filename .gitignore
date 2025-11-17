@@ -922,3 +922,11 @@ AI/venv/Scripts/pip3.exe
 AI/venv/Scripts/python.exe
 AI/venv/Scripts/pythonw.exe
 LICENSE
+Android/AndroidTV/BIST/BIST.iml
+Android/AndroidTV/BIST/BIST.drawio.html
+Android/AndroidTV/BIST/.idea/vcs.xml
+Android/AndroidTV/BIST/.idea/modules.xml
+Android/AndroidTV/BIST/.idea/misc.xml
+Android/AndroidTV/BIST/.idea/libraries/media3_ui_1_8_0.xml
+Android/AndroidTV/BIST/.idea/libraries/media3_exoplayer_1_8_0.xml
+Android/AndroidTV/BIST/.idea/caches/deviceStreaming.xml

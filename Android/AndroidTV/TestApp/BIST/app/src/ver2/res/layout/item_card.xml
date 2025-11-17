@@ -1,27 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/card_margin"
     android:focusable="true"
-    android:backgroundTint="@color/white"
-    app:cardElevation="4dp">
+    android:clickable="true"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardElevation="@dimen/card_elevation"
+    app:cardMaxElevation="@dimen/card_max_elevation"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/card_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test A"
-            android:textSize="18sp"/>
+        <!-- 썸네일 이미지 -->
+        <ImageView
+            android:id="@+id/card_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/card_image_height"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_stats"
+            android:contentDescription="Card Image"
+            android:background="#E0E0E0"/>
+
+        <!-- 정보 영역 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="@dimen/card_padding"
+            android:gravity="center_vertical">
+
+            <!-- 타이틀 -->
+            <TextView
+                android:id="@+id/card_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:textSize="@dimen/card_title_size"
+                android:textStyle="bold"
+                android:paddingStart="5dp"
+                android:textColor="#000000"
+                android:maxLines="2"
+                android:ellipsize="end"/>
+
+            <!-- 서브타이틀 -->
+            <TextView
+                android:id="@+id/card_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:text="Subtitle"
+                android:textSize="@dimen/card_subtitle_size"
+                android:textColor="#666666"
+                android:layout_marginTop="@dimen/card_text_margin_top"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+        </LinearLayout>
+
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>
