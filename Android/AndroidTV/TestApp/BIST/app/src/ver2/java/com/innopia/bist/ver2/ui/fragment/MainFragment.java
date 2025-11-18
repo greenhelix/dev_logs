@@ -1,4 +1,4 @@
-package com.innopia.bist.ver2.fragment;
+package com.innopia.bist.ver2.ui.fragment;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -9,10 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-import com.innopia.bist.ver2.CardAdapter;
-import com.innopia.bist.ver2.CardItem;
+import com.innopia.bist.ver2.ui.adapter.CardAdapter;
+import com.innopia.bist.ver2.data.model.CardItem;
 import com.innopia.bist.ver2.R;
-import com.innopia.bist.ver2.fragment.Test1Fragment;
+import com.innopia.bist.ver2.ui.fragment.test.Test1Fragment;
+import com.innopia.bist.ver2.ui.fragment.test.Test2Fragment;
+import com.innopia.bist.ver2.ui.fragment.test.Test3Fragment;
 import com.innopia.bist.ver2.util.AutoFitGridLayoutManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,21 +79,40 @@ public class MainFragment extends Fragment {
      */
     private void handleCardClick(CardItem item) {
         String itemName = item.getText();
+        Fragment targetFragment = null;
 
-        if (itemName.equals("Test 1")) {
-            navigateToTest1Fragment();
-        } else {
-            Log.d(TAG, "Card " + itemName + " clicked - not implemented yet");
-            // TODO: 다른 Test Fragment 추가
+        switch (itemName) {
+            case "Test 1":
+                targetFragment = Test1Fragment.newInstance();
+                navigateToTestFragment(targetFragment);
+                break;
+
+            case "Test 2":
+                targetFragment = Test2Fragment.newInstance();
+                navigateToTestFragment(targetFragment);
+                break;
+
+            case "Test 3":
+                targetFragment = Test3Fragment.newInstance();
+                navigateToTestFragment(targetFragment);
+                break;
+
+//            case "HDMI Test": // ⭐ HDMI 테스트 (나중에 추가)
+//                targetFragment = HdmiTestFragment.newInstance();
+//                navigateToTestFragment(targetFragment);
+//                break;
+
+            default:
+                Log.d(TAG, "Card " + itemName + " clicked - not implemented yet");
+                // TODO: 나머지 Test Fragment 추가 예정
+                break;
         }
     }
 
     /**
-     * Test1Fragment로 이동
+     * TestFragment로 이동 Animation 효과 추가
      */
-    private void navigateToTest1Fragment() {
-        Fragment fragment = Test1Fragment.newInstance();
-
+    private void navigateToTestFragment(Fragment fragment) {
         getParentFragmentManager().beginTransaction()
                 .setCustomAnimations(
                         R.anim.fade_in,   // enter
@@ -103,6 +124,6 @@ public class MainFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
 
-        Log.d(TAG, "Navigated to Test1Fragment");
+        Log.d(TAG, "Navigated to TestFragment");
     }
 }

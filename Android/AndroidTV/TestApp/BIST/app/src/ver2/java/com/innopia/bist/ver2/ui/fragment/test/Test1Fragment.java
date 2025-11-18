@@ -1,4 +1,4 @@
-package com.innopia.bist.ver2.fragment;
+package com.innopia.bist.ver2.ui.fragment.test;
 
 import androidx.lifecycle.ViewModelProvider;
 import android.graphics.Color;
@@ -28,7 +28,6 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import com.innopia.bist.ver2.R;
-import com.innopia.bist.ver2.model.Test1;
 import com.innopia.bist.ver2.viewmodel.Test1ViewModel;
 
 import java.util.ArrayList;

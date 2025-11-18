@@ -5,6 +5,10 @@
     android:versionCode="2"
     android:versionName="14.0.1">
 
+    <!-- Test3 (네트워크 테스트)를 위한 권한 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
@@ -19,7 +23,7 @@
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         tools:ignore="MissingTvBanner">
 
-    <activity android:name="com.innopia.bist.ver2.MainActivity"
+    <activity android:name="com.innopia.bist.ver2.ui.activity.MainActivity"
         android:configChanges="keyboard|keyboardHidden|navigation|orientation|
 				screenLayout|screenSize|smallestScreenSize"
         android:enabled="true" android:exported="true"

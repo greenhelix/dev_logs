@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1a1a1a"
+    android:padding="24dp">
+
+    <!-- 타이틀 -->
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Performance Test (Memory &amp; CPU)"
+        android:textSize="24sp"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <!-- 상태 텍스트 -->
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ready to start performance test"
+        android:textSize="14sp"
+        android:textColor="#cccccc"
+        android:layout_marginBottom="8dp" />
+
+    <!-- 진행률 표시 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="0"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:textSize="14sp"
+            android:textColor="#ffffff"
+            android:layout_marginStart="12dp"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <!-- 중지 버튼 (위로 이동) -->
+    <Button
+        android:id="@+id/button_stop_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stop Test"
+        android:textSize="14sp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:enabled="false"
+        android:layout_marginBottom="12dp" />
+
+    <!-- 성능 차트 (크기 축소) -->
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/performance_chart"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginBottom="12dp"
+        android:background="#2a2a2a" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 메모리 테스트 섹션 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#2a2a2a"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Memory Performance Test"
+                    android:textSize="18sp"
+                    android:textColor="#4CAF50"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <Button
+                    android:id="@+id/button_memory_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start Memory Test"
+                    android:textSize="14sp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- 메모리 속도 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Memory Speed:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/memory_speed_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 전체 메모리 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Total Memory:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/memory_total_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 사용 중 메모리 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Used Memory:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/memory_used_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 사용 가능 메모리 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Available Memory:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/memory_available_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 메모리 사용률 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Memory Usage:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/memory_usage_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- CPU 테스트 섹션 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#2a2a2a"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CPU Performance Test"
+                    android:textSize="18sp"
+                    android:textColor="#2196F3"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <Button
+                    android:id="@+id/button_cpu_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start CPU Test"
+                    android:textSize="14sp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- 실행 시간 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Execution Time:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/cpu_time_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 초당 연산 횟수 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Operations/sec:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/cpu_ops_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- CPU 코어 수 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="CPU Cores:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/cpu_cores_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- CPU 사용률 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="CPU Usage:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/cpu_usage_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

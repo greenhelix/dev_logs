@@ -9,7 +9,7 @@
     android:background="@color/white"
     android:focusable="false"
     android:focusableInTouchMode="false"
-    tools:context=".fragment.Test1Fragment">
+    tools:context=".ui.fragment.test.Test1Fragment">
 
     <!-- 타이틀 -->
     <TextView

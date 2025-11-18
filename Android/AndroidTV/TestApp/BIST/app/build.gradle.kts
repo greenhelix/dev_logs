@@ -53,18 +53,17 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.appcompat)
-// Leanback 라이브러리 (필수)
-    implementation("androidx.leanback:leanback:1.0.0")
-// CardView
-    implementation("androidx.cardview:cardview:1.0.0")
-// Glide (이미지 로딩)
-    implementation("com.github.bumptech.glide:glide:4.15.1")
-// RecyclerView
-    implementation("androidx.recyclerview:recyclerview:1.3.0")
 
+    // Leanback 라이브러리 (필수)
+    implementation("androidx.leanback:leanback:1.0.0")
+    // CardView
+    implementation("androidx.cardview:cardview:1.0.0")
+    // Glide (이미지 로딩)
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    // RecyclerView
+    implementation("androidx.recyclerview:recyclerview:1.3.0")
     // MPAndroidChart
     implementation (libs.philjay.mpandroidchart)
-
     // Glide (이미지 로딩)
     implementation ("com.github.bumptech.glide:glide:5.0.5")
     implementation(libs.material)

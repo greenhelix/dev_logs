@@ -8,7 +8,7 @@
     android:background="@color/white"
     android:clipChildren="false"
     android:clipToPadding="false"
-    tools:context=".fragment.MainFragment">
+    tools:context=".ui.fragment.MainFragment">
 
     <!-- 상단 정보 뷰 -->
     <androidx.cardview.widget.CardView

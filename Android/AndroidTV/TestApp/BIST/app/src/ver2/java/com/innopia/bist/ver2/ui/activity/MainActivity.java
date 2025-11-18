@@ -1,4 +1,4 @@
-package com.innopia.bist.ver2;
+package com.innopia.bist.ver2.ui.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -13,7 +13,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.navigation.NavigationView;
-import com.innopia.bist.ver2.fragment.MainFragment;
+import com.innopia.bist.ver2.R;
+import com.innopia.bist.ver2.ui.fragment.MainFragment;
 import com.innopia.bist.ver2.util.OverscanHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         Log.d(TAG, "onBackPressed called, backStackCount: "
                 + getSupportFragmentManager().getBackStackEntryCount());
 

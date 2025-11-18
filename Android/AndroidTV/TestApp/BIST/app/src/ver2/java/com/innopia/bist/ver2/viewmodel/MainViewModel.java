@@ -3,7 +3,7 @@ package com.innopia.bist.ver2.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.innopia.bist.ver2.CardItem;
+import com.innopia.bist.ver2.data.model.CardItem;
 import java.util.ArrayList;
 import java.util.List;
 

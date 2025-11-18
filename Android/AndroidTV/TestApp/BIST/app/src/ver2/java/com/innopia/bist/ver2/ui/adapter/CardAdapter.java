@@ -1,4 +1,4 @@
-package com.innopia.bist.ver2;
+package com.innopia.bist.ver2.ui.adapter;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -11,6 +11,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.innopia.bist.ver2.R;
+import com.innopia.bist.ver2.data.model.CardItem;
+
 import java.util.List;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {

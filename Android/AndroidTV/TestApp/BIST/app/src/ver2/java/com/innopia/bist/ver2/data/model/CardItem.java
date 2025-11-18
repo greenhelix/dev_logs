@@ -1,4 +1,4 @@
-package com.innopia.bist.ver2;
+package com.innopia.bist.ver2.data.model;
 
 public class CardItem {
     private String text;

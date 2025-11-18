@@ -1,11 +1,28 @@
+armeabi-v7a CtsAppExitTestCases		
+Test	Result	Details
+android.app.cts.ActivityManagerAppExitInfoTest#testSecondaryUser	fail	java.lang.AssertionError: expected:&lt;1&gt; but was:&lt;3&gt;
 armeabi-v7a CtsAppExitTestCases[instant]		
 Test	Result	Details
-android.app.cts.ActivityManagerAppExitInfoTest#testLmkdKill	fail	java.lang.AssertionError
+android.app.cts.ActivityManagerAppExitInfoTest#testSecondaryUser	fail	java.lang.AssertionError: expected:&lt;2&gt; but was:&lt;3&gt;
 armeabi-v7a CtsHdmiCecHostTestCases		
 Test	Result	Details
-android.hdmicec.cts.common.HdmiCecSystemStandbyTest#cect_HandleBroadcastStandby	fail	com.android.tradefed.device.DeviceNotAvailableException[DEVICE_UNAVAILABLE|520750|LOST_SYSTEM_UNDER_TEST]: Could not find device 92210000003S70000005
+android.hdmicec.cts.common.HdmiCecSystemStandbyTest#cect_HandleBroadcastStandby	fail	MultipleFailureException, There were 2 errors:
+android.hdmicec.cts.common.HdmiCecSystemStandbyTest#cect_HandleAddressedStandby	fail	MultipleFailureException, There were 2 errors:
 android.hdmicec.cts.playback.HdmiCecDeviceOsdNameTest#cect_11_2_11_1a_GiveOsdNameTest	fail	value of: trim()
 android.hdmicec.cts.playback.HdmiCecDeviceOsdNameTest#cectGiveOsdNameTestInStandby	fail	expected: MagentaTV Stic
+android.hdmicec.cts.playback.HdmiCecPowerStatusTest#cect_hf4_6_7_setStreamPath_powerOn	fail	java.lang.Exception: Power status did not change to expected state.
+armeabi-v7a CtsMediaAudioTestCases		
+Test	Result	Details
+android.media.audio.cts.DirectAudioProfilesForAttributesTest#testCreateDirectAudioTracksOnlyForGetDirectProfilesForAttributes	fail	java.lang.AssertionError: Failed to create AudioTrack for attributes (AudioAttributes: usage=USAGE_UNKNOWN content=CONTENT_TYPE_UNKNOWN flags=0x800 tags= bundle=null) and audio format (AudioFormat: props=7 enc=19 chan=0xC chan_index=0x0 rate=48000) with exception (java.lang.UnsupportedOperationException: Cannot create AudioTrack)!
+armeabi-v7a CtsMediaAudioTestCases[instant]		
+Test	Result	Details
+android.media.audio.cts.DirectAudioProfilesForAttributesTest#testCreateDirectAudioTracksOnlyForGetDirectProfilesForAttributes	fail	java.lang.AssertionError: Failed to create AudioTrack for attributes (AudioAttributes: usage=USAGE_UNKNOWN content=CONTENT_TYPE_UNKNOWN flags=0x800 tags= bundle=null) and audio format (AudioFormat: props=7 enc=19 chan=0xC chan_index=0x0 rate=48000) with exception (java.lang.UnsupportedOperationException: Cannot create AudioTrack)!
+armeabi-v7a CtsOsHostTestCases		
+Test	Result	Details
+android.os.cts.InattentiveSleepTests#testInattentiveSleep_warningTiming	fail	java.lang.AssertionError: Warning dismissed early
+armeabi-v7a CtsOsHostTestCases[instant]		
+Test	Result	Details
+android.os.cts.InattentiveSleepTests#testInattentiveSleep_warningTiming	fail	java.lang.AssertionError: Warning dismissed early
 armeabi-v7a CtsHostsideNetworkTests[instant]		
 Test	Result	Details
 com.android.cts.net.HostsideRestrictBackgroundNetworkTests#testMeteredNetworkAccess_expeditedJob	fail	java.lang.AssertionError: on-device tests failed:

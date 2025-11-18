@@ -4,14 +4,14 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.innopia.bist.ver2.model.Test1;
+import com.innopia.bist.ver2.data.repository.Test1Repository;
 import java.util.List;
 
 public class Test1ViewModel extends ViewModel {
 
     private static final String TAG = "Test1ViewModel";
 
-    private final Test1 test1Model;
+    private final Test1Repository test1Model;
 
     // LiveData - 차트 데이터
     private final MutableLiveData<List<Float>> chartData = new MutableLiveData<>();
@@ -20,7 +20,7 @@ public class Test1ViewModel extends ViewModel {
     private final MutableLiveData<String> infoText = new MutableLiveData<>();
 
     // LiveData - 통계 데이터
-    private final MutableLiveData<Test1.DataStats> statsData = new MutableLiveData<>();
+    private final MutableLiveData<Test1Repository.DataStats> statsData = new MutableLiveData<>();
 
     // LiveData - 로딩 상태
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
@@ -29,7 +29,7 @@ public class Test1ViewModel extends ViewModel {
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
     public Test1ViewModel() {
-        test1Model = new Test1();
+        test1Model = new Test1Repository();
         infoText.setValue("Click button to load data");
     }
 
@@ -42,7 +42,7 @@ public class Test1ViewModel extends ViewModel {
         return infoText;
     }
 
-    public LiveData<Test1.DataStats> getStatsData() {
+    public LiveData<Test1Repository.DataStats> getStatsData() {
         return statsData;
     }
 
@@ -61,7 +61,7 @@ public class Test1ViewModel extends ViewModel {
         isLoading.setValue(true);
         infoText.setValue("Loading random data...");
 
-        test1Model.generateRandomData(new Test1.Test1Callback() {
+        test1Model.generateRandomData(new Test1Repository.Test1Callback() {
             @Override
             public void onDataGenerated(List<Float> data, String info) {
                 Log.d(TAG, "Data generated: " + data.size() + " points");
@@ -70,7 +70,7 @@ public class Test1ViewModel extends ViewModel {
                 infoText.setValue(info);
 
                 // 통계 계산
-                Test1.DataStats stats = new Test1.DataStats(data);
+                Test1Repository.DataStats stats = new Test1Repository.DataStats(data);
                 statsData.setValue(stats);
 
                 isLoading.setValue(false);
@@ -93,7 +93,7 @@ public class Test1ViewModel extends ViewModel {
         isLoading.setValue(true);
         infoText.setValue("Loading sales data...");
 
-        test1Model.generateSalesData(new Test1.Test1Callback() {
+        test1Model.generateSalesData(new Test1Repository.Test1Callback() {
             @Override
             public void onDataGenerated(List<Float> data, String info) {
                 Log.d(TAG, "Sales data loaded: " + data.size() + " points");
@@ -102,7 +102,7 @@ public class Test1ViewModel extends ViewModel {
                 infoText.setValue(info);
 
                 // 통계 계산
-                Test1.DataStats stats = new Test1.DataStats(data);
+                Test1Repository.DataStats stats = new Test1Repository.DataStats(data);
                 statsData.setValue(stats);
 
                 isLoading.setValue(false);

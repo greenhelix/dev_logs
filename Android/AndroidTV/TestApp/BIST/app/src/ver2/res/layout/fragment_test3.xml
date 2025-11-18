@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1a1a1a"
+    android:padding="24dp">
+
+    <!-- 타이틀 -->
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Network Speed Test"
+        android:textSize="24sp"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <!-- 상태 텍스트 -->
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ready to start network test"
+        android:textSize="14sp"
+        android:textColor="#cccccc"
+        android:layout_marginBottom="8dp" />
+
+    <!-- 진행률 표시 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="0"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:textSize="14sp"
+            android:textColor="#ffffff"
+            android:layout_marginStart="12dp"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <!-- 중지 버튼 (위로 이동) -->
+    <Button
+        android:id="@+id/button_stop_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stop Test"
+        android:textSize="14sp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:enabled="false"
+        android:layout_marginBottom="12dp" />
+
+    <!-- 연결 타입 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#2a2a2a"
+        android:padding="10dp"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Connection Type:"
+            android:textSize="14sp"
+            android:textColor="#cccccc" />
+
+        <TextView
+            android:id="@+id/connection_type_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unknown"
+            android:textSize="14sp"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 속도 차트 (크기 축소) -->
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/speed_chart"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginBottom="12dp"
+        android:background="#2a2a2a" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 다운로드 테스트 섹션 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#2a2a2a"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Download Speed Test"
+                    android:textSize="18sp"
+                    android:textColor="#4CAF50"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <Button
+                    android:id="@+id/button_download_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start Download Test"
+                    android:textSize="14sp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- 다운로드 속도 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Download Speed:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/download_speed_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 다운로드 데이터량 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Downloaded:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/download_bytes_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 다운로드 시간 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Time Taken:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/download_time_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 업로드 테스트 섹션 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#2a2a2a"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Upload Speed Test"
+                    android:textSize="18sp"
+                    android:textColor="#2196F3"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <Button
+                    android:id="@+id/button_upload_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start Upload Test"
+                    android:textSize="14sp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- 업로드 속도 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Upload Speed:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/upload_speed_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 업로드 데이터량 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Uploaded:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/upload_bytes_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 업로드 시간 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Time Taken:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/upload_time_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Ping 테스트 섹션 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#2a2a2a"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ping Test"
+                    android:textSize="18sp"
+                    android:textColor="#FF9800"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <Button
+                    android:id="@+id/button_ping_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start Ping Test"
+                    android:textSize="14sp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- 평균 Ping -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Average Ping:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/ping_average_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 성공 횟수 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Success Count:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/ping_success_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 전체 시도 횟수 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Total Attempts:"
+                        android:textSize="14sp"
+                        android:textColor="#cccccc" />
+
+                    <TextView
+                        android:id="@+id/ping_attempts_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
