@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Log.d(TAG, "onBackPressed called, backStackCount: "
                 + getSupportFragmentManager().getBackStackEntryCount());
 
@@ -96,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         // 3. MainFragment에서 Exit Dialog 표시
         Log.d(TAG, "Showing exit dialog");
         showExitDialog();
+        super.onBackPressed();
     }
 
     /**

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- 모든 도메인에 대해 cleartext(HTTP) 허용 (테스트용) -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- 특정 도메인만 허용하려면 -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">ipv4.download.thinkbroadband.com</domain>
+        <domain includeSubdomains="true">httpbin.org</domain>
+        <domain includeSubdomains="true">www.google.com</domain>
+        <domain includeSubdomains="true">speed.hetzner.de</domain>
+    </domain-config>
+</network-security-config>
