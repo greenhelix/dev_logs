@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1a1a1a"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Process Monitor"
+            android:textSize="22sp"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/button_stop_monitoring"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop"
+            android:textSize="14sp"
+            android:minWidth="100dp"
+            android:enabled="false" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ready"
+        android:textSize="14sp"
+        android:textColor="#cccccc"
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:orientation="vertical"
+            android:layout_marginEnd="12dp">
+
+            <com.github.mikephil.charting.charts.HorizontalBarChart
+                android:id="@+id/process_chart"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#2a2a2a" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Memory Info -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#2a2a2a"
+                    android:padding="14dp"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="System Memory"
+                        android:textSize="16sp"
+                        android:textColor="#FF9800"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="10dp" />
+
+                    <Button
+                        android:id="@+id/button_start_monitoring"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Start Monitoring"
+                        android:textSize="13sp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:layout_marginBottom="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Total:"
+                            android:textSize="13sp"
+                            android:textColor="#aaaaaa" />
+                        <TextView
+                            android:id="@+id/total_memory_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="13sp"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Used:"
+                            android:textSize="13sp"
+                            android:textColor="#aaaaaa" />
+                        <TextView
+                            android:id="@+id/used_memory_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="13sp"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Available:"
+                            android:textSize="13sp"
+                            android:textColor="#aaaaaa" />
+                        <TextView
+                            android:id="@+id/available_memory_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="13sp"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Top Processes -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#2a2a2a"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Top 5 Processes"
+                        android:textSize="16sp"
+                        android:textColor="#4CAF50"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="10dp" />
+
+                    <!-- Process 1 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:id="@+id/process1_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="--"
+                            android:textSize="12sp"
+                            android:textColor="#ffffff"
+                            android:ellipsize="end"
+                            android:maxLines="1" />
+                        <TextView
+                            android:id="@+id/process1_memory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="12sp"
+                            android:textColor="#FF5252"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Process 2 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:id="@+id/process2_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="--"
+                            android:textSize="12sp"
+                            android:textColor="#ffffff"
+                            android:ellipsize="end"
+                            android:maxLines="1" />
+                        <TextView
+                            android:id="@+id/process2_memory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="12sp"
+                            android:textColor="#FF9800"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Process 3 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:id="@+id/process3_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="--"
+                            android:textSize="12sp"
+                            android:textColor="#ffffff"
+                            android:ellipsize="end"
+                            android:maxLines="1" />
+                        <TextView
+                            android:id="@+id/process3_memory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="12sp"
+                            android:textColor="#FFC107"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Process 4 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:id="@+id/process4_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="--"
+                            android:textSize="12sp"
+                            android:textColor="#ffffff"
+                            android:ellipsize="end"
+                            android:maxLines="1" />
+                        <TextView
+                            android:id="@+id/process4_memory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="12sp"
+                            android:textColor="#8BC34A"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Process 5 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/process5_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="--"
+                            android:textSize="12sp"
+                            android:textColor="#ffffff"
+                            android:ellipsize="end"
+                            android:maxLines="1" />
+                        <TextView
+                            android:id="@+id/process5_memory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="12sp"
+                            android:textColor="#4CAF50"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</LinearLayout>

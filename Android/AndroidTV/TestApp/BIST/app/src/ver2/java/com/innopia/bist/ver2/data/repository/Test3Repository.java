@@ -14,15 +14,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 /**
  * Test3 - 네트워크 속도 측정 Repository
@@ -35,17 +28,11 @@ public class Test3Repository implements Test {
     private TestStatus currentStatus = TestStatus.IDLE;
     private boolean isTestRunning = false;
 
-//    // 테스트용 공개 파일 URL (약 10MB)
-//    private static final String DOWNLOAD_TEST_URL =
-//            "https://speed.hetzner.de/10MB.bin";
-    // 테스트용 공개 파일 URL - HTTP로 변경
+    // 테스트용 공개 파일 URL
     private static final String DOWNLOAD_TEST_URL =
             "http://ipv4.download.thinkbroadband.com/5MB.zip";
-    // 업로드 테스트용 엔드포인트
-//    private static final String UPLOAD_TEST_URL =
-//            "https://httpbin.org/post";
 
-    // 업로드 테스트용 엔드포인트 - HTTP로 변경
+    // 업로드 테스트용 엔드포인트
     private static final String UPLOAD_TEST_URL =
             "http://httpbin.org/post";
 
@@ -55,31 +42,6 @@ public class Test3Repository implements Test {
 
     public Test3Repository(Context context) {
         this.context = context.getApplicationContext();
-    }
-
-
-    /**
-     * SSL 인증서 검증 우회 (테스트 전용)
-     */
-    private void disableSSLVerification() {
-        try {
-            TrustManager[] trustAllCerts = new TrustManager[]{
-                    new X509TrustManager() {
-                        public X509Certificate[] getAcceptedIssuers() {
-                            return new X509Certificate[0];
-                        }
-                        public void checkClientTrusted(X509Certificate[] certs, String authType) {}
-                        public void checkServerTrusted(X509Certificate[] certs, String authType) {}
-                    }
-            };
-
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to disable SSL verification", e);
-        }
     }
 
     /**
@@ -106,10 +68,11 @@ public class Test3Repository implements Test {
                 connection.setConnectTimeout(15000);
                 connection.setReadTimeout(15000);
                 connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+                connection.setInstanceFollowRedirects(true);
                 connection.connect();
 
                 int responseCode = connection.getResponseCode();
-                Log.d(TAG, "Download test response code: " + responseCode);
+                Log.d(TAG, "Download response code: " + responseCode);
 
                 if (responseCode != HttpURLConnection.HTTP_OK) {
                     throw new Exception("Server returned code: " + responseCode);
@@ -117,8 +80,9 @@ public class Test3Repository implements Test {
 
                 long fileSize = connection.getContentLength();
                 if (fileSize <= 0) {
-                    fileSize = 10 * 1024 * 1024; // 기본 10MB로 설정
+                    fileSize = 5 * 1024 * 1024; // 5MB
                 }
+                Log.d(TAG, "File size: " + fileSize + " bytes");
 
                 input = connection.getInputStream();
                 handler.post(() -> callback.onTestProgress(20, "Downloading..."));
@@ -139,18 +103,15 @@ public class Test3Repository implements Test {
                     long currentTime = System.currentTimeMillis();
                     double elapsedSeconds = (currentTime - startTime) / 1000.0;
 
-                    // 0.5초마다 속도 업데이트
-                    if (currentTime - lastUpdateTime >= 500) {
-                        if (elapsedSeconds > 0) {
-                            double currentSpeed = (currentBytes / 1024.0 / 1024.0) / elapsedSeconds;
-                            speedData.add((float) currentSpeed);
+                    if (currentTime - lastUpdateTime >= 500 && elapsedSeconds > 0) {
+                        double currentSpeed = (currentBytes / 1024.0 / 1024.0) / elapsedSeconds;
+                        speedData.add((float) currentSpeed);
 
-                            handler.post(() -> {
-                                callback.onTestProgress(progress,
-                                        String.format(Locale.US, "Downloading: %.2f MB/s", currentSpeed));
-                                callback.onChartDataUpdate(new ArrayList<>(speedData));
-                            });
-                        }
+                        handler.post(() -> {
+                            callback.onTestProgress(progress,
+                                    String.format("Download: %.2f MB/s", currentSpeed));
+                            callback.onChartDataUpdate(new ArrayList<>(speedData));
+                        });
                         lastUpdateTime = currentTime;
                     }
                 }
@@ -158,6 +119,8 @@ public class Test3Repository implements Test {
                 long endTime = System.currentTimeMillis();
                 double totalTimeSeconds = (endTime - startTime) / 1000.0;
                 double downloadSpeedMbps = (totalBytesRead * 8.0 / 1024.0 / 1024.0) / totalTimeSeconds;
+
+                Log.d(TAG, "Download completed: " + totalBytesRead + " bytes in " + totalTimeSeconds + "s");
 
                 DownloadTestResult result = new DownloadTestResult();
                 result.downloadSpeed = downloadSpeedMbps;
@@ -170,25 +133,13 @@ public class Test3Repository implements Test {
                 handler.post(() -> callback.onDownloadTestCompleted(result));
 
             } catch (Exception e) {
-                Log.e(TAG, "Download test error: " + e.getClass().getName() + " - " + e.getMessage(), e);
+                Log.e(TAG, "Download test error", e);
                 currentStatus = TestStatus.ERROR;
-                String errorMsg = "Download failed: " + e.getMessage();
-                if (e instanceof java.net.UnknownHostException) {
-                    errorMsg = "Cannot reach server. Check network connection.";
-                } else if (e instanceof java.net.SocketTimeoutException) {
-                    errorMsg = "Connection timeout. Server not responding.";
-                } else if (e instanceof javax.net.ssl.SSLException) {
-                    errorMsg = "SSL certificate error. Try HTTP endpoint.";
-                }
-                final String finalError = errorMsg;
-                handler.post(() -> callback.onError(finalError));
+                String errorMsg = getErrorMessage(e);
+                handler.post(() -> callback.onError(errorMsg));
             } finally {
-                try {
-                    if (input != null) input.close();
-                    if (connection != null) connection.disconnect();
-                } catch (Exception e) {
-                    Log.e(TAG, "Error closing connection", e);
-                }
+                closeQuietly(input);
+                if (connection != null) connection.disconnect();
             }
         }).start();
     }
@@ -210,10 +161,10 @@ public class Test3Repository implements Test {
             OutputStream output = null;
 
             try {
-                handler.post(() -> callback.onTestProgress(10, "Preparing upload test..."));
+                handler.post(() -> callback.onTestProgress(10, "Preparing upload..."));
 
-                // 1MB 테스트 데이터 생성
-                int dataSize = 1024 * 1024; // 1MB
+                // 512KB 테스트 데이터 생성 (크기 축소)
+                int dataSize = 512 * 1024;
                 byte[] testData = new byte[dataSize];
                 for (int i = 0; i < dataSize; i++) {
                     testData[i] = (byte)(i % 256);
@@ -223,11 +174,12 @@ public class Test3Repository implements Test {
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
-                connection.setConnectTimeout(10000);
-                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(15000);
                 connection.setRequestProperty("Content-Type", "application/octet-stream");
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-                handler.post(() -> callback.onTestProgress(20, "Uploading test data..."));
+                handler.post(() -> callback.onTestProgress(20, "Uploading..."));
 
                 long startTime = System.currentTimeMillis();
                 output = connection.getOutputStream();
@@ -247,7 +199,6 @@ public class Test3Repository implements Test {
                     int progress = 20 + (currentChunk * 60 / totalChunks);
                     long currentTime = System.currentTimeMillis();
 
-                    // 0.5초마다 속도 업데이트
                     if (currentTime - lastUpdateTime >= 500) {
                         double elapsedSeconds = (currentTime - startTime) / 1000.0;
                         if (elapsedSeconds > 0) {
@@ -256,7 +207,7 @@ public class Test3Repository implements Test {
 
                             handler.post(() -> {
                                 callback.onTestProgress(progress,
-                                        String.format("Uploading: %.2f Mbps", currentSpeed));
+                                        String.format("Upload: %.2f Mbps", currentSpeed));
                                 callback.onChartDataUpdate(new ArrayList<>(speedData));
                             });
                         }
@@ -268,6 +219,8 @@ public class Test3Repository implements Test {
 
                 int responseCode = connection.getResponseCode();
                 long endTime = System.currentTimeMillis();
+
+                Log.d(TAG, "Upload response code: " + responseCode);
 
                 if (responseCode == HttpURLConnection.HTTP_OK) {
                     double totalTimeSeconds = (endTime - startTime) / 1000.0;
@@ -283,102 +236,17 @@ public class Test3Repository implements Test {
                     currentStatus = TestStatus.COMPLETED;
                     handler.post(() -> callback.onUploadTestCompleted(result));
                 } else {
-                    throw new Exception("Upload failed with response code: " + responseCode);
+                    throw new Exception("Upload failed with code: " + responseCode);
                 }
 
             } catch (Exception e) {
                 Log.e(TAG, "Upload test error", e);
                 currentStatus = TestStatus.ERROR;
-                handler.post(() -> callback.onError("Upload test failed: " + e.getMessage()));
+                String errorMsg = getErrorMessage(e);
+                handler.post(() -> callback.onError(errorMsg));
             } finally {
-                try {
-                    if (output != null) output.close();
-                    if (connection != null) connection.disconnect();
-                } catch (Exception e) {
-                    Log.e(TAG, "Error closing connection", e);
-                }
-            }
-        }).start();
-    }
-
-    /**
-     * Ping 테스트
-     */
-    public void testPing(Test3Callback callback) {
-        currentStatus = TestStatus.RUNNING;
-        isTestRunning = true;
-
-        new Thread(() -> {
-            try {
-                handler.post(() -> callback.onTestProgress(10, "Testing ping..."));
-
-                String host = "www.google.com";
-                int pingCount = 10;
-                long totalPingTime = 0;
-                int successCount = 0;
-
-                List<Float> pingData = new ArrayList<>();
-
-                for (int i = 0; i < pingCount && isTestRunning; i++) {
-                    long startTime = System.currentTimeMillis();
-
-                    try {
-                        URL url = new URL("https://" + host);
-                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                        connection.setRequestMethod("HEAD");
-                        connection.setConnectTimeout(5000);
-                        connection.connect();
-
-                        int responseCode = connection.getResponseCode();
-                        long endTime = System.currentTimeMillis();
-
-                        if (responseCode == HttpURLConnection.HTTP_OK) {
-                            long pingTime = endTime - startTime;
-                            totalPingTime += pingTime;
-                            successCount++;
-                            pingData.add((float) pingTime);
-                        }
-
-                        connection.disconnect();
-
-                        final int currentPing = i + 1;
-                        final long currentPingTime = endTime - startTime;
-                        int progress = 10 + (currentPing * 80 / pingCount);
-                        handler.post(() -> {
-                            callback.onTestProgress(progress,
-                                    "Ping test: " + currentPing + "/" + pingCount +
-                                            " (" + currentPingTime + " ms)");
-                            callback.onChartDataUpdate(new ArrayList<>(pingData));
-                        });
-
-                    } catch (Exception e) {
-                        Log.w(TAG, "Ping attempt " + (i + 1) + " failed", e);
-                        pingData.add(0f);
-                    }
-
-                    Thread.sleep(200);
-                }
-
-                if (successCount > 0) {
-                    long averagePing = totalPingTime / successCount;
-
-                    PingTestResult result = new PingTestResult();
-                    result.averagePing = averagePing;
-                    result.successCount = successCount;
-                    result.totalAttempts = pingCount;
-                    result.connectionType = getConnectionType();
-                    result.pingData = pingData;
-
-                    currentStatus = TestStatus.COMPLETED;
-                    handler.post(() -> callback.onPingTestCompleted(result));
-                } else {
-                    throw new Exception("All ping attempts failed");
-                }
-
-            } catch (Exception e) {
-                Log.e(TAG, "Ping test error", e);
-                currentStatus = TestStatus.ERROR;
-                handler.post(() -> callback.onError("Ping test failed: " + e.getMessage()));
+                closeQuietly(output);
+                if (connection != null) connection.disconnect();
             }
         }).start();
     }
@@ -569,9 +437,7 @@ public class Test3Repository implements Test {
         return currentStatus;
     }
 
-    /**
-     * Test3 전용 콜백 인터페이스
-     */
+    // 콜백 및 결과 클래스는 동일
     public interface Test3Callback {
         void onTestProgress(int progress, String message);
         void onChartDataUpdate(List<Float> data);
@@ -581,36 +447,27 @@ public class Test3Repository implements Test {
         void onError(String error);
     }
 
-    /**
-     * 다운로드 테스트 결과
-     */
     public static class DownloadTestResult {
-        public double downloadSpeed; // Mbps
+        public double downloadSpeed;
         public long totalBytes;
         public double totalTimeSeconds;
         public String connectionType;
-        public List<Float> speedData; // 차트용 데이터
+        public List<Float> speedData;
     }
 
-    /**
-     * 업로드 테스트 결과
-     */
     public static class UploadTestResult {
-        public double uploadSpeed; // Mbps
+        public double uploadSpeed;
         public long totalBytes;
         public double totalTimeSeconds;
         public String connectionType;
-        public List<Float> speedData; // 차트용 데이터
+        public List<Float> speedData;
     }
 
-    /**
-     * Ping 테스트 결과
-     */
     public static class PingTestResult {
-        public long averagePing; // ms
+        public long averagePing;
         public int successCount;
         public int totalAttempts;
         public String connectionType;
-        public List<Float> pingData; // 차트용 데이터
+        public List<Float> pingData;
     }
 }

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1a1a1a"
+    android:padding="20dp">
+
+    <!-- 헤더 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Storage Test"
+            android:textSize="22sp"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/button_stop_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop"
+            android:textSize="14sp"
+            android:minWidth="100dp"
+            android:enabled="false" />
+    </LinearLayout>
+
+    <!-- 상태 및 진행률 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ready"
+            android:textSize="14sp"
+            android:textColor="#cccccc" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:max="100"
+            android:progress="0"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/progress_text"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:textSize="14sp"
+            android:textColor="#ffffff"
+            android:gravity="end"
+            android:layout_marginStart="8dp"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <!-- 메인 컨텐츠 (2컬럼) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <!-- 왼쪽: Pie Chart (60%) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:orientation="vertical"
+            android:layout_marginEnd="12dp">
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/storage_chart"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#2a2a2a" />
+        </LinearLayout>
+
+        <!-- 오른쪽: 정보 (40%) -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Internal Storage -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#2a2a2a"
+                    android:padding="14dp"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Internal Storage"
+                        android:textSize="16sp"
+                        android:textColor="#FF9800"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="10dp" />
+
+                    <Button
+                        android:id="@+id/button_start_test"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Check Storage"
+                        android:textSize="13sp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:layout_marginBottom="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Total:"
+                            android:textSize="13sp"
+                            android:textColor="#aaaaaa" />
+                        <TextView
+                            android:id="@+id/storage_total_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="13sp"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Used:"
+                            android:textSize="13sp"
+                            android:textColor="#aaaaaa" />
+                        <TextView
+                            android:id="@+id/storage_used_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="13sp"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Free:"
+                            android:textSize="13sp"
+                            android:textColor="#aaaaaa" />
+                        <TextView
+                            android:id="@+id/storage_free_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="13sp"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Status:"
+                            android:textSize="13sp"
+                            android:textColor="#aaaaaa" />
+                        <TextView
+                            android:id="@+id/storage_status_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="13sp"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- External Storage -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#2a2a2a"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="External Storage"
+                        android:textSize="16sp"
+                        android:textColor="#9C27B0"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Total:"
+                            android:textSize="13sp"
+                            android:textColor="#aaaaaa" />
+                        <TextView
+                            android:id="@+id/external_total_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="13sp"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Used:"
+                            android:textSize="13sp"
+                            android:textColor="#aaaaaa" />
+                        <TextView
+                            android:id="@+id/external_used_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="13sp"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Free:"
+                            android:textSize="13sp"
+                            android:textColor="#aaaaaa" />
+                        <TextView
+                            android:id="@+id/external_free_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="13sp"
+                            android:textColor="#ffffff"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</LinearLayout>
