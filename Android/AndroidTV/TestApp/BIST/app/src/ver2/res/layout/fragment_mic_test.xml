@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1a1a1a"
+    android:padding="20dp">
+
+    <!-- 상단 타이틀 영역 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Multi-Mic Test"
+            android:textSize="22sp"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/button_stop_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop"
+            android:enabled="false" />
+    </LinearLayout>
+
+    <!-- 메인 컨텐츠: 좌측(그래프) / 우측(개별 볼륨 게이지) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <!-- [좌측] 실시간 라인 차트 (전체 흐름) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:orientation="vertical"
+            android:layout_marginEnd="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History Graph (10s)"
+                android:textColor="#aaaaaa"
+                android:textSize="12sp"
+                android:layout_marginBottom="4dp"/>
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/volume_chart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#2a2a2a" />
+        </LinearLayout>
+
+        <!-- [우측] 개별 마이크 볼륨 게이지 (실시간) -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:background="#2a2a2a"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/button_mic_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start Test"
+                    android:layout_marginBottom="15dp" />
+
+                <Button
+                    android:id="@+id/button_fake_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Run Simulation (Fake Data)"
+                    android:backgroundTint="#555555"
+                    android:textColor="#ffffff"
+                    android:layout_marginBottom="15dp" />
+
+                <!-- Mic 1 -->
+                <TextView
+                    android:text="MIC 1 (Main)"
+                    android:textColor="#FF5252"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ProgressBar
+                        android:id="@+id/progress_mic_1"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:max="100"
+                        android:progress="0"
+                        android:layout_marginEnd="8dp"/>
+                    <TextView
+                        android:id="@+id/text_db_mic_1"
+                        android:text="0 dB"
+                        android:textColor="#ffffff"
+                        android:textSize="12sp"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="10dp"/>
+
+                <!-- Mic 2 -->
+                <TextView
+                    android:text="MIC 2"
+                    android:textColor="#4CAF50"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ProgressBar
+                        android:id="@+id/progress_mic_2"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:max="100"
+                        android:progress="0"
+                        android:layout_marginEnd="8dp"/>
+                    <TextView
+                        android:id="@+id/text_db_mic_2"
+                        android:text="0 dB"
+                        android:textColor="#ffffff"
+                        android:textSize="12sp"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="10dp"/>
+
+                <!-- Mic 3 -->
+                <TextView
+                    android:text="MIC 3"
+                    android:textColor="#448AFF"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ProgressBar
+                        android:id="@+id/progress_mic_3"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:max="100"
+                        android:progress="0"
+                        android:layout_marginEnd="8dp"/>
+                    <TextView
+                        android:id="@+id/text_db_mic_3"
+                        android:text="0 dB"
+                        android:textColor="#ffffff"
+                        android:textSize="12sp"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="10dp"/>
+
+                <!-- Mic 4 -->
+                <TextView
+                    android:text="MIC 4"
+                    android:textColor="#FFC107"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ProgressBar
+                        android:id="@+id/progress_mic_4"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:max="100"
+                        android:progress="0"
+                        android:layout_marginEnd="8dp"/>
+                    <TextView
+                        android:id="@+id/text_db_mic_4"
+                        android:text="0 dB"
+                        android:textColor="#ffffff"
+                        android:textSize="12sp"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</LinearLayout>

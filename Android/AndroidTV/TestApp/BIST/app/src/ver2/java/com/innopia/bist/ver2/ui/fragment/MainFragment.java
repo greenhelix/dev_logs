@@ -64,20 +64,21 @@ public class MainFragment extends Fragment {
         List<CardItem> cardItems = new ArrayList<>();
 
         // 실제 구현된 테스트들
-        cardItems.add(new CardItem("Display Test"));      // Test 1
-        cardItems.add(new CardItem("Memory Test"));       // Test 2
-        cardItems.add(new CardItem("CPU Test"));          // Test 3
-        cardItems.add(new CardItem("Network Test"));      // Test 4
-        cardItems.add(new CardItem("Storage Test"));      // Test 5
-        cardItems.add(new CardItem("Bluetooth Test"));    // Test 6
-        cardItems.add(new CardItem("WiFi Test"));         // Test 7
-        cardItems.add(new CardItem("Process Monitor"));   // Test 8
-        cardItems.add(new CardItem("RCU Button Test"));   // Test 9
-        cardItems.add(new CardItem("Video Test"));        // Test 10
-        cardItems.add(new CardItem("Temperature Test"));  // Test 11
+        cardItems.add(new CardItem("Display Test"));      // Test 0
+        cardItems.add(new CardItem("Memory Test"));       // Test 1
+        cardItems.add(new CardItem("CPU Test"));          // Test 2
+        cardItems.add(new CardItem("Network Test"));      // Test 3
+        cardItems.add(new CardItem("Storage Test"));      // Test 4
+        cardItems.add(new CardItem("Bluetooth Test"));    // Test 5
+        cardItems.add(new CardItem("WiFi Test"));         // Test 6
+        cardItems.add(new CardItem("Process Monitor"));   // Test 7
+        cardItems.add(new CardItem("RCU Button Test"));   // Test 8
+        cardItems.add(new CardItem("Video Test"));        // Test 9
+        cardItems.add(new CardItem("Temperature Test"));  // Test 10
+        cardItems.add(new CardItem("Mic Test"));          // Test 11
 
         // 나머지는 향후 구현 예정
-        for (int i = 12; i <= 28; i++) {
+        for (int i = 13; i <= 28; i++) {
             cardItems.add(new CardItem("Test " + i));
         }
 
@@ -89,6 +90,9 @@ public class MainFragment extends Fragment {
         Fragment targetFragment = null;
 
         switch (itemName) {
+            case "Mic Test":
+                targetFragment = MicTestFragment.newInstance();
+                break;
             case "Display Test":
                 targetFragment = Test1Fragment.newInstance();
                 break;
