@@ -117,3 +117,9 @@ com.innopia.bist.ver2
 ### 4️⃣ 레이아웃 파일 생성 (선택사항)
 **위치:** `res/layout/`  
 **파일명:** `fragment_[테스트명].xml`
+
+### 5️⃣ MainFragment에 cardItem 추가
+**위치:** `ui/fragment/`
+**파일명:** `MainFragment.java`
+- generateSampleData()에 CardItem 추가 -> Main 화면 에서 카드 생성 부분
+- handleCardClick()에 case 추가 -> Fragment와 연결 부분

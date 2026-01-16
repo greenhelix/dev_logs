@@ -104,7 +104,7 @@ public class MicTestFragment extends Fragment {
             buttonMicTest.setEnabled(!isLoading);
             buttonFakeTest.setEnabled(!isLoading); // 시뮬레이션 버튼도 제어
             buttonStopTest.setEnabled(isLoading);
-p        });
+        });
     }
 
     private void initViews(View root) {
