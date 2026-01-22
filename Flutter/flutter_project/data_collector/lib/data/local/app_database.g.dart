@@ -3,7 +3,7 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
-class $PeopleTable extends People with TableInfo<$PeopleTable, PeopleData> {
+class $PeopleTable extends People with TableInfo<$PeopleTable, Person> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -43,7 +43,7 @@ class $PeopleTable extends People with TableInfo<$PeopleTable, PeopleData> {
   String get actualTableName => $name;
   static const String $name = 'people';
   @override
-  VerificationContext validateIntegrity(Insertable<PeopleData> instance,
+  VerificationContext validateIntegrity(Insertable<Person> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -72,9 +72,9 @@ class $PeopleTable extends People with TableInfo<$PeopleTable, PeopleData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  PeopleData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Person map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return PeopleData(
+    return Person(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
@@ -98,13 +98,13 @@ class $PeopleTable extends People with TableInfo<$PeopleTable, PeopleData> {
       const JsonConverter();
 }
 
-class PeopleData extends DataClass implements Insertable<PeopleData> {
+class Person extends DataClass implements Insertable<Person> {
   final String id;
   final String name;
   final int? age;
   final String? photoUrl;
   final Map<String, dynamic> attributes;
-  const PeopleData(
+  const Person(
       {required this.id,
       required this.name,
       this.age,
@@ -140,10 +140,10 @@ class PeopleData extends DataClass implements Insertable<PeopleData> {
     );
   }
 
-  factory PeopleData.fromJson(Map<String, dynamic> json,
+  factory Person.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return PeopleData(
+    return Person(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       age: serializer.fromJson<int?>(json['age']),
@@ -163,21 +163,21 @@ class PeopleData extends DataClass implements Insertable<PeopleData> {
     };
   }
 
-  PeopleData copyWith(
+  Person copyWith(
           {String? id,
           String? name,
           Value<int?> age = const Value.absent(),
           Value<String?> photoUrl = const Value.absent(),
           Map<String, dynamic>? attributes}) =>
-      PeopleData(
+      Person(
         id: id ?? this.id,
         name: name ?? this.name,
         age: age.present ? age.value : this.age,
         photoUrl: photoUrl.present ? photoUrl.value : this.photoUrl,
         attributes: attributes ?? this.attributes,
       );
-  PeopleData copyWithCompanion(PeopleCompanion data) {
-    return PeopleData(
+  Person copyWithCompanion(PeopleCompanion data) {
+    return Person(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       age: data.age.present ? data.age.value : this.age,
@@ -189,7 +189,7 @@ class PeopleData extends DataClass implements Insertable<PeopleData> {
 
   @override
   String toString() {
-    return (StringBuffer('PeopleData(')
+    return (StringBuffer('Person(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('age: $age, ')
@@ -204,7 +204,7 @@ class PeopleData extends DataClass implements Insertable<PeopleData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is PeopleData &&
+      (other is Person &&
           other.id == this.id &&
           other.name == this.name &&
           other.age == this.age &&
@@ -212,7 +212,7 @@ class PeopleData extends DataClass implements Insertable<PeopleData> {
           other.attributes == this.attributes);
 }
 
-class PeopleCompanion extends UpdateCompanion<PeopleData> {
+class PeopleCompanion extends UpdateCompanion<Person> {
   final Value<String> id;
   final Value<String> name;
   final Value<int?> age;
@@ -237,7 +237,7 @@ class PeopleCompanion extends UpdateCompanion<PeopleData> {
   })  : id = Value(id),
         name = Value(name),
         attributes = Value(attributes);
-  static Insertable<PeopleData> custom({
+  static Insertable<Person> custom({
     Expression<String>? id,
     Expression<String>? name,
     Expression<int>? age,
@@ -1118,14 +1118,14 @@ class $$PeopleTableAnnotationComposer
 class $$PeopleTableTableManager extends RootTableManager<
     _$AppDatabase,
     $PeopleTable,
-    PeopleData,
+    Person,
     $$PeopleTableFilterComposer,
     $$PeopleTableOrderingComposer,
     $$PeopleTableAnnotationComposer,
     $$PeopleTableCreateCompanionBuilder,
     $$PeopleTableUpdateCompanionBuilder,
-    (PeopleData, BaseReferences<_$AppDatabase, $PeopleTable, PeopleData>),
-    PeopleData,
+    (Person, BaseReferences<_$AppDatabase, $PeopleTable, Person>),
+    Person,
     PrefetchHooks Function()> {
   $$PeopleTableTableManager(_$AppDatabase db, $PeopleTable table)
       : super(TableManagerState(
@@ -1179,14 +1179,14 @@ class $$PeopleTableTableManager extends RootTableManager<
 typedef $$PeopleTableProcessedTableManager = ProcessedTableManager<
     _$AppDatabase,
     $PeopleTable,
-    PeopleData,
+    Person,
     $$PeopleTableFilterComposer,
     $$PeopleTableOrderingComposer,
     $$PeopleTableAnnotationComposer,
     $$PeopleTableCreateCompanionBuilder,
     $$PeopleTableUpdateCompanionBuilder,
-    (PeopleData, BaseReferences<_$AppDatabase, $PeopleTable, PeopleData>),
-    PeopleData,
+    (Person, BaseReferences<_$AppDatabase, $PeopleTable, Person>),
+    Person,
     PrefetchHooks Function()>;
 typedef $$NewsLogsTableCreateCompanionBuilder = NewsLogsCompanion Function({
   required String id,

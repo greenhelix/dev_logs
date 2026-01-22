@@ -140,3 +140,58 @@ final databaseProvider = Provider<AppDatabase>((ref) {
 ```
 
 이제 앱 어디서든 ref.read(databaseProvider)라고 외치면, 이 배급소에서 만들어둔 데이터베이스 리모컨을 건네줍니다. 이것을 **의존성 주입(Dependency Injection)**이라고 합니다.
+
+
+```
+flutter clean
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs
+```
+delete-conflicting-outputs: 기존에 잘못 생성된 파일(app_database.g.dart)을 강제로 지우고 다시 만듭니다.
+
+
+## 📅 Development Log (중간 점검)
+[2026-01-22] 1단계: 프로젝트 기본 구조 및 인물 위키 완성
+✅ 완료된 작업 (Accomplished)
+프로젝트 아키텍처 수립
+
+Architecture: Feature-first (기능 단위 폴더 구조)
+
+State Management: Riverpod (Provider)
+
+Database: Drift (SQLite) - 플랫폼별(Web/Native) 연결 분리 구현 완료
+
+Router: GoRouter (화면 이동 관리)
+
+핵심 인프라 구축
+
+lib/data/local/: Drift DB 스키마 정의 (Person, News, Map)
+
+lib/data/local/connection/: Web과 Native 환경을 구분하는 DB 연결 로직 분리
+
+기능 1: 인물 위키 (Person Wiki)
+
+Repository: PersonRepository (DB CRUD 작업)
+
+UI: PersonListScreen (인물 목록 조회, 추가, Null Safety 처리 완료)
+
+Routing: 홈 화면 -> 인물 위키 화면 연결
+
+🚧 현재 상태 (Status)
+빌드 환경: macOS (성공 ✅), Chrome (설정 필요 ⚠️)
+
+데이터: 인물 정보 저장 및 조회가 로컬 DB(SQLite)에서 정상 작동함.
+
+🚀 다음 단계: 기능 2 - 뉴스 아카이브 (News Archive)
+이제 두 번째 핵심 기능인 뉴스 저장소를 만듭니다. 이 기능의 핵심 도전 과제는 다음과 같습니다.
+
+이미지 저장: 뉴스에는 사진이 들어갑니다. (DB에 직접 넣을지, 파일로 저장할지 결정 필요)
+
+날짜 처리: DateTime을 다루고, 최신순으로 정렬해야 합니다.
+
+📂 계획 (Plan)
+NewsRepository 구현: 뉴스 데이터 저장/조회 로직
+
+NewsListScreen 구현: 뉴스 목록 (타임라인 형태) UI
+
+NewsAddScreen 구현: 제목, 내용, 사진 입력 화면
