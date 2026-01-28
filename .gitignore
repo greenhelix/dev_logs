@@ -943,3 +943,7 @@ Flutter/flutter_project/data_collector/.flutter-plugins-dependencies
 /Flutter/flutter_project/data_collector/web
 Flutter/flutter_project/data_collector/pubspec.lock
 Windows/DiagramGenerator/bist.
+Flutter/flutter_project/data_collector/.flutter-plugins-dependencies
+Flutter/flutter_project/data_collector/lib/data/local/app_database.dart
+Flutter/flutter_project/data_collector/lib/data/local/connection/connection_web.dart
+Flutter/flutter_project/data_collector/pubspec.lock

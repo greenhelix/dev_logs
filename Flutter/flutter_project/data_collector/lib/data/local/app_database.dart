@@ -5,10 +5,12 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
+// ─── 조건부 Import (Windows/macOS/Web 모두 동작) ──
 import 'connection/connection_stub.dart'
-    if (dart.library.io) 'connection/connection_native.dart'
-    if (dart.library.js_interop) 'connection/connection_web.dart';
-
+  if (dart.library.io) 'connection/connection_native.dart'
+  if (dart.library.html) 'connection/connection_web.dart'
+  if (dart.library.js_interop) 'connection/connection_web.dart';
+// 
 // 코드 생성기가 만들 파일 이름 (나중에 생성됨)
 part 'app_database.g.dart';
 

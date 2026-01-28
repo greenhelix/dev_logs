@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift/web.dart';
 
-QueryExecutor openConnecrtion() {
-  return WebDatabase.withStorage(
-      DriftWebStorage.indexedDb("data_collector_db"));
+QueryExecutor openConnection() {
+  // Drift Web 지원 기능을 사용 (IndexedDB)
+  return WebDatabase('data_collector_db');
 }
