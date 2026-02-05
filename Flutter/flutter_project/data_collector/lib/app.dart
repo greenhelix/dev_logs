@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'data/local/app_database.dart';
+
+import 'features/person/presentation/person_detail_screen.dart';
 import 'features/home/presentation/home_screen.dart';
 
 // ─── Router Config ───────────────────────────
@@ -17,9 +20,16 @@ final _router = GoRouter(
         // 추후 여기에 각 기능별 라우트를 추가할 예정입니다.
         // 예: path: 'person', builder: ...
         GoRoute(
-          path: 'person',
-          builder: (context, state) => const PersonListScreen(),
-        ),
+            path: 'person',
+            builder: (context, state) => const PersonListScreen(),
+            routes: [
+              GoRoute(
+                  path: 'detail',
+                  builder: (context, state) {
+                    final person = state.extra as Person;
+                    return PersonDetailScreen(person: person);
+                  })
+            ]),
       ],
     ),
   ],

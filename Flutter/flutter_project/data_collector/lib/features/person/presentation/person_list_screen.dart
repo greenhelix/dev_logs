@@ -58,6 +58,8 @@ class PersonListScreen extends ConsumerWidget {
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
                       // TODO: 상세 화면 이동
+                      context.push('/person/detail',
+                          extra: person); // GoRouter를 통해 person객체 전달하며 이동
                     },
                   );
                 },
@@ -75,26 +77,59 @@ class PersonListScreen extends ConsumerWidget {
     );
   }
 
-  // 간단한 추가 다이얼로그 (임시 구현)
+  // 간단한 추가 다이얼로그
   void _showAddPersonDialog(BuildContext context, WidgetRef ref) {
     final nameController = TextEditingController();
     final ageController = TextEditingController();
+    final photoUrlController = TextEditingController();
+
+    final attrKeyController = TextEditingController();
+    final attrValueController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Add Person"),
+        title: const Text("Add Person Profile"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(labelText: "Name"),
+              decoration: const InputDecoration(
+                  labelText: "Name", icon: Icon(Icons.person)),
             ),
             TextField(
               controller: ageController,
-              decoration: const InputDecoration(labelText: "Age"),
+              decoration: const InputDecoration(
+                  labelText: "Age", icon: Icon(Icons.calendar_today)),
               keyboardType: TextInputType.number,
+            ),
+            TextField(
+              controller: photoUrlController,
+              decoration: const InputDecoration(
+                  labelText: "Photo URL (Optional)",
+                  icon: Icon(Icons.image),
+                  hintText: "http://example.com/photo.jpg"),
+            ),
+            const SizedBox(height: 16),
+            const Text("Custom Attribue (Wiki Data)",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            Row(
+              children: [
+                Expanded(
+                    child: TextField(
+                  controller: attrKeyController,
+                  decoration: const InputDecoration(labelText: "Key (e.g Job)"),
+                )),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TextField(
+                    controller: attrValueController,
+                    decoration: const InputDecoration(
+                        labelText: "Value (e.g Developer)"),
+                  ),
+                )
+              ],
             ),
           ],
         ),
@@ -107,12 +142,22 @@ class PersonListScreen extends ConsumerWidget {
             onPressed: () async {
               final name = nameController.text;
               final age = int.tryParse(ageController.text);
+              final photoUrl = photoUrlController.text.isNotEmpty
+                  ? photoUrlController.text
+                  : null;
+              final Map<String, dynamic> attributes = {};
+              if (attrKeyController.text.isNotEmpty &&
+                  attrValueController.text.isNotEmpty) {
+                attributes[attrKeyController.text] = attrValueController.text;
+              }
 
               if (name.isNotEmpty) {
                 // 저장소 호출
                 await ref.read(personRepositoryProvider).addPerson(
                       name: name,
                       age: age,
+                      photoUrl: photoUrl,
+                      attributes: attributes,
                     );
 
                 // 목록 새로고침 (invalidate)
