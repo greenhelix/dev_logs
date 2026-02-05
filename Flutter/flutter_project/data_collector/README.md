@@ -220,3 +220,47 @@ Drift 생성 클래스(Person vs PeopleData) 이름 불일치 해결.
 
 Web/Native DB 연결 분리(connection_web.dart 등) 적용.
 
+## 📅 Development Log (중간 점검)
+[2026-02-05] 기능 2: 뉴스 아카이브(News Archive) 개발 완료
+📝 요약
+두 번째 핵심 기능인 '뉴스 아카이브'를 완성함. Drift DB의 timestamp 정렬 기능을 활용하여 뉴스 피드(Feed) 형태의 UI를 구현하였으며, 목록 -> 상세 화면 흐름을 통해 이미지와 장문 텍스트를 효과적으로 보여주도록 함.
+
+✅ 완료된 작업 (Accomplished)
+1. 인프라 및 공통 (Infrastructure)
+플랫폼 호환성: Windows/macOS/Web(Chrome) 빌드 환경 설정 완료 (Web은 Fake DB로 우회).
+
+DB 스키마: NewsLogs 테이블 (Title, Content, Timestamp, ImageUrl) 정의 및 마이그레이션.
+
+2. 기능 1: 인물 위키 (Person Wiki)
+JSON 필드를 활용한 동적 속성(Wiki Data) 저장 시스템 구축.
+
+목록/추가/상세 화면 UI 및 로직 구현 완료.
+
+3. 기능 2: 뉴스 아카이브 (News Archive)
+Repository: NewsRepository (최신순 정렬 조회 orderBy).
+
+UI:
+
+NewsListScreen: 타임라인 스타일의 카드 리스트 뷰.
+
+NewsAddScreen: 제목, 내용, 이미지 URL 입력 및 유효성 검사.
+
+NewsDetailScreen: 전체 내용 및 대형 이미지 보기 지원.
+
+Routing: /news, /news/add, /news/detail 경로 연결 완료.
+
+🗺️ 전체 진행 단계 (Roadmap Check)
+총 11단계 중 10단계까지 완료했습니다!
+
+단계	작업 내용	상태
+Step 1	프로젝트 생성 및 의존성 설정 (pubspec.yaml)	✅ 완료
+Step 2	앱 진입점(main.dart) 및 Riverpod 설정	✅ 완료
+Step 3	전역 라우터(app.dart) 및 홈 화면 구성	✅ 완료
+Step 4	로컬 DB 설계 (Drift Schema)	✅ 완료
+Step 5	DB 코드 생성 (build_runner)	✅ 완료
+Step 6	DB 연결 분리 (Web/Native) 및 Provider 설정	✅ 완료
+Step 7	홈 화면 UI (대시보드) 연결	✅ 완료
+Step 8	[기능 1] 인물 위키 개발 (Repo + UI)	✅ 완료
+Step 9	[기능 1] 인물 상세/추가 기능 보강	✅ 완료
+Step 10	[기능 2] 뉴스 아카이브 개발 (Repo + UI)	✅ 완료
+Step 11	[기능 3] 지도 트래커 (Google Maps + Geolocation)	🚧 대기 중
