@@ -273,12 +273,14 @@ Step 11을 지도 기능에서 Firebase 전환 및 배포로 변경하고, DB �
 🧐 Firebase DB 선택: Realtime DB vs Firestore
 작성하신 앱(인물 위키, 뉴스 아카이브, 지도 로그)의 특성을 고려할 때, 두 가지 선택지가 있습니다.
 
-특성	Realtime Database (RTDB)	Cloud Firestore (추천)
-데이터 구조	거대한 JSON 트리 구조 (단순함)	문서(Document) & 컬렉션(Collection) 구조 (체계적)
-쿼리(검색)	매우 제한적 (필터링 1개만 가능)	강력함 (복합 필터링, 정렬, 페이징 지원)
-확장성	데이터가 많아지면 성능 저하 가능성	자동 확장 (Scaling), 대용량 데이터에 적합
-비용	대역폭(전송량) 기준 과금	읽기/쓰기 횟수 기준 과금
-적합성	단순 채팅, 실시간 상태값 동기화	사용자 프로필, 뉴스 피드, 복잡한 데이터 관계
+|특성	|Realtime Database (RTDB)|	Cloud Firestore (추천)|
+|:--|:--|:--|
+|데이터 구조| 거대한 JSON 트리 구조 (단순함) |문서(Document) & 컬렉션(Collection) 구조 (체계적)|
+|쿼리(검색)| 매우 제한적 (필터링 1개만 가능) | 강력함 (복합 필터링, 정렬, 페이징 지원)|
+|확장성|데이터가 많아지면 성능 저하 가능성	|자동 확장 (Scaling), 대용량 데이터에 적합|
+|비용|대역폭(전송량) 기준 과금	|읽기/쓰기 횟수 기준 과금|
+|적합성|단순 채팅, 실시간 상태값 동기화	|사용자 프로필, 뉴스 피드, 복잡한 데이터 관계|
+
 🏆 추천: Cloud Firestore
 이유:
 
@@ -291,9 +293,39 @@ Step 11을 지도 기능에서 Firebase 전환 및 배포로 변경하고, DB �
 🚀 수정된 로드맵 (Roadmap v2)
 Step 11: Firebase 프로젝트 생성 및 연동 (앱 설정)
 
+> Flutter Project 폴더 내부에서 아래를 진행한다. 
+
+> Firebase Console로 이동해서 프로젝트 생성 및 사용하려는 서비스를 먼저 생성한다. 
+> cloud firestore의 경우 미리 만들어두면 된다. 
+
+> Firebase CLI 를 OS맞춰서 다운로드 해준다. 
+
+> macOS 기준 아래의 명령어 
+> curl -sL https://firebase.tools | bash  
+> 명령어를 쳐주면 다운로드를 하는데 password를 입력하라고 한다. pc의 비번을 입력하면 된다.
+
+> firebase login 
+> dart pub global activate flutterfire_cli
+> flutterfire configure 
+
+> 이 후 firebase에 미리 연동해두 프로젝트를 연결 및 로그인 하면 된다. 
+
+이렇게 하면, lib/firebase_options.dart 파일이 해당 프로젝트에서 생성되어 있다. 
 Step 12: Firestore 데이터 구조 설계 및 Repository 수정 (로컬 Drift -> Cloud Firestore 전환)
 
 Step 13: Firebase Hosting 배포 (웹에서 접속 가능하게)
 
 (보류) Step 14: 지도 기능 (추후 추가)
 
+## 📅 Development Log
+[2026-02-08 16:18] Firestore 데이터베이스 전환
+📝 요약
+로컬 DB(Drift) 대신 Google Cloud Firestore를 사용하도록 PersonRepository와 NewsRepository를 수정함. 이를 통해 앱 데이터가 클라우드에 저장되고, 웹/앱 어디서든 실시간 동기화됨.
+
+🚀 진행 단계: Step 12 - Repository 교체
+우리는 기존 Drift 코드를 지우지 않고, 새로운 Firestore용 Repository를 만들어서 연결만 바꿀 것입니다. (나중에 필요하면 로컬 모드로 돌아갈 수 있도록)
+
+
+
+
+pod repo update

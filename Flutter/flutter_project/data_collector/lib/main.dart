@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart'; // 터미널에서 flutterfire configure 실행 후 생성됨
+import 'firebase_options.dart'; // 터미널에서 flutterfire configure 실행 후 생성됨
 
 import 'app.dart'; // 다음 단계(Step 3)에서 생성할 파일
 
@@ -15,7 +15,8 @@ void main() async {
   // 생성 전이라면 아래 try-catch 블록을 주석 처리하고 진행해도 UI 개발은 가능합니다.
   try {
     await Firebase.initializeApp(
-      // options: DefaultFirebaseOptions.currentPlatform, // firebase_options.dart 필요
+      options:
+          DefaultFirebaseOptions.currentPlatform, // firebase_options.dart 필요
     );
   } catch (e) {
     debugPrint("Firebase initialization failed (Ignore if not setup yet): $e");

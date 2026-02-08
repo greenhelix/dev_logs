@@ -3,16 +3,26 @@ import 'package:drift/src/dsl/dsl.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../data/person_repository.dart';
+
+// import '../data/person_repository.dart'; // localDB사용하는 경우
+import '../data/person_firestore_repository.dart'; // FirebaseDB 사용하는 경우
+import '../domain/person_model.dart'; // FirebaseDB 사용하는 경우
 import '../../../data/local/app_database.dart'; // 데이터 모델(Person) 사용을 위해
 
 // ─── Controller (Provider) ───────────────────
-// 화면에 데이터를 공급하는 역할 (비동기 데이터)
-final personListProvider =
-    FutureProvider.autoDispose<List<Person>>((ref) async {
+
+final personListProvider = StreamProvider.autoDispose<List<PersonModel>>((ref) {
   final repository = ref.watch(personRepositoryProvider);
-  return repository.getAllPeople();
+  return repository.getPeopleStream();
 });
+
+// localDB 사용하는 경우
+// // 화면에 데이터를 공급하는 역할 (비동기 데이터)
+// final personListProvider =
+//     FutureProvider.autoDispose<List<Person>>((ref) async {
+//   final repository = ref.watch(personRepositoryProvider);
+//   return repository.getAllPeople();
+// });
 
 // ─── Screen (UI) ─────────────────────────────
 class PersonListScreen extends ConsumerWidget {
@@ -57,7 +67,7 @@ class PersonListScreen extends ConsumerWidget {
                     subtitle: Text("Age: ${person.age ?? 'Unknown'}"),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
-                      // TODO: 상세 화면 이동
+                      // 상세 화면 이동
                       context.push('/person/detail',
                           extra: person); // GoRouter를 통해 person객체 전달하며 이동
                     },
@@ -153,17 +163,43 @@ class PersonListScreen extends ConsumerWidget {
 
               if (name.isNotEmpty) {
                 // 저장소 호출
-                await ref.read(personRepositoryProvider).addPerson(
-                      name: name,
-                      age: age,
-                      photoUrl: photoUrl,
-                      attributes: attributes,
+                try {
+                  print("Debug >> Saving person to Firestore...");
+                  await ref.read(personRepositoryProvider).addPerson(
+                        name: name,
+                        age: age,
+                        photoUrl: photoUrl,
+                        attributes: attributes,
+                      );
+
+                  print("Debug >> Save Success!");
+
+                  // 목록 새로고침 (invalidate)
+                  //ref.invalidate(personListProvider);
+
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Saved successfully!")),
                     );
-
-                // 목록 새로고침 (invalidate)
-                ref.invalidate(personListProvider);
-
-                if (context.mounted) Navigator.pop(context);
+                  }
+                } catch (e) {
+                  print("Error saving person : $e");
+                  if (context.mounted) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text("Error"),
+                        content: Text("Failed to save: $e"),
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("OK"))
+                        ],
+                      ),
+                    );
+                  }
+                }
               }
             },
             child: const Text("Save"),

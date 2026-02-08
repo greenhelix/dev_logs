@@ -1,8 +1,10 @@
+import 'package:data_accumulator_app/features/person/domain/person_model.dart';
 import 'package:flutter/material.dart';
 import '../../../data/local/app_database.dart';
 
 class PersonDetailScreen extends StatelessWidget {
-  final Person person;
+  final PersonModel person;
+  // final Person person;
 
   const PersonDetailScreen({super.key, required this.person});
 

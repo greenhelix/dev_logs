@@ -1,6 +1,7 @@
 import 'package:data_accumulator_app/features/news/presentation/news_add_screen.dart';
 import 'package:data_accumulator_app/features/news/presentation/news_detail_screen.dart';
 import 'package:data_accumulator_app/features/news/presentation/news_list_screen.dart';
+import 'package:data_accumulator_app/features/person/domain/person_model.dart';
 import 'package:data_accumulator_app/features/person/presentation/person_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,7 +30,8 @@ final _router = GoRouter(
               GoRoute(
                   path: 'detail',
                   builder: (context, state) {
-                    final person = state.extra as Person;
+                    final person = state.extra as PersonModel;
+                    // final person = state.extra as Person;
                     return PersonDetailScreen(person: person);
                   })
             ]),
