@@ -396,3 +396,37 @@ rewrites: 모든 경로(**)를 /index.html로 리다이렉트하여 GoRouter(SPA
 제공된 Hosting URL로 접속 시 앱이 정상 구동됨.
 
 Firestore 데이터 연동(Named DB) 및 라우팅 기능 동작 확인 완료.
+
+## 📅 Development Log
+[2026-02-10 21:17] News Feature 고도화 (Firestore 연동 & UX 개선)
+
+📝 요약
+기존 News 기능을 Person 기능과 동일한 아키텍처 패턴(순수 Dart 모델 + Manual Provider)으로 리팩토링하고, 태그(Tag) 기능과 직관적인 날짜 입력 UI를 추가함.
+
+🚀 진행 단계: Step 5 - News Feature 고도화 (완료)
+
+1. 데이터 모델 (NewsLog) 개선
+
+Timestamp 처리: Firestore의 Timestamp 타입을 앱 내에서 DateTime으로 편하게 다룰 수 있도록 fromMap/toMap 메서드 내부에 변환 로직을 내재화함.
+
+태그(Tags) 추가: 뉴스 분류를 위한 List<String> tags 필드 추가.
+
+순수 Dart 객체: freezed 의존성을 제거하고, PersonModel과 동일하게 명시적인 생성자와 변환 메서드를 갖춘 구조로 통일.
+
+2. Repository (NewsFirestoreRepository) 리팩토링
+
+구조 통일: part 및 Code Generation을 제거하고, PersonFirestoreRepository와 동일한 일반 Provider 방식으로 전환하여 유지보수성을 높임.
+
+Converter 활용: Firestore의 withConverter를 사용하여 데이터 입출력 시 모델 변환을 자동화함.
+
+3. UI/UX 개선
+
+추가 화면 통합: 별도의 NewsAddScreen 페이지를 제거하고, NewsListScreen 내부에서 다이얼로그(Dialog) 형태로 뉴스를 추가하도록 변경하여 작업 흐름을 끊지 않음.
+
+태그 입력: # 태그를 쉽고 빠르게 입력할 수 있는 칩(Chip) 기반 UI 구현.
+
+상세 화면: 날짜와 태그 정보를 시각적으로 강조한 NewsDetailScreen 구현.
+
+4. 라우팅 (app.dart) 정리
+
+불필요해진 news/add 라우트를 제거하고, 변경된 모델(NewsLog)에 맞춰 detail 화면 파라미터 전달 로직을 수정함.

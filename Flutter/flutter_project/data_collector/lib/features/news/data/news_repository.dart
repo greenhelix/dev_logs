@@ -5,7 +5,7 @@ import '../../../data/local/app_database.dart';
 import '../../../data/providers.dart';
 
 // 1. Provider 정의
-final newsRepositoryProvider = Provider<NewsRepository>((ref) {
+final localNewsRepositoryProvider = Provider<NewsRepository>((ref) {
   final db = ref.watch(databaseProvider);
   return NewsRepository(db);
 });

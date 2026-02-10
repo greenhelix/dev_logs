@@ -1,16 +1,19 @@
-import 'package:data_accumulator_app/features/news/presentation/news_add_screen.dart';
-import 'package:data_accumulator_app/features/news/presentation/news_detail_screen.dart';
-import 'package:data_accumulator_app/features/news/presentation/news_list_screen.dart';
-import 'package:data_accumulator_app/features/person/domain/person_model.dart';
-import 'package:data_accumulator_app/features/person/presentation/person_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'data/local/app_database.dart';
-
-import 'features/person/presentation/person_detail_screen.dart';
+// 📌 home
 import 'features/home/presentation/home_screen.dart';
+
+// 📌 person
+import 'features/person/domain/person_model.dart';
+import 'features/person/presentation/person_list_screen.dart';
+import 'features/person/presentation/person_detail_screen.dart';
+
+// 📌 news
+import 'features/news/domain/news_model.dart';
+import 'features/news/presentation/news_list_screen.dart';
+import 'features/news/presentation/news_detail_screen.dart';
 
 // ─── Router Config ───────────────────────────
 // 앱의 모든 화면 경로를 여기서 관리합니다.
@@ -21,8 +24,7 @@ final _router = GoRouter(
       path: '/',
       builder: (context, state) => const HomeScreen(),
       routes: [
-        // 추후 여기에 각 기능별 라우트를 추가할 예정입니다.
-        // 예: path: 'person', builder: ...
+        // 예: path: 'person', 'news', 'maps': ...
         GoRoute(
             path: 'person',
             builder: (context, state) => const PersonListScreen(),
@@ -39,10 +41,6 @@ final _router = GoRouter(
             path: 'news',
             builder: (context, state) => const NewsListScreen(),
             routes: [
-              GoRoute(
-                path: 'add',
-                builder: (context, state) => const NewsAddScreen(),
-              ),
               GoRoute(
                   path: 'detail',
                   builder: (context, state) {
