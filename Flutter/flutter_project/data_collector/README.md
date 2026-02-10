@@ -360,3 +360,39 @@ flutter build web --release 정상 완료.
 
 Firestore 연동은 그대로 유지되면서, Web 환경에서의 호환성 문제만 깔끔하게 해결됨.
 
+##📅 Development Log
+[2026-02-10 18:59] Firebase Hosting 배포 완료
+
+📝 요약
+Flutter Web 빌드 결과물을 Firebase Hosting에 성공적으로 배포하여, 외부 URL을 통해 앱에 접속할 수 있게 됨. firebase.json 설정 파일 구성을 완료하고, 프로덕션 빌드 및 배포 파이프라인을 구축함.
+
+🚀 진행 단계: Step 13 - Web 배포 완료
+로컬 개발 환경을 벗어나 실제 웹 서버(Firebase Hosting)에 앱을 게시했습니다.
+
+1. 빌드 및 배포 프로세스 정립
+
+빌드: flutter build web --release
+
+최적화된 프로덕션용 정적 파일(HTML/JS/Assets)을 build/web 폴더에 생성.
+
+앞서 해결한 '조건부 임포트' 덕분에 sqlite3 관련 에러 없이 빌드 성공.
+
+배포: firebase deploy --only hosting
+
+build/web 폴더의 내용을 Firebase 서버로 전송.
+
+2. 설정 파일(firebase.json) 구성
+
+기존 FlutterFire 설정(flutter 키)을 유지하면서, Hosting 배포를 위한 필수 설정(hosting 키)을 병합하여 적용함.
+
+주요 설정:
+
+public: "build/web": 배포할 폴더 지정.
+
+rewrites: 모든 경로(**)를 /index.html로 리다이렉트하여 GoRouter(SPA)의 새로고침 404 문제 방지.
+
+3. 결과 확인
+
+제공된 Hosting URL로 접속 시 앱이 정상 구동됨.
+
+Firestore 데이터 연동(Named DB) 및 라우팅 기능 동작 확인 완료.
