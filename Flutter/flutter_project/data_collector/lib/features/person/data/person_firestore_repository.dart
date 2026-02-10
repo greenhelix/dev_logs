@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../domain/person_model.dart'; // 방금 만든 모델 import
+import '../domain/person_model.dart';
 
 // ★ Provider 교체 포인트 ★
 // 나중에 로컬로 돌아가고 싶으면 이 Provider의 반환값만 Drift Repository로 바꾸면 됨 (인터페이스 통일 시)
