@@ -325,7 +325,38 @@ Step 13: Firebase Hosting 배포 (웹에서 접속 가능하게)
 🚀 진행 단계: Step 12 - Repository 교체
 우리는 기존 Drift 코드를 지우지 않고, 새로운 Firestore용 Repository를 만들어서 연결만 바꿀 것입니다. (나중에 필요하면 로컬 모드로 돌아갈 수 있도록)
 
+## 📅 Development Log
+[2026-02-10 18:30] Web 배포를 위한 빌드 에러 해결
+📝 요약
+sqlite3 및 Drift 관련 Native 코드가 Web 빌드 과정에 포함되면서 발생한 Only JS interop members may be 'external' 컴파일 에러를 해결함.
+Native(Mobile/Desktop)와 Web 환경의 DB 연결 코드를 분리하는 '조건부 임포트(Conditional Import)' 패턴을 적용하여, Web 빌드 시에는 sqlite3 관련 코드가 아예 제외되도록 조치함.
 
+🚀 진행 단계: Step 13 - Firebase Hosting 배포 준비
+성공적인 웹 배포를 위해, 플랫폼별(Native vs Web)로 다른 DB 연결 구현체를 사용하도록 구조를 재정비했습니다.
 
+1. 문제 상황
 
-pod repo update
+flutter build web --release 실행 시 sqlite3 패키지 내부(FFI 관련)에서 대량의 에러 발생.
+
+원인: Flutter Web 컴파일러(dart2js)는 FFI(C언어 연동)를 지원하지 않는데, connection_native.dart가 빌드 트리에 포함되어 있었음.
+
+2. 해결 방법 (조건부 임포트 적용)
+
+파일 분리: DB 연결 로직을 3개로 쪼개어 관리.
+
+connection_stub.dart: 껍데기(Interface) 역할.
+
+connection_native.dart: dart:io 환경용 (기존 sqlite3 코드 유지).
+
+connection_web.dart: dart:html 환경용 (빈 껍데기 LazyDatabase 반환으로 에러 방지).
+
+진입점 통일: app_database.dart에서 dart.library.io와 dart.library.html 조건을 걸어, 환경에 따라 올바른 파일만 import 하도록 설정.
+
+직접 참조 제거: 프로젝트 전체에서 connection_native.dart나 package:drift/native.dart를 직접 import 하는 코드를 모두 찾아 제거하고, 위에서 만든 통일된 진입점을 사용하도록 수정.
+
+3. 결과
+
+flutter build web --release 정상 완료.
+
+Firestore 연동은 그대로 유지되면서, Web 환경에서의 호환성 문제만 깔끔하게 해결됨.
+
