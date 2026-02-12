@@ -1,95 +1,53 @@
-import 'package:data_accumulator_app/features/person/domain/person_model.dart';
 import 'package:flutter/material.dart';
-import '../../../data/local/app_database.dart';
+import '../domain/person_model.dart';
 
 class PersonDetailScreen extends StatelessWidget {
   final PersonModel person;
-  // final Person person;
 
-  const PersonDetailScreen({super.key, required this.person});
+  const PersonDetailScreen({Key? key, required this.person}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final String name = (person.name as String) ?? 'Unknown';
-    final int? age = person.age;
-    final String? photoUrl = person.photoUrl;
-
-    final Map<String, dynamic> attributes = person.attributes;
-
     return Scaffold(
-      appBar: AppBar(title: Text(name)),
+      appBar: AppBar(title: Text(person.name)),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              height: 250,
-              color: Colors.grey.shade200,
-              child: photoUrl != null && photoUrl.isNotEmpty
-                  ? Image.network(
-                      photoUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, StackTrace) => const Icon(
-                          Icons.person,
-                          size: 100,
-                          color: Colors.grey),
-                    )
-                  : const Icon(Icons.person, size: 100, color: Colors.grey),
+            CircleAvatar(
+              radius: 60,
+              backgroundImage: person.photoUrl != null ? NetworkImage(person.photoUrl!) : null,
+              child: person.photoUrl == null ? const Icon(Icons.person, size: 60) : null,
             ),
-            Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("Base Info",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
-                    const Divider(),
-                    _buildInfoRow("Name", name),
-                    _buildInfoRow("Age", age?.toString() ?? "Unknow"),
-                    const SizedBox(height: 24),
-                    if (attributes.isNotEmpty) ...[
-                      const Text(
-                        "Wiki Attributes",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const Divider(),
-                      ...attributes.entries.map((entry) {
-                        return _buildInfoRow(entry.key, entry.value.toString());
-                      }),
-                    ] else
-                      const Text("No Additional Wiki Data",
-                          style: TextStyle(color: Colors.grey)),
-                  ],
-                ))
+            const SizedBox(height: 20),
+            _buildInfoTile('이름', person.name),
+            _buildInfoTile('나이', person.age?.toString() ?? '정보 없음'),
+            _buildInfoTile('ID', person.id),
+            
+            const Divider(),
+            const Text('추가 속성 (Attributes)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 10),
+            
+            if (person.attributes.isEmpty)
+              const Text('없음', style: TextStyle(color: Colors.grey))
+            else
+              ...person.attributes.entries.map((e) => _buildInfoTile(e.key, e.value.toString())),
           ],
         ),
       ),
     );
   }
-}
 
-Widget _buildInfoRow(String label, String value) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 100,
-          child: Text(
-            label,
-            style: const TextStyle(
-                fontWeight: FontWeight.w600, color: Colors.black54),
-          ),
-        ),
-        Expanded(
-            child: Text(
-          value,
-          style: const TextStyle(fontSize: 16),
-        ))
-      ],
-    ),
-  );
+  Widget _buildInfoTile(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: 100, child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey))),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 16))),
+        ],
+      ),
+    );
+  }
 }

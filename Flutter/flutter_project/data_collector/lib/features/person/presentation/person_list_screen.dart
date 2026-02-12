@@ -1,208 +1,110 @@
-import 'package:data_accumulator_app/features/person/data/person_repository.dart';
-import 'package:drift/src/dsl/dsl.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/widgets/responsive_list_tile.dart';
+import '../../../data/providers.dart';
+import '../domain/person_model.dart';
 
-// import '../data/person_repository.dart'; // localDB사용하는 경우
-import '../data/person_firestore_repository.dart'; // FirebaseDB 사용하는 경우
-import '../domain/person_model.dart'; // FirebaseDB 사용하는 경우
-import '../../../data/local/app_database.dart'; // 데이터 모델(Person) 사용을 위해
-
-// ─── Controller (Provider) ───────────────────
-
-final personListProvider = StreamProvider.autoDispose<List<PersonModel>>((ref) {
-  final repository = ref.watch(personRepositoryProvider);
-  return repository.getPeopleStream();
-});
-
-// localDB 사용하는 경우
-// // 화면에 데이터를 공급하는 역할 (비동기 데이터)
-// final personListProvider =
-//     FutureProvider.autoDispose<List<Person>>((ref) async {
-//   final repository = ref.watch(personRepositoryProvider);
-//   return repository.getAllPeople();
-// });
-
-// ─── Screen (UI) ─────────────────────────────
 class PersonListScreen extends ConsumerWidget {
-  const PersonListScreen({super.key});
+  const PersonListScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Provider의 상태(로딩중, 에러, 데이터있음)를 구독
-    final personListAsync = ref.watch(personListProvider);
+    final personListAsync = ref.watch(personStreamProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Person Wiki"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              // 목록 새로고침
-              ref.invalidate(personListProvider);
-            },
-          )
-        ],
-      ),
-      // 데이터 상태에 따라 다른 UI 보여주기 (.when)
+      appBar: AppBar(title: const Text('Person List')),
       body: personListAsync.when(
-        data: (people) => people.isEmpty
-            ? const Center(child: Text("No people yet. Add one!"))
-            : ListView.builder(
-                itemCount: people.length,
-                itemBuilder: (context, index) {
-                  final person = people[index];
-                  final String? name = person.name as String?;
-                  final String nameStr = name ?? '';
-                  final firstChar = nameStr.isNotEmpty
-                      ? nameStr.substring(0, 1).toUpperCase()
-                      : '?';
-                  return ListTile(
-                    leading: CircleAvatar(
-                      child: Text(firstChar), // 이름 첫 글자
-                    ),
-                    title: Text(person.name as String),
-                    subtitle: Text("Age: ${person.age ?? 'Unknown'}"),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      // 상세 화면 이동
-                      context.push('/person/detail',
-                          extra: person); // GoRouter를 통해 person객체 전달하며 이동
-                    },
-                  );
-                },
+        data: (people) => ListView.builder(
+          itemCount: people.length,
+          itemBuilder: (context, index) {
+            final person = people[index];
+            return ResponsiveListTile(
+              onEdit: () => _showAddOrEditDialog(context, ref, person: person),
+              onDelete: () => ref.read(personRepositoryProvider).deletePerson(person.id),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: person.photoUrl != null && person.photoUrl!.isNotEmpty
+                      ? NetworkImage(person.photoUrl!)
+                      : null,
+                  child: (person.photoUrl == null || person.photoUrl!.isEmpty)
+                      ? const Icon(Icons.person)
+                      : null,
+                ),
+                title: Text(person.name),
+                subtitle: Text('Age: ${person.age ?? 'N/A'}'),
+                onTap: () => context.push('/person/detail', extra: person),
               ),
+            );
+          },
+        ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text("Error: $err")),
+        error: (err, stack) => Center(child: Text('Error: $err')),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // 인물 추가 다이얼로그 띄우기 (다음 단계에서 상세 구현)
-          _showAddPersonDialog(context, ref);
-        },
+        onPressed: () => _showAddOrEditDialog(context, ref),
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  // 간단한 추가 다이얼로그
-  void _showAddPersonDialog(BuildContext context, WidgetRef ref) {
-    final nameController = TextEditingController();
-    final ageController = TextEditingController();
-    final photoUrlController = TextEditingController();
-
-    final attrKeyController = TextEditingController();
-    final attrValueController = TextEditingController();
+  void _showAddOrEditDialog(BuildContext context, WidgetRef ref, {PersonModel? person}) {
+    final isEdit = person != null;
+    final nameCtrl = TextEditingController(text: person?.name ?? '');
+    final ageCtrl = TextEditingController(text: person?.age?.toString() ?? '');
+    final urlCtrl = TextEditingController(text: person?.photoUrl ?? '');
+    
+    // Attributes handling (Simple JSON-like string for demo)
+    final attrCtrl = TextEditingController(
+      text: person?.attributes.entries.map((e) => "${e.key}:${e.value}").join(", ") ?? ""
+    );
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Add Person Profile"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                  labelText: "Name", icon: Icon(Icons.person)),
-            ),
-            TextField(
-              controller: ageController,
-              decoration: const InputDecoration(
-                  labelText: "Age", icon: Icon(Icons.calendar_today)),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: photoUrlController,
-              decoration: const InputDecoration(
-                  labelText: "Photo URL (Optional)",
-                  icon: Icon(Icons.image),
-                  hintText: "http://example.com/photo.jpg"),
-            ),
-            const SizedBox(height: 16),
-            const Text("Custom Attribue (Wiki Data)",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Row(
-              children: [
-                Expanded(
-                    child: TextField(
-                  controller: attrKeyController,
-                  decoration: const InputDecoration(labelText: "Key (e.g Job)"),
-                )),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: attrValueController,
-                    decoration: const InputDecoration(
-                        labelText: "Value (e.g Developer)"),
-                  ),
-                )
-              ],
-            ),
-          ],
+        title: Text(isEdit ? 'Person 수정' : 'Person 추가'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Name')),
+              TextField(controller: ageCtrl, decoration: const InputDecoration(labelText: 'Age'), keyboardType: TextInputType.number),
+              TextField(controller: urlCtrl, decoration: const InputDecoration(labelText: 'Photo URL')),
+              TextField(controller: attrCtrl, decoration: const InputDecoration(labelText: 'Attributes (key:value, k:v)')),
+            ],
+          ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('취소')),
           ElevatedButton(
             onPressed: () async {
-              final name = nameController.text;
-              final age = int.tryParse(ageController.text);
-              final photoUrl = photoUrlController.text.isNotEmpty
-                  ? photoUrlController.text
-                  : null;
-              final Map<String, dynamic> attributes = {};
-              if (attrKeyController.text.isNotEmpty &&
-                  attrValueController.text.isNotEmpty) {
-                attributes[attrKeyController.text] = attrValueController.text;
-              }
-
-              if (name.isNotEmpty) {
-                // 저장소 호출
-                try {
-                  print("Debug >> Saving person to Firestore...");
-                  await ref.read(personRepositoryProvider).addPerson(
-                        name: name,
-                        age: age,
-                        photoUrl: photoUrl,
-                        attributes: attributes,
-                      );
-
-                  print("Debug >> Save Success!");
-
-                  // 목록 새로고침 (invalidate)
-                  //ref.invalidate(personListProvider);
-
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Saved successfully!")),
-                    );
-                  }
-                } catch (e) {
-                  print("Error saving person : $e");
-                  if (context.mounted) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text("Error"),
-                        content: Text("Failed to save: $e"),
-                        actions: [
-                          TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("OK"))
-                        ],
-                      ),
-                    );
+              // Parse attributes string back to map
+              Map<String, dynamic> newAttributes = {};
+              if (attrCtrl.text.isNotEmpty) {
+                for (var item in attrCtrl.text.split(',')) {
+                  var parts = item.split(':');
+                  if (parts.length == 2) {
+                    newAttributes[parts[0].trim()] = parts[1].trim();
                   }
                 }
               }
+
+              final newPerson = PersonModel(
+                // 수정 시 기존 ID 유지, 추가 시 임의의 ID 생성 (또는 Firestore 자동 ID 사용 가능)
+                id: isEdit ? person.id : DateTime.now().millisecondsSinceEpoch.toString(),
+                name: nameCtrl.text,
+                age: int.tryParse(ageCtrl.text),
+                photoUrl: urlCtrl.text.isEmpty ? null : urlCtrl.text,
+                attributes: newAttributes,
+              );
+
+              if (isEdit) {
+                await ref.read(personRepositoryProvider).updatePerson(newPerson);
+              } else {
+                await ref.read(personRepositoryProvider).addPerson(newPerson);
+              }
+              if (context.mounted) Navigator.pop(context);
             },
-            child: const Text("Save"),
+            child: Text(isEdit ? '수정' : '추가'),
           ),
         ],
       ),

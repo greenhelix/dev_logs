@@ -1,135 +1,57 @@
-// lib/features/news/presentation/news_detail_screen.dart
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../data/news_firestore_repository.dart';
 import '../domain/news_model.dart';
 
-class NewsDetailScreen extends ConsumerWidget {
+class NewsDetailScreen extends StatelessWidget {
   final NewsLog news;
 
-  const NewsDetailScreen({
-    super.key,
-    required this.news,
-  });
+  const NewsDetailScreen({Key? key, required this.news}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // 날짜 포맷팅
-    final dateStr = DateFormat('yyyy년 MM월 dd일 (E)').format(news.date);
+  Widget build(BuildContext context) {
+    final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('News Detail'),
-        actions: [
-          // 삭제 버튼
-          IconButton(
-            icon: const Icon(Icons.delete_outline),
-            onPressed: () => _confirmDelete(context, ref),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('News Detail')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. 날짜 표시
+            Text(news.title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
-                const SizedBox(width: 8),
-                Text(
-                  dateStr,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: Colors.grey[700],
-                      ),
-                ),
+                Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text(dateFormat.format(news.date), style: TextStyle(color: Colors.grey[600])),
               ],
             ),
             const SizedBox(height: 16),
-
-            // 2. 제목
-            Text(
-              news.title,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 16),
-
-            // 3. 태그 (Chip)
             if (news.tags.isNotEmpty)
               Wrap(
                 spacing: 8,
-                runSpacing: 8,
-                children: news.tags.map((tag) {
-                  return Chip(
-                    label: Text('#$tag'),
-                    backgroundColor:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
-                    labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 12,
-                    ),
-                    visualDensity: VisualDensity.compact,
-                  );
-                }).toList(),
+                children: news.tags.map((tag) => Chip(
+                  label: Text('#$tag'),
+                  backgroundColor: Colors.blue[50],
+                  labelStyle: TextStyle(color: Colors.blue[800]),
+                )).toList(),
               ),
-            const SizedBox(height: 24),
-            const Divider(),
-            const SizedBox(height: 24),
-
-            // 4. 본문 내용
-            Text(
-              news.content,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    height: 1.6, // 줄간격 확보
-                  ),
-            ),
+            const Divider(height: 30),
+            Text(news.content, style: const TextStyle(fontSize: 16, height: 1.5)),
+            
+            if (news.relatedPersonId != null) ...[
+               const SizedBox(height: 30),
+               const Divider(),
+               ListTile(
+                 leading: const Icon(Icons.link),
+                 title: const Text('관련 인물 ID'),
+                 subtitle: Text(news.relatedPersonId!),
+               ),
+            ],
           ],
         ),
       ),
-      // (선택사항) 수정 버튼을 FloatingActionButton으로 둘 수도 있음
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // 수정 기능은 추후 구현 (Update Dialog 등)
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Edit feature coming soon!')),
-          );
-        },
-        child: const Icon(Icons.edit),
-      ),
     );
-  }
-
-  // 삭제 확인 다이얼로그
-  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete News'),
-        content: const Text('Are you sure you want to delete this log?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && context.mounted) {
-      if (news.id != null) {
-        await ref.read(newsRepositoryProvider).deleteNews(news.id!);
-        if (context.mounted) context.pop(); // 리스트 화면으로 복귀
-      }
-    }
   }
 }

@@ -43,6 +43,7 @@ dependencies:
 
   # ─── UI Icons ──────────────────────────────
   cupertino_icons: ^1.0.2
+  flutter_slidable: ^4.0.3
 
 dev_dependencies:
   flutter_test:
