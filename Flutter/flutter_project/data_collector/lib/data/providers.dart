@@ -10,6 +10,9 @@ import '../features/person/domain/person_model.dart';
 import '../features/news/data/news_firestore_repository.dart';
 import '../features/news/domain/news_model.dart';
 
+import '../features/maps/data/location_firestore_repository.dart';
+import '../features/maps/domain/location_model.dart';
+
 // [DB Instance Provider]
 // 여러 Repository에서 공통으로 사용할 Firestore 인스턴스 (Named DB)
 final firestoreProvider = Provider<FirebaseFirestore>((ref) {
@@ -34,7 +37,6 @@ final personStreamProvider = StreamProvider<List<PersonModel>>((ref) {
   return repository.streamPeople();
 });
 
-
 // --- [News Feature Providers] ---
 
 // 1. Repository Provider
@@ -47,4 +49,18 @@ final newsRepositoryProvider = Provider<NewsFirestoreRepository>((ref) {
 final newsStreamProvider = StreamProvider<List<NewsLog>>((ref) {
   final repository = ref.read(newsRepositoryProvider);
   return repository.streamNews();
+});
+
+// --- [Maps Providers] ---
+
+// 1. Repository Provider (Named DB 주입)
+final locationRepositoryProvider = Provider<LocationFirestoreRepository>((ref) {
+  final firestore = ref.watch(firestoreProvider); // 기존에 만든 Named DB Provider
+  return LocationFirestoreRepository(firestore: firestore);
+});
+
+// 2. Stream Provider (UI에서 저장된 경로 그리기용)
+final locationsStreamProvider = StreamProvider<List<LocationModel>>((ref) {
+  final repository = ref.read(locationRepositoryProvider);
+  return repository.streamLocations();
 });

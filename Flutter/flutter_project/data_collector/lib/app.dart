@@ -15,6 +15,11 @@ import 'features/news/domain/news_model.dart';
 import 'features/news/presentation/news_list_screen.dart';
 import 'features/news/presentation/news_detail_screen.dart';
 
+// 📌 maps
+import 'features/maps/domain/location_model.dart';
+import 'features/maps/presentation/location_list_screen.dart';
+import 'features/maps/presentation/map_tracker_screen.dart';
+
 // ─── Router Config ───────────────────────────
 // 앱의 모든 화면 경로를 여기서 관리합니다.
 final _router = GoRouter(
@@ -47,6 +52,14 @@ final _router = GoRouter(
                     final news = state.extra as NewsLog;
                     return NewsDetailScreen(news: news);
                   })
+            ]),
+        GoRoute(
+            path: 'maps',
+            builder: (context, state) => const MapTrackerScreen(),
+            routes: [
+              GoRoute(
+                  path: 'list',
+                  builder: (context, state) => const LocationListScreen()),
             ])
       ],
     ),

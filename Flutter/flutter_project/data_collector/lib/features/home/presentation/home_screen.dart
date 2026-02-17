@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            
+
             // 메뉴 카드 그리드
             Expanded(
               child: GridView.count(
@@ -34,7 +34,7 @@ class HomeScreen extends StatelessWidget {
                     color: Colors.blue.shade100,
                     onTap: () {
                       // TODO: 나중에 라우터 연결
-                      context.go('/person'); 
+                      context.go('/person');
                     },
                   ),
                   _MenuCard(
@@ -50,7 +50,7 @@ class HomeScreen extends StatelessWidget {
                     title: "Geo Tracker",
                     color: Colors.orange.shade100,
                     onTap: () {
-                      context.go('/map');
+                      context.go('/maps');
                     },
                   ),
                 ],
@@ -101,7 +101,7 @@ class _MenuCard extends StatelessWidget {
             Text(
               title,
               style: const TextStyle(
-                fontSize: 18, 
+                fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
             ),
