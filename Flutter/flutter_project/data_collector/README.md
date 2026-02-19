@@ -455,3 +455,83 @@ Converter 활용: Firestore의 withConverter를 사용하여 데이터 입출력
 ## 3. 향후 계획
 - Firebase Console에서 Storage 보안 규칙(Rules) 검토 및 적용.
 - 실제 모바일 기기(Android/iOS)에서의 이미지 업로드 및 권한 요청 테스트.
+
+
+# 📘 개발자 로그: 데이터 수집기 앱 - 이미지 업로드 기능 고도화
+
+**날짜:** 2026-02-19 17:20 KST
+**작성자:** Perplexity AI Assistant
+**상태:** ✅ 기능 개선 및 안정화 (Step 17)
+
+## 1. 업데이트 요약
+- **권한 문제 해결**: 모바일(Android 13+/iOS) 환경에서 갤러리 접근 시 권한 팝업이 뜨지 않던 문제를 해결했습니다.
+- **이미지 처리 로직 통합**: `CustomImagePicker` 위젯을 통해 'URL 직접 입력'과 '파일 업로드' 방식을 하나로 통합했습니다.
+- **용량 최적화 적용**: 업로드 시 2MB 제한 및 자동 리사이징(Resize) 로직을 적용하여 서버 용량을 절약합니다.
+
+## 2. 주요 변경 사항
+### 🔧 권한 설정 (Permissions)
+- **Android**: `AndroidManifest.xml`에 `READ_MEDIA_IMAGES` (Android 13 이상 필수) 및 `READ_EXTERNAL_STORAGE` 권한을 추가했습니다.
+- **iOS**: `Info.plist`에 `NSPhotoLibraryUsageDescription` 키를 추가하여 앱 심사 기준을 충족했습니다.
+- **코드**: `permission_handler` 패키지를 도입하여, 갤러리 접근 전 명시적으로 권한을 요청하고 거부 시 설정 화면으로 유도하도록 개선했습니다.
+
+### 🖼️ 이미지 처리 (CustomImagePicker)
+- **하이브리드 모드**:
+  1. **URL 모드**: 웹 이미지 주소 복사-붙여넣기 시 `HEAD` 요청으로 파일 크기를 미리 검증합니다.
+  2. **업로드 모드**: 갤러리 선택 시 `flutter_image_compress`를 통해 이미지를 압축한 후 Firebase Storage에 저장합니다.
+- **UI 개선**: 이미지 선택, 로딩, 미리보기, 삭제 기능을 직관적인 원형 UI(CircleAvatar)로 통합했습니다.
+
+## 3. 기술 스택
+- **패키지**: `image_picker`, `firebase_storage`, `flutter_image_compress`, `permission_handler`
+- **저장소**: Firebase Storage (Bucket: `asia-northeast3` / Path: `/uploads`)
+
+## 4. 향후 계획 (Next Steps)
+- 실제 기기에서 권한 팝업이 정상적으로 뜨는지 최종 확인. (특히 Android 13 이상 기기)
+- News 및 Person 리스트 화면에서 썸네일 이미지가 깨지지 않고 잘 로딩되는지 확인.
+
+# 📘 개발자 로그: 데이터 수집기 앱 - 데이터 입력 UX 개선
+
+**날짜:** 2026-02-19 18:00 KST
+**상태:** ✅ 입력 편의성 개선 완료 (Step 19)
+
+## 1. 업데이트 요약
+- **속성(Attribute) & 태그(Tag) 입력 방식 개선**: 기존의 원시적인 문자열 파싱(`key:value` 등) 방식을 제거하고, 직관적인 **전용 입력 위젯**을 도입했습니다.
+- **키보드 접근성 강화**: PC와 모바일 환경 모두에서 `Enter` 또는 `Next` 키를 통해 연속적인 데이터 입력이 가능하도록 흐름을 최적화했습니다.
+
+## 2. 주요 변경 사항 (Components)
+### 🏷️ 태그 입력 (`TagInputWidget`)
+- **기능**: 텍스트 입력 후 `Enter`를 누르면 즉시 하단에 `Chip` 형태로 태그가 추가됩니다.
+- **삭제**: 추가된 태그의 `X` 버튼을 눌러 손쉽게 제거할 수 있습니다.
+- **적용**: `NewsListScreen`의 뉴스 태그 입력란에 적용되었습니다.
+
+### 🔑 속성 입력 (`AttributeInputWidget`)
+- **구조**: `Key`와 `Value` 입력 필드를 분리하고 나란히 배치했습니다.
+- **흐름**: [Key 입력] -> [Enter/Next] -> [Value 포커스 이동] -> [Value 입력] -> [Enter] -> [속성 추가 & 입력창 초기화 & Key 포커스 이동]의 순환 구조를 구현했습니다.
+- **시각화**: 추가된 속성은 하단에 리스트 형태로 쌓이며, 개별 삭제가 가능합니다.
+- **적용**: `PersonListScreen`의 인물 속성 입력란에 적용되었습니다.
+
+## 3. 기술적 이점
+- **데이터 무결성**: 사용자가 포맷(`:`, `,` 등)을 신경 쓸 필요가 없어 오타나 파싱 오류가 원천 차단됩니다.
+- **코드 간소화**: 화면(Screen) 단의 복잡한 문자열 처리 로직이 제거되고, 모델 객체(`Map`, `List`)를 직접 조작하므로 코드가 훨씬 깔끔해졌습니다.
+
+# 📘 개발자 로그: 데이터 수집기 앱 - UI/UX 통합 업데이트
+
+**날짜:** 2026-02-19 18:20 KST
+**작성자:** Perplexity AI Assistant
+**상태:** ✅ 기능 통합 및 완료 (Step 20)
+
+## 1. 업데이트 요약
+- **UI 통합**: 이전에 개별적으로 개발된 `CustomImagePicker`, `TagInputWidget`, `AttributeInputWidget`을 `PersonListScreen`과 `NewsListScreen`에 완벽하게 통합했습니다.
+- **버그 수정**: 기존 화면 코드에서 누락되거나 하드코딩 되어 있던 부분들을 모두 커스텀 위젯으로 교체하여 유지보수성과 사용성을 확보했습니다.
+
+## 2. 화면별 변경 사항
+### 👤 Person Feature (`PersonListScreen`)
+- **프로필 사진**: `CustomImagePicker(isCircle: true)`를 적용하여 원형 프로필 사진 업로드/변경 UI를 구현했습니다.
+- **속성 입력**: `AttributeInputWidget`을 적용하여 `Key:Value` 문자열 파싱 방식의 불편함을 해소하고, 직관적인 리스트 추가/삭제 방식을 도입했습니다.
+
+### 📰 News Feature (`NewsListScreen`)
+- **썸네일 이미지**: `CustomImagePicker(isCircle: false)`를 적용하여 뉴스 기사에 맞는 사각형 썸네일 업로드 UI를 구현했습니다.
+- **태그 입력**: `TagInputWidget`을 적용하여 콤마(,) 구분 없이 `Enter/Tab` 키로 태그를 쉽게 추가하고 관리할 수 있도록 했습니다.
+
+## 3. 남은 작업
+- 실제 디바이스 빌드 및 배포 테스트.
+- Firestore 데이터 구조가 변경된 모델(imageUrl 필드 등)과 잘 호환되는지 확인.
