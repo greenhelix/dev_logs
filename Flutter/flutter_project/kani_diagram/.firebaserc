@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "greenhelix-web-db"
+  },
+  "targets": {
+    "greenhelix-web-db": {
+      "hosting": {
+        "kaniDiagramWeb": [
+          "greenhelix-web-db-kani-diagram"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
