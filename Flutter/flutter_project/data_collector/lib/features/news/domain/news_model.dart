@@ -7,6 +7,7 @@ class NewsLog {
   final DateTime date;
   final List<String> tags;
   final String? relatedPersonId;
+  final String? imageUrl;
 
   NewsLog({
     this.id,
@@ -15,6 +16,7 @@ class NewsLog {
     required this.date,
     this.tags = const [],
     this.relatedPersonId,
+    this.imageUrl,
   });
 
   // 📌 Firestore 데이터 -> 객체 변환 (Timestamp 처리 포함)
@@ -35,6 +37,7 @@ class NewsLog {
       date: parsedDate,
       tags: List<String>.from(map['tags'] ?? []),
       relatedPersonId: map['relatedPersonId'] as String?,
+      imageUrl: map['imageUrl'],
     );
   }
 
@@ -46,6 +49,7 @@ class NewsLog {
       'date': Timestamp.fromDate(date), // DateTime -> Firestore Timestamp
       'tags': tags,
       'relatedPersonId': relatedPersonId,
+      'imageUrl': imageUrl,
     };
   }
 }

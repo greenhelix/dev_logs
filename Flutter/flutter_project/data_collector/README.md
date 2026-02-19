@@ -430,3 +430,28 @@ Converter 활용: Firestore의 withConverter를 사용하여 데이터 입출력
 4. 라우팅 (app.dart) 정리
 
 불필요해진 news/add 라우트를 제거하고, 변경된 모델(NewsLog)에 맞춰 detail 화면 파라미터 전달 로직을 수정함.
+
+
+# 📘 개발자 로그: 데이터 수집기 앱 - 이미지 업로드 기능 추가
+
+**날짜:** 2026-02-19 16:20 KST
+**상태:** ✅ 기능 업데이트 (Step 16)
+
+## 1. 업데이트 요약
+- **맵 트래커 (Map Tracker)**:
+  - 웹 렌더링 문제를 Google Maps JS API 스크립트 추가와 널(Null) 타입 수정으로 해결했습니다.
+  - 이제 웹 배포 시 지도와 위치 추적(REC) 기능이 정상 작동합니다.
+
+- **인물 관리 (Person Feature)**:
+  - 기존의 수동 URL 입력 방식을 **이미지 선택기(Image Picker)** 및 **Firebase Storage 업로드** 방식으로 전면 교체했습니다.
+  - 모바일(Android/iOS) 및 웹(Web) 환경에서 갤러리 접근 및 파일 선택을 지원합니다.
+  - 업로드 진행 시 로딩 인디케이터를 표시하여 사용자 경험을 개선했습니다.
+
+## 2. 기술적 세부사항
+- **추가된 라이브러리**: `image_picker`, `firebase_storage`
+- **저장 경로**: 이미지는 `/person_images/{timestamp}_{filename}` 경로에 저장됩니다.
+- **웹 호환성 처리**: `kIsWeb` 플래그를 사용하여 모바일은 `File` 객체로, 웹은 `readAsBytes` 방식으로 분기 처리하여 업로드를 구현했습니다.
+
+## 3. 향후 계획
+- Firebase Console에서 Storage 보안 규칙(Rules) 검토 및 적용.
+- 실제 모바일 기기(Android/iOS)에서의 이미지 업로드 및 권한 요청 테스트.

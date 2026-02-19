@@ -1,3 +1,4 @@
+import 'package:data_accumulator_app/core/widgets/custom_image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,23 +24,33 @@ class NewsListScreen extends ConsumerWidget {
             final news = newsList[index];
             return ResponsiveListTile(
               onEdit: () => _showAddOrEditDialog(context, ref, news: news),
-              onDelete: () => ref.read(newsRepositoryProvider).deleteNews(news.id!),
+              onDelete: () =>
+                  ref.read(newsRepositoryProvider).deleteNews(news.id!),
               child: ListTile(
-                title: Text(news.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+                title: Text(news.title,
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(news.content, maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text(news.content,
+                        maxLines: 2, overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 4),
                     Wrap(
                       spacing: 4,
                       children: [
-                        Text(dateFormat.format(news.date), style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                        Text(dateFormat.format(news.date),
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey)),
                         if (news.tags.isNotEmpty)
                           ...news.tags.take(3).map((t) => Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                                decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(4)),
-                                child: Text('#$t', style: TextStyle(fontSize: 10, color: Colors.blue[800])),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 4, vertical: 2),
+                                decoration: BoxDecoration(
+                                    color: Colors.blue[50],
+                                    borderRadius: BorderRadius.circular(4)),
+                                child: Text('#$t',
+                                    style: TextStyle(
+                                        fontSize: 10, color: Colors.blue[800])),
                               )),
                       ],
                     ),
@@ -60,14 +71,17 @@ class NewsListScreen extends ConsumerWidget {
     );
   }
 
-  void _showAddOrEditDialog(BuildContext context, WidgetRef ref, {NewsLog? news}) {
+  void _showAddOrEditDialog(BuildContext context, WidgetRef ref,
+      {NewsLog? news}) {
     final isEdit = news != null;
     final titleCtrl = TextEditingController(text: news?.title ?? '');
     final contentCtrl = TextEditingController(text: news?.content ?? '');
     final tagsCtrl = TextEditingController(text: news?.tags.join(', ') ?? '');
-    
+
     // Date Picker Variable
     DateTime selectedDate = news?.date ?? DateTime.now();
+
+    String? currentImageUrl = news?.imageUrl;
 
     showDialog(
       context: context,
@@ -79,9 +93,23 @@ class NewsListScreen extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: 'Title')),
-                  TextField(controller: contentCtrl, decoration: const InputDecoration(labelText: 'Content'), maxLines: 5),
-                  TextField(controller: tagsCtrl, decoration: const InputDecoration(labelText: 'Tags (comma separated)')),
+                  TextField(
+                      controller: titleCtrl,
+                      decoration: const InputDecoration(labelText: 'Title')),
+                  TextField(
+                      controller: contentCtrl,
+                      decoration: const InputDecoration(labelText: 'Content'),
+                      maxLines: 5),
+                  TextField(
+                      controller: tagsCtrl,
+                      decoration: const InputDecoration(
+                          labelText: 'Tags (comma separated)')),
+                  CustomImagePicker(
+                    initialUrl: currentImageUrl,
+                    onImageSelected: (url) {
+                      currentImageUrl = url;
+                    },
+                  ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
@@ -98,7 +126,8 @@ class NewsListScreen extends ConsumerWidget {
                             setState(() => selectedDate = picked);
                           }
                         },
-                        child: Text(DateFormat('yyyy-MM-dd').format(selectedDate)),
+                        child:
+                            Text(DateFormat('yyyy-MM-dd').format(selectedDate)),
                       ),
                     ],
                   ),
@@ -106,7 +135,9 @@ class NewsListScreen extends ConsumerWidget {
               ),
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('취소')),
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('취소')),
               ElevatedButton(
                 onPressed: () async {
                   final tagsList = tagsCtrl.text
@@ -121,7 +152,9 @@ class NewsListScreen extends ConsumerWidget {
                     content: contentCtrl.text,
                     date: selectedDate,
                     tags: tagsList,
-                    relatedPersonId: news?.relatedPersonId, // 기존 값 유지 (또는 선택 UI 추가 가능)
+                    relatedPersonId:
+                        news?.relatedPersonId, // 기존 값 유지 (또는 선택 UI 추가 가능)
+                    imageUrl: currentImageUrl,
                   );
 
                   if (isEdit) {
