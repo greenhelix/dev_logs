@@ -29,19 +29,19 @@ final diagramRepositoryProvider = Provider<DiagramRepository>((ref) {
 
 final diagramEditorControllerProvider =
     StateNotifierProvider<DiagramEditorController, DiagramEditorState>((ref) {
-  return DiagramEditorController(
-    codeParser: ref.read(codeParserServiceProvider),
-    repository: ref.read(diagramRepositoryProvider),
-  );
-});
+      return DiagramEditorController(
+        codeParser: ref.read(codeParserServiceProvider),
+        repository: ref.read(diagramRepositoryProvider),
+      );
+    });
 
 class DiagramEditorController extends StateNotifier<DiagramEditorState> {
   DiagramEditorController({
     required CodeParserService codeParser,
     required DiagramRepository repository,
-  })  : _codeParser = codeParser,
-        _repository = repository,
-        super(const DiagramEditorState());
+  }) : _codeParser = codeParser,
+       _repository = repository,
+       super(const DiagramEditorState());
 
   final CodeParserService _codeParser;
   final DiagramRepository _repository;
@@ -84,7 +84,9 @@ class DiagramEditorController extends StateNotifier<DiagramEditorState> {
     if (current == null) return;
 
     final updatedNodes = current.nodes
-        .map((node) => node.id == nodeId ? node.copyWith(label: newLabel) : node)
+        .map(
+          (node) => node.id == nodeId ? node.copyWith(label: newLabel) : node,
+        )
         .toList();
     state = state.copyWith(current: current.copyWith(nodes: updatedNodes));
   }
@@ -99,11 +101,45 @@ class DiagramEditorController extends StateNotifier<DiagramEditorState> {
       final recent = await _repository.loadRecentDiagrams();
       state = state.copyWith(isSaving: false, history: recent);
     } catch (e) {
-      state = state.copyWith(
-        isSaving: false,
-        error: '저장 중 오류가 발생했습니다: $e',
-      );
+      state = state.copyWith(isSaving: false, error: '저장 중 오류가 발생했습니다: $e');
     }
+  }
+
+  void setPreviewScale(double value) {
+    final clamped = value.clamp(0.5, 1.8).toDouble();
+    state = state.copyWith(previewScale: clamped);
+  }
+
+  void setHideExternalNodes(bool value) {
+    state = state.copyWith(hideExternalNodes: value);
+  }
+
+  void setHideInterfaceNodes(bool value) {
+    state = state.copyWith(hideInterfaceNodes: value);
+  }
+
+  void setMaxPreviewNodes(double value) {
+    state = state.copyWith(
+      maxPreviewNodes: value.round().clamp(20, 300).toInt(),
+    );
+  }
+
+  Future<void> refreshHistory() async {
+    try {
+      final recent = await _repository.loadRecentDiagrams();
+      state = state.copyWith(history: recent, clearError: true);
+    } catch (e) {
+      state = state.copyWith(error: '이력 조회 중 오류가 발생했습니다: $e');
+    }
+  }
+
+  void openFromHistory(String diagramId) {
+    final target = state.history.where((item) => item.id == diagramId);
+    if (target.isEmpty) {
+      state = state.copyWith(error: '선택한 이력을 찾을 수 없습니다.');
+      return;
+    }
+    state = state.copyWith(current: target.first, clearError: true);
   }
 
   Future<void> exportDiagram({
@@ -113,7 +149,8 @@ class DiagramEditorController extends StateNotifier<DiagramEditorState> {
     final current = state.current;
     if (current == null) return;
 
-    final boundary = repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    final boundary =
+        repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
     if (boundary == null) {
       state = state.copyWith(error: '내보내기 대상을 찾을 수 없습니다.');
       return;

@@ -6,6 +6,10 @@ class DiagramEditorState {
   const DiagramEditorState({
     this.current,
     this.previewType = DiagramType.classMap,
+    this.previewScale = 1.0,
+    this.hideExternalNodes = false,
+    this.hideInterfaceNodes = false,
+    this.maxPreviewNodes = 120,
     this.history = const [],
     this.isSaving = false,
     this.error,
@@ -13,6 +17,10 @@ class DiagramEditorState {
 
   final DiagramModel? current;
   final DiagramType previewType;
+  final double previewScale;
+  final bool hideExternalNodes;
+  final bool hideInterfaceNodes;
+  final int maxPreviewNodes;
   final List<DiagramModel> history;
   final bool isSaving;
   final String? error;
@@ -21,6 +29,10 @@ class DiagramEditorState {
     DiagramModel? current,
     bool clearCurrent = false,
     DiagramType? previewType,
+    double? previewScale,
+    bool? hideExternalNodes,
+    bool? hideInterfaceNodes,
+    int? maxPreviewNodes,
     List<DiagramModel>? history,
     bool? isSaving,
     String? error,
@@ -29,6 +41,10 @@ class DiagramEditorState {
     return DiagramEditorState(
       current: clearCurrent ? null : current ?? this.current,
       previewType: previewType ?? this.previewType,
+      previewScale: previewScale ?? this.previewScale,
+      hideExternalNodes: hideExternalNodes ?? this.hideExternalNodes,
+      hideInterfaceNodes: hideInterfaceNodes ?? this.hideInterfaceNodes,
+      maxPreviewNodes: maxPreviewNodes ?? this.maxPreviewNodes,
       history: history ?? this.history,
       isSaving: isSaving ?? this.isSaving,
       error: clearError ? null : error ?? this.error,
