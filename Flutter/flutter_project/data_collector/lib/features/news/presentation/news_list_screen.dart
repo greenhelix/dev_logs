@@ -1,7 +1,9 @@
+// news_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
 import '../../../core/widgets/responsive_list_tile.dart';
 import '../../../core/widgets/custom_image_picker.dart'; // 이미지 피커
 import '../../../core/widgets/tag_input_widget.dart'; // 태그 입력
@@ -17,61 +19,121 @@ class NewsListScreen extends ConsumerWidget {
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
 
     return Scaffold(
-      appBar: AppBar(title: const Text('News Log')),
+      appBar: AppBar(
+        title: const Text('News Log'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: '새로고침',
+            onPressed: () => ref.invalidate(newsStreamProvider),
+          ),
+        ],
+      ),
       body: newsListAsync.when(
-        data: (newsList) => ListView.builder(
-          itemCount: newsList.length,
-          itemBuilder: (context, index) {
-            final news = newsList[index];
-            return ResponsiveListTile(
-              onEdit: () => _showAddOrEditDialog(context, ref, news: news),
-              onDelete: () =>
-                  ref.read(newsRepositoryProvider).deleteNews(news.id!),
-              child: ListTile(
-                // 썸네일 (사각형)
-                leading: news.imageUrl != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Image.network(news.imageUrl!,
-                            width: 50, height: 50, fit: BoxFit.cover),
-                      )
-                    : const Icon(Icons.article),
-                title: Text(news.title,
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(news.content,
-                        maxLines: 2, overflow: TextOverflow.ellipsis),
-                    const SizedBox(height: 4),
-                    Wrap(
-                      spacing: 4,
-                      children: [
-                        Text(dateFormat.format(news.date),
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.grey)),
-                        if (news.tags.isNotEmpty)
-                          ...news.tags.take(3).map((t) => Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 4, vertical: 2),
-                                decoration: BoxDecoration(
-                                    color: Colors.blue[50],
-                                    borderRadius: BorderRadius.circular(4)),
-                                child: Text('#$t',
-                                    style: TextStyle(
-                                        fontSize: 10, color: Colors.blue[800])),
-                              )),
-                      ],
-                    ),
-                  ],
-                ),
-                onTap: () => context.push('/news/detail', extra: news),
-              ),
-            );
+        data: (newsList) => RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(newsStreamProvider);
+            // Stream 재구독 대기 (짧은 딜레이로 스피너 유지)
+            await Future.delayed(const Duration(milliseconds: 500));
           },
+          child: newsList.isEmpty
+              // 리스트가 비어있어도 스와이프를 지원하기 위해 빈 ListView 유지
+              ? ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: const [
+                    SizedBox(height: 200),
+                    Center(child: Text('등록된 뉴스가 없습니다.', style: TextStyle(color: Colors.grey))),
+                  ],
+                )
+              : ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: newsList.length,
+                  itemBuilder: (context, index) {
+                    final news = newsList[index];
+                    return ResponsiveListTile(
+                      onEdit: () =>
+                          _showAddOrEditDialog(context, ref, news: news),
+                      onDelete: () async {
+                        await ref
+                            .read(newsRepositoryProvider)
+                            .deleteNews(news.id!);
+                        // 삭제 후 강제 갱신
+                        ref.invalidate(newsStreamProvider);
+                      },
+                      child: ListTile(
+                        // 썸네일 (사각형)
+                        leading: news.imageUrl != null && news.imageUrl!.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: Image.network(
+                                  news.imageUrl!,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
+                                ),
+                              )
+                            : const Icon(Icons.article),
+                        title: Text(
+                          news.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              news.content,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Wrap(
+                              spacing: 4,
+                              children: [
+                                Text(
+                                  dateFormat.format(news.date),
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.grey),
+                                ),
+                                if (news.tags.isNotEmpty)
+                                  ...news.tags.take(3).map((t) => Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue[50],
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: Text(
+                                          '#$t',
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.blue[800]),
+                                        ),
+                                      )),
+                              ],
+                            ),
+                          ],
+                        ),
+                        onTap: () => context.push('/news/detail', extra: news),
+                      ),
+                    );
+                  },
+                ),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
+        error: (err, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Error: $err'),
+              ElevatedButton(
+                onPressed: () => ref.invalidate(newsStreamProvider),
+                child: const Text('다시 시도'),
+              ),
+            ],
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddOrEditDialog(context, ref),
@@ -89,7 +151,7 @@ class NewsListScreen extends ConsumerWidget {
     // 상태 변수
     DateTime selectedDate = news?.date ?? DateTime.now();
     String? currentImageUrl = news?.imageUrl;
-    List<String> currentTags = news?.tags ?? [];
+    List<String> currentTags = List.from(news?.tags ?? []);
 
     showDialog(
       context: context,
@@ -106,26 +168,28 @@ class NewsListScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 1. 이미지 피커 (사각형 모드)
-                    CustomImagePicker(
-                      initialUrl: currentImageUrl,
-                      onImageSelected: (url) {
-                        currentImageUrl = url;
-                      },
-                      isCircle: false, // 뉴스용 사각형
+                    Center(
+                      child: CustomImagePicker(
+                        initialUrl: currentImageUrl,
+                        onImageSelected: (url) {
+                          currentImageUrl = url;
+                        },
+                        isCircle: false, // 뉴스용 사각형
+                      ),
                     ),
                     const SizedBox(height: 16),
-
                     // 2. 기본 정보
                     TextField(
-                        controller: titleCtrl,
-                        decoration: const InputDecoration(labelText: 'Title')),
+                      controller: titleCtrl,
+                      decoration: const InputDecoration(labelText: 'Title'),
+                    ),
                     TextField(
-                        controller: contentCtrl,
-                        decoration: const InputDecoration(labelText: 'Content'),
-                        maxLines: 5),
+                      controller: contentCtrl,
+                      decoration: const InputDecoration(labelText: 'Content'),
+                      maxLines: 5,
+                    ),
                     const SizedBox(height: 16),
-
-                    // 3. 태그 입력 위젯 (개선된 버전)
+                    // 3. 태그 입력 위젯
                     TagInputWidget(
                       initialTags: currentTags,
                       onChanged: (newTags) {
@@ -133,7 +197,6 @@ class NewsListScreen extends ConsumerWidget {
                       },
                     ),
                     const SizedBox(height: 16),
-
                     // 4. 날짜 선택
                     Row(
                       children: [
@@ -163,16 +226,24 @@ class NewsListScreen extends ConsumerWidget {
             ),
             actions: [
               TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('취소')),
+                onPressed: () => Navigator.pop(context),
+                child: const Text('취소'),
+              ),
               ElevatedButton(
                 onPressed: () async {
+                  if (titleCtrl.text.trim().isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('제목을 입력해주세요.')),
+                    );
+                    return;
+                  }
+
                   final newNews = NewsLog(
                     id: isEdit ? news.id : null,
-                    title: titleCtrl.text,
-                    content: contentCtrl.text,
+                    title: titleCtrl.text.trim(),
+                    content: contentCtrl.text.trim(),
                     date: selectedDate,
-                    tags: currentTags, // 바로 사용
+                    tags: currentTags,
                     imageUrl: currentImageUrl,
                     relatedPersonId: news?.relatedPersonId,
                   );
@@ -183,9 +254,13 @@ class NewsListScreen extends ConsumerWidget {
                     await ref.read(newsRepositoryProvider).addNews(newNews);
                   }
 
+                  // 저장 후 강제 갱신
+                  ref.invalidate(newsStreamProvider);
+
+                  // 팝업 닫기 (중복 pop 제거)
                   if (context.mounted) Navigator.pop(context);
                 },
-                child: Text(isEdit ? '수정' : '추가'),
+                child: const Text('저장'), // 수정/추가 상관없이 저장으로 통일
               ),
             ],
           );
