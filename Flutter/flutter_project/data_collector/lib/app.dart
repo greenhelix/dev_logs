@@ -1,3 +1,4 @@
+import 'package:data_accumulator_app/features/maps/domain/track_record_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,8 @@ import 'features/news/presentation/news_detail_screen.dart';
 import 'features/maps/domain/location_model.dart';
 import 'features/maps/presentation/location_list_screen.dart';
 import 'features/maps/presentation/map_tracker_screen.dart';
+import 'features/maps/presentation/tracking_history_screen.dart';
+import 'features/maps/presentation/tracking_detail_screen.dart'; 
 
 // ─── Router Config ───────────────────────────
 // 앱의 모든 화면 경로를 여기서 관리합니다.
@@ -58,12 +61,21 @@ final _router = GoRouter(
             builder: (context, state) => const MapTrackerScreen(),
             routes: [
               GoRoute(
-                  path: 'list',
-                  builder: (context, state) => const LocationListScreen()),
+                  path: 'history',
+                  builder: (context, state) => const TrackingHistoryScreen(),
+                  routes: [
+                    GoRoute(
+                        path: 'detail',
+                        builder: (context, state) {
+                          final record = state.extra as TrackRecordModel;
+                          return TrackingDetailScreen(record: record);
+                        }),
             ])
       ],
     ),
-  ],
+        ],
+      )
+  ]
 );
 
 // ─── App Widget ──────────────────────────────

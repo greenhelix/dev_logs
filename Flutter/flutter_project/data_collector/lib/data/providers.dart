@@ -1,5 +1,7 @@
 // lib/data/providers.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data_accumulator_app/features/maps/data/track_record_repository.dart';
+import 'package:data_accumulator_app/features/maps/domain/track_record_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -63,4 +65,14 @@ final locationRepositoryProvider = Provider<LocationFirestoreRepository>((ref) {
 final locationsStreamProvider = StreamProvider<List<LocationModel>>((ref) {
   final repository = ref.read(locationRepositoryProvider);
   return repository.streamLocations();
+});
+
+// --- [Maps - TrackRecord Providers] --- [NEW]
+final trackRecordRepositoryProvider = Provider((ref) {
+  final firestore = ref.watch(firestoreProvider);
+  return TrackRecordRepository(firestore: firestore);
+});
+
+final trackRecordStreamProvider = StreamProvider<List<TrackRecordModel>>((ref) {
+  return ref.read(trackRecordRepositoryProvider).streamTrackRecords();
 });
