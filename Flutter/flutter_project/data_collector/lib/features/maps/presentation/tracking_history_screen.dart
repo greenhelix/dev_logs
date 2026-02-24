@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../data/providers.dart';
 import '../domain/track_record_model.dart';
 
@@ -12,33 +13,65 @@ class TrackingHistoryScreen extends ConsumerWidget {
     final historyAsync = ref.watch(trackRecordStreamProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('트래킹 기록')),
+      appBar: AppBar(
+        title: const Text('트래킹 기록'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: '새로고침',
+            onPressed: () => ref.invalidate(trackRecordStreamProvider),
+          ),
+        ],
+      ),
       body: historyAsync.when(
         data: (records) {
-          if (records.isEmpty) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.route, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text('아직 트래킹 기록이 없습니다.', style: TextStyle(color: Colors.grey)),
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(8),
-            itemCount: records.length,
-            itemBuilder: (context, index) {
-              final record = records[index];
-              return _TrackHistoryCard(record: record);
+          return RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(trackRecordStreamProvider);
+              await Future.delayed(const Duration(milliseconds: 500));
             },
+            child: records.isEmpty
+                ? ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: const [
+                      SizedBox(height: 150),
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.route, size: 64, color: Colors.grey),
+                            SizedBox(height: 16),
+                            Text('아직 트래킹 기록이 없습니다.',
+                                style: TextStyle(color: Colors.grey)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(8),
+                    itemCount: records.length,
+                    itemBuilder: (context, index) {
+                      final record = records[index];
+                      return _TrackHistoryCard(record: record);
+                    },
+                  ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('오류: $err')),
+        error: (err, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('오류: $err'),
+              ElevatedButton(
+                onPressed: () => ref.invalidate(trackRecordStreamProvider),
+                child: const Text('다시 시도'),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -59,6 +92,7 @@ class _TrackHistoryCard extends ConsumerWidget {
     final h = diff.inHours;
     final m = diff.inMinutes % 60;
     final s = diff.inSeconds % 60;
+
     if (h > 0) return '${h}시간 ${m}분';
     if (m > 0) return '${m}분 ${s}초';
     return '${s}초';
@@ -74,10 +108,14 @@ class _TrackHistoryCard extends ConsumerWidget {
           backgroundColor: Colors.blue[100],
           child: Text(
             '${record.totalDistance.toStringAsFixed(1)}k',
-            style: TextStyle(color: Colors.blue[800], fontSize: 11, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: Colors.blue[800],
+                fontSize: 11,
+                fontWeight: FontWeight.bold),
           ),
         ),
-        title: Text(record.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(record.title,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -85,29 +123,35 @@ class _TrackHistoryCard extends ConsumerWidget {
             Row(children: [
               const Icon(Icons.play_arrow, size: 14, color: Colors.green),
               const SizedBox(width: 4),
-              Text(_formatDate(record.startTime), style: const TextStyle(fontSize: 12)),
+              Text(_formatDate(record.startTime),
+                  style: const TextStyle(fontSize: 12)),
             ]),
             Row(children: [
               const Icon(Icons.stop, size: 14, color: Colors.red),
               const SizedBox(width: 4),
-              Text(_formatDate(record.endTime), style: const TextStyle(fontSize: 12)),
+              Text(_formatDate(record.endTime),
+                  style: const TextStyle(fontSize: 12)),
             ]),
             const SizedBox(height: 4),
             Row(
               children: [
                 Icon(Icons.timer_outlined, size: 14, color: Colors.grey[600]),
                 const SizedBox(width: 4),
-                Text(_formatDuration(record.startTime, record.endTime), style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                Text(_formatDuration(record.startTime, record.endTime),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600])),
                 const SizedBox(width: 12),
                 Icon(Icons.route, size: 14, color: Colors.grey[600]),
                 const SizedBox(width: 4),
-                Text('${record.totalDistance.toStringAsFixed(2)}km', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                Text('${record.totalDistance.toStringAsFixed(2)}km',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600])),
               ],
             ),
             if (record.memo != null && record.memo!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
-                child: Text('📝 ${record.memo}', style: const TextStyle(fontSize: 12, color: Colors.blueGrey)),
+                child: Text('📝 ${record.memo}',
+                    style: const TextStyle(
+                        fontSize: 12, color: Colors.blueGrey)),
               ),
           ],
         ),
@@ -133,11 +177,17 @@ class _TrackHistoryCard extends ConsumerWidget {
         title: const Text('삭제 확인'),
         content: const Text('이 트래킹 기록을 삭제하시겠습니까?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('취소')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('취소')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () async {
-              await ref.read(trackRecordRepositoryProvider).deleteTrackRecord(record.id);
+              await ref
+                  .read(trackRecordRepositoryProvider)
+                  .deleteTrackRecord(record.id);
+                  
+              ref.invalidate(trackRecordStreamProvider);
+              
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text('삭제', style: TextStyle(color: Colors.white)),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../core/widgets/responsive_list_tile.dart';
-import '../../../core/widgets/custom_image_picker.dart'; // 이미지 피커
-import '../../../core/widgets/attribute_input_widget.dart'; // 속성 입력
+import '../../../core/widgets/custom_image_picker.dart';
+import '../../../core/widgets/attribute_input_widget.dart';
 import '../../../data/providers.dart';
 import '../domain/person_model.dart';
 
@@ -15,35 +16,81 @@ class PersonListScreen extends ConsumerWidget {
     final personListAsync = ref.watch(personStreamProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Person List')),
+      appBar: AppBar(
+        title: const Text('Person List'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: '새로고침',
+            onPressed: () => ref.invalidate(personStreamProvider),
+          ),
+        ],
+      ),
       body: personListAsync.when(
-        data: (people) => ListView.builder(
-          itemCount: people.length,
-          itemBuilder: (context, index) {
-            final person = people[index];
-            return ResponsiveListTile(
-              onEdit: () => _showAddOrEditDialog(context, ref, person: person),
-              onDelete: () =>
-                  ref.read(personRepositoryProvider).deletePerson(person.id),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundImage:
-                      person.photoUrl != null && person.photoUrl!.isNotEmpty
-                          ? NetworkImage(person.photoUrl!)
-                          : null,
-                  child: (person.photoUrl == null || person.photoUrl!.isEmpty)
-                      ? const Icon(Icons.person)
-                      : null,
-                ),
-                title: Text(person.name),
-                subtitle: Text('Age: ${person.age ?? 'N/A'}'),
-                onTap: () => context.push('/person/detail', extra: person),
-              ),
-            );
+        data: (people) => RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(personStreamProvider);
+            await Future.delayed(const Duration(milliseconds: 500));
           },
+          child: people.isEmpty
+              ? ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: const [
+                    SizedBox(height: 200),
+                    Center(child: Text('등록된 인물이 없습니다.', style: TextStyle(color: Colors.grey))),
+                  ],
+                )
+              : ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: people.length,
+                  itemBuilder: (context, index) {
+                    final person = people[index];
+                    return ResponsiveListTile(
+                      onEdit: () =>
+                          _showAddOrEditDialog(context, ref, person: person),
+                      onDelete: () async {
+                        await ref
+                            .read(personRepositoryProvider)
+                            .deletePerson(person.id);
+                        ref.invalidate(personStreamProvider);
+                      },
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage:
+                              person.photoUrl != null &&
+                                      person.photoUrl!.isNotEmpty
+                                  ? NetworkImage(person.photoUrl!)
+                                  : null,
+                          child:
+                              (person.photoUrl == null ||
+                                      person.photoUrl!.isEmpty)
+                                  ? const Icon(Icons.person)
+                                  : null,
+                        ),
+                        title: Text(person.name),
+                        subtitle: Text('Age: ${person.age ?? 'N/A'}'),
+                        onTap: () =>
+                            context.push('/person/detail', extra: person),
+                      ),
+                    );
+                  },
+                ),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
+        error: (err, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Error: $err'),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () => ref.invalidate(personStreamProvider),
+                icon: const Icon(Icons.refresh),
+                label: const Text('다시 시도'),
+              ),
+            ],
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddOrEditDialog(context, ref),
@@ -56,15 +103,15 @@ class PersonListScreen extends ConsumerWidget {
       {PersonModel? person}) {
     final isEdit = person != null;
     final nameCtrl = TextEditingController(text: person?.name ?? '');
-    final ageCtrl = TextEditingController(text: person?.age?.toString() ?? '');
-
-    // 상태 변수 (이미지 & 속성)
+    final ageCtrl =
+        TextEditingController(text: person?.age?.toString() ?? '');
     String? currentPhotoUrl = person?.photoUrl;
-    Map<String, dynamic> currentAttributes = person?.attributes ?? {};
+    Map<String, String> currentAttributes =
+        Map.from(person?.attributes ?? {});
 
     showDialog(
       context: context,
-      barrierDismissible: false, // 실수로 닫기 방지
+      barrierDismissible: false,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
@@ -75,33 +122,34 @@ class PersonListScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // 1. 이미지 피커 (원형 모드)
-                    CustomImagePicker(
-                      initialUrl: currentPhotoUrl,
-                      onImageSelected: (url) {
-                        currentPhotoUrl = url;
-                      },
-                      isCircle: true, // 프로필용 원형
+                    Center(
+                      child: CustomImagePicker(
+                        initialUrl: currentPhotoUrl,
+                        onImageSelected: (url) {
+                          currentPhotoUrl = url;
+                        },
+                        isCircle: true,
+                      ),
                     ),
                     const SizedBox(height: 16),
-
-                    // 2. 기본 정보 입력
                     TextField(
-                        controller: nameCtrl,
-                        decoration:
-                            const InputDecoration(labelText: '이름 (Name)')),
+                      controller: nameCtrl,
+                      decoration:
+                          const InputDecoration(labelText: '이름 (Name)'),
+                    ),
                     TextField(
-                        controller: ageCtrl,
-                        decoration:
-                            const InputDecoration(labelText: '나이 (Age)'),
-                        keyboardType: TextInputType.number),
+                      controller: ageCtrl,
+                      decoration:
+                          const InputDecoration(labelText: '나이 (Age)'),
+                      keyboardType: TextInputType.number,
+                    ),
                     const SizedBox(height: 24),
-
-                    // 3. 속성 입력 위젯 (개선된 버전)
                     const Align(
                       alignment: Alignment.centerLeft,
-                      child: Text("추가 속성 (Attributes)",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text(
+                        '추가 속성 (Attributes)',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     AttributeInputWidget(
@@ -116,18 +164,28 @@ class PersonListScreen extends ConsumerWidget {
             ),
             actions: [
               TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('취소')),
+                onPressed: () => Navigator.pop(context),
+                child: const Text('취소'),
+              ),
               ElevatedButton(
                 onPressed: () async {
+                  if (nameCtrl.text.trim().isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('이름을 입력해주세요.')),
+                    );
+                    return;
+                  }
+
                   final newPerson = PersonModel(
                     id: isEdit
                         ? person!.id
-                        : DateTime.now().millisecondsSinceEpoch.toString(),
-                    name: nameCtrl.text,
+                        : DateTime.now()
+                            .millisecondsSinceEpoch
+                            .toString(),
+                    name: nameCtrl.text.trim(),
                     age: int.tryParse(ageCtrl.text),
                     photoUrl: currentPhotoUrl,
-                    attributes: currentAttributes, // 바로 사용
+                    attributes: currentAttributes,
                   );
 
                   if (isEdit) {
@@ -140,9 +198,11 @@ class PersonListScreen extends ConsumerWidget {
                         .addPerson(newPerson);
                   }
 
+                  ref.invalidate(personStreamProvider);
+
                   if (context.mounted) Navigator.pop(context);
                 },
-                child: Text(isEdit ? '수정' : '추가'),
+                child: const Text('저장'),
               ),
             ],
           );
