@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../core/widgets/responsive_list_tile.dart';
 import '../../../core/widgets/custom_image_picker.dart';
 import '../../../core/widgets/attribute_input_widget.dart';
@@ -52,9 +53,12 @@ class PersonListScreen extends ConsumerWidget {
                     return ResponsiveListTile(
                       onEdit: () =>
                           _showAddOrEditDialog(context, ref, person: person),
-                      onDelete: () => ref
-                          .read(personRepositoryProvider)
-                          .deletePerson(person.id),
+                      onDelete: () async {
+                        await ref
+                            .read(personRepositoryProvider)
+                            .deletePerson(person.id);
+                        ref.invalidate(personStreamProvider);
+                      },
                       child: ListTile(
                         leading: CircleAvatar(
                           backgroundImage:
@@ -170,6 +174,13 @@ class PersonListScreen extends ConsumerWidget {
               ),
               ElevatedButton(
                 onPressed: () async {
+                  if (nameCtrl.text.trim().isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('이름을 입력해주세요.')),
+                    );
+                    return;
+                  }
+
                   final newPerson = PersonModel(
                     id: isEdit
                         ? person!.id

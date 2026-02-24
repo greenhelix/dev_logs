@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/widgets/responsive_list_tile.dart';
-import '../../../core/widgets/custom_image_picker.dart'; // 이미지 피커
-import '../../../core/widgets/tag_input_widget.dart'; // 태그 입력
+import '../../../core/widgets/custom_image_picker.dart';
+import '../../../core/widgets/tag_input_widget.dart';
 import '../../../data/providers.dart';
 import '../domain/news_model.dart';
 
@@ -148,7 +148,6 @@ class NewsListScreen extends ConsumerWidget {
     final titleCtrl = TextEditingController(text: news?.title ?? '');
     final contentCtrl = TextEditingController(text: news?.content ?? '');
 
-    // 상태 변수
     DateTime selectedDate = news?.date ?? DateTime.now();
     String? currentImageUrl = news?.imageUrl;
     List<String> currentTags = List.from(news?.tags ?? []);
