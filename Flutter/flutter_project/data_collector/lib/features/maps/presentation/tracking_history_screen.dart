@@ -1,3 +1,4 @@
+// tracking_history_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -186,6 +187,7 @@ class _TrackHistoryCard extends ConsumerWidget {
                   .read(trackRecordRepositoryProvider)
                   .deleteTrackRecord(record.id);
                   
+              // 삭제 후 강제 갱신
               ref.invalidate(trackRecordStreamProvider);
               
               if (ctx.mounted) Navigator.pop(ctx);

@@ -19,6 +19,7 @@ class PersonListScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Person List'),
         actions: [
+          // Manual refresh button in AppBar
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: '새로고침',
@@ -27,20 +28,24 @@ class PersonListScreen extends ConsumerWidget {
         ],
       ),
       body: personListAsync.when(
+        // ✅ Pull-to-refresh: RefreshIndicator로 전체 감싸기
         data: (people) => RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(personStreamProvider);
+            // Stream 재구독 대기 (짧은 딜레이로 스피너 유지)
             await Future.delayed(const Duration(milliseconds: 500));
           },
           child: people.isEmpty
+              // ✅ 빈 리스트에서도 스와이프 제스처 동작하도록 ListView 유지
               ? ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: const [
                     SizedBox(height: 200),
-                    Center(child: Text('등록된 인물이 없습니다.', style: TextStyle(color: Colors.grey))),
+                    Center(child: Text('등록된 인물이 없습니다.')),
                   ],
                 )
               : ListView.builder(
+                  // ✅ 스크롤 짧아도 당기기 제스처 동작
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemCount: people.length,
                   itemBuilder: (context, index) {
@@ -106,7 +111,7 @@ class PersonListScreen extends ConsumerWidget {
     final ageCtrl =
         TextEditingController(text: person?.age?.toString() ?? '');
     String? currentPhotoUrl = person?.photoUrl;
-    Map<String, String> currentAttributes =
+    Map<String, dynamic> currentAttributes =
         Map.from(person?.attributes ?? {});
 
     showDialog(
@@ -115,21 +120,21 @@ class PersonListScreen extends ConsumerWidget {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: Text(isEdit ? 'Person 수정' : 'Person 추가'),
+            // ✅ 타이틀도 "수정" → "편집"으로 통일 (선택사항)
+            title: Text(isEdit ? 'Person 편집' : 'Person 추가'),
             content: SizedBox(
               width: double.maxFinite,
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Center(
-                      child: CustomImagePicker(
-                        initialUrl: currentPhotoUrl,
-                        onImageSelected: (url) {
-                          currentPhotoUrl = url;
-                        },
-                        isCircle: true,
-                      ),
+                    // Profile image picker (circular)
+                    CustomImagePicker(
+                      initialUrl: currentPhotoUrl,
+                      onImageSelected: (url) {
+                        currentPhotoUrl = url;
+                      },
+                      isCircle: true,
                     ),
                     const SizedBox(height: 16),
                     TextField(
@@ -198,10 +203,13 @@ class PersonListScreen extends ConsumerWidget {
                         .addPerson(newPerson);
                   }
 
+                  // ✅ 저장/수정 완료 후 Provider 강제 갱신
+                  // Firestore Stream이 실시간 반영 안 될 경우 대비
                   ref.invalidate(personStreamProvider);
 
                   if (context.mounted) Navigator.pop(context);
                 },
+                // ✅ "수정" → "저장" 으로 텍스트 통일
                 child: const Text('저장'),
               ),
             ],

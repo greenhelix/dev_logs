@@ -1,3 +1,4 @@
+// news_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -32,9 +33,11 @@ class NewsListScreen extends ConsumerWidget {
         data: (newsList) => RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(newsStreamProvider);
+            // Stream 재구독 대기 (짧은 딜레이로 스피너 유지)
             await Future.delayed(const Duration(milliseconds: 500));
           },
           child: newsList.isEmpty
+              // 리스트가 비어있어도 스와이프를 지원하기 위해 빈 ListView 유지
               ? ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: const [
@@ -54,9 +57,11 @@ class NewsListScreen extends ConsumerWidget {
                         await ref
                             .read(newsRepositoryProvider)
                             .deleteNews(news.id!);
+                        // 삭제 후 강제 갱신
                         ref.invalidate(newsStreamProvider);
                       },
                       child: ListTile(
+                        // 썸네일 (사각형)
                         leading: news.imageUrl != null && news.imageUrl!.isNotEmpty
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
@@ -161,16 +166,18 @@ class NewsListScreen extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // 1. 이미지 피커 (사각형 모드)
                     Center(
                       child: CustomImagePicker(
                         initialUrl: currentImageUrl,
                         onImageSelected: (url) {
                           currentImageUrl = url;
                         },
-                        isCircle: false,
+                        isCircle: false, // 뉴스용 사각형
                       ),
                     ),
                     const SizedBox(height: 16),
+                    // 2. 기본 정보
                     TextField(
                       controller: titleCtrl,
                       decoration: const InputDecoration(labelText: 'Title'),
@@ -181,6 +188,7 @@ class NewsListScreen extends ConsumerWidget {
                       maxLines: 5,
                     ),
                     const SizedBox(height: 16),
+                    // 3. 태그 입력 위젯
                     TagInputWidget(
                       initialTags: currentTags,
                       onChanged: (newTags) {
@@ -188,6 +196,7 @@ class NewsListScreen extends ConsumerWidget {
                       },
                     ),
                     const SizedBox(height: 16),
+                    // 4. 날짜 선택
                     Row(
                       children: [
                         const Icon(Icons.calendar_today,
@@ -244,11 +253,13 @@ class NewsListScreen extends ConsumerWidget {
                     await ref.read(newsRepositoryProvider).addNews(newNews);
                   }
 
+                  // 저장 후 강제 갱신
                   ref.invalidate(newsStreamProvider);
 
+                  // 팝업 닫기 (중복 pop 제거)
                   if (context.mounted) Navigator.pop(context);
                 },
-                child: const Text('저장'),
+                child: const Text('저장'), // 수정/추가 상관없이 저장으로 통일
               ),
             ],
           );
