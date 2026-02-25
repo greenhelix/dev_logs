@@ -1,13 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class NewsLog {
   final String? id;
   final String title;
   final String content;
   final DateTime date;
   final List<String> tags;
-  final String? relatedPersonId;
   final String? imageUrl;
+  final String? relatedPersonId;
+  // Added to support multiple links with titles and URLs
+  final List<Map<String, String>> sourceLinks;
 
   NewsLog({
     this.id,
@@ -15,41 +15,45 @@ class NewsLog {
     required this.content,
     required this.date,
     this.tags = const [],
-    this.relatedPersonId,
     this.imageUrl,
+    this.relatedPersonId,
+    this.sourceLinks = const [], // Initialize as empty list
   });
 
-  // 📌 Firestore 데이터 -> 객체 변환 (Timestamp 처리 포함)
+  // Convert from Firestore Map
   factory NewsLog.fromMap(Map<String, dynamic> map, String docId) {
-    // Timestamp -> DateTime 변환
-    DateTime parsedDate = DateTime.now();
-
-    if (map['date'] is Timestamp) {
-      parsedDate = (map['date'] as Timestamp).toDate();
-    } else if (map['date'] is String) {
-      parsedDate = DateTime.tryParse(map['date']) ?? DateTime.now();
+    // Safely parse the list of maps from Firestore
+    List<Map<String, String>> parsedLinks = [];
+    if (map['sourceLinks'] != null) {
+      for (var item in map['sourceLinks']) {
+        parsedLinks.add(Map<String, String>.from(item));
+      }
     }
 
     return NewsLog(
       id: docId,
       title: map['title'] ?? '',
       content: map['content'] ?? '',
-      date: parsedDate,
+      date: map['date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['date'])
+          : DateTime.now(),
       tags: List<String>.from(map['tags'] ?? []),
+      imageUrl: map['imageUrl'] as String?,
       relatedPersonId: map['relatedPersonId'] as String?,
-      imageUrl: map['imageUrl'],
+      sourceLinks: parsedLinks, // Assign parsed links
     );
   }
 
-  // 📌 객체 -> Firestore 저장용 Map 변환 (DateTime을 Timestamp로 변환)
+  // Convert to Firestore Map
   Map<String, dynamic> toMap() {
     return {
       'title': title,
       'content': content,
-      'date': Timestamp.fromDate(date), // DateTime -> Firestore Timestamp
+      'date': date.millisecondsSinceEpoch,
       'tags': tags,
-      'relatedPersonId': relatedPersonId,
       'imageUrl': imageUrl,
+      'relatedPersonId': relatedPersonId,
+      'sourceLinks': sourceLinks, // Save list of maps
     };
   }
 }
