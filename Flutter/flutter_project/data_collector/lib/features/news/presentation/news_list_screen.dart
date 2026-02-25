@@ -8,8 +8,6 @@ import '../../../core/widgets/custom_image_picker.dart';
 import '../../../core/widgets/tag_input_widget.dart';
 import '../../../data/providers.dart';
 import '../domain/news_model.dart';
-// Import our conditional URL opener
-import '../../../core/utils/open_url.dart';
 
 // Utility to auto-extract top keywords from content
 List<String> _extractAutoTags(String text) {
@@ -166,40 +164,14 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
                                                   fontSize: 10,
                                                   color: Colors.blue[800])),
                                         )),
+                                  // 기사 링크가 있다는 표시만 작은 아이콘으로 (클릭 불가, 상세화면 유도)
+                                  if (news.sourceLinks.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2, left: 4),
+                                      child: Icon(Icons.link, size: 14, color: Colors.blue[400]),
+                                    ),
                                 ],
                               ),
-                              // Display Source Links
-                              if (news.sourceLinks.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 6),
-                                  child: Column(
-                                    children: news.sourceLinks.map((link) {
-                                      return InkWell(
-                                        onTap: () => openUrlNewTab(link['url']!),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 2),
-                                          child: Row(
-                                            children: [
-                                              const Icon(Icons.link, size: 14, color: Colors.blue),
-                                              const SizedBox(width: 4),
-                                              Expanded(
-                                                child: Text(
-                                                  link['title']!,
-                                                  style: const TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.blue,
-                                                      decoration: TextDecoration.underline),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
                             ],
                           ),
                           onTap: () => context.push('/news/detail', extra: news),
