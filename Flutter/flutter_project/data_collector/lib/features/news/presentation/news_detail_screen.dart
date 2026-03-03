@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../domain/news_model.dart';
+// Import the custom network image widget
+import '../../../core/widgets/custom_network_image.dart';
 
 class NewsDetailScreen extends StatelessWidget {
   final NewsLog news;
@@ -21,21 +23,15 @@ class NewsDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. 이미지 표시 영역 (이미지가 있을 경우에만)
+            // 1. 이미지 표시 영역 (이미지가 있을 경우에만 CustomNetworkImage 사용)
             if (news.imageUrl != null && news.imageUrl!.isNotEmpty) ...[
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  news.imageUrl!,
+                child: CustomNetworkImage(
+                  imageUrl: news.imageUrl!,
                   width: double.infinity,
+                  height: 250, // Layout stability
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    height: 200,
-                    color: Colors.grey[200],
-                    child: const Center(
-                      child: Icon(Icons.broken_image, size: 48, color: Colors.grey),
-                    ),
-                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -63,20 +59,23 @@ class NewsDetailScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            
+
             // 태그 리스트
             if (news.tags.isNotEmpty)
               Wrap(
                 spacing: 8,
                 runSpacing: 4,
-                children: news.tags.map((tag) => Chip(
-                  label: Text('#$tag', style: const TextStyle(fontSize: 12)),
-                  backgroundColor: Colors.blue[50],
-                  side: BorderSide.none,
-                  padding: EdgeInsets.zero,
-                )).toList(),
+                children: news.tags
+                    .map((tag) => Chip(
+                          label: Text('#$tag',
+                              style: const TextStyle(fontSize: 12)),
+                          backgroundColor: Colors.blue[50],
+                          side: BorderSide.none,
+                          padding: EdgeInsets.zero,
+                        ))
+                    .toList(),
               ),
-            
+
             const Divider(height: 32),
 
             // 4. 본문 내용
@@ -84,7 +83,7 @@ class NewsDetailScreen extends StatelessWidget {
               news.content,
               style: const TextStyle(fontSize: 16, height: 1.6),
             ),
-            
+
             const SizedBox(height: 32),
 
             // 5. 관련 기사 링크 (Links)
@@ -127,7 +126,8 @@ class NewsDetailScreen extends StatelessWidget {
                           final Uri url = Uri.parse(urlStr);
                           if (await canLaunchUrl(url)) {
                             // 웹, 모바일 상관없이 안전하게 띄워줌
-                            await launchUrl(url, mode: LaunchMode.externalApplication);
+                            await launchUrl(url,
+                                mode: LaunchMode.externalApplication);
                           } else {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(

@@ -621,3 +621,28 @@ tree /f 하면 하위 파일까지 나온다.
   - 타임라인 **최신순/오래된순 정렬 토글** 추가
   - 본문 내용 기반 **자동 태그 추출(빈도 상위 4개)** 생성 버튼 추가
   - **이미지 업로드 UX 개선**: PC(중앙 다이얼로그) / 모바일(바텀시트) UI 분리 및 다이얼로그 내 프리뷰 이미지 최대 높이 고정
+
+## 📋 [Dev Log] Data Collector UI/UX 및 
+
+**안정성 개선 (2026.03.03)**
+
+1. 홈 화면(HomeScreen) 반응형 레이아웃 적용
+   - 문제: Web/PC 화면(넓은 화면)에서 1열 또는 2열 고정 배치로 인해 내비게이션 카드 크기가 지나치게 커지는 UI 이슈.
+   - 해결: `LayoutBuilder`를 도입하여 디바이스의 최대 너비(constraints.maxWidth)를 감지.
+   - 결과: 화면 크기에 따라 GridView의 열 개수(crossAxisCount)가 모바일(1~2열)에서 PC(3열)로 유동적으로 변경되도록 개선 완료.
+
+2. 통합 커스텀 이미지 위젯 (CustomNetworkImage) 개발 및 적용
+   - 문제: WebP, JPG 등 외부 공유 링크나 CORS 제약이 있는 이미지 URL을 불러올 때, 엑스박스나 흰 화면으로 앱이 깨져보이는 현상 발생.
+   - 해결: `core/widgets/custom_network_image.dart` 파일 신규 생성. 로딩 인디케이터(loadingBuilder)와 에러 아이콘(errorBuilder)을 내장한 안전한 렌더링 위젯 구축.
+   - 적용 범위 (전면 교체 완료):
+     * Person 상세 화면 (`person_detail_screen.dart`)
+     * News 상세 화면 (`news_detail_screen.dart`)
+     * Person 리스트 썸네일 (`person_list_screen.dart`)
+     * News 리스트 썸네일 (`news_list_screen.dart`)
+     * 이미지 등록/수정 모달 (`custom_image_picker.dart` 내부 미리보기)
+
+3. 기본 Widget Test 코드(widget_test.dart) 수정
+   - 문제: 기존 Flutter 기본 카운터 앱 기준으로 작성된 `widget_test.dart`가 현재 앱 구조(DataCollectorApp + Riverpod)와 맞지 않아 테스트 실행 시 오류 발생.
+   - 해결: 
+     * `MyApp`을 `DataCollectorApp`으로 변경하고 `ProviderScope`로 래핑.
+     * 카운터 숫자 검증을 제거하고, 홈 화면의 AppBar('Data Collector') 및 내비게이션 카드 텍스트('Person Wiki', 'News Log' 등)의 렌더링 여부를 검증하는 초기 스모크 테스트(Smoke Test)로 전면 개편.
