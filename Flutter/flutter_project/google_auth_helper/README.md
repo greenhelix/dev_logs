@@ -15,6 +15,10 @@ flowchart LR
     A --> D[환경 점검기\n체크리스트/권한/경로]
     A --> E[로그/터미널 WebSocket]
     A --> F[업로드 어댑터\nJira/Redmine/Notion]
+    A --> H[결과서 파서\nXML/HTML]
+    H --> I[결과 저장소\nSQLite]
+    A --> J[그래프 API\n/analytics/dashboard]
+    A --> K[모니터링 API\n/monitor/summary]
 
     W[Windows 브라우저] --> A
     M[Mobile 브라우저] --> A
@@ -95,3 +99,4 @@ docs/
 
 ## 추가 문서
 - Firebase 조회 전용 연동 가이드: `docs/firebase-monitoring.md`
+- Ubuntu 도구 경로 설정 가이드: `docs/tool-setup.md`

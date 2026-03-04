@@ -86,4 +86,27 @@ class ToolRegistry:
 
         command = runtime.spec.command_template.format(serial=serial)
         base = shlex.split(command)
+        executable = base[0]
+        resolved_exec = self._resolve_tool_executable(
+            discovered_path=runtime.discovered_path,
+            executable_name=executable,
+        )
+        base[0] = resolved_exec
         return base + extra_args
+
+    def _resolve_tool_executable(self, discovered_path: Path | None, executable_name: str) -> str:
+        if discovered_path is None:
+            return executable_name
+
+        if discovered_path.is_file():
+            return str(discovered_path)
+
+        candidates = [
+            discovered_path / executable_name,
+            discovered_path / "bin" / executable_name,
+            discovered_path / "tools" / executable_name,
+        ]
+        for candidate in candidates:
+            if candidate.exists():
+                return str(candidate)
+        return executable_name
