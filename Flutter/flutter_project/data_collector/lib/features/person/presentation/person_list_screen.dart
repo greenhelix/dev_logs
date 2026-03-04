@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/responsive_list_tile.dart';
 import '../../../core/widgets/custom_image_picker.dart';
 import '../../../core/widgets/attribute_input_widget.dart';
+// Import the custom network image widget
+import '../../../core/widgets/custom_network_image.dart';
 import '../../../data/providers.dart';
 import '../domain/person_model.dart';
 
@@ -60,17 +62,24 @@ class PersonListScreen extends ConsumerWidget {
                         ref.invalidate(personStreamProvider);
                       },
                       child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage:
-                              person.photoUrl != null &&
-                                      person.photoUrl!.isNotEmpty
-                                  ? NetworkImage(person.photoUrl!)
-                                  : null,
-                          child:
-                              (person.photoUrl == null ||
-                                      person.photoUrl!.isEmpty)
-                                  ? const Icon(Icons.person)
-                                  : null,
+                        // Use CustomNetworkImage with a circular clip for the thumbnail
+                        leading: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey[200],
+                          ),
+                          clipBehavior: Clip.hardEdge,
+                          child: (person.photoUrl != null &&
+                                  person.photoUrl!.isNotEmpty)
+                              ? CustomNetworkImage(
+                                  imageUrl: person.photoUrl!,
+                                  width: 40,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                )
+                              : const Icon(Icons.person, color: Colors.grey),
                         ),
                         title: Text(person.name),
                         subtitle: Text('Age: ${person.age ?? 'N/A'}'),
@@ -108,11 +117,9 @@ class PersonListScreen extends ConsumerWidget {
       {PersonModel? person}) {
     final isEdit = person != null;
     final nameCtrl = TextEditingController(text: person?.name ?? '');
-    final ageCtrl =
-        TextEditingController(text: person?.age?.toString() ?? '');
+    final ageCtrl = TextEditingController(text: person?.age?.toString() ?? '');
     String? currentPhotoUrl = person?.photoUrl;
-    Map<String, dynamic> currentAttributes =
-        Map.from(person?.attributes ?? {});
+    Map<String, dynamic> currentAttributes = Map.from(person?.attributes ?? {});
 
     showDialog(
       context: context,
@@ -139,13 +146,11 @@ class PersonListScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     TextField(
                       controller: nameCtrl,
-                      decoration:
-                          const InputDecoration(labelText: '이름 (Name)'),
+                      decoration: const InputDecoration(labelText: '이름 (Name)'),
                     ),
                     TextField(
                       controller: ageCtrl,
-                      decoration:
-                          const InputDecoration(labelText: '나이 (Age)'),
+                      decoration: const InputDecoration(labelText: '나이 (Age)'),
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 24),
@@ -184,9 +189,7 @@ class PersonListScreen extends ConsumerWidget {
                   final newPerson = PersonModel(
                     id: isEdit
                         ? person!.id
-                        : DateTime.now()
-                            .millisecondsSinceEpoch
-                            .toString(),
+                        : DateTime.now().millisecondsSinceEpoch.toString(),
                     name: nameCtrl.text.trim(),
                     age: int.tryParse(ageCtrl.text),
                     photoUrl: currentPhotoUrl,

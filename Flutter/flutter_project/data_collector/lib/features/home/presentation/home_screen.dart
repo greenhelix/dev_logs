@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+// The Home Screen provides navigation to the core modules of Data Collector.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -21,39 +22,59 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // 메뉴 카드 그리드
+            // Use LayoutBuilder to create a responsive grid that adjusts column count
+            // based on the available maximum width.
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2, // 2열 배치
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                children: [
-                  _MenuCard(
-                    icon: Icons.person_search,
-                    title: "Person Wiki",
-                    color: Colors.blue.shade100,
-                    onTap: () {
-                      // TODO: 나중에 라우터 연결
-                      context.go('/person');
-                    },
-                  ),
-                  _MenuCard(
-                    icon: Icons.newspaper,
-                    title: "News Archive",
-                    color: Colors.green.shade100,
-                    onTap: () {
-                      context.go('/news');
-                    },
-                  ),
-                  _MenuCard(
-                    icon: Icons.map,
-                    title: "Geo Tracker",
-                    color: Colors.orange.shade100,
-                    onTap: () {
-                      context.go('/maps');
-                    },
-                  ),
-                ],
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  int crossAxisCount = 2; // Default for mobile/tablet
+                  double childAspectRatio = 1.0;
+
+                  // If screen is wide (e.g., PC/Web), show 3 items in a row
+                  if (constraints.maxWidth > 800) {
+                    crossAxisCount = 3;
+                    childAspectRatio = 1.5; // Make cards wider, less tall on PC
+                  }
+                  // If screen is very narrow (small mobile), show 1 item in a row
+                  else if (constraints.maxWidth < 400) {
+                    crossAxisCount = 1;
+                    childAspectRatio = 2.0;
+                  }
+
+                  return GridView.count(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: childAspectRatio,
+                    children: [
+                      _MenuCard(
+                        icon: Icons.person_search,
+                        title: "Person Wiki",
+                        color: Colors.blue.shade100,
+                        onTap: () {
+                          context.go('/person');
+                        },
+                      ),
+                      _MenuCard(
+                        icon: Icons.newspaper,
+                        title: "News Archive",
+                        color: Colors.green.shade100,
+                        onTap: () {
+                          context.go('/news');
+                        },
+                      ),
+                      _MenuCard(
+                        icon: Icons.map,
+                        title: "Geo Tracker",
+                        color: Colors.orange.shade100,
+                        onTap: () {
+                          // Note: Matches the existing routing path mapped to Geo Tracker
+                          context.go('/maps');
+                        },
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ],
@@ -63,7 +84,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-// ─── 서브 위젯: 메뉴 카드 ───────────────────
+// ─── Sub Widget: Menu Card ───────────────────
 class _MenuCard extends StatelessWidget {
   final IconData icon;
   final String title;

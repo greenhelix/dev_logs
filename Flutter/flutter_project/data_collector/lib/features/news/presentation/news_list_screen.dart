@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import '../../../core/widgets/responsive_list_tile.dart';
 import '../../../core/widgets/custom_image_picker.dart';
 import '../../../core/widgets/tag_input_widget.dart';
+// Import the custom network image widget
+import '../../../core/widgets/custom_network_image.dart';
 import '../../../data/providers.dart';
 import '../domain/news_model.dart';
 
@@ -13,11 +15,56 @@ import '../domain/news_model.dart';
 List<String> _extractAutoTags(String text) {
   // Common stop words to ignore
   const stopwords = {
-    '은', '는', '이', '가', '을', '를', '의', '에', '에서', '로', '으로',
-    '도', '만', '과', '와', '하다', '있다', '없다', '되다', '하고', '이고',
-    '그', '저', '것', '수', '및', '등', '더', '또', '이번', '지난',
-    'the', 'a', 'an', 'is', 'are', 'was', 'were', 'in', 'on', 'at',
-    'to', 'for', 'of', 'and', 'or', 'but', 'with', 'that', 'this',
+    '은',
+    '는',
+    '이',
+    '가',
+    '을',
+    '를',
+    '의',
+    '에',
+    '에서',
+    '로',
+    '으로',
+    '도',
+    '만',
+    '과',
+    '와',
+    '하다',
+    '있다',
+    '없다',
+    '되다',
+    '하고',
+    '이고',
+    '그',
+    '저',
+    '것',
+    '수',
+    '및',
+    '등',
+    '더',
+    '또',
+    '이번',
+    '지난',
+    'the',
+    'a',
+    'an',
+    'is',
+    'are',
+    'was',
+    'were',
+    'in',
+    'on',
+    'at',
+    'to',
+    'for',
+    'of',
+    'and',
+    'or',
+    'but',
+    'with',
+    'that',
+    'this',
   };
 
   // Clean special characters and split by space
@@ -63,7 +110,8 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
         actions: [
           // Sort toggle button
           IconButton(
-            icon: Icon(_isLatestFirst ? Icons.arrow_downward : Icons.arrow_upward),
+            icon: Icon(
+                _isLatestFirst ? Icons.arrow_downward : Icons.arrow_upward),
             tooltip: _isLatestFirst ? '오래된 순 보기' : '최신 순 보기',
             onPressed: () => setState(() => _isLatestFirst = !_isLatestFirst),
           ),
@@ -112,20 +160,19 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
                           ref.invalidate(newsStreamProvider);
                         },
                         child: ListTile(
-                          leading: news.imageUrl != null &&
-                                  news.imageUrl!.isNotEmpty
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: Image.network(
-                                    news.imageUrl!,
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) =>
-                                        const Icon(Icons.broken_image),
-                                  ),
-                                )
-                              : const Icon(Icons.article),
+                          // Use CustomNetworkImage for the thumbnail
+                          leading:
+                              news.imageUrl != null && news.imageUrl!.isNotEmpty
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: CustomNetworkImage(
+                                        imageUrl: news.imageUrl!,
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : const Icon(Icons.article),
                           title: Text(news.title,
                               maxLines: 1, overflow: TextOverflow.ellipsis),
                           subtitle: Column(
@@ -147,7 +194,8 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
                                     ),
                                     child: Text(dateFormat.format(news.date),
                                         style: const TextStyle(
-                                            fontSize: 10, color: Colors.black87)),
+                                            fontSize: 10,
+                                            color: Colors.black87)),
                                   ),
                                   // Display Tags
                                   if (news.tags.isNotEmpty)
@@ -167,14 +215,17 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
                                   // 기사 링크가 있다는 표시만 작은 아이콘으로 (클릭 불가, 상세화면 유도)
                                   if (news.sourceLinks.isNotEmpty)
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 2, left: 4),
-                                      child: Icon(Icons.link, size: 14, color: Colors.blue[400]),
+                                      padding: const EdgeInsets.only(
+                                          top: 2, left: 4),
+                                      child: Icon(Icons.link,
+                                          size: 14, color: Colors.blue[400]),
                                     ),
                                 ],
                               ),
                             ],
                           ),
-                          onTap: () => context.push('/news/detail', extra: news),
+                          onTap: () =>
+                              context.push('/news/detail', extra: news),
                         ),
                       );
                     },
@@ -207,7 +258,7 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
     final isEdit = news != null;
     final titleCtrl = TextEditingController(text: news?.title ?? '');
     final contentCtrl = TextEditingController(text: news?.content ?? '');
-    
+
     // Controllers for new link input
     final linkTitleCtrl = TextEditingController();
     final linkUrlCtrl = TextEditingController();
@@ -215,7 +266,8 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
     DateTime selectedDate = news?.date ?? DateTime.now();
     String? currentImageUrl = news?.imageUrl;
     List<String> currentTags = List.from(news?.tags ?? []);
-    List<Map<String, String>> currentSourceLinks = List.from(news?.sourceLinks ?? []);
+    List<Map<String, String>> currentSourceLinks =
+        List.from(news?.sourceLinks ?? []);
 
     showDialog(
       context: context,
@@ -268,12 +320,13 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
                           if (extracted.isEmpty) return;
                           setState(() {
                             // Merge and remove duplicates
-                            currentTags = {...currentTags, ...extracted}.toList();
+                            currentTags =
+                                {...currentTags, ...extracted}.toList();
                           });
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text(
-                                    '태그 추출 완료: ${extracted.join(', ')}')),
+                                content:
+                                    Text('태그 추출 완료: ${extracted.join(', ')}')),
                           );
                         },
                       ),
@@ -324,8 +377,8 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
                             if (linkUrlCtrl.text.trim().isNotEmpty) {
                               setState(() {
                                 // If title is empty, use URL as fallback
-                                final t = linkTitleCtrl.text.trim().isEmpty 
-                                    ? linkUrlCtrl.text.trim() 
+                                final t = linkTitleCtrl.text.trim().isEmpty
+                                    ? linkUrlCtrl.text.trim()
                                     : linkTitleCtrl.text.trim();
                                 currentSourceLinks.add({
                                   'title': t,
@@ -340,34 +393,38 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
                         ),
                       ],
                     ),
-                    
+
                     // Display added links
                     if (currentSourceLinks.isNotEmpty)
-                      ...currentSourceLinks.asMap().entries.map((entry) =>
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.link, size: 14, color: Colors.blue),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    entry.value['title']!,
-                                    style: const TextStyle(
-                                        fontSize: 12, color: Colors.blue),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                      ...currentSourceLinks
+                          .asMap()
+                          .entries
+                          .map((entry) => Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.link,
+                                        size: 14, color: Colors.blue),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        entry.value['title']!,
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.blue),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () => setState(() =>
+                                          currentSourceLinks
+                                              .removeAt(entry.key)),
+                                      child: const Icon(Icons.close,
+                                          size: 14, color: Colors.red),
+                                    ),
+                                  ],
                                 ),
-                                InkWell(
-                                  onTap: () => setState(() =>
-                                      currentSourceLinks.removeAt(entry.key)),
-                                  child: const Icon(Icons.close,
-                                      size: 14, color: Colors.red),
-                                ),
-                              ],
-                            ),
-                          )),
+                              )),
                     const SizedBox(height: 16),
 
                     // 5. Date Picker

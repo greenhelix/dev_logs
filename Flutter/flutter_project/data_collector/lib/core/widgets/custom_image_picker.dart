@@ -6,6 +6,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+// Import our custom network image widget for safe rendering
+import 'custom_network_image.dart';
+
 class CustomImagePicker extends StatefulWidget {
   final String? initialUrl;
   final void Function(String url) onImageSelected;
@@ -35,7 +38,8 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
   // Detect if platform is wide (PC Web) or mobile
   bool get _isDesktop {
     if (kIsWeb) {
-      final width = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize.width;
+      final width = WidgetsBinding
+          .instance.platformDispatcher.views.first.physicalSize.width;
       return width > 600;
     }
     return false;
@@ -134,7 +138,8 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
               if (_currentUrl != null && _currentUrl!.isNotEmpty)
                 ListTile(
                   leading: const Icon(Icons.delete_outline, color: Colors.red),
-                  title: const Text('이미지 삭제', style: TextStyle(color: Colors.red)),
+                  title:
+                      const Text('이미지 삭제', style: TextStyle(color: Colors.red)),
                   onTap: () {
                     Navigator.pop(ctx);
                     setState(() => _currentUrl = null);
@@ -180,7 +185,8 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
         imageBytes = compressed;
       }
 
-      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${picked.name}';
+      final fileName =
+          '${DateTime.now().millisecondsSinceEpoch}_${picked.name}';
       final ref = FirebaseStorage.instance.ref().child('uploads/$fileName');
       await ref.putData(imageBytes);
       final url = await ref.getDownloadURL();
@@ -243,15 +249,23 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
         child: Stack(
           alignment: Alignment.bottomRight,
           children: [
-            CircleAvatar(
-              radius: 48,
-              backgroundImage:
-                  _currentUrl != null && _currentUrl!.isNotEmpty
-                      ? NetworkImage(_currentUrl!)
-                      : null,
-              child: (_currentUrl == null || _currentUrl!.isEmpty)
-                  ? const Icon(Icons.person, size: 48)
-                  : null,
+            // Use CustomNetworkImage inside Container with Clip.hardEdge instead of CircleAvatar with backgroundImage
+            Container(
+              width: 96, // equivalent to radius 48
+              height: 96,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey[200],
+              ),
+              clipBehavior: Clip.hardEdge,
+              child: (_currentUrl != null && _currentUrl!.isNotEmpty)
+                  ? CustomNetworkImage(
+                      imageUrl: _currentUrl!,
+                      width: 96,
+                      height: 96,
+                      fit: BoxFit.cover,
+                    )
+                  : const Icon(Icons.person, size: 48, color: Colors.grey),
             ),
             CircleAvatar(
               radius: 14,
@@ -261,7 +275,9 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
                       width: 12,
                       height: 12,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : const Icon(Icons.edit, size: 14, color: Colors.white),
             ),
@@ -286,12 +302,12 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
             : _currentUrl != null && _currentUrl!.isNotEmpty
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      _currentUrl!,
-                      fit: BoxFit.cover,
+                    // Use CustomNetworkImage instead of Image.network
+                    child: CustomNetworkImage(
+                      imageUrl: _currentUrl!,
                       width: double.infinity,
-                      errorBuilder: (_, __, ___) =>
-                          const Center(child: Icon(Icons.broken_image, size: 48)),
+                      height: 150,
+                      fit: BoxFit.cover,
                     ),
                   )
                 : Column(
@@ -300,8 +316,7 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
                       Icon(Icons.add_photo_alternate_outlined,
                           size: 40, color: Colors.grey[400]),
                       const SizedBox(height: 8),
-                      Text('사진 추가',
-                          style: TextStyle(color: Colors.grey[500])),
+                      Text('사진 추가', style: TextStyle(color: Colors.grey[500])),
                     ],
                   ),
       ),
