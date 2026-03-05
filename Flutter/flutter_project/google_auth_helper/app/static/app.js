@@ -1,5 +1,79 @@
 const byId = (id) => document.getElementById(id);
+
 const API_BASE_STORAGE_KEY = "gah_api_base_url";
+const MODE_STORAGE_KEY = "gah_ui_mode";
+const CONSOLE_HEIGHT_STORAGE_KEY = "gah_console_height";
+
+const MODE_CONFIG = {
+  mode1: {
+    label: "MODE 1 · Ubuntu Control",
+    summary: "Ubuntu 운영 전체 기능",
+  },
+  mode2: {
+    label: "MODE 2 · Windows/Hosting",
+    summary: "조회/분석 중심 기능",
+  },
+};
+
+const state = {
+  wsLogs: null,
+  wsTerminal: null,
+  parsedResult: null,
+  charts: {},
+  devices: [],
+  mode: "mode1",
+  consoleExpanded: false,
+  consoleHeight: 280,
+};
+
+const viewMeta = {
+  dashboard: {
+    title: "대시보드",
+    description: "FW 인증 추이, Fail 감소 추이, 업로드 추이를 확인합니다.",
+  },
+  runner: {
+    title: "테스트 실행",
+    description: "인증 도구 실행과 작업 상태를 확인합니다.",
+  },
+  firmware: {
+    title: "펌웨어 업로드",
+    description: "ADB Push로 펌웨어를 업로드합니다.",
+  },
+  upload: {
+    title: "결과서/업로드",
+    description: "result.xml / result_failure.html 자동 분석 및 외부 업로드를 수행합니다.",
+  },
+  environment: {
+    title: "환경 점검",
+    description: "필수 환경과 권한 상태를 점검하고 watcher를 제어합니다.",
+  },
+  tools: {
+    title: "도구 상태",
+    description: "CTS/GTS/TVTS/VTS/STS/CTS-on-GSI 활성 상태를 확인합니다.",
+  },
+  firebase: {
+    title: "Firebase 센터",
+    description: "Firestore 상태 확인 및 동기화를 실행합니다.",
+  },
+  guide: {
+    title: "사용방법",
+    description: "모드별 기본 작업 흐름을 확인합니다.",
+  },
+  help: {
+    title: "도움말",
+    description: "자주 묻는 질문과 운영 팁을 확인합니다.",
+  },
+  settings: {
+    title: "설정",
+    description: "API Base URL 등 기본 연결 설정을 관리합니다.",
+  },
+};
+
+const escapeHtml = (value) =>
+  String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 
 function getApiBase() {
   const fromWindow = (window.GAH_API_BASE || "").trim();
@@ -25,43 +99,6 @@ function getWsBase() {
   return base;
 }
 
-const state = {
-  wsLogs: null,
-  wsTerminal: null,
-  parsedResult: null,
-  charts: {},
-  devices: [],
-};
-
-const viewMeta = {
-  dashboard: {
-    title: "대시보드",
-    description: "FW 인증 추이, Fail 감소 추이, 업로드 추이를 확인합니다.",
-  },
-  runner: {
-    title: "테스트 실행",
-    description: "인증 도구 실행/작업 상태/펌웨어 업로드를 처리합니다.",
-  },
-  upload: {
-    title: "결과서/업로드",
-    description: "result.xml / result_failure.html 자동 분석 및 외부 업로드를 수행합니다.",
-  },
-  environment: {
-    title: "환경 점검",
-    description: "필수 환경과 권한 상태를 별도 화면에서 점검합니다.",
-  },
-  tools: {
-    title: "도구 상태",
-    description: "CTS/GTS/TVTS/VTS/STS/CTS-on-GSI 활성 상태를 확인합니다.",
-  },
-};
-
-const escapeHtml = (value) =>
-  String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
-
 const badge = (status) => {
   if (status === "ok" || status === "success" || status === true) return `<span class="badge ok">정상</span>`;
   if (status === "warn" || status === "queued" || status === "running") return `<span class="badge warn-badge">${status}</span>`;
@@ -77,9 +114,23 @@ async function fetchJson(url, options = {}) {
   return response.json();
 }
 
+function modeAllowsElement(element, mode) {
+  const spec = (element.dataset.mode || "all").split(",").map((item) => item.trim());
+  return spec.includes("all") || spec.includes(mode);
+}
+
+function ensureActiveViewVisible() {
+  const active = document.querySelector(".menu-btn.active");
+  if (active && !active.classList.contains("hidden-by-mode")) return;
+  const fallback = document.querySelector(".menu-btn:not(.hidden-by-mode)");
+  if (fallback) switchView(fallback.dataset.view);
+}
+
 function switchView(target) {
+  if (!viewMeta[target]) return;
   document.querySelectorAll(".menu-btn").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.view === target);
+    const active = btn.dataset.view === target;
+    btn.classList.toggle("active", active);
   });
   document.querySelectorAll(".view").forEach((section) => {
     section.classList.toggle("active", section.id === `view-${target}`);
@@ -88,12 +139,171 @@ function switchView(target) {
   byId("viewDescription").textContent = viewMeta[target].description;
 }
 
+function applyMode(mode, persist = true) {
+  if (!MODE_CONFIG[mode]) return;
+  state.mode = mode;
+  if (persist) localStorage.setItem(MODE_STORAGE_KEY, mode);
+
+  byId("currentModeBadge").textContent = MODE_CONFIG[mode].label;
+  byId("currentModeText").textContent = MODE_CONFIG[mode].summary;
+
+  document.querySelectorAll("[data-mode]").forEach((element) => {
+    const visible = modeAllowsElement(element, mode);
+    element.classList.toggle("hidden-by-mode", !visible);
+    if (element.classList.contains("view") && !visible) {
+      element.classList.remove("active");
+    }
+  });
+
+  const terminalTab = document.querySelector('.console-tab[data-console="terminal"]');
+  const terminalPanel = byId("terminalLogs");
+  if (mode === "mode2" && terminalTab && terminalTab.classList.contains("active")) {
+    terminalTab.classList.remove("active");
+    terminalPanel.classList.remove("active");
+    const logTab = document.querySelector('.console-tab[data-console="logs"]');
+    const logPanel = byId("jobLogs");
+    if (logTab) logTab.classList.add("active");
+    if (logPanel) logPanel.classList.add("active");
+  }
+
+  ensureActiveViewVisible();
+  ensureSocketsForMode();
+}
+
 function initMenu() {
   document.querySelectorAll(".menu-btn").forEach((btn) => {
     btn.addEventListener("click", () => switchView(btn.dataset.view));
   });
 }
 
+function initModePicker() {
+  const host = (location.hostname || "").toLowerCase();
+  const isFirebaseHosting = host.endsWith(".web.app") || host.endsWith(".firebaseapp.com");
+  const isWindows = (navigator.userAgent || "").includes("Windows");
+  const suggestedMode = (isFirebaseHosting || isWindows) ? "mode2" : "mode1";
+  const savedMode = localStorage.getItem(MODE_STORAGE_KEY);
+  if (MODE_CONFIG[savedMode]) {
+    applyMode(savedMode, false);
+  } else {
+    applyMode(suggestedMode, false);
+  }
+
+  const overlay = byId("modeOverlay");
+  overlay.classList.add("show");
+
+  byId("selectMode1Btn").addEventListener("click", () => {
+    applyMode("mode1");
+    overlay.classList.remove("show");
+  });
+  byId("selectMode2Btn").addEventListener("click", () => {
+    applyMode("mode2");
+    overlay.classList.remove("show");
+  });
+  byId("switchModeBtn").addEventListener("click", () => {
+    overlay.classList.add("show");
+  });
+}
+
+function initConsoleTabs() {
+  document.querySelectorAll(".console-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      if (tab.classList.contains("hidden-by-mode")) return;
+      const target = tab.dataset.console;
+      document.querySelectorAll(".console-tab").forEach((button) => {
+        button.classList.toggle("active", button === tab);
+      });
+      const panelId = target === "logs" ? "jobLogs" : "terminalLogs";
+      byId("jobLogs").classList.toggle("active", panelId === "jobLogs");
+      byId("terminalLogs").classList.toggle("active", panelId === "terminalLogs");
+    });
+  });
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(value, max));
+}
+
+function applyConsoleHeight(px) {
+  const dock = byId("consoleDock");
+  const value = clamp(Math.round(px), 160, 760);
+  state.consoleHeight = value;
+  dock.style.height = `${value}px`;
+  localStorage.setItem(CONSOLE_HEIGHT_STORAGE_KEY, String(value));
+}
+
+function initConsoleDockControls() {
+  const dock = byId("consoleDock");
+  const handle = byId("consoleResizeHandle");
+  const toggleBtn = byId("toggleConsoleBtn");
+  const expandBtn = byId("expandConsoleBtn");
+  const saved = Number(localStorage.getItem(CONSOLE_HEIGHT_STORAGE_KEY) || 280);
+  applyConsoleHeight(saved);
+
+  let dragging = false;
+  let prevHeight = saved;
+
+  handle.addEventListener("mousedown", (event) => {
+    if (dock.classList.contains("minimized")) return;
+    dragging = true;
+    dock.classList.remove("expanded");
+    state.consoleExpanded = false;
+    event.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (event) => {
+    if (!dragging) return;
+    const desired = window.innerHeight - event.clientY;
+    applyConsoleHeight(desired);
+  });
+
+  document.addEventListener("mouseup", () => {
+    dragging = false;
+  });
+
+  toggleBtn.addEventListener("click", () => {
+    const minimized = dock.classList.toggle("minimized");
+    toggleBtn.textContent = minimized ? "열기" : "최소화";
+  });
+
+  expandBtn.addEventListener("click", () => {
+    if (!state.consoleExpanded) {
+      prevHeight = dock.offsetHeight || state.consoleHeight;
+      state.consoleExpanded = true;
+      dock.classList.remove("minimized");
+      dock.classList.add("expanded");
+      applyConsoleHeight(window.innerHeight * 0.58);
+      expandBtn.textContent = "원래 크기";
+      toggleBtn.textContent = "최소화";
+      return;
+    }
+    state.consoleExpanded = false;
+    dock.classList.remove("expanded");
+    applyConsoleHeight(prevHeight);
+    expandBtn.textContent = "크게";
+  });
+}
+
+function setConnectionText(elementId, text, tone) {
+  const element = byId(elementId);
+  if (!element) return;
+  element.textContent = text;
+  element.style.color = tone === "ok" ? "#8cffc4" : tone === "error" ? "#ffb5b5" : "#eef4ff";
+}
+
+async function refreshConnectionStatus() {
+  if (!navigator.onLine) {
+    setConnectionText("networkStatus", "오프라인", "error");
+    setConnectionText("apiStatus", "연결 불가", "error");
+    return;
+  }
+  setConnectionText("networkStatus", "온라인", "ok");
+  try {
+    await fetchJson("/api/health");
+    setConnectionText("apiStatus", "정상", "ok");
+  } catch (error) {
+    setConnectionText("apiStatus", "오류", "error");
+  }
+}
 async function loadTools() {
   const toolsTableBody = byId("toolsTable").querySelector("tbody");
   const toolIdSelect = byId("toolId");
@@ -382,47 +592,6 @@ async function loadRunDetail(runId) {
   });
   detailBox.textContent = head + caseLines.join("\n");
 }
-
-function initConsoleTabs() {
-  document.querySelectorAll(".console-tab").forEach((tab) => {
-    tab.addEventListener("click", () => {
-      const target = tab.dataset.console;
-      document.querySelectorAll(".console-tab").forEach((button) => {
-        button.classList.toggle("active", button === tab);
-      });
-      document.querySelectorAll(".console-panel").forEach((panel) => {
-        panel.classList.toggle("active", panel.id === (target === "logs" ? "jobLogs" : "terminalLogs"));
-      });
-    });
-  });
-}
-
-function initLogSocket() {
-  const jobLogs = byId("jobLogs");
-  state.wsLogs = new WebSocket(`${getWsBase()}/ws/logs`);
-  state.wsLogs.onmessage = (event) => {
-    jobLogs.textContent += `${event.data}\n`;
-    jobLogs.scrollTop = jobLogs.scrollHeight;
-  };
-}
-
-function initTerminalSocket() {
-  const terminalLogs = byId("terminalLogs");
-  state.wsTerminal = new WebSocket(`${getWsBase()}/ws/terminal`);
-  state.wsTerminal.onmessage = (event) => {
-    terminalLogs.textContent += event.data;
-    terminalLogs.scrollTop = terminalLogs.scrollHeight;
-  };
-}
-
-function sendTerminalCommand() {
-  const input = byId("terminalInput");
-  const value = input.value.trim();
-  if (!value || !state.wsTerminal || state.wsTerminal.readyState !== WebSocket.OPEN) return;
-  state.wsTerminal.send(value);
-  input.value = "";
-}
-
 function destroyChart(name) {
   if (state.charts[name]) {
     state.charts[name].destroy();
@@ -686,65 +855,145 @@ async function syncFirebaseMonitor() {
     summary.textContent = `모니터링 동기화 실패: ${error.message}`;
   }
 }
+function initLogSocket() {
+  if (state.wsLogs) return;
+  const jobLogs = byId("jobLogs");
+  state.wsLogs = new WebSocket(`${getWsBase()}/ws/logs`);
+  state.wsLogs.onmessage = (event) => {
+    jobLogs.textContent += `${event.data}\n`;
+    jobLogs.scrollTop = jobLogs.scrollHeight;
+  };
+  state.wsLogs.onclose = () => {
+    state.wsLogs = null;
+  };
+}
+
+function initTerminalSocket() {
+  if (state.wsTerminal || state.mode === "mode2") return;
+  const terminalLogs = byId("terminalLogs");
+  state.wsTerminal = new WebSocket(`${getWsBase()}/ws/terminal`);
+  state.wsTerminal.onmessage = (event) => {
+    terminalLogs.textContent += event.data;
+    terminalLogs.scrollTop = terminalLogs.scrollHeight;
+  };
+  state.wsTerminal.onclose = () => {
+    state.wsTerminal = null;
+  };
+}
+
+function closeTerminalSocket() {
+  if (!state.wsTerminal) return;
+  try {
+    state.wsTerminal.close();
+  } catch (error) {
+    console.warn(error);
+  }
+  state.wsTerminal = null;
+}
+
+function ensureSocketsForMode() {
+  initLogSocket();
+  if (state.mode === "mode1") {
+    initTerminalSocket();
+    return;
+  }
+  closeTerminalSocket();
+}
+
+function sendTerminalCommand() {
+  const input = byId("terminalInput");
+  const value = input.value.trim();
+  if (!value || !state.wsTerminal || state.wsTerminal.readyState !== WebSocket.OPEN) return;
+  state.wsTerminal.send(value);
+  input.value = "";
+}
+
+function on(id, eventName, handler) {
+  const element = byId(id);
+  if (element) element.addEventListener(eventName, handler);
+}
 
 function bindEvents() {
-  byId("refreshToolsBtn").addEventListener("click", loadTools);
-  byId("checkEnvBtn").addEventListener("click", loadEnvironmentCheck);
-  byId("startJobBtn").addEventListener("click", startJob);
-  byId("refreshJobsBtn").addEventListener("click", loadJobs);
-  byId("refreshDevicesBtn").addEventListener("click", loadAdbDevices);
-  byId("refreshFirebaseStatusBtn").addEventListener("click", loadFirebaseStatus);
-  byId("syncRunsBtn").addEventListener("click", syncFirebaseRuns);
-  byId("syncMonitorBtn").addEventListener("click", syncFirebaseMonitor);
-  byId("refreshWatcherStatusBtn").addEventListener("click", loadWatcherStatus);
-  byId("enableWatcherBtn").addEventListener("click", () => controlWatcher("enable"));
-  byId("disableWatcherBtn").addEventListener("click", () => controlWatcher("disable"));
-  byId("scanWatcherNowBtn").addEventListener("click", () => controlWatcher("scan"));
-  byId("deviceSelect").addEventListener("change", (event) => {
+  on("refreshToolsBtn", "click", () => loadTools());
+  on("checkEnvBtn", "click", () => loadEnvironmentCheck());
+  on("startJobBtn", "click", () => startJob());
+  on("refreshJobsBtn", "click", () => loadJobs());
+  on("refreshDevicesBtn", "click", () => loadAdbDevices());
+  on("refreshFirebaseStatusBtn", "click", () => loadFirebaseStatus());
+  on("syncRunsBtn", "click", () => syncFirebaseRuns());
+  on("syncMonitorBtn", "click", () => syncFirebaseMonitor());
+  on("refreshWatcherStatusBtn", "click", () => loadWatcherStatus());
+  on("enableWatcherBtn", "click", () => controlWatcher("enable"));
+  on("disableWatcherBtn", "click", () => controlWatcher("disable"));
+  on("scanWatcherNowBtn", "click", () => controlWatcher("scan"));
+  on("uploadFirmwareBtn", "click", () => uploadFirmware());
+  on("parseResultBtn", "click", () => parseAndStoreResult());
+  on("autoUploadBtn", "click", () => autoUploadParsedResult());
+  on("refreshRunsBtn", "click", () => loadRuns());
+  on("sendTerminalBtn", "click", () => sendTerminalCommand());
+  on("openFirebaseCenterBtn", "click", () => switchView("firebase"));
+
+  on("deviceSelect", "change", (event) => {
     const value = String(event.target.value || "").trim();
     if (value) {
       byId("serial").value = value;
       byId("firmwareSerial").value = value;
     }
   });
-  byId("uploadFirmwareBtn").addEventListener("click", uploadFirmware);
-  byId("parseResultBtn").addEventListener("click", parseAndStoreResult);
-  byId("autoUploadBtn").addEventListener("click", autoUploadParsedResult);
-  byId("refreshRunsBtn").addEventListener("click", loadRuns);
-  byId("sendTerminalBtn").addEventListener("click", sendTerminalCommand);
 
-  byId("terminalInput").addEventListener("keydown", (event) => {
+  on("terminalInput", "keydown", (event) => {
     if (event.key === "Enter") sendTerminalCommand();
   });
 
-  byId("saveApiBaseBtn").addEventListener("click", () => {
+  on("saveApiBaseBtn", "click", async () => {
     const value = byId("apiBaseUrl").value.trim();
-    if (value) {
-      localStorage.setItem(API_BASE_STORAGE_KEY, value);
-    } else {
-      localStorage.removeItem(API_BASE_STORAGE_KEY);
-    }
-    location.reload();
+    if (value) localStorage.setItem(API_BASE_STORAGE_KEY, value);
+    await refreshConnectionStatus();
+    alert("API 주소를 저장했습니다.");
   });
+
+  on("clearApiBaseBtn", "click", async () => {
+    localStorage.removeItem(API_BASE_STORAGE_KEY);
+    byId("apiBaseUrl").value = "";
+    await refreshConnectionStatus();
+    alert("API 주소를 지웠습니다.");
+  });
+}
+
+async function safeRun(label, runner) {
+  try {
+    await runner();
+  } catch (error) {
+    console.warn(`[init] ${label} failed`, error);
+  }
 }
 
 async function init() {
   byId("apiBaseUrl").value = getApiBase();
+
   initMenu();
+  initModePicker();
   initConsoleTabs();
+  initConsoleDockControls();
   bindEvents();
+
+  await safeRun("network", refreshConnectionStatus);
+  window.addEventListener("online", refreshConnectionStatus);
+  window.addEventListener("offline", refreshConnectionStatus);
+  setInterval(refreshConnectionStatus, 15000);
+
   await Promise.all([
-    loadTools(),
-    loadAdbDevices(),
-    loadFirebaseStatus(),
-    loadWatcherStatus(),
-    loadJobs(),
-    loadEnvironmentCheck(),
-    loadRuns(),
-    loadDashboard(),
+    safeRun("tools", loadTools),
+    safeRun("adb", loadAdbDevices),
+    safeRun("firebase", loadFirebaseStatus),
+    safeRun("watcher", loadWatcherStatus),
+    safeRun("jobs", loadJobs),
+    safeRun("environment", loadEnvironmentCheck),
+    safeRun("runs", loadRuns),
+    safeRun("dashboard", loadDashboard),
   ]);
-  initLogSocket();
-  initTerminalSocket();
+
+  ensureSocketsForMode();
 }
 
 init().catch((error) => {
