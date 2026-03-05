@@ -32,8 +32,14 @@ class EnvironmentReport(BaseModel):
 
 class StartJobRequest(BaseModel):
     tool_id: str
-    serial: str
+    serial: str = ""
     extra_args: List[str] = Field(default_factory=list)
+
+
+class AdbDevice(BaseModel):
+    serial: str
+    state: str
+    details: Dict[str, str] = Field(default_factory=dict)
 
 
 class JobInputRequest(BaseModel):

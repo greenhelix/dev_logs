@@ -6,6 +6,13 @@ from pathlib import Path
 from typing import List
 
 
+def env_bool(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
 @dataclass(frozen=True)
 class ToolSpec:
     id: str
@@ -35,9 +42,38 @@ class Settings:
     jira_token: str = field(default_factory=lambda: os.getenv("JIRA_TOKEN", ""))
     redmine_base_url: str = field(default_factory=lambda: os.getenv("REDMINE_BASE_URL", ""))
     redmine_token: str = field(default_factory=lambda: os.getenv("REDMINE_TOKEN", ""))
+    redmine_project_id: str = field(default_factory=lambda: os.getenv("REDMINE_PROJECT_ID", ""))
     notion_token: str = field(default_factory=lambda: os.getenv("NOTION_TOKEN", ""))
     notion_database_id: str = field(default_factory=lambda: os.getenv("NOTION_DATABASE_ID", ""))
+    notion_version: str = field(default_factory=lambda: os.getenv("NOTION_VERSION", "2022-06-28"))
     monitor_api_token: str = field(default_factory=lambda: os.getenv("MONITOR_API_TOKEN", ""))
+    firebase_backend: str = field(default_factory=lambda: os.getenv("FIREBASE_BACKEND", "firestore"))
+    firebase_project_id: str = field(default_factory=lambda: os.getenv("FIREBASE_PROJECT_ID", ""))
+    firebase_api_key: str = field(default_factory=lambda: os.getenv("FIREBASE_API_KEY", ""))
+    firebase_bearer_token: str = field(
+        default_factory=lambda: os.getenv("FIREBASE_BEARER_TOKEN", "")
+    )
+    firebase_service_account_file: str = field(
+        default_factory=lambda: os.getenv("FIREBASE_SERVICE_ACCOUNT_FILE", "")
+    )
+    firebase_hosting_url: str = field(
+        default_factory=lambda: os.getenv("FIREBASE_HOSTING_URL", "https://kani-projects.web.app")
+    )
+    firestore_default_collection: str = field(
+        default_factory=lambda: os.getenv("FIRESTORE_DEFAULT_COLLECTION", "google-auth")
+    )
+    firestore_database_id: str = field(
+        default_factory=lambda: os.getenv("FIRESTORE_DATABASE_ID", "(default)")
+    )
+    result_watcher_enabled: bool = field(
+        default_factory=lambda: env_bool("RESULT_WATCHER_ENABLED", True)
+    )
+    result_watcher_interval_sec: int = field(
+        default_factory=lambda: int(os.getenv("RESULT_WATCHER_INTERVAL_SEC", "15"))
+    )
+    result_watcher_scan_limit: int = field(
+        default_factory=lambda: int(os.getenv("RESULT_WATCHER_SCAN_LIMIT", "300"))
+    )
     allowed_origins: List[str] = field(
         default_factory=lambda: [
             origin.strip()
@@ -97,4 +133,11 @@ class Settings:
 
 
 def load_settings() -> Settings:
+    try:
+        from dotenv import load_dotenv
+
+        load_dotenv()
+    except Exception:
+        # Keep running even if python-dotenv is not installed.
+        pass
     return Settings()

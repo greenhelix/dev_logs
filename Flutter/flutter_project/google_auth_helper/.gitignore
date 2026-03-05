@@ -9,6 +9,9 @@ __pycache__/
 
 # Local workspace artifacts
 workspace/
+.env
+.firebase/
+firebase-debug.log
 
 # OS/editor
 .DS_Store

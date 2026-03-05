@@ -956,3 +956,7 @@ Flutter/flutter_project/data_collector/.flutter-plugins-dependencies
 Flutter/flutter_project/data_collector/.flutter-plugins-dependencies
 Flutter/flutter_project/data_collector/.firebase/hosting.YnVpbGRcd2Vi.cache
 Flutter/flutter_project/data_collector/.flutter-plugins-dependencies
+
+# Root web build artifacts
+/build/web/
+

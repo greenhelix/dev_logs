@@ -31,6 +31,13 @@ STS_TOOL_PATH=/opt/android-tests/sts
 CTS_ON_GSI_TOOL_PATH=/opt/android-tests/cts-on-gsi
 ```
 
+`xts` 구조 예시(요청 기준):
+```env
+CTS_TOOL_PATH=./xts/cts/android-cts-R11-arm/android-cts/tools/cts-tradefed
+CTS_RESULTS_DIR=./xts/cts/android-cts-R11-arm/android-cts/results
+CTS_LOGS_DIR=./xts/cts/android-cts-R11-arm/android-cts/logs
+```
+
 ## 3) 경로 규칙
 - 파일 경로를 직접 넣어도 됨: `/opt/android-tests/cts/bin/cts-tradefed`
 - 디렉터리 경로를 넣어도 됨: `/opt/android-tests/cts`
@@ -58,4 +65,3 @@ chmod +x /opt/android-tests/gts/bin/gts-tradefed
 ## 6) 참고
 - `.env`에 경로를 지정하지 않으면 기본 경로(`/opt/android-tests/...`, `/usr/local/android-tests/...`)를 탐색합니다.
 - `adb`가 없으면 펌웨어 업로드 기능은 비활성/실패 처리됩니다.
-

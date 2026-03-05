@@ -58,10 +58,22 @@ python run_local.py --host 0.0.0.0 --port 8000
 python run_local.py --no-browser
 ```
 
+## 스모크 테스트(자동 점검)
+PowerShell:
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\smoke_test.ps1
+```
+
+옵션:
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\smoke_test.ps1 -Port 8020
+```
+
 ## 현재 구현 범위(MVP)
 - 환경 점검 API(`/api/environment/check`)
 - 도구 활성/비활성 상태 표시(`/api/tools`)
 - 테스트 작업 시작/취소/입력/조회 API(`/api/jobs/*`)
+- ADB 디바이스 목록 조회 API(`/api/adb/devices`)
 - 실시간 로그 WebSocket(`/ws/logs`)
 - 실시간 터미널 WebSocket(`/ws/terminal`)
 - 펌웨어 업로드 + adb push(`/api/firmware/upload`)
@@ -70,6 +82,10 @@ python run_local.py --no-browser
 - 저장 결과서 목록/상세 조회(`/api/reports/runs`, `/api/reports/runs/{id}`)
 - 대시보드 그래프 데이터(`/api/analytics/dashboard`)
 - 조회 전용 모니터링 API(`/api/monitor/summary`)
+- 결과 watcher 상태 API(`/api/watcher/status`)
+- 결과 watcher 이벤트 API(`/api/watcher/events`)
+- 결과 watcher 제어 API(`/api/watcher/enable`, `/api/watcher/disable`, `/api/watcher/scan-now`)
+- Firestore CRUD API(`/api/firebase/firestore/*`)
 
 ## 디렉터리
 ```text
@@ -92,11 +108,56 @@ docs/
 - 헤더: `x-monitor-token: <MONITOR_API_TOKEN>`
 - `.env`에 `MONITOR_API_TOKEN`이 비어 있으면 토큰 없이도 조회 가능
 
+## Firestore 연동(조회/쓰기/수정)
+- 백엔드 타입: `FIREBASE_BACKEND=firestore`
+- 필수 환경변수:
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_BEARER_TOKEN`
+- 선택: `FIREBASE_API_KEY`
+- 엔드포인트:
+- `GET /api/firebase/firestore/{collection}?limit=20`
+- `POST /api/firebase/firestore/{collection}` (`{"document_id":"", "data": {...}}`)
+- `PUT /api/firebase/firestore/{collection}/{document_id}` (`{"data": {...}}`)
+- `GET /api/firebase/status`
+- `POST /api/firebase/sync/runs?limit=20&collection=google-auth`
+- `POST /api/firebase/sync/monitor?collection=google-auth`
+
+기본 권장값:
+- `FIREBASE_PROJECT_ID=kani-projects`
+- `FIREBASE_HOSTING_URL=https://kani-projects.web.app`
+- `FIRESTORE_DATABASE_ID=google-auth`
+- `FIRESTORE_DEFAULT_COLLECTION=google-auth`
+- 인증:
+- 권장: `FIREBASE_SERVICE_ACCOUNT_FILE=<service-account.json 경로>`
+- 대안: `FIREBASE_BEARER_TOKEN=<access token>`
+- 개발 PC 대안: `firebase login` 상태면 CLI 토큰(`~/.config/configstore/firebase-tools.json`)을 자동 사용
+
 ## Ubuntu 서비스 배포
 - 서비스 파일: `deploy/google-auth-helper.service`
 - 설치 스크립트: `scripts/install_systemd.sh`
 - 상세 가이드: `docs/ubuntu-deploy.md`
 
+## Firebase Hosting 배포
+사전 준비:
+- `firebase.cmd login`
+
+배포:
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\prepare_firebase_hosting.ps1
+firebase.cmd deploy --only hosting --project kani-projects
+```
+
+배포 URL:
+- `https://kani-projects.web.app`
+
+주의:
+- Hosting UI에서 백엔드 API를 사용하려면 상단의 `API Base URL`에 Ubuntu 서버 주소를 저장해야 합니다.
+- 예: `http://<ubuntu-server-ip>:8000`
+
 ## 추가 문서
 - Firebase 조회 전용 연동 가이드: `docs/firebase-monitoring.md`
 - Ubuntu 도구 경로 설정 가이드: `docs/tool-setup.md`
+
+## GitHub 저장소
+- 코드 저장소: `greenhelix/dev_logs/Flutter/flutter_project/google_auth_helper`
+- 릴리즈 저장소: `greenhelix/GAH-Release-Repo`

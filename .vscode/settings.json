@@ -1,0 +1,16 @@
+{
+  "terminal.integrated.defaultProfile.windows": "GAH PowerShell",
+  "terminal.integrated.profiles.windows": {
+    "GAH PowerShell": {
+      "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "args": [
+        "-NoLogo",
+        "-ExecutionPolicy",
+        "Bypass"
+      ],
+      "env": {
+        "PATH": "C:\\Program Files\\nodejs;C:\\Users\\Kim\\AppData\\Roaming\\npm;${env:PATH}"
+      }
+    }
+  }
+}
