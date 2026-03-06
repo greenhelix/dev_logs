@@ -17,25 +17,30 @@ flowchart LR
     A --> F[업로드 어댑터\nJira/Redmine/Notion]
     A --> H[결과서 파서\nXML/HTML]
     H --> I[결과 저장소\nSQLite]
+    A --> L[결과 Watcher\n상태/이벤트/제어]
     A --> J[그래프 API\n/analytics/dashboard]
     A --> K[모니터링 API\n/monitor/summary]
+    A --> N[Firestore API\nstatus/sync/CRUD]
+    N --> O[Firestore\nkani-projects/google-auth]
 
     W[Windows 브라우저] --> A
     M[Mobile 브라우저] --> A
     V[VS Code 브라우저/터미널] --> A
 
-    subgraph Optional Monitoring
-      G[Firebase Hosting 대시보드]
+    subgraph Firebase Hosting
+      G[Hosting UI\nkani-projects.web.app]
     end
-    G -. 조회 전용 API 연계 .-> A
+    G -->|API Base URL| A
+    G --> O
 ```
 
 ## Firebase Hosting 활용 의견
-가능합니다. 다만 제어 기능(테스트 시작/중지)은 Ubuntu 내부망 정책과 보안 이슈가 커서, 초기에는 Firebase를 조회 전용(대시보드/리포트 열람)으로 제한하는 구성이 안전합니다.
+현재 기준으로 Firebase는 조회뿐 아니라 Firestore 쓰기/수정까지 개발 범위에 포함합니다.
 
-권장 분리:
-- Control UI: Ubuntu 서버에서 직접 제공(운영 제어)
-- Monitor UI: Firebase Hosting에서 제공(조회 중심)
+권장 운영 분리:
+- Control API: Ubuntu 서버(FastAPI)에서 실행/제어 담당
+- Monitor UI: Firebase Hosting에서 화면 제공
+- Data Hub: Firestore(`kani-projects/google-auth`)에 요약/히스토리 저장
 
 ## 빠른 실행
 ```bash
