@@ -24,6 +24,7 @@ const state = {
   mode: "mode1",
   consoleExpanded: false,
   consoleHeight: 280,
+  sidebarOpen: false,
 };
 
 const viewMeta = {
@@ -137,6 +138,31 @@ function switchView(target) {
   });
   byId("viewTitle").textContent = viewMeta[target].title;
   byId("viewDescription").textContent = viewMeta[target].description;
+  if (window.matchMedia("(max-width: 1024px)").matches) {
+    setSidebarOpen(false);
+  }
+}
+
+function setSidebarOpen(open) {
+  state.sidebarOpen = Boolean(open);
+  const sidebar = document.querySelector(".sidebar");
+  const backdrop = byId("sidebarBackdrop");
+  const toggle = byId("mobileMenuToggle");
+  if (!sidebar || !backdrop || !toggle) return;
+  sidebar.classList.toggle("open", state.sidebarOpen);
+  backdrop.classList.toggle("show", state.sidebarOpen);
+  toggle.textContent = state.sidebarOpen ? "✕" : "☰";
+}
+
+function updateConsoleButtons() {
+  const dock = byId("consoleDock");
+  const toggleBtn = byId("toggleConsoleBtn");
+  const expandBtn = byId("expandConsoleBtn");
+  const mobileBtn = byId("mobileConsoleToggle");
+  const minimized = dock.classList.contains("minimized");
+  toggleBtn.textContent = minimized ? "▴" : "▾";
+  expandBtn.textContent = state.consoleExpanded ? "🗗" : "⤢";
+  mobileBtn.textContent = minimized ? "▴" : "▾";
 }
 
 function applyMode(mode, persist = true) {
@@ -174,6 +200,8 @@ function initMenu() {
   document.querySelectorAll(".menu-btn").forEach((btn) => {
     btn.addEventListener("click", () => switchView(btn.dataset.view));
   });
+  on("mobileMenuToggle", "click", () => setSidebarOpen(!state.sidebarOpen));
+  on("sidebarBackdrop", "click", () => setSidebarOpen(false));
 }
 
 function initModePicker() {
@@ -236,6 +264,7 @@ function initConsoleDockControls() {
   const handle = byId("consoleResizeHandle");
   const toggleBtn = byId("toggleConsoleBtn");
   const expandBtn = byId("expandConsoleBtn");
+  const mobileToggle = byId("mobileConsoleToggle");
   const saved = Number(localStorage.getItem(CONSOLE_HEIGHT_STORAGE_KEY) || 280);
   applyConsoleHeight(saved);
 
@@ -261,8 +290,8 @@ function initConsoleDockControls() {
   });
 
   toggleBtn.addEventListener("click", () => {
-    const minimized = dock.classList.toggle("minimized");
-    toggleBtn.textContent = minimized ? "열기" : "최소화";
+    dock.classList.toggle("minimized");
+    updateConsoleButtons();
   });
 
   expandBtn.addEventListener("click", () => {
@@ -272,15 +301,24 @@ function initConsoleDockControls() {
       dock.classList.remove("minimized");
       dock.classList.add("expanded");
       applyConsoleHeight(window.innerHeight * 0.58);
-      expandBtn.textContent = "원래 크기";
-      toggleBtn.textContent = "최소화";
+      updateConsoleButtons();
       return;
     }
     state.consoleExpanded = false;
     dock.classList.remove("expanded");
     applyConsoleHeight(prevHeight);
-    expandBtn.textContent = "크게";
+    updateConsoleButtons();
   });
+
+  mobileToggle.addEventListener("click", () => {
+    dock.classList.toggle("minimized");
+    updateConsoleButtons();
+  });
+
+  if (window.matchMedia("(max-width: 1024px)").matches) {
+    dock.classList.add("minimized");
+  }
+  updateConsoleButtons();
 }
 
 function setConnectionText(elementId, text, tone) {
@@ -976,6 +1014,24 @@ async function init() {
   initConsoleTabs();
   initConsoleDockControls();
   bindEvents();
+
+  const mq = window.matchMedia("(max-width: 1024px)");
+  const onScreenMode = (event) => {
+    if (!event.matches) {
+      setSidebarOpen(false);
+      byId("consoleDock").classList.remove("minimized");
+      updateConsoleButtons();
+      return;
+    }
+    setSidebarOpen(false);
+    byId("consoleDock").classList.add("minimized");
+    updateConsoleButtons();
+  };
+  if (typeof mq.addEventListener === "function") {
+    mq.addEventListener("change", onScreenMode);
+  } else if (typeof mq.addListener === "function") {
+    mq.addListener(onScreenMode);
+  }
 
   await safeRun("network", refreshConnectionStatus);
   window.addEventListener("online", refreshConnectionStatus);

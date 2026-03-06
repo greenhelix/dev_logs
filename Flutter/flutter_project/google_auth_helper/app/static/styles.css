@@ -212,6 +212,18 @@ textarea {
   flex-direction: column;
 }
 
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 18, 45, 0.55);
+  z-index: 85;
+}
+
+.sidebar-backdrop.show {
+  display: block;
+}
+
 .topbar {
   padding: 16px 20px;
   border-bottom: 1px solid var(--line);
@@ -220,6 +232,19 @@ textarea {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+}
+
+.icon-btn {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: #123b9a;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
 }
 
 .topbar h2 {
@@ -533,6 +558,14 @@ td {
   border-radius: 8px;
 }
 
+.console-control.icon {
+  min-width: 34px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  font-size: 16px;
+}
+
 .console-tab {
   background: #1d2741;
   border: 1px solid #2a3a63;
@@ -597,6 +630,22 @@ td {
   display: none !important;
 }
 
+.mobile-console-toggle {
+  display: none;
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 70;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid #2c4b93;
+  background: #1b5cff;
+  color: #fff;
+  font-size: 18px;
+  padding: 0;
+}
+
 @media (max-width: 1220px) {
   .cards-3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -606,18 +655,29 @@ td {
 @media (max-width: 1024px) {
   .app-shell {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: 1fr;
   }
 
   .sidebar {
-    border-right: none;
-    border-bottom: 1px solid var(--sidebar-line);
-    max-height: 42vh;
+    position: fixed;
+    z-index: 90;
+    top: 0;
+    left: 0;
+    width: min(82vw, 300px);
+    height: 100vh;
+    border-right: 1px solid var(--sidebar-line);
+    border-bottom: none;
+    transform: translateX(-105%);
+    transition: transform 0.2s ease;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
   }
 
   .menu {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-direction: column;
   }
 
   .main {
@@ -630,8 +690,22 @@ td {
     top: 0;
     z-index: 30;
     background: #ffffffeb;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .topbar > div:first-of-type {
+    min-width: 0;
+  }
+
+  .topbar h2 {
+    font-size: 18px;
+  }
+
+  .topbar p {
+    font-size: 12px;
+    margin-top: 2px;
   }
 
   .content-scroll {
@@ -644,19 +718,80 @@ td {
   .mode-grid {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 640px) {
-  .menu {
-    grid-template-columns: 1fr;
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
 
   .topbar-meta {
-    width: 100%;
-    justify-content: space-between;
+    width: auto;
+    margin-left: auto;
+    gap: 6px;
+  }
+
+  .mode-badge {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  #openFirebaseCenterBtn {
+    display: none;
   }
 
   .console-header {
-    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .console-tabs {
+    width: calc(100% - 88px);
+    min-width: 0;
+  }
+
+  .console-tab {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .console-header-actions {
+    margin-left: auto;
+  }
+
+  .mobile-console-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .console-dock {
+    height: 220px;
+  }
+
+  .console-resize-handle {
+    display: none;
+  }
+
+  .card {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar-meta {
+    gap: 4px;
+  }
+
+  .mode-badge {
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .console-tabs {
+    width: calc(100% - 80px);
   }
 }

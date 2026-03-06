@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 </head>
 <body>
+  <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
   <div id="modeOverlay" class="mode-overlay show">
     <div class="mode-dialog">
       <p class="mode-kicker">Start With Mode</p>
@@ -66,6 +67,7 @@
 
     <main class="main">
       <header class="topbar">
+        <button id="mobileMenuToggle" class="icon-btn" aria-label="메뉴 열기" title="메뉴">☰</button>
         <div>
           <h2 id="viewTitle">대시보드</h2>
           <p id="viewDescription">FW 인증 추이, Fail 감소 추이, 업로드 추이를 확인합니다.</p>
@@ -348,8 +350,8 @@
               <button class="console-tab" data-console="terminal" data-mode="mode1">터미널</button>
             </div>
             <div class="console-header-actions">
-              <button id="toggleConsoleBtn" class="console-control secondary">최소화</button>
-              <button id="expandConsoleBtn" class="console-control">크게</button>
+              <button id="toggleConsoleBtn" class="console-control icon" aria-label="콘솔 접기/펼치기" title="콘솔 접기/펼치기">▾</button>
+              <button id="expandConsoleBtn" class="console-control icon" aria-label="콘솔 확대/복원" title="콘솔 확대/복원">⤢</button>
             </div>
           </div>
           <div class="console-body">
@@ -361,6 +363,7 @@
             <button id="sendTerminalBtn">전송</button>
           </div>
         </footer>
+        <button id="mobileConsoleToggle" class="mobile-console-toggle" aria-label="콘솔 열기/닫기" title="콘솔">▴</button>
       </div>
     </main>
   </div>
