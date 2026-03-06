@@ -158,11 +158,9 @@ function updateConsoleButtons() {
   const dock = byId("consoleDock");
   const toggleBtn = byId("toggleConsoleBtn");
   const expandBtn = byId("expandConsoleBtn");
-  const mobileBtn = byId("mobileConsoleToggle");
   const minimized = dock.classList.contains("minimized");
   toggleBtn.textContent = minimized ? "▴" : "▾";
   expandBtn.textContent = state.consoleExpanded ? "🗗" : "⤢";
-  mobileBtn.textContent = minimized ? "▴" : "▾";
 }
 
 function applyMode(mode, persist = true) {
@@ -264,7 +262,6 @@ function initConsoleDockControls() {
   const handle = byId("consoleResizeHandle");
   const toggleBtn = byId("toggleConsoleBtn");
   const expandBtn = byId("expandConsoleBtn");
-  const mobileToggle = byId("mobileConsoleToggle");
   const saved = Number(localStorage.getItem(CONSOLE_HEIGHT_STORAGE_KEY) || 280);
   applyConsoleHeight(saved);
 
@@ -307,11 +304,6 @@ function initConsoleDockControls() {
     state.consoleExpanded = false;
     dock.classList.remove("expanded");
     applyConsoleHeight(prevHeight);
-    updateConsoleButtons();
-  });
-
-  mobileToggle.addEventListener("click", () => {
-    dock.classList.toggle("minimized");
     updateConsoleButtons();
   });
 
