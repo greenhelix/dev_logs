@@ -1,67 +1,52 @@
-# 아키텍처 설명 (현행)
+# Architecture
 
-## 1) 전체 구조
-```mermaid
-flowchart LR
-    A[Ubuntu 서버\nPython FastAPI] --> B[도구 실행 엔진\nCTS/GTS/TVTS/VTS/STS]
-    A --> C[ADB 서비스\n펌웨어 업로드/디바이스 조회]
-    A --> D[환경 점검기\n체크리스트/권한/경로]
-    A --> E[로그/터미널 WebSocket]
-    A --> F[업로드 어댑터\nRedmine/Notion]
-    A --> H[결과서 파서\nXML/HTML]
-    H --> I[결과 저장소\nSQLite]
-    A --> L[결과 Watcher\n상태/이벤트/제어]
-    A --> J[그래프 API\n/analytics/dashboard]
-    A --> K[모니터링 API\n/monitor/summary]
-    A --> N[Firestore API\nstatus/sync/CRUD]
-    N --> O[Firestore\nkani-projects/google-auth]
+## Summary
+- 대시보드가 메인 홈이다.
+- 화면 구조는 `GAH-Code-Repo`의 `sidebar + topbar + dashboard cards + chart grid + utility panels` 패턴을 계승한다.
+- 데이터 흐름은 `sample/local paths -> parser -> domain models -> Firestore REST -> dashboard/proxy` 순서로 고정한다.
 
-    W[Windows 브라우저] --> A
-    M[Mobile 브라우저] --> A
-    V[VS Code 브라우저/터미널] --> A
-
-    subgraph Firebase Hosting
-      G[Hosting UI\nkani-projects.web.app]
-    end
-    G -->|API Base URL| A
-    G --> O
+## Application Layers
+```text
+features/
+  shell/         responsive shell, navigation, dashboard-first UX
+  dashboard/     charts, summary cards, latest failures
+  import/        local path import, parser execution, preview
+  firebase/      sync status, remote collections preview
+  settings/      app mode, credentials, path config
+services/
+  import_service.dart
+  xts_result_parser.dart
+  xts_live_log_parser.dart
+  local_file_gateway.dart
+  auth_header_provider.dart
+data/
+  firestore_rest_client.dart
+  firestore_repository.dart
+models/
+  app_settings.dart
+  tool_config.dart
+  test_case_record.dart
+  failed_test_record.dart
+  test_metric_record.dart
 ```
 
-## 2) 주요 API 계층
-- 실행/제어: `/api/jobs/*`, `/api/adb/devices`, `/api/firmware/upload`
-- 결과 처리: `/api/reports/import-file`, `/api/reports/runs*`, `/api/reports/upload`
-- Watcher: `/api/watcher/status`, `/api/watcher/events`, `/api/watcher/enable`, `/api/watcher/disable`, `/api/watcher/scan-now`
-- 시각화/모니터링: `/api/analytics/dashboard`, `/api/monitor/summary`
-- Firebase/Firestore: `/api/firebase/status`, `/api/firebase/firestore/*`, `/api/firebase/sync/runs`, `/api/firebase/sync/monitor`
-- 실시간 채널: `/ws/logs`, `/ws/terminal`
+## UI Structure
+- 좌측 또는 드로어: 브랜드, 실행 모드, 연결 상태, 주요 섹션 이동
+- 상단: 현재 화면 제목, 설명, 환경/연결 배지
+- 홈: 핵심 수치 카드 + 차트 그리드 + 최근 실패 항목
+- 보조 화면: Import, Firebase Center, Settings, Guide
+- 모바일: Drawer 기반, 차트와 카드가 1열로 접힘
 
-## 3) 도구/결과 경로 모델
-- `.env`의 `*_TOOL_PATH`, `*_RESULTS_DIR`, `*_LOGS_DIR` 사용
-- `TOOL_PATH`는 파일/디렉터리 모두 허용
-- 디렉터리일 때 실행파일 탐색:
-1. `<tool_path>/<명령어>`
-2. `<tool_path>/bin/<명령어>`
-3. `<tool_path>/tools/<명령어>`
-- 결과 watcher는 도구별 `results` 경로를 주기 스캔하고 XML/HTML을 자동 import
+## Data Strategy
+- `TestCases`: 모듈 + 테스트케이스 class 단위 메타데이터
+- `FailedTests`: 실제 실패 테스트 메서드와 오류 스니펫
+- `TestMetrics`: 세션 단위 집계와 대시보드용 수치
+- Web은 read-only proxy를 통해 조회만 수행한다.
+- Desktop은 REST + credential provider를 사용해 읽기/쓰기를 수행한다.
 
-상세는 `docs/tool-setup.md` 참고
+## Local Path Strategy
+- `dev` 모드: `test_sample` 경로가 기본값으로 주입된다.
+- `release` 모드: 경로 공란 상태로 시작한다.
+- 사용자 설정은 로컬 저장소에 저장된다.
+- 릴리즈에서 샘플 경로는 자동 주입하지 않는다.
 
-## 4) 데이터 흐름
-1. 결과 파일 수집(수동 업로드 또는 watcher 자동 수집)
-2. `ReportParser`가 fail/metadata 추출
-3. `ResultStore(SQLite)`에 run/case 저장
-4. 대시보드/목록/상세 API로 조회
-5. 필요 시 Redmine/Notion 업로드
-6. Firestore 동기화 API로 `google-auth` 컬렉션 갱신
-
-## 5) Firebase Hosting 연계
-- Hosting UI는 정적 화면 제공
-- 백엔드 호출은 UI 상단 `API Base URL`로 Ubuntu API에 연결
-- Firestore 데이터는 Hosting UI와 Ubuntu API가 공용으로 사용
-
-```mermaid
-flowchart LR
-    FH[Firebase Hosting UI] --> API[Ubuntu FastAPI]
-    API --> FS[Firestore google-auth]
-    FH --> FS
-```

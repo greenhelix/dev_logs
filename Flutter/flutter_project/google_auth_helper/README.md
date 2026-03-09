@@ -1,168 +1,87 @@
 # Google Auth Helper
 
-Ubuntu에서 Google 인증 도구(CTS/GTS/TVTS/VTS/STS/CTS-on-GSI)를 실행하고, 웹 UI로 테스트 자동화/모니터링을 제공하는 Python 서버입니다.
+Flutter 기반의 Google Auth Helper 재구성 저장소다. 목표는 Ubuntu 중심의 XTS 분석/운영 흐름과 Windows/Web 조회 흐름을 하나의 확장 가능한 코드베이스로 통합하는 것이다.
 
-## 핵심 방향
-- 실행 중심: Ubuntu Linux 서버
-- 접근 방식: 브라우저 웹 UI(Windows/Mobile 포함)
-- 원칙: 환경이 100% 준비되지 않아도 프로그램은 실행, 기능별 활성/비활성 표시
+## 대원칙
+- 모든 코드는 확장성을 우선한다.
+- 메인 홈 화면은 항상 대시보드다.
+- 화면 구조는 `GAH-Code-Repo`의 정보 계층을 계승하되 Flutter 반응형 레이아웃으로 구현한다.
+- Windows 1차 범위는 조회/파싱/수동 입력 중심이다.
+- 실제 XTS 실행 우선순위는 Ubuntu다.
+- Firestore 연결은 REST로 통일한다.
+- Web은 조회 전용, 데스크톱은 읽기/쓰기를 담당한다.
+- `test_sample`은 개발용 fixture이며 릴리즈 기본 경로로 사용하지 않는다.
+- README와 개발로그는 단계별로 계속 갱신한다.
 
-## 아키텍처 다이어그램
-```mermaid
-flowchart LR
-    A[Ubuntu 서버\nPython FastAPI] --> B[도구 실행 엔진\nCTS/GTS/TVTS/VTS/STS]
-    A --> C[ADB 서비스\n펌웨어 업로드]
-    A --> D[환경 점검기\n체크리스트/권한/경로]
-    A --> E[로그/터미널 WebSocket]
-    A --> F[업로드 어댑터\nJira/Redmine/Notion]
-    A --> H[결과서 파서\nXML/HTML]
-    H --> I[결과 저장소\nSQLite]
-    A --> L[결과 Watcher\n상태/이벤트/제어]
-    A --> J[그래프 API\n/analytics/dashboard]
-    A --> K[모니터링 API\n/monitor/summary]
-    A --> N[Firestore API\nstatus/sync/CRUD]
-    N --> O[Firestore\nkani-projects/google-auth]
+## 현재 구현 범위
+- Flutter 프로젝트 수동 스캐폴드
+- Riverpod 기반 앱 구조
+- XTS XML/로그 파서 골격
+- Firestore REST 저장소 골격
+- Firebase Hosting용 read-only proxy 스캐폴드
+- Windows / Ubuntu / Firebase 설정 문서
 
-    W[Windows 브라우저] --> A
-    M[Mobile 브라우저] --> A
-    V[VS Code 브라우저/터미널] --> A
+## 현재 환경 진단
+- 이 PowerShell 환경에서는 `flutter`와 `dart`가 PATH에 없다.
+- `node`, `npm`, `firebase.cmd`는 확인되었다.
+- 따라서 네이티브 runner 생성과 `flutter doctor` 검증은 SDK 설치 후 진행해야 한다.
 
-    subgraph Firebase Hosting
-      G[Hosting UI\nkani-projects.web.app]
-    end
-    G -->|API Base URL| A
-    G --> O
-```
+확인된 버전:
+- `node`: `v24.14.0`
+- `npm`: `11.9.0`
+- `firebase.cmd`: `15.8.0`
 
-## Firebase Hosting 활용 의견
-현재 기준으로 Firebase는 조회뿐 아니라 Firestore 쓰기/수정까지 개발 범위에 포함합니다.
-
-권장 운영 분리:
-- Control API: Ubuntu 서버(FastAPI)에서 실행/제어 담당
-- Monitor UI: Firebase Hosting에서 화면 제공
-- Data Hub: Firestore(`kani-projects/google-auth`)에 요약/히스토리 저장
-
-## 빠른 실행
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
-
-브라우저 접속: `http://<ubuntu-server-ip>:8000`
-
-## 로컬 실행(브라우저 자동 오픈)
-```bash
-python run_local.py
-```
-
-옵션:
-```bash
-python run_local.py --host 0.0.0.0 --port 8000
-python run_local.py --no-browser
-```
-
-## 스모크 테스트(자동 점검)
-PowerShell:
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\smoke_test.ps1
-```
-
-옵션:
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\smoke_test.ps1 -Port 8020
-```
-
-## 현재 구현 범위(MVP)
-- 환경 점검 API(`/api/environment/check`)
-- 도구 활성/비활성 상태 표시(`/api/tools`)
-- 테스트 작업 시작/취소/입력/조회 API(`/api/jobs/*`)
-- ADB 디바이스 목록 조회 API(`/api/adb/devices`)
-- 실시간 로그 WebSocket(`/ws/logs`)
-- 실시간 터미널 WebSocket(`/ws/terminal`)
-- 펌웨어 업로드 + adb push(`/api/firmware/upload`)
-- Jira/Redmine/Notion 어댑터 뼈대(`/api/reports/upload`)
-- 결과서 자동 분석 + 저장(`/api/reports/import-file`)
-- 저장 결과서 목록/상세 조회(`/api/reports/runs`, `/api/reports/runs/{id}`)
-- 대시보드 그래프 데이터(`/api/analytics/dashboard`)
-- 조회 전용 모니터링 API(`/api/monitor/summary`)
-- 결과 watcher 상태 API(`/api/watcher/status`)
-- 결과 watcher 이벤트 API(`/api/watcher/events`)
-- 결과 watcher 제어 API(`/api/watcher/enable`, `/api/watcher/disable`, `/api/watcher/scan-now`)
-- Firestore CRUD API(`/api/firebase/firestore/*`)
-
-## 디렉터리
+## 저장소 구조
 ```text
-app/
-  main.py
-  config.py
-  models.py
+lib/
+  app.dart
+  main.dart
+  core/
+  data/
+  features/
+  models/
   services/
-  static/
 docs/
   architecture.md
+  setup/
   dev-logs/
+functions/
+scripts/
+test/
+test_sample/
 ```
 
-## 개발로그 규칙
-개발 중 체크리스트 항목이 완료될 때마다 `docs/dev-logs/`에 마크다운 로그를 추가합니다.
+## Flutter 부트스트랩
+Flutter SDK 설치 후 아래 스크립트로 누락된 플랫폼 runner를 생성한다.
 
-## 모니터링 API(Firebase 조회 전용)
-- 엔드포인트: `GET /api/monitor/summary`
-- 헤더: `x-monitor-token: <MONITOR_API_TOKEN>`
-- `.env`에 `MONITOR_API_TOKEN`이 비어 있으면 토큰 없이도 조회 가능
-
-## Firestore 연동(조회/쓰기/수정)
-- 백엔드 타입: `FIREBASE_BACKEND=firestore`
-- 필수 환경변수:
-- `FIREBASE_PROJECT_ID`
-- `FIREBASE_BEARER_TOKEN`
-- 선택: `FIREBASE_API_KEY`
-- 엔드포인트:
-- `GET /api/firebase/firestore/{collection}?limit=20`
-- `POST /api/firebase/firestore/{collection}` (`{"document_id":"", "data": {...}}`)
-- `PUT /api/firebase/firestore/{collection}/{document_id}` (`{"data": {...}}`)
-- `GET /api/firebase/status`
-- `POST /api/firebase/sync/runs?limit=20&collection=google-auth`
-- `POST /api/firebase/sync/monitor?collection=google-auth`
-
-기본 권장값:
-- `FIREBASE_PROJECT_ID=kani-projects`
-- `FIREBASE_HOSTING_URL=https://kani-projects.web.app`
-- `FIRESTORE_DATABASE_ID=google-auth`
-- `FIRESTORE_DEFAULT_COLLECTION=google-auth`
-- 인증:
-- 권장: `FIREBASE_SERVICE_ACCOUNT_FILE=<service-account.json 경로>`
-- 대안: `FIREBASE_BEARER_TOKEN=<access token>`
-- 개발 PC 대안: `firebase login` 상태면 CLI 토큰(`~/.config/configstore/firebase-tools.json`)을 자동 사용
-
-## Ubuntu 서비스 배포
-- 서비스 파일: `deploy/google-auth-helper.service`
-- 설치 스크립트: `scripts/install_systemd.sh`
-- 상세 가이드: `docs/ubuntu-deploy.md`
-
-## Firebase Hosting 배포
-사전 준비:
-- `firebase.cmd login`
-
-배포:
+Windows PowerShell:
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\prepare_firebase_hosting.ps1
-firebase.cmd deploy --only hosting --project kani-projects
+powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap_flutter_project.ps1
 ```
 
-배포 URL:
-- `https://kani-projects.web.app`
+Ubuntu:
+```bash
+bash ./scripts/bootstrap_flutter_project.sh
+```
 
-주의:
-- Hosting UI에서 백엔드 API를 사용하려면 상단의 `API Base URL`에 Ubuntu 서버 주소를 저장해야 합니다.
-- 예: `http://<ubuntu-server-ip>:8000`
+## Firebase Hosting / Proxy
+- Firebase project: `kani-projects`
+- Firestore database ID: `google-auth`
+- Web은 `/api/test-cases`, `/api/failed-tests`, `/api/test-metrics` read-only endpoint만 사용한다.
+- Hosting rewrites는 `firebase.json`에 정의되어 있다.
 
-## 추가 문서
-- Firebase 조회 전용 연동 가이드: `docs/firebase-monitoring.md`
-- Ubuntu 도구 경로 설정 가이드: `docs/tool-setup.md`
+## 문서
+- [Windows 설정 가이드](docs/setup/windows.md)
+- [Ubuntu 설정 가이드](docs/setup/ubuntu.md)
+- [Firebase 설정 가이드](docs/setup/firebase.md)
+- [아키텍처](docs/architecture.md)
+- [개발로그](docs/dev-logs/2026-03-09-01-flutter-bootstrap.md)
 
-## GitHub 저장소
-- 코드 저장소: `greenhelix/dev_logs/Flutter/flutter_project/google_auth_helper`
-- 릴리즈 저장소: `greenhelix/GAH-Release-Repo`
+## 참고 기준
+- Flutter Windows 설치: https://docs.flutter.dev/get-started/install/windows/desktop
+- Flutter Linux 설치: https://docs.flutter.dev/get-started/install/linux/desktop
+- Firebase CLI: https://firebase.google.com/docs/cli
+- Firebase Admin named database: https://firebase.google.com/docs/reference/admin/node/firebase-admin.firestore
+- `firebase_core` 지원 플랫폼: https://pub.dev/packages/firebase_core
+- `cloud_firestore` 지원 플랫폼: https://pub.dev/packages/cloud_firestore
+

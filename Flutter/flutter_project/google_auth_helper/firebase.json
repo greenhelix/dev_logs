@@ -1,14 +1,27 @@
 {
+  "functions": {
+    "source": "functions"
+  },
   "hosting": {
-    "public": "deploy/firebase/public",
+    "public": "build/web",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
+    "rewrites": [
+      {
+        "source": "/api/**",
+        "function": "api"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
     "headers": [
       {
-        "source": "**/*.@(js|css)",
+        "source": "**/*.@(js|css|json)",
         "headers": [
           {
             "key": "Cache-Control",
@@ -16,12 +29,7 @@
           }
         ]
       }
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
     ]
   }
 }
+

@@ -960,3 +960,4 @@ Flutter/flutter_project/data_collector/.flutter-plugins-dependencies
 # Root web build artifacts
 /build/web/
 
+/Flutter/flutter_project/google_auth_helper/test_sample

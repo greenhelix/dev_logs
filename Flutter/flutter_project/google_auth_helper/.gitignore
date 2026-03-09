@@ -1,19 +1,27 @@
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub/
+.pub-cache/
+build/
+coverage/
 
-# Virtual environment
-.venv/
-
-# Local workspace artifacts
-workspace/
-.env
-.firebase/
-firebase-debug.log
-
-# OS/editor
-.DS_Store
-Thumbs.db
+.idea/
 .vscode/
+*.iml
+
+functions/node_modules/
+functions/.runtimeconfig.json
+
+*.log
+*.lock
+
+.env
+.env.local
+service-account.json
+service-account.*.json
+firebase-service-account.json
+
+test_sample/.cache/
+
