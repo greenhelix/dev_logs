@@ -1,18 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="${1:-v0.1.1}"
+VERSION="${1:-v0.1.2}"
+RELEASE_SUMMARY="${2:-Windows auto test is disabled, platform icons stay visible on focus, and release artifacts are simplified.}"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STAGE_ROOT="$PROJECT_ROOT/test_release/linux/$VERSION"
-APP_ROOT="$STAGE_ROOT/pkg-root"
+TEMP_ROOT="$(mktemp -d)"
+APP_ROOT="$TEMP_ROOT/pkg-root"
 APP_INSTALL_DIR="$APP_ROOT/opt/google-auth-helper"
 DEBIAN_DIR="$APP_ROOT/DEBIAN"
 DESKTOP_DIR="$APP_ROOT/usr/share/applications"
 BIN_DIR="$APP_ROOT/usr/bin"
 RELEASE_DIR="$PROJECT_ROOT/build/linux/x64/release/bundle"
 CONTROL_TEMPLATE="$PROJECT_ROOT/packaging/linux/control"
+BUILD_DATE="$(date '+%Y-%m-%d %H:%M:%S')"
 
-mkdir -p "$APP_INSTALL_DIR" "$DEBIAN_DIR" "$DESKTOP_DIR" "$BIN_DIR"
+cleanup() {
+  rm -rf "$TEMP_ROOT"
+}
+trap cleanup EXIT
+
+rm -rf "$STAGE_ROOT"
+mkdir -p "$STAGE_ROOT" "$APP_INSTALL_DIR" "$DEBIAN_DIR" "$DESKTOP_DIR" "$BIN_DIR"
 
 pushd "$PROJECT_ROOT" >/dev/null
 flutter pub get
@@ -37,12 +46,14 @@ exec /opt/google-auth-helper/google_auth_helper "$@"
 EOF
 chmod 0755 "$BIN_DIR/google-auth-helper"
 
-echo "$VERSION" > "$STAGE_ROOT/VERSION.txt"
 cat > "$STAGE_ROOT/INSTALL.txt" <<EOF
+Version: $VERSION
+Built: $BUILD_DATE
+Changes: $RELEASE_SUMMARY
+
 1. sudo dpkg -i gah-ubuntu-${VERSION}.deb
 2. Launch Google Auth Helper from the app menu or run google-auth-helper
 EOF
 
 dpkg-deb --build "$APP_ROOT" "$STAGE_ROOT/gah-ubuntu-${VERSION}.deb"
-(cd "$STAGE_ROOT" && sha256sum "$(basename "$STAGE_ROOT/gah-ubuntu-${VERSION}.deb")" VERSION.txt INSTALL.txt > checksums.txt)
 popd >/dev/null

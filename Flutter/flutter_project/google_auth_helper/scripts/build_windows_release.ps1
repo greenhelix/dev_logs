@@ -1,5 +1,6 @@
 param(
-  [string]$Version = "v0.1.1",
+  [string]$Version = "v0.1.2",
+  [string]$ReleaseSummary = "Windows auto test is disabled, platform icons stay visible on focus, and release artifacts are simplified.",
   [string]$ProjectRoot = (Resolve-Path "$PSScriptRoot\..").Path,
   [string]$FlutterExe = "flutter",
   [string]$InnoSetupCompiler = ""
@@ -8,10 +9,12 @@ param(
 $ErrorActionPreference = "Stop"
 
 $stageRoot = Join-Path $ProjectRoot "test_release\windows\$Version"
-$appStage = Join-Path $stageRoot "app"
 $releaseDir = Join-Path $ProjectRoot "build\windows\x64\runner\Release"
 $issPath = Join-Path $ProjectRoot "packaging\windows\gah_installer.iss"
 $installerOutput = Join-Path $stageRoot "gah-windows-$Version-setup.exe"
+$stagingRoot = Join-Path $env:TEMP "gah-windows-$Version-stage"
+$appStage = Join-Path $stagingRoot "app"
+$buildDate = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
 
 function Invoke-Step {
   param(
@@ -48,8 +51,19 @@ function Resolve-InnoSetupCompiler {
   return ""
 }
 
-New-Item -ItemType Directory -Force -Path $appStage | Out-Null
 $InnoSetupCompiler = Resolve-InnoSetupCompiler $InnoSetupCompiler
+if (-not (Test-Path $InnoSetupCompiler)) {
+  throw "Inno Setup compiler was not found."
+}
+
+if (Test-Path $stageRoot) {
+  Remove-Item $stageRoot -Recurse -Force
+}
+if (Test-Path $stagingRoot) {
+  Remove-Item $stagingRoot -Recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $stageRoot | Out-Null
+New-Item -ItemType Directory -Force -Path $appStage | Out-Null
 
 Push-Location $ProjectRoot
 try {
@@ -63,37 +77,31 @@ try {
   }
 
   Copy-Item "$releaseDir\*" $appStage -Recurse -Force
-  Set-Content -Path (Join-Path $stageRoot "VERSION.txt") -Value $Version -Encoding UTF8
 
-  if (Test-Path $InnoSetupCompiler) {
-    Invoke-Step $InnoSetupCompiler `
-      "/DMyAppVersion=$Version" `
-      "/DMyAppSourceDir=$appStage" `
-      "/DMyAppOutputDir=$stageRoot" `
-      "/DMyAppOutputBaseFilename=gah-windows-$Version-setup" `
-      $issPath
-    Set-Content -Path (Join-Path $stageRoot "INSTALL.txt") -Value @"
+  Invoke-Step $InnoSetupCompiler `
+    "/DMyAppVersion=$Version" `
+    "/DMyAppSourceDir=$appStage" `
+    "/DMyAppOutputDir=$stageRoot" `
+    "/DMyAppOutputBaseFilename=gah-windows-$Version-setup" `
+    $issPath
+
+  Set-Content -Path (Join-Path $stageRoot "INSTALL.txt") -Value @"
+Version: $Version
+Built: $buildDate
+Changes: $ReleaseSummary
+
 1. Run gah-windows-$Version-setup.exe
 2. Follow the installer steps
 3. Launch Google Auth Helper from the Start Menu
 "@ -Encoding UTF8
-  } else {
-    Set-Content -Path (Join-Path $stageRoot "INSTALL.txt") -Value @"
-1. Open test_release/windows/$Version/app
-2. Run google_auth_helper.exe directly
-3. Install Inno Setup and rerun this script to create the setup EXE
-"@ -Encoding UTF8
-    Write-Warning "Inno Setup compiler not found. Staged app files were created, but installer EXE was not built."
-  }
 
-  $checksumPath = Join-Path $stageRoot "checksums.txt"
-  $checksumTempPath = Join-Path $stageRoot "checksums.txt.tmp"
-  Get-ChildItem $stageRoot -File -Recurse |
-    Get-FileHash -Algorithm SHA256 |
-    ForEach-Object { "{0}  {1}" -f $_.Hash.ToLowerInvariant(), ($_.Path.Substring($stageRoot.Length + 1).Replace('\','/')) } |
-    Set-Content -Path $checksumTempPath -Encoding UTF8
-  Move-Item -Path $checksumTempPath -Destination $checksumPath -Force
+  if (-not (Test-Path $installerOutput)) {
+    throw "Windows installer was not created: $installerOutput"
+  }
 }
 finally {
   Pop-Location
+  if (Test-Path $stagingRoot) {
+    Remove-Item $stagingRoot -Recurse -Force
+  }
 }

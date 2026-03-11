@@ -1,0 +1,7 @@
+﻿Version: v0.1.2
+Built: 2026-03-11 20:46:22
+Changes: Windows auto test is disabled, platform icons stay visible on focus, and desktop release artifacts are simplified.
+
+1. Run gah-windows-v0.1.2-setup.exe
+2. Follow the installer steps
+3. Launch Google Auth Helper from the Start Menu

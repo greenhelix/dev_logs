@@ -891,7 +891,6 @@ final releaseWatchTargetsControllerProvider = StateNotifierProvider<
 final runControllerProvider =
     StateNotifierProvider<RunController, RunSessionState>((ref) {
   final controller = RunController(ref);
-  unawaited(controller.refreshDevices());
   return controller;
 });
 

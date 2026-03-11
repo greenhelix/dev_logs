@@ -30,33 +30,33 @@ class _SectionMeta {
 
 const _sectionMeta = <AppSection, _SectionMeta>{
   AppSection.dashboard: _SectionMeta(
-    title: '대시보드',
-    description: '현재 진행 테스트, 업로드된 결과 추이, 테스트케이스 통계를 확인합니다.',
+    title: 'Dashboard',
+    description: 'Review the latest uploaded tests and summary trends.',
     icon: Icons.dashboard_rounded,
   ),
   AppSection.results: _SectionMeta(
-    title: '결과 업로드',
-    description: 'zip 업로드, 파싱 미리보기, Firestore/Redmine 업로드를 처리합니다.',
+    title: 'Results Upload',
+    description: 'Upload result and log zip files, then preview uploads.',
     icon: Icons.upload_file_rounded,
   ),
   AppSection.updates: _SectionMeta(
-    title: '릴리즈 감시',
-    description: 'Excel, Google Sheet, watcher artifact 기반 변경 감시 초안을 관리합니다.',
+    title: 'Release Watch',
+    description: 'Track release changes from watcher sources and artifacts.',
     icon: Icons.update_rounded,
   ),
   AppSection.environment: _SectionMeta(
-    title: '환경점검',
-    description: 'Firebase와 Redmine 연결 상태를 항목별로 점검합니다.',
+    title: 'Environment',
+    description: 'Check Firebase, ADB, and Redmine connectivity.',
     icon: Icons.health_and_safety_rounded,
   ),
   AppSection.run: _SectionMeta(
-    title: '자동 테스트',
-    description: '명령, 샤드, 경로를 관리하고 데스크톱에서 자동 테스트를 실행합니다.',
+    title: 'Auto Test',
+    description: 'Linux-only tradefed execution with ADB device selection.',
     icon: Icons.terminal_rounded,
   ),
   AppSection.settings: _SectionMeta(
-    title: '설정',
-    description: 'Redmine API 키와 공통 연결값 같은 자격증명만 관리합니다.',
+    title: 'Settings',
+    description: 'Manage shared connections and per-tool paths.',
     icon: Icons.tune_rounded,
   ),
 };
@@ -75,10 +75,10 @@ class _AppShellState extends ConsumerState<AppShell> {
   Widget build(BuildContext context) {
     final capabilities = ref.watch(runtimeCapabilitiesProvider);
     final releaseStatusAsync = ref.watch(releaseStatusProvider);
-    final visibleSections = AppSection.values;
     final meta = _sectionMeta[_section]!;
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= 1100;
+    final showHeaderDescription = width >= 780;
 
     return Scaffold(
       drawer: isWide
@@ -86,7 +86,6 @@ class _AppShellState extends ConsumerState<AppShell> {
           : Drawer(
               child: _Sidebar(
                 currentSection: _section,
-                visibleSections: visibleSections,
                 onSelected: _selectSection,
               ),
             ),
@@ -105,7 +104,6 @@ class _AppShellState extends ConsumerState<AppShell> {
                 width: 300,
                 child: _Sidebar(
                   currentSection: _section,
-                  visibleSections: visibleSections,
                   onSelected: _selectSection,
                 ),
               ),
@@ -138,16 +136,18 @@ class _AppShellState extends ConsumerState<AppShell> {
                                       .textTheme
                                       .headlineMedium,
                                 ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  meta.description,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
-                                        color: const Color(0xFF5D6779),
-                                      ),
-                                ),
+                                if (showHeaderDescription) ...[
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    meta.description,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: const Color(0xFF5D6779),
+                                        ),
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -211,6 +211,11 @@ class _AppShellState extends ConsumerState<AppShell> {
   }
 
   void _selectSection(AppSection section) {
+    final capabilities = ref.read(runtimeCapabilitiesProvider);
+    if (section == AppSection.run && !capabilities.canRunTests) {
+      return;
+    }
+
     setState(() {
       _section = section;
     });
@@ -237,19 +242,16 @@ class _AppShellState extends ConsumerState<AppShell> {
 class _Sidebar extends ConsumerWidget {
   const _Sidebar({
     required this.currentSection,
-    required this.visibleSections,
     required this.onSelected,
   });
 
   final AppSection currentSection;
-  final List<AppSection> visibleSections;
   final ValueChanged<AppSection> onSelected;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final capabilities = ref.watch(runtimeCapabilitiesProvider);
     final resultsState = ref.watch(resultsControllerProvider);
-    final runState = ref.watch(runControllerProvider);
     final releaseAsync = ref.watch(releaseWatcherSnapshotProvider);
 
     return DecoratedBox(
@@ -285,7 +287,7 @@ class _Sidebar extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '현재 상태',
+                      'Current Status',
                       style: TextStyle(
                         color: Color(0xFFBACEFF),
                         fontSize: 13,
@@ -294,24 +296,32 @@ class _Sidebar extends ConsumerWidget {
                     ),
                     const SizedBox(height: 10),
                     _SidebarStatusRow(
-                        label: '플랫폼', value: capabilities.platformLabel),
-                    _SidebarStatusRow(
-                        label: '권한', value: capabilities.badgeLabel),
-                    _SidebarStatusRow(
-                      label: '결과 미리보기',
-                      value: resultsState.previewBundle == null ? '없음' : '준비됨',
+                      label: 'Platform',
+                      value: capabilities.platformLabel,
                     ),
                     _SidebarStatusRow(
-                      label: '자동 테스트',
-                      value: runState.isRunning ? '진행 중' : '대기',
+                      label: 'Access',
+                      value: capabilities.badgeLabel,
                     ),
                     _SidebarStatusRow(
-                      label: '릴리즈 감시',
+                      label: 'Preview',
+                      value: resultsState.previewBundle == null
+                          ? 'Not ready'
+                          : 'Ready',
+                    ),
+                    _SidebarStatusRow(
+                      label: 'Auto Test',
+                      value: capabilities.canRunTests
+                          ? 'Available'
+                          : 'Ubuntu only',
+                    ),
+                    _SidebarStatusRow(
+                      label: 'Release Watch',
                       value: releaseAsync.when(
                         data: (status) =>
-                            status.changes.isEmpty ? '변경 없음' : '변경 감지',
-                        loading: () => '확인 중',
-                        error: (_, __) => '오류',
+                            status.changes.isEmpty ? 'No changes' : 'Changes',
+                        loading: () => 'Checking',
+                        error: (_, __) => 'Error',
                       ),
                     ),
                   ],
@@ -320,29 +330,20 @@ class _Sidebar extends ConsumerWidget {
               const SizedBox(height: 12),
               Expanded(
                 child: ListView(
-                  children: visibleSections.map((section) {
+                  children: AppSection.values.map((section) {
                     final meta = _sectionMeta[section]!;
                     final selected = currentSection == section;
+                    final enabled =
+                        section != AppSection.run || capabilities.canRunTests;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8),
-                      child: FilledButton.tonalIcon(
-                        style: FilledButton.styleFrom(
-                          alignment: Alignment.centerLeft,
-                          backgroundColor: selected
-                              ? const Color(0xFF1A6FFF)
-                              : const Color(0x14FFFFFF),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 14,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        onPressed: () => onSelected(section),
-                        icon: Icon(meta.icon),
-                        label: Text(meta.title),
+                      child: _SidebarMenuButton(
+                        title: meta.title,
+                        icon: meta.icon,
+                        selected: selected,
+                        enabled: enabled,
+                        note: enabled ? null : 'Ubuntu only',
+                        onPressed: enabled ? () => onSelected(section) : null,
                       ),
                     );
                   }).toList(growable: false),
@@ -351,6 +352,57 @@ class _Sidebar extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SidebarMenuButton extends StatelessWidget {
+  const _SidebarMenuButton({
+    required this.title,
+    required this.icon,
+    required this.selected,
+    required this.enabled,
+    required this.onPressed,
+    this.note,
+  });
+
+  final String title;
+  final IconData icon;
+  final bool selected;
+  final bool enabled;
+  final String? note;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton.tonalIcon(
+      style: FilledButton.styleFrom(
+        alignment: Alignment.centerLeft,
+        backgroundColor: selected
+            ? const Color(0xFF1A6FFF)
+            : enabled
+                ? const Color(0x14FFFFFF)
+                : const Color(0x1FFFFFFF),
+        foregroundColor: enabled ? Colors.white : const Color(0xFFA7B8DE),
+        disabledBackgroundColor: const Color(0x1FFFFFFF),
+        disabledForegroundColor: const Color(0xFFA7B8DE),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
+      onPressed: onPressed,
+      icon: Icon(icon),
+      label: Row(
+        children: [
+          Expanded(child: Text(title)),
+          if (note != null)
+            Text(
+              note!,
+              style: const TextStyle(fontSize: 11),
+            ),
+        ],
       ),
     );
   }
@@ -370,21 +422,21 @@ class _PlatformStatusIcons extends StatelessWidget {
           icon: Icons.language_rounded,
           active: capabilities.profile == RuntimePlatformProfile.webHosting,
           color: const Color(0xFF1459FF),
-          tooltip: '웹',
+          tooltip: 'Web',
         ),
         const SizedBox(width: 8),
         _PlatformDot.asset(
           assetPath: 'assets/platform/windows_logo.svg',
           active: capabilities.profile == RuntimePlatformProfile.windowsDesktop,
           color: const Color(0xFF00A76F),
-          tooltip: '윈도우',
+          tooltip: 'Windows',
         ),
         const SizedBox(width: 8),
         _PlatformDot.asset(
           assetPath: 'assets/platform/ubuntu_logo.svg',
           active: capabilities.profile == RuntimePlatformProfile.ubuntuDesktop,
           color: const Color(0xFFF79009),
-          tooltip: '우분투',
+          tooltip: 'Ubuntu',
         ),
       ],
     );
@@ -430,7 +482,7 @@ class _UpdateBanner extends StatelessWidget {
   }
 }
 
-class _PlatformDot extends StatelessWidget {
+class _PlatformDot extends StatefulWidget {
   const _PlatformDot.icon({
     required this.active,
     required this.color,
@@ -454,40 +506,71 @@ class _PlatformDot extends StatelessWidget {
   final String? _assetPath;
 
   @override
+  State<_PlatformDot> createState() => _PlatformDotState();
+}
+
+class _PlatformDotState extends State<_PlatformDot> {
+  bool _focused = false;
+  bool _hovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    final background = active ? color : const Color(0xFFE5EAF2);
-    final foreground = active ? Colors.white : const Color(0xFF7A869A);
+    final isHighlighted = _focused || _hovered;
+    final background = widget.active
+        ? widget.color
+        : isHighlighted
+            ? const Color(0xFFD7DEE9)
+            : const Color(0xFFE5EAF2);
+    final foreground =
+        widget.active ? Colors.white : const Color(0xFF465467);
 
     return Tooltip(
-      message: tooltip,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        width: 42,
-        height: 42,
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: active
-              ? [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.22),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
+      message: widget.tooltip,
+      child: FocusableActionDetector(
+        onShowFocusHighlight: (value) {
+          setState(() {
+            _focused = value;
+          });
+        },
+        onShowHoverHighlight: (value) {
+          setState(() {
+            _hovered = value;
+          });
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: background,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isHighlighted
+                  ? widget.color.withValues(alpha: 0.65)
+                  : Colors.transparent,
+              width: 1.5,
+            ),
+            boxShadow: widget.active || isHighlighted
+                ? [
+                    BoxShadow(
+                      color: widget.color.withValues(alpha: 0.20),
+                      blurRadius: 14,
+                      offset: const Offset(0, 6),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Center(
+            child: widget._assetPath == null
+                ? Icon(widget._icon, color: foreground)
+                : SvgPicture.asset(
+                    widget._assetPath!,
+                    width: 24,
+                    height: 24,
+                    colorFilter:
+                        ColorFilter.mode(foreground, BlendMode.srcIn),
                   ),
-                ]
-              : null,
-        ),
-        child: Center(
-          child: _assetPath == null
-              ? Icon(_icon, color: foreground)
-              : SvgPicture.asset(
-                  _assetPath,
-                  width: 24,
-                  height: 24,
-                  colorFilter: active
-                      ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
-                      : null,
-                ),
+          ),
         ),
       ),
     );

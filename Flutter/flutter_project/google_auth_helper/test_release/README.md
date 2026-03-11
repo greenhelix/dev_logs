@@ -1,13 +1,9 @@
 # test_release
 
-Local desktop release artifacts are staged here.
+Local desktop installers are staged here.
 
-- `windows/v0.1.1/`: Windows staging files and installer output
-- `linux/v0.1.1/`: Ubuntu staging files and DEB output
+- `windows/v0.1.2/`: installer EXE and `INSTALL.txt`
+- `linux/v0.1.2/`: installer DEB and `INSTALL.txt`
 
-Use:
-
-- `scripts/build_windows_release.ps1`
-- `scripts/build_ubuntu_release.sh`
-- `scripts/publish_release_repo.ps1`
-- `scripts/publish_release_repo.sh`
+Latest:
+- `v0.1.2`: Windows auto test is disabled, platform icons stay visible on focus, and desktop release artifacts are simplified.

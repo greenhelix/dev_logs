@@ -1,7 +1,7 @@
 name: google_auth_helper
 description: Flutter-first Google Auth Helper with extensible XTS parsing and Firestore REST integration.
 publish_to: "none"
-version: 0.1.1+2
+version: 0.1.2+1
 
 environment:
   sdk: ^3.6.0

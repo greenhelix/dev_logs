@@ -21,6 +21,21 @@ class _RunScreenState extends ConsumerState<RunScreen> {
   String _lastConfigJson = '';
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      final capabilities = ref.read(runtimeCapabilitiesProvider);
+      if (!capabilities.canRunTests) {
+        return;
+      }
+      ref.read(runControllerProvider.notifier).refreshDevices();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final capabilities = ref.watch(runtimeCapabilitiesProvider);
     final runState = ref.watch(runControllerProvider);

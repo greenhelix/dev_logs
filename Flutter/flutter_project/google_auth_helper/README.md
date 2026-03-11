@@ -1,21 +1,12 @@
 # Google Auth Helper
 
-Desktop Flutter application for XTS result parsing, Redmine upload, release monitoring, and automated Linux test execution.
+Desktop Flutter application for XTS result parsing, Redmine upload, release monitoring, and Ubuntu-based automated test execution.
 
 ## Current Scope
-- `Results Upload`
-  - Upload separate result and log zip files.
-  - Build preview data from uploaded archives only.
-  - Generate Firestore and Redmine upload previews from parsed data.
-- `Release Watch`
-  - Track release targets and show the latest watcher snapshot.
-- `Environment`
-  - Check Firebase Hosting, Firestore, ADB, and Redmine connectivity.
-- `Auto Test`
-  - Save tool profiles with tool root, results path, and logs path.
-  - Discover ADB devices and run XTS through tradefed console startup.
-- `Settings`
-  - Configure Firebase, Redmine, and per-tool paths.
+- Upload separate result and log zip files and preview parsed uploads.
+- Track release changes from watcher sources.
+- Check Firebase, ADB, and Redmine connectivity.
+- Run tradefed-based auto tests on Ubuntu only.
 
 ## Development
 ```powershell
@@ -27,28 +18,30 @@ flutter test
 ## Desktop Release
 Windows packaging:
 ```powershell
-pwsh -File scripts/build_windows_release.ps1 -Version v0.1.1
+pwsh -File scripts/build_windows_release.ps1 -Version v0.1.2
 ```
 
 Ubuntu packaging:
 ```bash
-bash scripts/build_ubuntu_release.sh v0.1.1
+bash scripts/build_ubuntu_release.sh v0.1.2
 ```
 
 Desktop release flow:
 - `flutter pub get`
 - `flutter analyze`
 - `flutter test`
-- platform desktop build and packaging only
-
-Desktop release scripts do not run `flutter build web` or `firebase deploy --only hosting`.
+- desktop packaging only
 
 ## Release Outputs
-- `test_release/windows/v0.1.1/`
-- `test_release/linux/v0.1.1/`
+- `test_release/windows/v0.1.2/`
+- `test_release/linux/v0.1.2/`
 
-## Update Check
-- Source: `https://github.com/greenhelix/GAH-Release-Repo/releases/latest`
+Each release folder now keeps only:
+- the installer package
+- `INSTALL.txt`
+
+## Latest Change
+- `v0.1.2`: Windows auto test is disabled, platform icons stay visible on focus, and desktop release artifacts are simplified.
 
 ## Publish Helpers
 - `scripts/build_windows_release.ps1`

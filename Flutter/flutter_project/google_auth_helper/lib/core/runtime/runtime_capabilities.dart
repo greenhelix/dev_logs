@@ -20,22 +20,22 @@ class RuntimeCapabilities {
   String get badgeLabel {
     switch (profile) {
       case RuntimePlatformProfile.webHosting:
-        return '조회/업로드';
+        return 'Read / Upload';
       case RuntimePlatformProfile.windowsDesktop:
-        return '조회/업로드';
+        return 'Read / Upload';
       case RuntimePlatformProfile.ubuntuDesktop:
-        return '조회/업로드/실행';
+        return 'Read / Upload / Run';
     }
   }
 
   String get platformLabel {
     switch (profile) {
       case RuntimePlatformProfile.webHosting:
-        return '웹';
+        return 'Web';
       case RuntimePlatformProfile.windowsDesktop:
-        return '윈도우';
+        return 'Windows';
       case RuntimePlatformProfile.ubuntuDesktop:
-        return '우분투';
+        return 'Ubuntu';
     }
   }
 

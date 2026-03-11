@@ -14,7 +14,7 @@ void main() {
 
     final status = await service.fetchLatestRelease();
 
-    expect(status.currentVersion, '0.1.1+2');
+    expect(status.currentVersion, '0.1.2+1');
     expect(status.latestVersion, isEmpty);
     expect(status.releaseUrl, contains('GAH-Release-Repo/releases'));
     expect(status.hasUpdate, isFalse);
@@ -24,7 +24,7 @@ void main() {
     final service = ReleaseUpdateService(
       httpClient: MockClient((_) async {
         return http.Response(
-          '{"tag_name":"v0.1.1","html_url":"https://github.com/greenhelix/GAH-Release-Repo/releases/tag/v0.1.1"}',
+          '{"tag_name":"v0.1.2","html_url":"https://github.com/greenhelix/GAH-Release-Repo/releases/tag/v0.1.2"}',
           200,
         );
       }),
@@ -32,8 +32,8 @@ void main() {
 
     final status = await service.fetchLatestRelease();
 
-    expect(status.latestVersion, 'v0.1.1');
-    expect(status.releaseUrl, contains('/tag/v0.1.1'));
+    expect(status.latestVersion, 'v0.1.2');
+    expect(status.releaseUrl, contains('/tag/v0.1.2'));
     expect(status.hasUpdate, isTrue);
   });
 }

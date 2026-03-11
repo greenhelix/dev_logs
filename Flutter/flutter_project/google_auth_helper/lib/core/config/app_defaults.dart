@@ -2,7 +2,7 @@ import '../../models/app_settings.dart';
 import '../../models/tool_config.dart';
 
 class AppDefaults {
-  static const appVersion = '0.1.1+2';
+  static const appVersion = '0.1.2+1';
   static const firebaseProjectId = 'kani-projects';
   static const firestoreDatabaseId = 'google-auth';
   static const webProxyBaseUrl = '/';
