@@ -2,7 +2,7 @@
 set -euo pipefail
 
 VERSION="${1:-v0.1.2}"
-RELEASE_SUMMARY="${2:-Windows auto test is disabled, platform icons stay visible on focus, and release artifacts are simplified.}"
+RELEASE_SUMMARY="${2:-헤더 플랫폼 표시는 제거했고 셸과 주요 화면을 한국어 중심으로 정리했으며 결과 업로드, ADB 경로 설정, 업데이트 설치 흐름을 반영했습니다.}"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STAGE_ROOT="$PROJECT_ROOT/test_release/linux/$VERSION"
 TEMP_ROOT="$(mktemp -d)"

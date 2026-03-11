@@ -7,10 +7,18 @@ import 'xts_execution_service_web.dart'
 
 abstract class XtsExecutionService {
   bool get isSupported;
+  bool get isConsoleRunning;
 
   Stream<String> get logLines;
 
   Stream<ConsoleHealth> get consoleHealthUpdates;
+
+  Future<void> startConsole({
+    required ToolConfig config,
+    required RunRequest request,
+  });
+
+  Future<void> sendRunCommand(RunRequest request);
 
   Future<void> startRun({
     required ToolConfig config,

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/app_settings.dart';
+import '../models/failed_test_record.dart';
 import '../models/import_bundle.dart';
 import '../models/redmine_current_user.dart';
 import '../models/redmine_project_summary.dart';
@@ -15,50 +16,61 @@ class RedmineService {
   final http.Client _httpClient;
 
   String buildMarkdown(ImportBundle bundle) {
+    final start = bundle.metric.timestamp;
+    final end = start.add(Duration(seconds: bundle.metric.durationSeconds));
+    final failuresByModule = <String, List<dynamic>>{};
+    for (final item in bundle.activeFailedTests) {
+      failuresByModule.putIfAbsent(item.moduleName, () => []).add(item);
+    }
+
+    final title =
+        '${bundle.metric.suiteName.toLowerCase()} ${bundle.metric.suiteVersion} | ${bundle.metric.compactBuildLabel} | ${_formatDateTime(start)} | 모듈 ${bundle.metric.moduleCount} | 성공 ${bundle.metric.passCount} | 실패 ${bundle.activeFailedTests.length}';
     final lines = <String>[
-      '# ${bundle.metric.suiteName} ${bundle.metric.suiteVersion}',
-      '',
-      '- Build: ${bundle.metric.compactBuildLabel}',
-      '- Fingerprint: ${bundle.metric.buildFingerprint.isEmpty ? '-' : bundle.metric.buildFingerprint}',
-      '- FW: ${bundle.metric.fwVersion}',
-      '- Device: ${bundle.metric.buildDevice.isEmpty ? '-' : bundle.metric.buildDevice}',
-      '- Android: ${bundle.metric.androidVersion.isEmpty ? '-' : bundle.metric.androidVersion}',
-      '- Build Type: ${bundle.metric.buildType.isEmpty ? '-' : bundle.metric.buildType}',
-      '- Total Tests: ${bundle.metric.totalTests}',
-      '- Passed: ${bundle.metric.passCount}',
-      '- Fail (log summary): ${bundle.metric.failCount}',
-      '- Excluded by user: ${bundle.excludedFailedTests.length}',
-      '- Fail to upload: ${bundle.activeFailedTests.length}',
-      '- Ignored: ${bundle.metric.ignoredCount}',
-      '- Assumption Failure: ${bundle.metric.assumptionFailureCount}',
-      '- Devices: ${bundle.metric.devices.join(', ')}',
-      '- Count Source: ${bundle.metric.countSource}',
-      '- Status: ${bundle.liveStatus.stateSummary.isEmpty ? 'Preview ready' : bundle.liveStatus.stateSummary}',
-      '',
-      '## Failure List',
+      '{{collapse($title)',
+      '**Suite Plan:** ${bundle.metric.suiteName.toLowerCase()} ',
+      '**Suite Version:** ${bundle.metric.suiteVersion}',
+      '**Fingerprint:** ${bundle.metric.buildFingerprint.isEmpty ? "-" : bundle.metric.buildFingerprint}',
+      '**Version:** ${bundle.metric.fwVersion.isEmpty ? "-" : bundle.metric.fwVersion}',
+      '**Security Patch:** -',
+      '|START|END|RUN TIME|PASS|FAIL|Module|',
+      '|-|-|-|-|-|-|',
+      '|${_formatDateTime(start)}|${_formatDateTime(end)}|${_formatDuration(bundle.metric.durationSeconds)}|${bundle.metric.passCount}|${bundle.activeFailedTests.length}|${bundle.metric.moduleCount}|',
+      '### 실행 정보',
+      '- 장치: ${bundle.metric.devices.isEmpty ? "-" : bundle.metric.devices.join(", ")}',
+      '- 안드로이드 버전: ${bundle.metric.androidVersion.isEmpty ? "-" : bundle.metric.androidVersion}',
+      '- 빌드 타입: ${bundle.metric.buildType.isEmpty ? "-" : bundle.metric.buildType}',
+      '- 집계 기준: ${bundle.metric.countSource}',
+      '- 상태 요약: ${bundle.liveStatus.stateSummary.isEmpty ? "미리보기 준비 완료" : bundle.liveStatus.stateSummary}',
+      '### 실패 모듈',
     ];
 
-    if (bundle.activeFailedTests.isEmpty) {
-      lines.add('- No active failures.');
+    if (failuresByModule.isEmpty) {
+      lines.add('- 실패 항목이 없습니다.');
     } else {
-      for (final item in bundle.activeFailedTests.take(20)) {
-        final memoSuffix =
-            item.manualMemo.isEmpty ? '' : ' (memo: ${item.manualMemo})';
-        lines.add(
-          '- ${item.displayModuleName} / ${item.testName}: '
-          '${item.failureMessage.isEmpty ? 'No message' : item.failureMessage}$memoSuffix',
-        );
+      for (final entry in failuresByModule.entries) {
+        lines.add('');
+        lines.add('- [[${entry.key.isEmpty ? "미확인 모듈" : entry.key}]]');
+        lines.add('  |Test|Message|');
+        lines.add('  |-|-|');
+        for (final raw in entry.value) {
+          final item = raw as FailedTestRecord;
+          final memo = item.manualMemo.isEmpty ? '' : ' / 메모: ${item.manualMemo}';
+          lines.add(
+            '  |${item.testName}|${_escapeTable(item.failureMessage.isEmpty ? "메시지 없음" : item.failureMessage)}$memo|',
+          );
+        }
       }
     }
 
     if (bundle.previewWarnings.isNotEmpty) {
       lines.add('');
-      lines.add('## Preview Warnings');
+      lines.add('### 경고');
       for (final warning in bundle.previewWarnings) {
         lines.add('- $warning');
       }
     }
 
+    lines.add('}}');
     return lines.join('\n');
   }
 
@@ -66,7 +78,7 @@ class RedmineService {
     required AppSettings settings,
   }) async {
     if (kIsWeb) {
-      throw UnsupportedError('Redmine user lookup is only available on desktop.');
+      throw UnsupportedError('레드마인 사용자 조회는 데스크톱에서만 지원합니다.');
     }
     final response = await _httpClient.get(
       Uri.parse('${_normalizedBaseUrl(settings)}/users/current.json'),
@@ -85,7 +97,7 @@ class RedmineService {
   }) async {
     if (kIsWeb) {
       throw UnsupportedError(
-        'Redmine project listing is only available on desktop.',
+        '레드마인 프로젝트 목록 조회는 데스크톱에서만 지원합니다.',
       );
     }
     final response = await _httpClient.get(
@@ -107,11 +119,11 @@ class RedmineService {
     required String projectId,
   }) async {
     if (kIsWeb) {
-      throw UnsupportedError('Redmine project lookup is only available on desktop.');
+      throw UnsupportedError('레드마인 프로젝트 조회는 데스크톱에서만 지원합니다.');
     }
     final normalizedProjectId = projectId.trim();
     if (normalizedProjectId.isEmpty) {
-      throw StateError('Redmine project ID is required.');
+      throw StateError('레드마인 프로젝트 ID가 필요합니다.');
     }
     final response = await _httpClient.get(
       Uri.parse('${_normalizedBaseUrl(settings)}/projects/$normalizedProjectId.json'),
@@ -156,10 +168,10 @@ class RedmineService {
       Uri.parse('${_normalizedBaseUrl(settings)}/issues.json'),
       headers: _desktopHeaders(settings, contentType: 'application/json'),
       body: jsonEncode({
-        'issue': {
-          'project_id': settings.redmineProjectId.trim(),
-          'subject': subject,
-          'description': description,
+          'issue': {
+            'project_id': settings.redmineProjectId.trim(),
+            'subject': subject,
+            'description': description,
         },
       }),
     );
@@ -187,7 +199,7 @@ class RedmineService {
     final projectId = settings.redmineProjectId.trim();
     if (baseUrl.isEmpty || apiKey.isEmpty || projectId.isEmpty) {
       throw StateError(
-        'Redmine Base URL, API Key, and Project ID are required.',
+        '레드마인 주소, API 키, 프로젝트 ID를 모두 입력해야 합니다.',
       );
     }
   }
@@ -206,5 +218,28 @@ class RedmineService {
         '$label failed: ${response.statusCode} ${response.body}',
       );
     }
+  }
+
+  String _formatDateTime(DateTime value) {
+    final local = value.toLocal();
+    final year = local.year.toString().padLeft(4, '0');
+    final month = local.month.toString().padLeft(2, '0');
+    final day = local.day.toString().padLeft(2, '0');
+    final hour = local.hour.toString().padLeft(2, '0');
+    final minute = local.minute.toString().padLeft(2, '0');
+    final second = local.second.toString().padLeft(2, '0');
+    return '$year-$month-$day-$hour:$minute:$second';
+  }
+
+  String _formatDuration(int seconds) {
+    final duration = Duration(seconds: seconds);
+    final hours = duration.inHours.toString().padLeft(2, '0');
+    final minutes = (duration.inMinutes % 60).toString().padLeft(2, '0');
+    final secs = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    return '$hours:$minutes:$secs';
+  }
+
+  String _escapeTable(String value) {
+    return value.replaceAll('\n', ' ').replaceAll('|', '\\|');
   }
 }

@@ -16,6 +16,7 @@ class AppDefaults {
       firestoreDatabaseId: firestoreDatabaseId,
       credentialMode: CredentialMode.serviceAccountFile,
       serviceAccountPath: '',
+      adbExecutablePath: '',
       webProxyBaseUrl: webProxyBaseUrl,
       redmineBaseUrl: redmineBaseUrl,
       redmineApiKey: '',

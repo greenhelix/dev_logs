@@ -29,14 +29,14 @@ class ImportService {
     bool preferLatest = true,
   }) async {
     if (!_localFileGateway.supportsLocalFiles) {
-      throw UnsupportedError('웹에서는 로컬 경로를 직접 읽을 수 없습니다.');
+      throw UnsupportedError('이 플랫폼에서는 로컬 경로 가져오기를 지원하지 않습니다.');
     }
 
     final resultPath = preferLatest
         ? await _localFileGateway.findLatestFile(resultsDir, 'test_result.xml')
         : await _localFileGateway.findFirstFile(resultsDir, 'test_result.xml');
     if (resultPath == null) {
-      throw StateError('$resultsDir 에서 test_result.xml을 찾을 수 없습니다.');
+      throw StateError('$resultsDir 에서 test_result.xml 파일을 찾지 못했습니다.');
     }
 
     final tfOutputPath = await _localFileGateway.findLatestFile(

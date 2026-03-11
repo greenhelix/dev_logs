@@ -20,6 +20,7 @@ class RunSessionState {
     this.message,
     this.exitCode,
     this.isRunning = false,
+    this.isConsoleReady = false,
     this.isUploading = false,
     this.isRefreshingDevices = false,
   });
@@ -39,6 +40,7 @@ class RunSessionState {
   final String? message;
   final int? exitCode;
   final bool isRunning;
+  final bool isConsoleReady;
   final bool isUploading;
   final bool isRefreshingDevices;
 
@@ -84,6 +86,7 @@ class RunSessionState {
     String? message,
     int? exitCode,
     bool? isRunning,
+    bool? isConsoleReady,
     bool? isUploading,
     bool? isRefreshingDevices,
   }) {
@@ -103,6 +106,7 @@ class RunSessionState {
       message: message,
       exitCode: exitCode ?? this.exitCode,
       isRunning: isRunning ?? this.isRunning,
+      isConsoleReady: isConsoleReady ?? this.isConsoleReady,
       isUploading: isUploading ?? this.isUploading,
       isRefreshingDevices: isRefreshingDevices ?? this.isRefreshingDevices,
     );

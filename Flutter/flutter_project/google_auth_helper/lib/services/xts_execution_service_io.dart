@@ -19,6 +19,9 @@ class IoXtsExecutionService implements XtsExecutionService {
   bool get isSupported => Platform.isLinux;
 
   @override
+  bool get isConsoleRunning => _process != null;
+
+  @override
   Stream<String> get logLines => _logController.stream;
 
   @override
@@ -46,15 +49,15 @@ class IoXtsExecutionService implements XtsExecutionService {
   }
 
   @override
-  Future<void> startRun({
+  Future<void> startConsole({
     required ToolConfig config,
     required RunRequest request,
   }) async {
     if (!isSupported) {
-      throw UnsupportedError('Test execution is only supported on Linux.');
+      throw UnsupportedError('자동 테스트 실행은 우분투에서만 지원합니다.');
     }
     if (_process != null) {
-      throw StateError('Another test process is already running.');
+      throw StateError('이미 실행 중인 콘솔이 있습니다.');
     }
 
     final executable = path.join(
@@ -66,7 +69,7 @@ class IoXtsExecutionService implements XtsExecutionService {
     _consoleHealthController.add(
       const ConsoleHealth(
         status: ConsoleHealthStatus.checking,
-        message: 'Waiting for tradefed console prompt.',
+        message: 'tradefed 콘솔 프롬프트를 기다리는 중입니다.',
       ),
     );
 
@@ -77,7 +80,7 @@ class IoXtsExecutionService implements XtsExecutionService {
       runInShell: false,
     );
     _process = process;
-    _logController.add('Launching: $executable');
+    _logController.add('콘솔 시작: $executable');
 
     final expectedPrompt = request.toolType.consolePrompt.toLowerCase();
     final promptCompleter = Completer<void>();
@@ -100,7 +103,7 @@ class IoXtsExecutionService implements XtsExecutionService {
         _consoleHealthController.add(
           ConsoleHealth(
             status: ConsoleHealthStatus.ok,
-            message: 'Console prompt detected.',
+            message: '콘솔 프롬프트를 확인했습니다.',
             matchedPrompt: request.toolType.consolePrompt,
           ),
         );
@@ -118,7 +121,7 @@ class IoXtsExecutionService implements XtsExecutionService {
         failConsole(
           ConsoleHealth(
             status: ConsoleHealthStatus.failed,
-            message: 'Console startup failed before prompt was detected.',
+            message: '프롬프트 확인 전에 콘솔 시작이 실패했습니다.',
           ),
         );
       }
@@ -134,7 +137,7 @@ class IoXtsExecutionService implements XtsExecutionService {
           failConsole(
             ConsoleHealth(
               status: ConsoleHealthStatus.failed,
-              message: 'Process exited before console prompt appeared.',
+              message: '콘솔 프롬프트가 나타나기 전에 프로세스가 종료되었습니다.',
             ),
           );
         }
@@ -149,21 +152,38 @@ class IoXtsExecutionService implements XtsExecutionService {
       failConsole(
         const ConsoleHealth(
           status: ConsoleHealthStatus.needsAttention,
-          message: 'Console prompt was not detected within 20 seconds.',
+          message: '20초 안에 콘솔 프롬프트를 찾지 못했습니다.',
         ),
       );
     });
 
     try {
       await promptCompleter.future;
-      process.stdin.writeln(request.command);
-      _logController.add('Command sent: ${request.command}');
     } catch (_) {
       process.kill(ProcessSignal.sigterm);
       rethrow;
     } finally {
       timeoutTimer.cancel();
     }
+  }
+
+  @override
+  Future<void> sendRunCommand(RunRequest request) async {
+    final process = _process;
+    if (process == null) {
+      throw StateError('먼저 콘솔을 시작해야 합니다.');
+    }
+    process.stdin.writeln(request.command);
+    _logController.add('실행 명령 전송: ${request.command}');
+  }
+
+  @override
+  Future<void> startRun({
+    required ToolConfig config,
+    required RunRequest request,
+  }) async {
+    await startConsole(config: config, request: request);
+    await sendRunCommand(request);
   }
 
   @override

@@ -44,9 +44,9 @@ void main() {
       ),
     );
 
-    expect(find.text('Ubuntu only'), findsWidgets);
+    expect(find.text('우분투 전용'), findsWidgets);
     final button = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, 'Auto Test'),
+      find.widgetWithText(FilledButton, '자동 테스트'),
     );
     expect(button.onPressed, isNull);
   });
@@ -64,11 +64,8 @@ void main() {
       ),
     );
 
-    expect(find.text('Dashboard'), findsOneWidget);
-    expect(
-      find.text('Review the latest uploaded tests and summary trends.'),
-      findsNothing,
-    );
+    expect(find.text('대시보드'), findsWidgets);
+    expect(find.text('원격 집계와 현재 미리보기를 확인합니다.'), findsOneWidget);
   });
 }
 

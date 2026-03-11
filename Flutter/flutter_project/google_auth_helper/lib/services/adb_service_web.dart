@@ -6,12 +6,12 @@ class UnsupportedAdbService implements AdbService {
   bool get isSupported => false;
 
   @override
-  Future<AdbSnapshot> inspect() async {
+  Future<AdbSnapshot> inspect({String? configuredPath}) async {
     return const AdbSnapshot(
       available: false,
       version: '',
       devices: [],
-      message: 'ADB is not supported on this platform.',
+      message: '웹에서는 ADB 점검을 지원하지 않습니다.',
     );
   }
 }

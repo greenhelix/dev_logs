@@ -1,9 +1,3 @@
-Ubuntu desktop release staging directory.
+Ubuntu desktop release archive placeholder.
 
-Expected outputs:
-
-- `pkg-root/`
-- `gah-ubuntu-v0.1.1.deb`
-- `VERSION.txt`
-- `INSTALL.txt`
-- `checksums.txt`
+No Linux installer is currently staged in this workspace. Build the `.deb` from an Ubuntu environment with `scripts/build_ubuntu_release.sh` when Linux packaging is available.

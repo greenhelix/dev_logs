@@ -73,7 +73,7 @@ void main() {
     expect(state.loadStage, ResultsLoadStage.idle);
     expect(
       state.message,
-      'Upload result and log zip files to build a preview.',
+      '결과와 로그 원본을 올리면 미리보기를 생성합니다.',
     );
   });
 }

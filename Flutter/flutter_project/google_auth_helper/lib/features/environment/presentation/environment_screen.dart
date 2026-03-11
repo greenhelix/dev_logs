@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/runtime/runtime_capabilities.dart';
 import '../../../models/environment_check_status.dart';
 import '../../../providers/app_providers.dart';
 
@@ -10,6 +11,7 @@ class EnvironmentScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final envAsync = ref.watch(environmentStatusProvider);
+    final capabilities = ref.watch(runtimeCapabilitiesProvider);
 
     return ListView(
       children: [
@@ -19,25 +21,35 @@ class EnvironmentScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Environment',
-                    style: Theme.of(context).textTheme.titleLarge),
+                Text('환경 점검', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
-                const Text(
-                  'Check Firebase, Firestore, ADB, and Redmine connectivity from the current runtime.',
-                ),
+                const Text('현재 실행 환경에서 Firebase, Redmine, ADB 연결 상태를 확인합니다.'),
                 const SizedBox(height: 12),
                 FilledButton.tonalIcon(
                   onPressed: () => ref.invalidate(environmentStatusProvider),
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Refresh Status'),
+                  label: const Text('다시 점검'),
                 ),
+                if (capabilities.profile == RuntimePlatformProfile.webHosting) ...[
+                  const SizedBox(height: 10),
+                  const Text(
+                    '웹에서는 ADB 점검 항목을 표시하지 않습니다.',
+                    style: TextStyle(
+                      color: Color(0xFF5D6779),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
         ),
         const SizedBox(height: 12),
         envAsync.when(
-          data: (status) => _EnvironmentResult(status: status),
+          data: (status) => _EnvironmentResult(
+            status: status,
+            showAdb: capabilities.profile != RuntimePlatformProfile.webHosting,
+          ),
           loading: () => const _LoadingCard(),
           error: (error, _) => _ErrorCard(message: error.toString()),
         ),
@@ -47,9 +59,13 @@ class EnvironmentScreen extends ConsumerWidget {
 }
 
 class _EnvironmentResult extends StatelessWidget {
-  const _EnvironmentResult({required this.status});
+  const _EnvironmentResult({
+    required this.status,
+    required this.showAdb,
+  });
 
   final EnvironmentCheckStatus status;
+  final bool showAdb;
 
   @override
   Widget build(BuildContext context) {
@@ -58,19 +74,21 @@ class _EnvironmentResult extends StatelessWidget {
       children: [
         _ProbeSection(
           title: 'Firebase',
-          subtitle: 'Hosting and Firestore connectivity.',
+          subtitle: '호스팅과 Firestore 연결 상태',
           probes: status.firebaseResults,
         ),
         const SizedBox(height: 16),
-        _ProbeSection(
-          title: 'Local Tools',
-          subtitle: 'ADB availability and detected devices.',
-          probes: status.localResults,
-        ),
-        const SizedBox(height: 16),
+        if (showAdb) ...[
+          _ProbeSection(
+            title: '로컬 도구',
+            subtitle: 'ADB와 연결된 장치 상태',
+            probes: status.localResults,
+          ),
+          const SizedBox(height: 16),
+        ],
         _ProbeSection(
           title: 'Redmine',
-          subtitle: 'Connection, current user, and project access.',
+          subtitle: '연결, 현재 사용자, 프로젝트 접근 상태',
           probes: status.redmineResults,
         ),
       ],
@@ -117,6 +135,8 @@ class _ProbeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final okColor = const Color(0xFF067647);
+    final errorColor = const Color(0xFFB42318);
     return SizedBox(
       width: 320,
       child: Card(
@@ -131,9 +151,7 @@ class _ProbeCard extends StatelessWidget {
                     result.isOk
                         ? Icons.check_circle_rounded
                         : Icons.error_outline_rounded,
-                    color: result.isOk
-                        ? const Color(0xFF067647)
-                        : const Color(0xFFB42318),
+                    color: result.isOk ? okColor : errorColor,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -148,9 +166,7 @@ class _ProbeCard extends StatelessWidget {
               Text(
                 result.message,
                 style: TextStyle(
-                  color: result.isOk
-                      ? const Color(0xFF067647)
-                      : const Color(0xFFB42318),
+                  color: result.isOk ? okColor : errorColor,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -174,7 +190,7 @@ class _LoadingCard extends StatelessWidget {
           children: [
             CircularProgressIndicator(),
             SizedBox(width: 16),
-            Text('Checking environment status...'),
+            Text('환경 점검 결과를 불러오는 중입니다...'),
           ],
         ),
       ),

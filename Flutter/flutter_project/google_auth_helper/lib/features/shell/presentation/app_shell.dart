@@ -1,10 +1,14 @@
+import 'dart:async';
+import 'dart:math' as math;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/app_defaults.dart';
-import '../../../core/runtime/runtime_capabilities.dart';
+import '../../../models/app_log_entry.dart';
 import '../../../models/release_status.dart';
 import '../../../providers/app_providers.dart';
 import '../../dashboard/presentation/dashboard_screen.dart';
@@ -21,43 +25,51 @@ class _SectionMeta {
     required this.title,
     required this.description,
     required this.icon,
+    required this.logArea,
   });
 
   final String title;
   final String description;
   final IconData icon;
+  final AppLogArea logArea;
 }
 
 const _sectionMeta = <AppSection, _SectionMeta>{
   AppSection.dashboard: _SectionMeta(
-    title: 'Dashboard',
-    description: 'Review the latest uploaded tests and summary trends.',
+    title: '대시보드',
+    description: '원격 집계와 현재 미리보기를 확인합니다.',
     icon: Icons.dashboard_rounded,
+    logArea: AppLogArea.dashboard,
   ),
   AppSection.results: _SectionMeta(
-    title: 'Results Upload',
-    description: 'Upload result and log zip files, then preview uploads.',
+    title: '결과 업로드',
+    description: '결과와 로그를 올리고 업로드 본문을 확인합니다.',
     icon: Icons.upload_file_rounded,
+    logArea: AppLogArea.results,
   ),
   AppSection.updates: _SectionMeta(
-    title: 'Release Watch',
-    description: 'Track release changes from watcher sources and artifacts.',
+    title: '릴리즈 감시',
+    description: '릴리즈 감시 대상과 최근 변화를 확인합니다.',
     icon: Icons.update_rounded,
+    logArea: AppLogArea.updates,
   ),
   AppSection.environment: _SectionMeta(
-    title: 'Environment',
-    description: 'Check Firebase, ADB, and Redmine connectivity.',
+    title: '환경 점검',
+    description: 'Firebase, Redmine, ADB 상태를 점검합니다.',
     icon: Icons.health_and_safety_rounded,
+    logArea: AppLogArea.environment,
   ),
   AppSection.run: _SectionMeta(
-    title: 'Auto Test',
-    description: 'Linux-only tradefed execution with ADB device selection.',
+    title: '자동 테스트',
+    description: '콘솔 시작과 실행 명령 전송을 분리해 제어합니다.',
     icon: Icons.terminal_rounded,
+    logArea: AppLogArea.run,
   ),
   AppSection.settings: _SectionMeta(
-    title: 'Settings',
-    description: 'Manage shared connections and per-tool paths.',
+    title: '설정',
+    description: '공용 인증 정보와 연결 설정을 관리합니다.',
     icon: Icons.tune_rounded,
+    logArea: AppLogArea.settings,
   ),
 };
 
@@ -70,15 +82,35 @@ class AppShell extends ConsumerStatefulWidget {
 
 class _AppShellState extends ConsumerState<AppShell> {
   AppSection _section = AppSection.dashboard;
+  bool _updatePromptShown = false;
+  bool _logExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.listenManual<AsyncValue<ReleaseStatus>>(
+        releaseStatusProvider,
+        (previous, next) {
+          next.whenData((status) {
+            if (!mounted || _updatePromptShown || !status.hasUpdate || kIsWeb) {
+              return;
+            }
+            _updatePromptShown = true;
+            unawaited(_showUpdateDialog(status));
+          });
+        },
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final capabilities = ref.watch(runtimeCapabilitiesProvider);
     final releaseStatusAsync = ref.watch(releaseStatusProvider);
+    final logs = ref.watch(appLogControllerProvider);
     final meta = _sectionMeta[_section]!;
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= 1100;
-    final showHeaderDescription = width >= 780;
 
     return Scaffold(
       drawer: isWide
@@ -119,8 +151,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                             Builder(
                               builder: (context) {
                                 return IconButton.filledTonal(
-                                  onPressed: () =>
-                                      Scaffold.of(context).openDrawer(),
+                                  onPressed: () => Scaffold.of(context).openDrawer(),
                                   icon: const Icon(Icons.menu_rounded),
                                 );
                               },
@@ -132,26 +163,18 @@ class _AppShellState extends ConsumerState<AppShell> {
                               children: [
                                 Text(
                                   meta.title,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium,
+                                  style: Theme.of(context).textTheme.headlineMedium,
                                 ),
-                                if (showHeaderDescription) ...[
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    meta.description,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: const Color(0xFF5D6779),
-                                        ),
-                                  ),
-                                ],
+                                const SizedBox(height: 6),
+                                Text(
+                                  meta.description,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: const Color(0xFF5D6779),
+                                      ),
+                                ),
                               ],
                             ),
                           ),
-                          _PlatformStatusIcons(capabilities: capabilities),
                         ],
                       ),
                     ),
@@ -161,10 +184,9 @@ class _AppShellState extends ConsumerState<AppShell> {
                               padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                               child: _UpdateBanner(
                                 status: status,
-                                onOpenRelease: () => _openReleaseUrl(
-                                  context,
-                                  status.releaseUrl,
-                                ),
+                                onInstall: () => _installRelease(status),
+                                onOpenRelease: () =>
+                                    _openReleaseUrl(context, status.releaseUrl),
                               ),
                             )
                           : const SizedBox.shrink(),
@@ -173,7 +195,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                     ),
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
                         child: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 220),
                           child: KeyedSubtree(
@@ -181,6 +203,24 @@ class _AppShellState extends ConsumerState<AppShell> {
                             child: _buildSection(),
                           ),
                         ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                      child: _LogPanel(
+                        section: _section,
+                        entries: logs,
+                        expanded: _logExpanded,
+                        onClear: () {
+                          ref
+                              .read(appLogControllerProvider.notifier)
+                              .clearForArea(meta.logArea);
+                        },
+                        onToggle: () {
+                          setState(() {
+                            _logExpanded = !_logExpanded;
+                          });
+                        },
                       ),
                     ),
                   ],
@@ -234,8 +274,87 @@ class _AppShellState extends ConsumerState<AppShell> {
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Could not open the release page.')),
+      const SnackBar(content: Text('릴리즈 페이지를 열지 못했습니다.')),
     );
+  }
+
+  Future<void> _showUpdateDialog(ReleaseStatus status) async {
+    if (!mounted) {
+      return;
+    }
+    final install = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('새 버전이 있습니다'),
+          content: Text(
+            '현재 버전 ${status.currentVersion}\n최신 버전 ${status.latestVersion}\n\n지금 설치를 시작할까요?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('나중에'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('설치 시작'),
+            ),
+          ],
+        );
+      },
+    );
+    if (install == true) {
+      await _installRelease(status);
+    }
+  }
+
+  Future<void> _installRelease(ReleaseStatus status) async {
+    final service = ref.read(releaseInstallerServiceProvider);
+    if (!service.isSupported || status.installerAsset == null) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('이 플랫폼에서는 자동 설치 파일을 찾지 못했습니다.')),
+      );
+      return;
+    }
+
+    ref.read(appLogControllerProvider.notifier).add(
+          area: AppLogArea.common,
+          message: '업데이트 설치 파일 다운로드 시작',
+          detail: status.installerAsset!.name,
+        );
+    try {
+      final installerPath = await service.downloadInstaller(status);
+      await service.openInstaller(installerPath);
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('설치 프로그램을 실행했습니다: ${status.installerAsset!.name}'),
+        ),
+      );
+      ref.read(appLogControllerProvider.notifier).add(
+            area: AppLogArea.common,
+            message: '업데이트 설치 파일 실행',
+            detail: installerPath,
+          );
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('업데이트 설치를 시작하지 못했습니다. $error')),
+      );
+      ref.read(appLogControllerProvider.notifier).add(
+            area: AppLogArea.common,
+            message: '업데이트 설치 실패',
+            level: AppLogLevel.error,
+            detail: '$error',
+          );
+    }
   }
 }
 
@@ -278,7 +397,7 @@ class _Sidebar extends ConsumerWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                'Google Auth Helper ${AppDefaults.appVersion}',
+                '버전 ${AppDefaults.appVersion}',
                 style: const TextStyle(color: Color(0xFFA7B8DE)),
               ),
               const SizedBox(height: 18),
@@ -287,7 +406,7 @@ class _Sidebar extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Current Status',
+                      '현재 상태',
                       style: TextStyle(
                         color: Color(0xFFBACEFF),
                         fontSize: 13,
@@ -296,32 +415,24 @@ class _Sidebar extends ConsumerWidget {
                     ),
                     const SizedBox(height: 10),
                     _SidebarStatusRow(
-                      label: 'Platform',
-                      value: capabilities.platformLabel,
-                    ),
-                    _SidebarStatusRow(
-                      label: 'Access',
+                      label: '권한',
                       value: capabilities.badgeLabel,
                     ),
                     _SidebarStatusRow(
-                      label: 'Preview',
-                      value: resultsState.previewBundle == null
-                          ? 'Not ready'
-                          : 'Ready',
+                      label: '미리보기',
+                      value: resultsState.previewBundle == null ? '없음' : '준비됨',
                     ),
                     _SidebarStatusRow(
-                      label: 'Auto Test',
-                      value: capabilities.canRunTests
-                          ? 'Available'
-                          : 'Ubuntu only',
+                      label: '자동 테스트',
+                      value: capabilities.canRunTests ? '사용 가능' : '우분투 전용',
                     ),
                     _SidebarStatusRow(
-                      label: 'Release Watch',
+                      label: '릴리즈 감시',
                       value: releaseAsync.when(
                         data: (status) =>
-                            status.changes.isEmpty ? 'No changes' : 'Changes',
-                        loading: () => 'Checking',
-                        error: (_, __) => 'Error',
+                            status.changes.isEmpty ? '변경 없음' : '변경 있음',
+                        loading: () => '확인 중',
+                        error: (_, __) => '오류',
                       ),
                     ),
                   ],
@@ -342,7 +453,7 @@ class _Sidebar extends ConsumerWidget {
                         icon: meta.icon,
                         selected: selected,
                         enabled: enabled,
-                        note: enabled ? null : 'Ubuntu only',
+                        note: enabled ? null : '우분투 전용',
                         onPressed: enabled ? () => onSelected(section) : null,
                       ),
                     );
@@ -408,48 +519,15 @@ class _SidebarMenuButton extends StatelessWidget {
   }
 }
 
-class _PlatformStatusIcons extends StatelessWidget {
-  const _PlatformStatusIcons({required this.capabilities});
-
-  final RuntimeCapabilities capabilities;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _PlatformDot.icon(
-          icon: Icons.language_rounded,
-          active: capabilities.profile == RuntimePlatformProfile.webHosting,
-          color: const Color(0xFF1459FF),
-          tooltip: 'Web',
-        ),
-        const SizedBox(width: 8),
-        _PlatformDot.asset(
-          assetPath: 'assets/platform/windows_logo.svg',
-          active: capabilities.profile == RuntimePlatformProfile.windowsDesktop,
-          color: const Color(0xFF00A76F),
-          tooltip: 'Windows',
-        ),
-        const SizedBox(width: 8),
-        _PlatformDot.asset(
-          assetPath: 'assets/platform/ubuntu_logo.svg',
-          active: capabilities.profile == RuntimePlatformProfile.ubuntuDesktop,
-          color: const Color(0xFFF79009),
-          tooltip: 'Ubuntu',
-        ),
-      ],
-    );
-  }
-}
-
 class _UpdateBanner extends StatelessWidget {
   const _UpdateBanner({
     required this.status,
+    required this.onInstall,
     required this.onOpenRelease,
   });
 
   final ReleaseStatus status;
+  final VoidCallback onInstall;
   final VoidCallback onOpenRelease;
 
   @override
@@ -468,109 +546,285 @@ class _UpdateBanner extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Update available: ${status.currentVersion} -> ${status.latestVersion}',
+              '새 버전 ${status.latestVersion}을 설치할 수 있습니다.',
               style: const TextStyle(fontWeight: FontWeight.w700),
             ),
           ),
-          FilledButton.tonal(
-            onPressed: onOpenRelease,
-            child: const Text('Open Release'),
-          ),
+          if (status.installerAsset != null)
+            FilledButton.tonal(
+              onPressed: onInstall,
+              child: const Text('설치 시작'),
+            )
+          else
+            FilledButton.tonal(
+              onPressed: onOpenRelease,
+              child: const Text('릴리즈 열기'),
+            ),
         ],
       ),
     );
   }
 }
 
-class _PlatformDot extends StatefulWidget {
-  const _PlatformDot.icon({
-    required this.active,
-    required this.color,
-    required this.tooltip,
-    required IconData icon,
-  })  : _icon = icon,
-        _assetPath = null;
+class _LogPanel extends StatefulWidget {
+  const _LogPanel({
+    required this.section,
+    required this.entries,
+    required this.expanded,
+    required this.onClear,
+    required this.onToggle,
+  });
 
-  const _PlatformDot.asset({
-    required this.active,
-    required this.color,
-    required this.tooltip,
-    required String assetPath,
-  })  : _assetPath = assetPath,
-        _icon = null;
-
-  final bool active;
-  final Color color;
-  final String tooltip;
-  final IconData? _icon;
-  final String? _assetPath;
+  final AppSection section;
+  final List<AppLogEntry> entries;
+  final bool expanded;
+  final VoidCallback onClear;
+  final VoidCallback onToggle;
 
   @override
-  State<_PlatformDot> createState() => _PlatformDotState();
+  State<_LogPanel> createState() => _LogPanelState();
 }
 
-class _PlatformDotState extends State<_PlatformDot> {
-  bool _focused = false;
-  bool _hovered = false;
+class _LogPanelState extends State<_LogPanel> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void didUpdateWidget(covariant _LogPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final hadVisible = _visibleEntries(oldWidget).length;
+    final visible = _visibleEntries(widget).length;
+    if (!widget.expanded || visible == 0 || visible == hadVisible) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) {
+        return;
+      }
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isHighlighted = _focused || _hovered;
-    final background = widget.active
-        ? widget.color
-        : isHighlighted
-            ? const Color(0xFFD7DEE9)
-            : const Color(0xFFE5EAF2);
-    final foreground =
-        widget.active ? Colors.white : const Color(0xFF465467);
+    final visible = _visibleEntries(widget);
+    final listHeight = math.min(
+      320.0,
+      math.max(140.0, visible.length * 78.0),
+    );
 
-    return Tooltip(
-      message: widget.tooltip,
-      child: FocusableActionDetector(
-        onShowFocusHighlight: (value) {
-          setState(() {
-            _focused = value;
-          });
-        },
-        onShowHoverHighlight: (value) {
-          setState(() {
-            _hovered = value;
-          });
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          width: 42,
-          height: 42,
-          decoration: BoxDecoration(
-            color: background,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: isHighlighted
-                  ? widget.color.withValues(alpha: 0.65)
-                  : Colors.transparent,
-              width: 1.5,
-            ),
-            boxShadow: widget.active || isHighlighted
-                ? [
-                    BoxShadow(
-                      color: widget.color.withValues(alpha: 0.20),
-                      blurRadius: 14,
-                      offset: const Offset(0, 6),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Center(
-            child: widget._assetPath == null
-                ? Icon(widget._icon, color: foreground)
-                : SvgPicture.asset(
-                    widget._assetPath!,
-                    width: 24,
-                    height: 24,
-                    colorFilter:
-                        ColorFilter.mode(foreground, BlendMode.srcIn),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Text(
+                        '로그',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE9EEF7),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          '${visible.length}건',
+                          style: const TextStyle(
+                            color: Color(0xFF475467),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-          ),
+                ),
+                FilledButton.tonalIcon(
+                  onPressed: visible.isEmpty ? null : widget.onClear,
+                  icon: const Icon(Icons.delete_sweep_rounded),
+                  label: const Text('현재 메뉴 비우기'),
+                ),
+                const SizedBox(width: 8),
+                FilledButton.tonalIcon(
+                  onPressed: visible.isEmpty
+                      ? null
+                      : () async {
+                          final text = visible
+                              .map(_formatLogEntry)
+                              .join('\n\n');
+                          await Clipboard.setData(ClipboardData(text: text));
+                          if (!context.mounted) {
+                            return;
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('로그를 복사했습니다.')),
+                          );
+                        },
+                  icon: const Icon(Icons.copy_rounded),
+                  label: const Text('복사'),
+                ),
+                const SizedBox(width: 8),
+                FilledButton.tonalIcon(
+                  onPressed: widget.onToggle,
+                  icon: Icon(widget.expanded
+                      ? Icons.unfold_less_rounded
+                      : Icons.unfold_more_rounded),
+                  label: Text(widget.expanded ? '접기' : '펼치기'),
+                ),
+              ],
+            ),
+            if (widget.expanded) ...[
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                height: listHeight,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F1C36),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: visible.isEmpty
+                    ? const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          '표시할 로그가 없습니다.',
+                          style: TextStyle(color: Color(0xFFD8E4FF)),
+                        ),
+                      )
+                    : Scrollbar(
+                        controller: _scrollController,
+                        thumbVisibility: visible.length > 2,
+                        child: ListView.separated(
+                          controller: _scrollController,
+                          itemCount: visible.length,
+                          itemBuilder: (context, index) {
+                            return _LogEntryTile(entry: visible[index]);
+                          },
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 8),
+                        ),
+                      ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<AppLogEntry> _visibleEntries(_LogPanel widget) {
+    final area = _sectionMeta[widget.section]!.logArea;
+    return widget.entries
+        .where((entry) => entry.area == area || entry.area == AppLogArea.common)
+        .toList(growable: false);
+  }
+
+  String _formatLogEntry(AppLogEntry entry) {
+    final prefix = '[${entry.timestamp.toLocal().toString().split(".").first}]';
+    final detail = entry.detail == null ? '' : '\n${entry.detail}';
+    return '$prefix ${entry.message}$detail';
+  }
+}
+
+class _LogEntryTile extends StatelessWidget {
+  const _LogEntryTile({required this.entry});
+
+  final AppLogEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final tone = switch (entry.level) {
+      AppLogLevel.info => const Color(0xFF98A2FF),
+      AppLogLevel.warning => const Color(0xFFFDB022),
+      AppLogLevel.error => const Color(0xFFF97066),
+    };
+    final levelLabel = switch (entry.level) {
+      AppLogLevel.info => 'INFO',
+      AppLogLevel.warning => 'WARN',
+      AppLogLevel.error => 'ERROR',
+    };
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: const Color(0x141D2939),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0x263A4A66)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: tone.withAlpha(41),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    levelLabel,
+                    style: TextStyle(
+                      color: tone,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    entry.message,
+                    style: const TextStyle(
+                      color: Color(0xFFF8FAFC),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                Text(
+                  entry.timestamp.toLocal().toString().split('.').first,
+                  style: const TextStyle(
+                    color: Color(0xFF98A2B3),
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+            if (entry.detail != null && entry.detail!.trim().isNotEmpty) ...[
+              const SizedBox(height: 8),
+              SelectableText(
+                entry.detail!,
+                style: const TextStyle(
+                  color: Color(0xFFD8E4FF),
+                  fontFamily: 'Consolas',
+                  fontSize: 12,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

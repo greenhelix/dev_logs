@@ -1,6 +1,6 @@
 ﻿Version: v0.1.2
-Built: 2026-03-11 20:46:22
-Changes: Windows auto test is disabled, platform icons stay visible on focus, and desktop release artifacts are simplified.
+Built: 2026-03-12 01:30:38
+Changes: 헤더 플랫폼 표시는 제거했고 셸과 주요 화면을 한국어 중심으로 정리했으며 결과 업로드·ADB 경로 설정·업데이트 설치 흐름을 반영했습니다.
 
 1. Run gah-windows-v0.1.2-setup.exe
 2. Follow the installer steps

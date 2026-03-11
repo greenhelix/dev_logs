@@ -13,6 +13,6 @@ class ConsoleHealth {
 
   static const idle = ConsoleHealth(
     status: ConsoleHealthStatus.idle,
-    message: 'Console not started.',
+    message: '콘솔이 시작되지 않았습니다.',
   );
 }

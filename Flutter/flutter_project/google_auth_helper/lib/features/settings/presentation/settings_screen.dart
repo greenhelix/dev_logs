@@ -46,19 +46,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Settings', style: Theme.of(context).textTheme.titleLarge),
+                Text('공통 설정', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
-                const Text(
-                  'Use this screen for shared credentials and remote connection settings. Tool-specific paths and commands stay in the Auto Test screen.',
-                ),
+                const Text('공용 인증 정보와 원격 연결 설정을 관리합니다.'),
                 const SizedBox(height: 14),
-                _InfoLine('App Version', AppDefaults.appVersion),
+                _InfoLine('앱 버전', AppDefaults.appVersion),
                 const SizedBox(height: 8),
-                _InfoLine('Platform', capabilities.platformLabel),
-                _InfoLine('Capability', capabilities.badgeLabel),
+                _InfoLine('플랫폼', capabilities.platformLabel),
+                _InfoLine('권한', capabilities.badgeLabel),
                 const SizedBox(height: 12),
                 _Field(
-                  label: 'Firebase Project ID',
+                  label: 'Firebase 프로젝트 ID',
                   initialValue: _draft.firebaseProjectId,
                   onChanged: (value) {
                     _isDirty = true;
@@ -67,7 +65,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 _Field(
-                  label: 'Firestore Database ID',
+                  label: 'Firestore 데이터베이스 ID',
                   initialValue: _draft.firestoreDatabaseId,
                   onChanged: (value) {
                     _isDirty = true;
@@ -77,8 +75,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const SizedBox(height: 12),
                 DropdownButtonFormField<CredentialMode>(
                   initialValue: _draft.credentialMode,
-                  decoration:
-                      const InputDecoration(labelText: 'Firestore Auth Mode'),
+                  decoration: const InputDecoration(labelText: 'Firestore 인증 방식'),
                   items: CredentialMode.values
                       .map(
                         (mode) => DropdownMenuItem(
@@ -98,7 +95,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 _Field(
-                  label: 'Service Account Path',
+                  label: '서비스 계정 파일 경로',
                   initialValue: _draft.serviceAccountPath,
                   onChanged: (value) {
                     _isDirty = true;
@@ -107,7 +104,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 _Field(
-                  label: 'Web Proxy Base URL',
+                  label: 'ADB 실행 파일 경로',
+                  initialValue: _draft.adbExecutablePath,
+                  onChanged: (value) {
+                    _isDirty = true;
+                    _draft = _draft.copyWith(adbExecutablePath: value);
+                  },
+                ),
+                const SizedBox(height: 12),
+                _Field(
+                  label: '웹 프록시 기준 주소',
                   initialValue: _draft.webProxyBaseUrl,
                   onChanged: (value) {
                     _isDirty = true;
@@ -125,15 +131,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Redmine Credentials',
-                    style: Theme.of(context).textTheme.titleLarge),
+                Text('Redmine 설정', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
-                const Text(
-                  'Desktop and hosted flows use the same Redmine base URL, API key, and project ID.',
-                ),
+                const Text('레드마인 주소, API 키, 프로젝트 정보를 입력합니다.'),
                 const SizedBox(height: 12),
                 _Field(
-                  label: 'Redmine Base URL',
+                  label: 'Redmine 주소',
                   initialValue: _draft.redmineBaseUrl,
                   onChanged: (value) {
                     _isDirty = true;
@@ -142,7 +145,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 _Field(
-                  label: 'Redmine API Key',
+                  label: 'Redmine API 키',
                   initialValue: _draft.redmineApiKey,
                   obscureText: true,
                   onChanged: (value) {
@@ -152,7 +155,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 _Field(
-                  label: 'Redmine Project ID',
+                  label: 'Redmine 프로젝트 ID',
                   initialValue: _draft.redmineProjectId,
                   onChanged: (value) {
                     _isDirty = true;
@@ -170,16 +173,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           : () => _loadRedmineProjects(),
                       icon: const Icon(Icons.cloud_sync_rounded),
                       label: Text(
-                        _isLoadingRedmineProjects
-                            ? 'Loading...'
-                            : 'Load Projects',
+                        _isLoadingRedmineProjects ? '불러오는 중...' : '프로젝트 불러오기',
                       ),
                     ),
                     if (_selectedProject != null)
                       Chip(
-                        label: Text(
-                          'Selected: ${_selectedProject!.displayLabel}',
-                        ),
+                        label: Text('선택됨: ${_selectedProject!.displayLabel}'),
                       ),
                   ],
                 ),
@@ -201,12 +200,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ],
                 if (_redmineCurrentUser != null) ...[
                   const SizedBox(height: 12),
-                  _InfoLine('Current User', _redmineCurrentUser!.displayName),
+                  _InfoLine('현재 사용자', _redmineCurrentUser!.displayName),
                 ],
                 if (_redmineProjects.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   Text(
-                    'Accessible Projects',
+                    '접근 가능한 프로젝트',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
@@ -271,11 +270,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     return;
                   }
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Settings saved.')),
+                    const SnackBar(content: Text('설정을 저장했습니다.')),
                   );
                 },
           icon: const Icon(Icons.save_rounded),
-          label: Text(state.isLoading ? 'Saving...' : 'Save Settings'),
+          label: Text(state.isLoading ? '저장 중...' : '설정 저장'),
         ),
       ],
     );
@@ -316,7 +315,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         _redmineProjects = projects;
         _selectedProject = selectedProject;
         _redmineLookupMessage =
-            'Loaded ${projects.length} project(s) from Redmine.';
+            '레드마인에서 프로젝트 ${projects.length}개를 불러왔습니다.';
       });
     } catch (error) {
       if (!mounted) {
@@ -372,8 +371,7 @@ class _InfoLine extends StatelessWidget {
         children: [
           SizedBox(
             width: 140,
-            child:
-                Text(label, style: const TextStyle(color: Color(0xFF5D6779))),
+            child: Text(label, style: const TextStyle(color: Color(0xFF5D6779))),
           ),
           Expanded(child: Text(value)),
         ],

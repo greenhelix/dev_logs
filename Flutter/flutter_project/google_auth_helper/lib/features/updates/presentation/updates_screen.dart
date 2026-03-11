@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../models/app_log_entry.dart';
 import '../../../models/release_watch_snapshot.dart';
 import '../../../models/release_watch_target.dart';
 import '../../../providers/app_providers.dart';
@@ -43,7 +44,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
                 Text('릴리즈 감시', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 const Text(
-                  '초기 버전은 Excel 업로드와 Google Sheet 링크를 받아 watcher 대상 초안을 관리합니다. 실제 주기 실행은 tools/release_watcher에서 담당합니다.',
+                  '초기 버전은 엑셀 업로드와 구글 시트 링크를 등록해 감시 대상을 관리합니다.',
                 ),
                 const SizedBox(height: 14),
                 Wrap(
@@ -53,20 +54,19 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
                     FilledButton.tonalIcon(
                       onPressed: _pickExcelTarget,
                       icon: const Icon(Icons.table_view_rounded),
-                      label: const Text('Excel 업로드'),
+                      label: const Text('엑셀 등록'),
                     ),
                     FilledButton.tonalIcon(
-                      onPressed: () =>
-                          ref.invalidate(releaseWatcherSnapshotProvider),
+                      onPressed: () => ref.invalidate(releaseWatcherSnapshotProvider),
                       icon: const Icon(Icons.refresh_rounded),
-                      label: const Text('Watcher 다시 읽기'),
+                      label: const Text('감시 결과 새로고침'),
                     ),
                   ],
                 ),
                 if (kIsWeb) ...[
                   const SizedBox(height: 10),
                   const Text(
-                    '웹에서는 Excel 업로드가 브라우저 제약에 따라 실패할 수 있습니다. 이 경우 Google Sheet 링크 등록을 우선 사용합니다.',
+                    '웹에서는 엑셀 업로드 대신 구글 시트 링크 등록을 우선 권장합니다.',
                     style: TextStyle(
                       color: Color(0xFFB54708),
                       fontWeight: FontWeight.w700,
@@ -84,7 +84,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Google Sheet 링크 등록',
+                Text('구글 시트 링크 등록',
                     style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 TextFormField(
@@ -94,15 +94,14 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _sheetUrlController,
-                  decoration:
-                      const InputDecoration(labelText: 'Google Sheet URL'),
+                  decoration: const InputDecoration(labelText: '구글 시트 주소'),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _sheetRuleController,
                   decoration: const InputDecoration(
                     labelText: '파싱 규칙 메모',
-                    hintText: '예: sheet1!A:C / version, notes 컬럼 사용',
+                    hintText: '예: sheet1!A:C / version, notes 열 사용',
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -122,7 +121,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('감시 대상 초안', style: Theme.of(context).textTheme.titleLarge),
+                Text('감시 대상', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 if (targetsState.isLoading)
                   const LinearProgressIndicator()
@@ -133,9 +132,13 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
                     (target) => _TargetTile(
                       target: target,
                       onRemove: () {
+                        ref.read(appLogControllerProvider.notifier).add(
+                              area: AppLogArea.updates,
+                              message: '감시 대상 제거',
+                              detail: '${target.name} | ${target.sourceRef}',
+                            );
                         ref
-                            .read(
-                                releaseWatchTargetsControllerProvider.notifier)
+                            .read(releaseWatchTargetsControllerProvider.notifier)
                             .removeTarget(target.id);
                       },
                     ),
@@ -156,7 +159,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
           error: (error, _) => Card(
             child: Padding(
               padding: const EdgeInsets.all(24),
-              child: Text('Watcher artifact를 불러오지 못했습니다: $error'),
+              child: Text('감시 산출물을 불러오지 못했습니다. $error'),
             ),
           ),
         ),
@@ -185,6 +188,11 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
       await ref
           .read(releaseWatchTargetsControllerProvider.notifier)
           .addTarget(target);
+      ref.read(appLogControllerProvider.notifier).add(
+            area: AppLogArea.updates,
+            message: '엑셀 감시 대상 등록',
+            detail: file.path.isEmpty ? file.name : file.path,
+          );
       if (!mounted) {
         return;
       }
@@ -192,6 +200,12 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
         SnackBar(content: Text('${file.name} 대상을 추가했습니다.')),
       );
     } catch (error) {
+      ref.read(appLogControllerProvider.notifier).add(
+            area: AppLogArea.updates,
+            message: '엑셀 감시 대상 등록 실패',
+            level: AppLogLevel.error,
+            detail: '$error',
+          );
       if (!mounted) {
         return;
       }
@@ -199,7 +213,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Excel 업로드 실패'),
+            title: const Text('엑셀 등록 실패'),
             content: Text('$error'),
             actions: [
               FilledButton(
@@ -219,11 +233,16 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
     final parserRule = _sheetRuleController.text.trim();
     final uri = Uri.tryParse(url);
     final isGoogleSheet = uri != null &&
-        (uri.host.contains('docs.google.com') ||
-            uri.host.contains('google.com'));
+        (uri.host.contains('docs.google.com') || uri.host.contains('google.com'));
     if (name.isEmpty || url.isEmpty || !isGoogleSheet) {
+      ref.read(appLogControllerProvider.notifier).add(
+            area: AppLogArea.updates,
+            message: '구글 시트 감시 대상 등록 실패',
+            level: AppLogLevel.warning,
+            detail: '표시 이름 또는 주소 형식을 확인해 주세요.',
+          );
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('표시 이름과 유효한 Google Sheet 링크를 입력하세요.')),
+        const SnackBar(content: Text('표시 이름과 구글 시트 주소를 확인해 주세요.')),
       );
       return;
     }
@@ -239,6 +258,11 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen> {
     await ref
         .read(releaseWatchTargetsControllerProvider.notifier)
         .addTarget(target);
+    ref.read(appLogControllerProvider.notifier).add(
+          area: AppLogArea.updates,
+          message: '구글 시트 감시 대상 등록',
+          detail: '$name | $url',
+        );
     _sheetNameController.clear();
     _sheetUrlController.clear();
     _sheetRuleController.clear();
@@ -266,8 +290,7 @@ class _TargetTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       color: const Color(0xFFF7F9FF),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         title: Text(target.name),
         subtitle: Text(
           '${target.sourceType.label} | ${target.sourceRef}\n'
@@ -299,20 +322,17 @@ class _WatcherSnapshotCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('최근 watcher artifact',
-                    style: Theme.of(context).textTheme.titleLarge),
+                Text('최신 감시 산출물', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
-                _InfoLine('Source', snapshot.sourceLabel),
-                _InfoLine('Version', snapshot.version),
-                _InfoLine('Release Notes Hash', snapshot.releaseNotesHash),
-                _InfoLine('Last Checked',
-                    snapshot.lastCheckedAt.toLocal().toString()),
+                _InfoLine('출처', snapshot.sourceLabel),
+                _InfoLine('버전', snapshot.version),
+                _InfoLine('릴리즈 노트 해시', snapshot.releaseNotesHash),
+                _InfoLine('마지막 점검', snapshot.lastCheckedAt.toLocal().toString()),
                 _InfoLine(
-                  'Last Uploaded',
-                  snapshot.lastUploadedAt?.toLocal().toString() ??
-                      '(not uploaded)',
+                  '마지막 업로드',
+                  snapshot.lastUploadedAt?.toLocal().toString() ?? '(업로드 안 함)',
                 ),
-                _InfoLine('Upload Status', snapshot.uploadStatus),
+                _InfoLine('업로드 상태', snapshot.uploadStatus),
               ],
             ),
           ),
@@ -327,7 +347,7 @@ class _WatcherSnapshotCard extends StatelessWidget {
                 Text('감지된 변경', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 if (snapshot.changes.isEmpty)
-                  const Text('변경이 감지되지 않았습니다.')
+                  const Text('감지된 변경이 없습니다.')
                 else
                   ...snapshot.changes.map(
                     (change) => ListTile(
@@ -361,8 +381,7 @@ class _InfoLine extends StatelessWidget {
         children: [
           SizedBox(
             width: 140,
-            child:
-                Text(label, style: const TextStyle(color: Color(0xFF5D6779))),
+            child: Text(label, style: const TextStyle(color: Color(0xFF5D6779))),
           ),
           Expanded(
             child: Text(

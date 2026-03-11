@@ -20,22 +20,22 @@ class RuntimeCapabilities {
   String get badgeLabel {
     switch (profile) {
       case RuntimePlatformProfile.webHosting:
-        return 'Read / Upload';
+        return '조회';
       case RuntimePlatformProfile.windowsDesktop:
-        return 'Read / Upload';
+        return '조회 / 업로드';
       case RuntimePlatformProfile.ubuntuDesktop:
-        return 'Read / Upload / Run';
+        return '조회 / 업로드 / 실행';
     }
   }
 
   String get platformLabel {
     switch (profile) {
       case RuntimePlatformProfile.webHosting:
-        return 'Web';
+        return '웹';
       case RuntimePlatformProfile.windowsDesktop:
-        return 'Windows';
+        return '윈도우';
       case RuntimePlatformProfile.ubuntuDesktop:
-        return 'Ubuntu';
+        return '우분투';
     }
   }
 
@@ -44,7 +44,7 @@ class RuntimeCapabilities {
       return const RuntimeCapabilities(
         profile: RuntimePlatformProfile.webHosting,
         canReadRemote: true,
-        canUploadResults: true,
+        canUploadResults: false,
         canRunTests: false,
         canEditSettings: true,
       );
@@ -69,7 +69,7 @@ class RuntimeCapabilities {
         );
       default:
         return const RuntimeCapabilities(
-          profile: RuntimePlatformProfile.webHosting,
+          profile: RuntimePlatformProfile.windowsDesktop,
           canReadRemote: true,
           canUploadResults: true,
           canRunTests: false,

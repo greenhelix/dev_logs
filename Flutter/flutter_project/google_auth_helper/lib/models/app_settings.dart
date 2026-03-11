@@ -6,9 +6,9 @@ extension CredentialModeX on CredentialMode {
   String get label {
     switch (this) {
       case CredentialMode.serviceAccountFile:
-        return 'Service Account File';
+        return '서비스 계정 파일';
       case CredentialMode.localToken:
-        return 'Local Firebase Token';
+        return '로컬 Firebase 토큰';
     }
   }
 
@@ -34,6 +34,7 @@ class AppSettings {
     required this.firestoreDatabaseId,
     required this.credentialMode,
     required this.serviceAccountPath,
+    required this.adbExecutablePath,
     required this.webProxyBaseUrl,
     required this.redmineBaseUrl,
     required this.redmineApiKey,
@@ -45,6 +46,7 @@ class AppSettings {
   final String firestoreDatabaseId;
   final CredentialMode credentialMode;
   final String serviceAccountPath;
+  final String adbExecutablePath;
   final String webProxyBaseUrl;
   final String redmineBaseUrl;
   final String redmineApiKey;
@@ -60,6 +62,7 @@ class AppSettings {
     String? firestoreDatabaseId,
     CredentialMode? credentialMode,
     String? serviceAccountPath,
+    String? adbExecutablePath,
     String? webProxyBaseUrl,
     String? redmineBaseUrl,
     String? redmineApiKey,
@@ -71,6 +74,7 @@ class AppSettings {
       firestoreDatabaseId: firestoreDatabaseId ?? this.firestoreDatabaseId,
       credentialMode: credentialMode ?? this.credentialMode,
       serviceAccountPath: serviceAccountPath ?? this.serviceAccountPath,
+      adbExecutablePath: adbExecutablePath ?? this.adbExecutablePath,
       webProxyBaseUrl: webProxyBaseUrl ?? this.webProxyBaseUrl,
       redmineBaseUrl: redmineBaseUrl ?? this.redmineBaseUrl,
       redmineApiKey: redmineApiKey ?? this.redmineApiKey,
@@ -85,6 +89,7 @@ class AppSettings {
       'firestoreDatabaseId': firestoreDatabaseId,
       'credentialMode': credentialMode.storageKey,
       'serviceAccountPath': serviceAccountPath,
+      'adbExecutablePath': adbExecutablePath,
       'webProxyBaseUrl': webProxyBaseUrl,
       'redmineBaseUrl': redmineBaseUrl,
       'redmineApiKey': redmineApiKey,
@@ -101,6 +106,7 @@ class AppSettings {
         json['credentialMode'] as String? ?? 'serviceAccountFile',
       ),
       serviceAccountPath: json['serviceAccountPath'] as String? ?? '',
+      adbExecutablePath: json['adbExecutablePath'] as String? ?? '',
       webProxyBaseUrl: json['webProxyBaseUrl'] as String? ?? '/',
       redmineBaseUrl: json['redmineBaseUrl'] as String? ?? '',
       redmineApiKey: json['redmineApiKey'] as String? ?? '',

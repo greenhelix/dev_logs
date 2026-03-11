@@ -9,6 +9,9 @@ class UnsupportedXtsExecutionService implements XtsExecutionService {
   bool get isSupported => false;
 
   @override
+  bool get isConsoleRunning => false;
+
+  @override
   Stream<String> get logLines => const Stream.empty();
 
   @override
@@ -19,11 +22,24 @@ class UnsupportedXtsExecutionService implements XtsExecutionService {
   RunStage deriveStage(String fullLogText) => RunStage.idle;
 
   @override
+  Future<void> startConsole({
+    required ToolConfig config,
+    required RunRequest request,
+  }) async {
+    throw UnsupportedError('이 플랫폼에서는 자동 테스트를 실행할 수 없습니다.');
+  }
+
+  @override
+  Future<void> sendRunCommand(RunRequest request) async {
+    throw UnsupportedError('이 플랫폼에서는 자동 테스트를 실행할 수 없습니다.');
+  }
+
+  @override
   Future<void> startRun({
     required ToolConfig config,
     required RunRequest request,
   }) async {
-    throw UnsupportedError('Test execution is not available on this platform.');
+    throw UnsupportedError('이 플랫폼에서는 자동 테스트를 실행할 수 없습니다.');
   }
 
   @override

@@ -1,9 +1,10 @@
-Windows desktop release staging directory.
+Windows desktop release archive directory.
 
-Expected outputs:
+Retained outputs:
 
-- `app/`
 - `gah-windows-v0.1.1-setup.exe`
 - `VERSION.txt`
 - `INSTALL.txt`
 - `checksums.txt`
+
+The unpacked `app/` bundle was removed to keep only installer-oriented artifacts in `test_release`.

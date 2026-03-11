@@ -9,7 +9,7 @@ class GahApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Google Auth Helper',
+      title: '구글 인증 도우미',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       home: const AppShell(),

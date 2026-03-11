@@ -11,6 +11,8 @@ coverage/
 .vscode/
 *.iml
 
+.firebase/
+
 functions/node_modules/
 functions/.runtimeconfig.json
 

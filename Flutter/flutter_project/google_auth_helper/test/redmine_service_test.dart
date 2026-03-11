@@ -16,6 +16,7 @@ AppSettings _settings() {
     firestoreDatabaseId: 'google-auth',
     credentialMode: CredentialMode.serviceAccountFile,
     serviceAccountPath: '',
+    adbExecutablePath: '',
     webProxyBaseUrl: '/',
     redmineBaseUrl: 'https://redmine.example.com',
     redmineApiKey: 'secret',

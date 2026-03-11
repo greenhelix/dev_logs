@@ -15,11 +15,11 @@ extension ReleaseWatchSourceTypeX on ReleaseWatchSourceType {
   String get label {
     switch (this) {
       case ReleaseWatchSourceType.excel:
-        return 'Excel';
+        return '엑셀';
       case ReleaseWatchSourceType.gsheet:
-        return 'Google Sheet';
+        return '구글 시트';
       case ReleaseWatchSourceType.web:
-        return 'Web';
+        return '웹';
     }
   }
 

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_auth_helper/services/archive_import_service.dart';
+import 'package:google_auth_helper/services/local_file_gateway_io.dart';
 import 'package:google_auth_helper/services/xts_live_log_parser.dart';
 import 'package:google_auth_helper/services/xts_result_parser.dart';
 import 'package:google_auth_helper/services/xts_tf_output_parser.dart';
@@ -12,6 +13,7 @@ void main() {
   test('ArchiveImportService parses split result and log zip uploads',
       () async {
     final service = ArchiveImportService(
+      localFileGateway: IoLocalFileGateway(),
       resultParser: XtsResultParser(),
       liveLogParser: XtsLiveLogParser(),
       tfOutputParser: XtsTfOutputParser(),

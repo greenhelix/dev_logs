@@ -22,7 +22,7 @@ class _FakeAdbService implements AdbService {
   bool get isSupported => true;
 
   @override
-  Future<AdbSnapshot> inspect() async {
+  Future<AdbSnapshot> inspect({String? configuredPath}) async {
     return const AdbSnapshot(
       available: true,
       version: 'Android Debug Bridge version 1.0.41',
@@ -71,6 +71,7 @@ void main() {
       adbService: _FakeAdbService(),
       httpClient: client,
     );
+    final progressLabels = <String>[];
 
     final status = await service.check(
       AppSettings(
@@ -78,6 +79,7 @@ void main() {
         firestoreDatabaseId: 'google-auth',
         credentialMode: CredentialMode.serviceAccountFile,
         serviceAccountPath: '',
+        adbExecutablePath: '',
         webProxyBaseUrl: '/',
         redmineBaseUrl: 'https://redmine.example.com',
         redmineApiKey: 'secret',
@@ -93,6 +95,9 @@ void main() {
           ),
         ],
       ),
+      onProgress: (progress) {
+        progressLabels.add('${progress.phase.name}:${progress.label}');
+      },
     );
 
     expect(status.hosting.isOk, isTrue);
@@ -102,5 +107,24 @@ void main() {
     expect(status.redmineConnection.isOk, isTrue);
     expect(status.redmineCurrentUser.isOk, isTrue);
     expect(status.redmineProjectAccess.isOk, isTrue);
+    expect(
+      progressLabels,
+      containsAllInOrder([
+        'started:Firebase Hosting',
+        'finished:Firebase Hosting',
+        'started:Firestore Download',
+        'finished:Firestore Download',
+        'started:Firestore Upload',
+        'finished:Firestore Upload',
+        'started:ADB',
+        'finished:ADB',
+        'started:Redmine Connection',
+        'finished:Redmine Connection',
+        'started:Redmine Current User',
+        'finished:Redmine Current User',
+        'started:Redmine Project Access',
+        'finished:Redmine Project Access',
+      ]),
+    );
   });
 }
