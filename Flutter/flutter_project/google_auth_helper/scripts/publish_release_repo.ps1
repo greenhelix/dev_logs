@@ -57,7 +57,7 @@ function Copy-ReleaseFiles {
 }
 
 if ([string]::IsNullOrWhiteSpace($CloneDir)) {
-  $CloneDir = Join-Path $env:TEMP "GAH-Release-Repo"
+  $CloneDir = "E:\github\GAH-Release-Repo"
 }
 
 if (Test-Path $CloneDir) {

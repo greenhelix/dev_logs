@@ -5,7 +5,14 @@ VERSION="${1:-v0.1.2}"
 RELEASE_SUMMARY="${2:-Windows auto test is disabled, platform icons stay visible on focus, and release artifacts are simplified.}"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RELEASE_REPO_URL="${RELEASE_REPO_URL:-https://github.com/greenhelix/GAH-Release-Repo.git}"
-CLONE_DIR="${CLONE_DIR:-$HOME/.cache/gah-release-repo}"
+
+if [[ -z "${CLONE_DIR:-}" ]]; then
+  if [[ -d "/mnt/e/github/GAH-Release-Repo/.git" ]]; then
+    CLONE_DIR="/mnt/e/github/GAH-Release-Repo"
+  else
+    CLONE_DIR="$HOME/.cache/gah-release-repo"
+  fi
+fi
 
 copy_release_files() {
   local source_dir="$1"
