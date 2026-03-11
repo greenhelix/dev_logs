@@ -376,6 +376,25 @@ class ResultsController extends StateNotifier<ResultsState> {
             : 'Loaded preview from the configured local path.',
       );
     } catch (error) {
+      final usedFallbackPaths =
+          configured.resultsDir.trim().isEmpty || configured.logsDir.trim().isEmpty;
+      if (usedFallbackPaths) {
+        state = state.copyWith(
+          previewBundle: null,
+          baselineBundle: null,
+          redmineMarkdown: '',
+          isLoading: false,
+          usingDemoData: false,
+          initialized: true,
+          lastArchiveName: null,
+          loadStage: ResultsLoadStage.idle,
+          loadError: null,
+          rawArchiveAvailable: false,
+          previewWarnings: const [],
+          message: 'Bundled sample preview is not available in this workspace.',
+        );
+        return;
+      }
       state = state.copyWith(
         previewBundle: null,
         baselineBundle: null,

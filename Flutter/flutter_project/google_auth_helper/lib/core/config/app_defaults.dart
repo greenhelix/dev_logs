@@ -50,22 +50,14 @@ class AppDefaults {
     if (mode == AppMode.release || kIsWeb || toolType != ToolType.cts) {
       return '';
     }
-    return path.join(
-      'test_sample',
-      'results',
-      '2026.01.05_16.03.34.081_7223',
-    );
+    return path.join('test_sample', 'results');
   }
 
   static String _defaultLogsDir(ToolType toolType, AppMode mode) {
     if (mode == AppMode.release || kIsWeb || toolType != ToolType.cts) {
       return '';
     }
-    return path.join(
-      'test_sample',
-      'logs',
-      '2026.01.05_16.03.34.081_7223',
-    );
+    return path.join('test_sample', 'logs');
   }
 
   static String _defaultCommand(ToolType toolType) {

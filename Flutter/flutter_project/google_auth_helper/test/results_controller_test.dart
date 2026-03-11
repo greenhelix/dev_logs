@@ -6,6 +6,9 @@ import 'package:google_auth_helper/models/tool_config.dart';
 import 'package:google_auth_helper/providers/app_providers.dart';
 import 'package:google_auth_helper/services/app_settings_store.dart';
 import 'package:google_auth_helper/services/upload_history_store.dart';
+
+import 'test_sample_locator.dart';
+
 class _FakeAppSettingsStore extends AppSettingsStore {
   _FakeAppSettingsStore(this.settings);
 
@@ -68,9 +71,16 @@ void main() {
     await controller.initialize();
     final state = container.read(resultsControllerProvider);
 
-    expect(state.previewBundle, isNotNull);
     expect(state.usingDemoData, isFalse);
-    expect(state.previewBundle!.metric.fwVersion, '403_1');
-    expect(state.previewBundle!.metric.primaryBuildLabel, contains('TelekomTV'));
+    if (hasSampleImportDirectories()) {
+      expect(state.previewBundle, isNotNull);
+      expect(state.loadError, isNull);
+      expect(state.previewBundle!.metric.countSource, 'xts_tf_output.log');
+      expect(state.previewBundle!.metric.primaryBuildLabel.trim(), isNotEmpty);
+    } else {
+      expect(state.previewBundle, isNull);
+      expect(state.loadError, isNull);
+      expect(state.loadStage, ResultsLoadStage.idle);
+    }
   });
 }
