@@ -16,7 +16,11 @@ mkdir -p "$APP_INSTALL_DIR" "$DEBIAN_DIR" "$DESKTOP_DIR" "$BIN_DIR"
 
 pushd "$PROJECT_ROOT" >/dev/null
 flutter pub get
+flutter analyze
+flutter test
 flutter build linux --release
+flutter build web
+firebase deploy --only hosting
 
 if [[ ! -d "$RELEASE_DIR" ]]; then
   echo "Linux release directory not found: $RELEASE_DIR" >&2

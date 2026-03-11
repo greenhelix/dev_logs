@@ -63,6 +63,7 @@ flutter build web
   - `test_release/windows/v0.1.1/`
   - `test_release/linux/v0.1.1/`
 - Update check source: `https://github.com/greenhelix/GAH-Release-Repo/releases/latest`
+- Release builds always run `flutter build web` and `firebase deploy --only hosting` before desktop packaging.
 - Release publish helpers:
   - `scripts/build_windows_release.ps1`
   - `scripts/build_ubuntu_release.sh`
