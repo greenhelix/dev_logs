@@ -1,62 +1,60 @@
 # Firebase Setup
 
+## 목표
+- Firebase Hosting + Functions + Firestore 구성을 고정합니다.
+- 웹에서도 결과 zip 업로드와 Firestore 업로드를 테스트할 수 있게 합니다.
+- Redmine 연결 상태와 업로드도 Hosting 뒤 프록시를 통해 점검할 수 있게 합니다.
+
 ## 고정값
-- Firebase Project: `kani-projects`
+- Firebase project: `kani-projects`
 - Firestore database ID: `google-auth`
 - Hosting URL: `https://kani-projects.web.app`
 
-## 1. CLI 준비
-공식 문서: https://firebase.google.com/docs/cli
+## Web API
+- `GET /api/health`
+- `GET /api/test-cases`
+- `GET /api/failed-tests`
+- `GET /api/test-metrics`
+- `POST /api/upload-health`
+- `POST /api/sync-import`
+- `POST /api/redmine-health`
+- `POST /api/redmine-issues`
 
-```powershell
-firebase.cmd login
-firebase.cmd use kani-projects
-```
+## 역할
+- Hosting
+  - Flutter 웹 앱 배포
+- Functions
+  - Firestore 조회 프록시
+  - Firestore 업로드 프록시
+  - Redmine 상태 확인 프록시
+  - Redmine 이슈 생성 프록시
+- Firestore
+  - `TestCases`
+  - `FailedTests`
+  - `TestMetrics`
 
-또는 Ubuntu:
+## CLI 준비
 ```bash
 firebase login
 firebase use kani-projects
 ```
 
-## 2. Hosting / Functions 배포
-이 저장소는 아래 경로를 기준으로 한다.
-- Hosting public: `build/web`
-- Functions source: `functions`
-
-배포 예시:
-```powershell
+## 배포 명령
+```bash
 flutter build web
-firebase.cmd deploy --project kani-projects
+cd functions
+npm install
+cd ..
+firebase deploy --only hosting,functions --force
 ```
 
-## 3. Read-only Web Proxy
-Web은 Firestore에 직접 쓰지 않는다.
+## 확인 항목
+- `https://kani-projects.web.app`
+- `https://kani-projects.web.app/api/health`
+- 결과 화면에서 zip 업로드 후 Firestore 업로드 가능 여부
+- 환경점검 화면에서 Hosting/Firestore/Redmine 상태 확인 가능 여부
 
-노출 API:
-- `GET /api/test-cases`
-- `GET /api/failed-tests`
-- `GET /api/test-metrics`
-
-구현 위치:
-- `functions/index.js`
-
-## 4. Desktop Credential 전략
-- `serviceAccountFile`
-  - 로컬 JSON 파일 경로를 Settings에 저장
-  - 파일 자체는 저장소에 커밋하지 않음
-- `localToken`
-  - Firebase CLI login 상태의 access token 사용
-  - 기본 탐색 파일:
-    - Windows: `%APPDATA%\\configstore\\firebase-tools.json`
-    - Ubuntu: `~/.config/configstore/firebase-tools.json`
-
-## 5. 보안 원칙
-- 서비스 계정 파일은 `.gitignore` 대상이다.
-- Web 클라이언트에는 privileged credential을 넣지 않는다.
-- 쓰기 권한은 Desktop 앱 또는 서버 측 proxy로만 수행한다.
-
-## 6. Named Database 참고
-- Admin SDK named database reference:
-  - https://firebase.google.com/docs/reference/admin/node/firebase-admin.firestore
-
+## 보안 주의
+- 서비스 계정 JSON은 저장소에 커밋하지 않습니다.
+- Redmine API Key는 개발/운영 환경에서 별도 관리해야 합니다.
+- 웹은 민감 정보를 영구 저장하지 않는 방향을 유지합니다.

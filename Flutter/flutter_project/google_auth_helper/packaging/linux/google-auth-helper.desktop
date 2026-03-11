@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Google Auth Helper
+Comment=Desktop utility for GAH result workflows
+Exec=/usr/bin/google-auth-helper
+Icon=applications-system
+Terminal=false
+Type=Application
+Categories=Utility;

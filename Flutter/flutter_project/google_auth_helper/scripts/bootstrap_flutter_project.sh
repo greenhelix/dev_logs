@@ -6,6 +6,8 @@ if ! command -v flutter >/dev/null 2>&1; then
   exit 1
 fi
 
+mkdir -p "${PUB_CACHE:-$HOME/.pub-cache}"
+
 flutter create . \
   --platforms=windows,linux,web \
   --project-name google_auth_helper \

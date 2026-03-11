@@ -1,0 +1,17 @@
+{
+  "remote_debugging_url": "http://127.0.0.1:9222",
+  "version_page_url": "https://example.com/tool-version",
+  "release_notes_url": "https://example.com/release-notes",
+  "version_selector": "#version",
+  "release_notes_selector": "#release-notes",
+  "smtp": {
+    "host": "smtp.example.com",
+    "port": 587,
+    "username": "watcher@example.com",
+    "password": "change-me",
+    "from": "watcher@example.com",
+    "to": [
+      "team@example.com"
+    ]
+  }
+}

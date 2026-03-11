@@ -1,0 +1,8 @@
+Package: google-auth-helper
+Version: __VERSION__
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: greenhelix
+Depends: libgtk-3-0
+Description: Google Auth Helper desktop release

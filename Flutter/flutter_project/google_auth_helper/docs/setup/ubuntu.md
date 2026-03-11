@@ -1,66 +1,63 @@
 # Ubuntu Setup
 
 ## 목표
-- Ubuntu Desktop Flutter 빌드 환경 준비
-- XTS 도구 경로와 로컬 분석 환경 준비
-- Firebase CLI와 데스크톱 쓰기용 credential 준비
+- Flutter Linux 개발 환경 구성
+- Ubuntu 데스크톱에서 조회/업로드/테스트 실행 가능 상태 준비
 
-## 1. Flutter 설치
-- 공식 문서: https://docs.flutter.dev/get-started/install/linux/desktop
-
-필수 패키지 예시:
+## 필수 설치
 ```bash
 sudo apt-get update
-sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev
+sudo apt-get install -y curl git unzip xz-utils zip clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
 ```
 
-Flutter SDK 설치 후:
+Flutter 공식 문서:
+- https://docs.flutter.dev/get-started/install/linux/desktop
+
+추가 도구:
+- adb
+- Java
+- Python
+- Firebase CLI
+
+## Flutter 준비
 ```bash
+export PATH="$HOME/flutter/bin:$PATH"
+flutter --version
 flutter doctor
 flutter config --enable-linux-desktop
 flutter config --enable-web
 ```
 
-## 2. XTS 운영 환경 점검
-`dev.md` 기준 필수 확인 항목:
-- `adb`
-- Java
-- Python
-- 인증 도구 루트 경로
-- 필요 시 Redmine 연동 환경
-
-예시 경로:
-```text
-/home/innopia/xts/cts/android-cts-14_r10-linux_x86-arm
-/home/innopia/xts/gts/android-gts-13.1-R1-13-16-14373446
-/home/innopia/xts/tvts/android-tvts-2.16R2-arm
-/home/innopia/xts/vts/android11-vts-r16-arm
-/home/innopia/xts/sts/android-sts-11_sts-r23-linux-arm
-```
-
-## 3. 검증
+## 저장소 초기화
 ```bash
-which adb
-java -version
-python3 --version
-flutter doctor
-firebase --version
-```
-
-## 4. 저장소 부트스트랩
-```bash
+cd ~/path/to/google_auth_helper
 bash ./scripts/bootstrap_flutter_project.sh
 flutter pub get
 flutter test
+flutter analyze
 flutter build linux
-flutter build web
 ```
 
-## 5. Firestore 쓰기 준비
-- 권장: 로컬에 `service-account.json` 보관 후 Settings 화면에서 경로 지정
-- 대안: Firebase CLI 로그인 후 로컬 access token fallback 사용
+## Ubuntu 역할
+- 허용
+  - 대시보드 조회
+  - 결과 미리보기
+  - Firestore 결과 업로드
+  - 테스트 실행
+  - 실행 후 자동 업로드
+- 실행 화면 기본 범위
+  - 도구 선택
+  - 명령어 편집
+  - serial/shard 설정
+  - 시작/중지
+  - 실시간 로그
 
-## 6. 주의
-- Ubuntu에서도 FlutterFire plugin 대신 REST를 사용한다.
-- 이유: Linux desktop 공식 지원 공백과 named database(`google-auth`) 일관성 때문이다.
+## 경로 설정 예시
+- CTS root: `/home/innopia/xts/cts/android-cts-14_r10-linux_x86-arm`
+- results root: `/home/innopia/xts/cts/android-cts-14_r10-linux_x86-arm/android-cts/results`
+- logs root: `/home/innopia/xts/cts/android-cts-14_r10-linux_x86-arm/android-cts/logs`
 
+`results` 와 `logs`는 특정 세션 디렉터리가 아니라 상위 루트를 넣어도 됩니다. 앱이 최신 `test_result.xml`과 우선 로그 파일을 찾도록 구성되어 있습니다.
+## Additional Notes
+- Run `flutter build linux` and one manual zip upload smoke test on a Linux host before release.
+- Local path imports prefer `xts_tf_output.log` for counts and failure snippets, while `olc_server_session_log.txt` remains a live-status fallback.

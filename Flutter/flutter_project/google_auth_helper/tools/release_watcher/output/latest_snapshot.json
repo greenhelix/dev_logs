@@ -1,0 +1,18 @@
+{
+  "sourceLabel": "Google Portal Watcher",
+  "version": "14_r10",
+  "releaseNotesHash": "demo-release-hash",
+  "lastCheckedAt": "2026-03-11T00:00:00Z",
+  "lastUploadedAt": "2026-03-11T00:05:00Z",
+  "uploadStatus": "demo",
+  "changes": [
+    {
+      "kind": "version",
+      "summary": "Detected a new tool version in the portal output."
+    },
+    {
+      "kind": "notes",
+      "summary": "Release notes text hash changed since the previous run."
+    }
+  ]
+}
