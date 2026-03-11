@@ -4,20 +4,26 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
+import '../models/console_health.dart';
 import '../models/live_status.dart';
 import '../models/run_request.dart';
 import '../models/tool_config.dart';
 import 'xts_execution_service.dart';
 
 class IoXtsExecutionService implements XtsExecutionService {
-  final _controller = StreamController<String>.broadcast();
+  final _logController = StreamController<String>.broadcast();
+  final _consoleHealthController = StreamController<ConsoleHealth>.broadcast();
   Process? _process;
 
   @override
   bool get isSupported => Platform.isLinux;
 
   @override
-  Stream<String> get logLines => _controller.stream;
+  Stream<String> get logLines => _logController.stream;
+
+  @override
+  Stream<ConsoleHealth> get consoleHealthUpdates =>
+      _consoleHealthController.stream;
 
   @override
   RunStage deriveStage(String fullLogText) {
@@ -45,10 +51,10 @@ class IoXtsExecutionService implements XtsExecutionService {
     required RunRequest request,
   }) async {
     if (!isSupported) {
-      throw UnsupportedError('테스트 실행은 Ubuntu/Linux에서만 지원합니다.');
+      throw UnsupportedError('Test execution is only supported on Linux.');
     }
     if (_process != null) {
-      throw StateError('이미 실행 중인 테스트가 있습니다.');
+      throw StateError('Another test process is already running.');
     }
 
     final executable = path.join(
@@ -56,23 +62,108 @@ class IoXtsExecutionService implements XtsExecutionService {
       'tools',
       request.toolType.tradefedExecutable,
     );
-    final args = _tokenize(request.command);
-    _process = await Process.start(
+
+    _consoleHealthController.add(
+      const ConsoleHealth(
+        status: ConsoleHealthStatus.checking,
+        message: 'Waiting for tradefed console prompt.',
+      ),
+    );
+
+    final process = await Process.start(
       executable,
-      args,
+      const [],
       workingDirectory: config.toolRoot,
       runInShell: false,
     );
+    _process = process;
+    _logController.add('Launching: $executable');
 
-    _controller.add('명령 실행: $executable ${request.command}');
-    unawaited(_pipe(_process!.stdout));
-    unawaited(_pipe(_process!.stderr));
+    final expectedPrompt = request.toolType.consolePrompt.toLowerCase();
+    final promptCompleter = Completer<void>();
+    Timer? timeoutTimer;
+    var promptDetected = false;
+
+    void failConsole(ConsoleHealth health) {
+      if (!promptCompleter.isCompleted) {
+        promptCompleter.completeError(StateError(health.message));
+      }
+      _consoleHealthController.add(health);
+    }
+
+    void onLine(String line) {
+      _logController.add(line);
+      final lower = line.toLowerCase();
+      if (!promptDetected && lower.contains(expectedPrompt)) {
+        promptDetected = true;
+        timeoutTimer?.cancel();
+        _consoleHealthController.add(
+          ConsoleHealth(
+            status: ConsoleHealthStatus.ok,
+            message: 'Console prompt detected.',
+            matchedPrompt: request.toolType.consolePrompt,
+          ),
+        );
+        if (!promptCompleter.isCompleted) {
+          promptCompleter.complete();
+        }
+        return;
+      }
+
+      if (!promptDetected &&
+          (lower.contains('exception') ||
+              lower.contains('fatal') ||
+              lower.contains('no such file') ||
+              lower.contains('permission denied'))) {
+        failConsole(
+          ConsoleHealth(
+            status: ConsoleHealthStatus.failed,
+            message: 'Console startup failed before prompt was detected.',
+          ),
+        );
+      }
+    }
+
+    _streamLines(process.stdout).listen(onLine);
+    _streamLines(process.stderr).listen(onLine);
+
     unawaited(
-      _process!.exitCode.then((code) {
-        _controller.add('프로세스 종료 코드: $code');
+      process.exitCode.then((code) {
+        _logController.add('Process exit code: $code');
+        if (!promptDetected) {
+          failConsole(
+            ConsoleHealth(
+              status: ConsoleHealthStatus.failed,
+              message: 'Process exited before console prompt appeared.',
+            ),
+          );
+        }
         _process = null;
       }),
     );
+
+    timeoutTimer = Timer(const Duration(seconds: 20), () {
+      if (promptDetected) {
+        return;
+      }
+      failConsole(
+        const ConsoleHealth(
+          status: ConsoleHealthStatus.needsAttention,
+          message: 'Console prompt was not detected within 20 seconds.',
+        ),
+      );
+    });
+
+    try {
+      await promptCompleter.future;
+      process.stdin.writeln(request.command);
+      _logController.add('Command sent: ${request.command}');
+    } catch (_) {
+      process.kill(ProcessSignal.sigterm);
+      rethrow;
+    } finally {
+      timeoutTimer.cancel();
+    }
   }
 
   @override
@@ -96,25 +187,12 @@ class IoXtsExecutionService implements XtsExecutionService {
     return process.exitCode;
   }
 
-  Future<void> _pipe(Stream<List<int>> stream) async {
-    await for (final chunk in stream.transform(utf8.decoder)) {
-      final lines = chunk.replaceAll('\r', '').split('\n');
-      for (final line in lines) {
-        final trimmed = line.trimRight();
-        if (trimmed.isEmpty) {
-          continue;
-        }
-        _controller.add(trimmed);
-      }
-    }
-  }
-
-  List<String> _tokenize(String command) {
-    return command
-        .split(RegExp(r'\s+'))
-        .map((item) => item.trim())
-        .where((item) => item.isNotEmpty)
-        .toList(growable: false);
+  Stream<String> _streamLines(Stream<List<int>> stream) {
+    return stream
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .map((line) => line.trimRight())
+        .where((line) => line.isNotEmpty);
   }
 }
 

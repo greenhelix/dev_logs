@@ -1,3 +1,4 @@
+import '../models/console_health.dart';
 import '../models/live_status.dart';
 import '../models/run_request.dart';
 import '../models/tool_config.dart';
@@ -8,6 +9,8 @@ abstract class XtsExecutionService {
   bool get isSupported;
 
   Stream<String> get logLines;
+
+  Stream<ConsoleHealth> get consoleHealthUpdates;
 
   Future<void> startRun({
     required ToolConfig config,

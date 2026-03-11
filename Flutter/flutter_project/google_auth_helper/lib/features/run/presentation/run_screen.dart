@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../models/connected_adb_device.dart';
+import '../../../models/console_health.dart';
+import '../../../models/live_status.dart';
 import '../../../models/tool_config.dart';
 import '../../../providers/app_providers.dart';
 
@@ -38,12 +41,13 @@ class _RunScreenState extends ConsumerState<RunScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('자동 테스트', style: Theme.of(context).textTheme.titleLarge),
+                Text('Auto Test',
+                    style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 Text(
                   capabilities.canRunTests
-                      ? '명령, 샤드, 기기 시리얼을 설정하고 자동 실행을 관리합니다.'
-                      : '이 플랫폼에서는 실행은 지원하지 않지만, 도구 프로필과 기본 실행값은 미리 관리할 수 있습니다.',
+                      ? 'Start tradefed, wait for the console prompt, then send the generated run command.'
+                      : 'This platform does not support test execution.',
                 ),
                 const SizedBox(height: 14),
                 Wrap(
@@ -54,7 +58,7 @@ class _RunScreenState extends ConsumerState<RunScreen> {
                       width: 220,
                       child: DropdownButtonFormField<ToolType>(
                         initialValue: runState.selectedTool,
-                        decoration: const InputDecoration(labelText: '도구'),
+                        decoration: const InputDecoration(labelText: 'Tool'),
                         items: ToolType.values
                             .map(
                               (toolType) => DropdownMenuItem(
@@ -66,70 +70,46 @@ class _RunScreenState extends ConsumerState<RunScreen> {
                         onChanged: runState.isRunning
                             ? null
                             : (value) {
-                                if (value == null) {
-                                  return;
+                                if (value != null) {
+                                  controller.selectTool(value);
                                 }
-                                controller.selectTool(value);
                               },
                       ),
                     ),
+                    FilledButton.tonalIcon(
+                      onPressed: runState.isRefreshingDevices || runState.isRunning
+                          ? null
+                          : controller.refreshDevices,
+                      icon: const Icon(Icons.usb_rounded),
+                      label: Text(
+                        runState.isRefreshingDevices
+                            ? 'Refreshing...'
+                            : 'Refresh Devices',
+                      ),
+                    ),
                     FilledButton.icon(
-                      onPressed: runState.isRunning || !capabilities.canRunTests
+                      onPressed: runState.isRunning ||
+                              !capabilities.canRunTests ||
+                              runState.selectedDeviceSerials.isEmpty
                           ? null
                           : controller.startRun,
                       icon: const Icon(Icons.play_arrow_rounded),
-                      label: const Text('실행'),
+                      label: const Text('Run'),
                     ),
                     FilledButton.tonalIcon(
                       onPressed: runState.isRunning ? controller.stopRun : null,
                       icon: const Icon(Icons.stop_circle_outlined),
-                      label: const Text('중지'),
+                      label: const Text('Stop'),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
-                  key: ValueKey('run-command-${runState.selectedTool.name}'),
-                  initialValue: runState.command,
-                  decoration: const InputDecoration(labelText: '테스트 명령'),
-                  onChanged: controller.updateCommand,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  key: ValueKey('run-serials-${runState.selectedTool.name}'),
-                  initialValue: runState.deviceSerials.join(', '),
-                  decoration: const InputDecoration(
-                    labelText: '기기 시리얼',
-                    helperText: '쉼표 또는 공백으로 여러 시리얼을 구분합니다.',
-                  ),
-                  onChanged: controller.updateSerials,
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Slider(
-                        value: runState.shardCount.toDouble(),
-                        min: 1,
-                        max: 8,
-                        divisions: 7,
-                        label: '${runState.shardCount}',
-                        onChanged: runState.isRunning
-                            ? null
-                            : (value) =>
-                                controller.updateShardCount(value.round()),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text('샤드 ${runState.shardCount}'),
-                  ],
-                ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   value: runState.autoUploadAfterRun,
                   onChanged:
                       runState.isRunning ? null : controller.updateAutoUpload,
-                  title: const Text('실행 후 자동 업로드'),
+                  title: const Text('Auto upload after run'),
                 ),
                 if (runState.message != null)
                   Padding(
@@ -137,13 +117,51 @@ class _RunScreenState extends ConsumerState<RunScreen> {
                     child: Text(
                       runState.message!,
                       style: TextStyle(
-                        color: runState.stage.name == 'error'
+                        color: runState.stage == RunStage.error
                             ? const Color(0xFFB42318)
                             : const Color(0xFF1459FF),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Device Selection',
+                    style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 12),
+                if (runState.availableDevices.isEmpty)
+                  const Text('No ADB devices detected.')
+                else
+                  ...runState.availableDevices.map(
+                    (device) => _DeviceTile(
+                      device: device,
+                      selected:
+                          runState.selectedDeviceSerials.contains(device.serial),
+                      enabled: device.isReady && !runState.isRunning,
+                      onChanged: (value) {
+                        controller.toggleDeviceSelection(
+                          device.serial,
+                          value ?? false,
+                        );
+                      },
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                _ReadOnlyField(
+                  label: 'Generated Command',
+                  value: runState.generatedCommand.isEmpty
+                      ? '(select ready devices first)'
+                      : runState.generatedCommand,
+                ),
               ],
             ),
           ),
@@ -165,15 +183,37 @@ class _RunScreenState extends ConsumerState<RunScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('실행 상태', style: Theme.of(context).textTheme.titleLarge),
+                Text('Execution Status',
+                    style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
-                _StatusLine('단계', runState.stage.name),
-                _StatusLine('자동 업로드', runState.isUploading ? '진행 중' : '대기'),
-                _StatusLine('결과 경로', runState.detectedResultsDir ?? '(미확인)'),
-                _StatusLine('로그 경로', runState.detectedLogsDir ?? '(미확인)'),
+                _StatusLine('Stage', runState.stage.name),
                 _StatusLine(
-                  '종료 코드',
-                  runState.exitCode == null ? '(없음)' : '${runState.exitCode}',
+                  'Console',
+                  _consoleStatusLabel(runState.consoleHealth.status),
+                ),
+                _StatusLine('Console Detail', runState.consoleHealth.message),
+                _StatusLine(
+                  'Selected Devices',
+                  runState.selectedDeviceSerials.isEmpty
+                      ? '(none)'
+                      : runState.selectedDeviceSerials.join(', '),
+                ),
+                _StatusLine('Shard Count', '${runState.shardCount}'),
+                _StatusLine(
+                  'Auto Upload',
+                  runState.autoUploadAfterRun ? 'enabled' : 'disabled',
+                ),
+                _StatusLine(
+                  'Result Path',
+                  runState.detectedResultsDir ?? '(not set)',
+                ),
+                _StatusLine(
+                  'Log Path',
+                  runState.detectedLogsDir ?? '(not set)',
+                ),
+                _StatusLine(
+                  'Exit Code',
+                  runState.exitCode == null ? '(none)' : '${runState.exitCode}',
                 ),
               ],
             ),
@@ -186,7 +226,7 @@ class _RunScreenState extends ConsumerState<RunScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('실시간 로그', style: Theme.of(context).textTheme.titleLarge),
+                Text('Live Logs', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 Container(
                   width: double.infinity,
@@ -197,7 +237,7 @@ class _RunScreenState extends ConsumerState<RunScreen> {
                   ),
                   child: SelectableText(
                     runState.latestLogs.isEmpty
-                        ? '로그가 아직 없습니다.'
+                        ? 'No logs yet.'
                         : runState.latestLogs.join('\n'),
                     style: const TextStyle(
                       color: Color(0xFFD8E4FF),
@@ -214,6 +254,21 @@ class _RunScreenState extends ConsumerState<RunScreen> {
     );
   }
 
+  String _consoleStatusLabel(ConsoleHealthStatus status) {
+    switch (status) {
+      case ConsoleHealthStatus.idle:
+        return 'idle';
+      case ConsoleHealthStatus.checking:
+        return 'checking';
+      case ConsoleHealthStatus.ok:
+        return 'ok';
+      case ConsoleHealthStatus.failed:
+        return 'failed';
+      case ConsoleHealthStatus.needsAttention:
+        return 'needs attention';
+    }
+  }
+
   Future<void> _saveToolProfile() async {
     final draft = _draftConfig;
     if (draft == null) {
@@ -227,7 +282,59 @@ class _RunScreenState extends ConsumerState<RunScreen> {
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${draft.toolType.label} 프로필을 저장했습니다.')),
+      SnackBar(content: Text('${draft.toolType.label} profile saved.')),
+    );
+  }
+}
+
+class _DeviceTile extends StatelessWidget {
+  const _DeviceTile({
+    required this.device,
+    required this.selected,
+    required this.enabled,
+    required this.onChanged,
+  });
+
+  final ConnectedAdbDevice device;
+  final bool selected;
+  final bool enabled;
+  final ValueChanged<bool?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final statusColor = switch (device.state) {
+      'device' => const Color(0xFF067647),
+      'offline' => const Color(0xFFF79009),
+      _ => const Color(0xFFB42318),
+    };
+
+    return CheckboxListTile(
+      value: selected,
+      onChanged: enabled ? onChanged : null,
+      contentPadding: EdgeInsets.zero,
+      title: Text(device.summaryLabel),
+      subtitle: Text('State: ${device.state}'),
+      secondary: Icon(Icons.circle, color: statusColor, size: 14),
+    );
+  }
+}
+
+class _ReadOnlyField extends StatelessWidget {
+  const _ReadOnlyField({
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      initialValue: value,
+      readOnly: true,
+      maxLines: 3,
+      decoration: InputDecoration(labelText: label),
     );
   }
 }
@@ -254,38 +361,40 @@ class _ToolProfileCard extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text('도구 프로필',
-                      style: Theme.of(context).textTheme.titleLarge),
+                  child: Text(
+                    'Tool Profile',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                 ),
                 FilledButton.tonalIcon(
                   onPressed: onSave,
                   icon: const Icon(Icons.save_rounded),
-                  label: const Text('프로필 저장'),
+                  label: const Text('Save Profile'),
                 ),
               ],
             ),
             const SizedBox(height: 12),
             _Field(
-              label: '도구 루트',
+              label: 'Tool Root',
               initialValue: config.toolRoot,
               onChanged: (value) => onChanged(config.copyWith(toolRoot: value)),
             ),
             const SizedBox(height: 12),
             _Field(
-              label: '결과 경로',
+              label: 'Result Path',
               initialValue: config.resultsDir,
               onChanged: (value) =>
                   onChanged(config.copyWith(resultsDir: value)),
             ),
             const SizedBox(height: 12),
             _Field(
-              label: '로그 경로',
+              label: 'Log Path',
               initialValue: config.logsDir,
               onChanged: (value) => onChanged(config.copyWith(logsDir: value)),
             ),
             const SizedBox(height: 12),
             _Field(
-              label: '기본 명령',
+              label: 'Base Command',
               initialValue: config.defaultCommand,
               onChanged: (value) =>
                   onChanged(config.copyWith(defaultCommand: value)),
@@ -330,9 +439,10 @@ class _StatusLine extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 120,
+            width: 140,
             child:
                 Text(label, style: const TextStyle(color: Color(0xFF5D6779))),
           ),

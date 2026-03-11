@@ -2,7 +2,6 @@ param(
   [string]$Version = "v0.1.1",
   [string]$ProjectRoot = (Resolve-Path "$PSScriptRoot\..").Path,
   [string]$FlutterExe = "flutter",
-  [string]$FirebaseExe = "firebase",
   [string]$InnoSetupCompiler = ""
 )
 
@@ -58,8 +57,6 @@ try {
   Invoke-Step $FlutterExe analyze
   Invoke-Step $FlutterExe test
   Invoke-Step $FlutterExe build windows --release
-  Invoke-Step $FlutterExe build web
-  Invoke-Step $FirebaseExe deploy --only hosting
 
   if (-not (Test-Path $releaseDir)) {
     throw "Windows release directory not found: $releaseDir"

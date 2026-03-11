@@ -1,6 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:path/path.dart' as path;
-
 import '../../models/app_settings.dart';
 import '../../models/tool_config.dart';
 
@@ -14,9 +11,7 @@ class AppDefaults {
   static const redmineProjectId = '69';
 
   static AppSettings initialSettings() {
-    final mode = kReleaseMode ? AppMode.release : AppMode.dev;
     return AppSettings(
-      mode: mode,
       firebaseProjectId: firebaseProjectId,
       firestoreDatabaseId: firestoreDatabaseId,
       credentialMode: CredentialMode.serviceAccountFile,
@@ -30,11 +25,9 @@ class AppDefaults {
             (toolType) => ToolConfig(
               toolType: toolType,
               toolRoot: '',
-              resultsDir: _defaultResultsDir(toolType, mode),
-              logsDir: _defaultLogsDir(toolType, mode),
+              resultsDir: '',
+              logsDir: '',
               defaultCommand: _defaultCommand(toolType),
-              deviceSerials: const [],
-              shardCount: 1,
               autoUploadAfterRun: true,
             ),
           )
@@ -44,20 +37,6 @@ class AppDefaults {
 
   static ToolConfig defaultToolConfig(ToolType toolType) {
     return initialSettings().toolConfigFor(toolType);
-  }
-
-  static String _defaultResultsDir(ToolType toolType, AppMode mode) {
-    if (mode == AppMode.release || kIsWeb || toolType != ToolType.cts) {
-      return '';
-    }
-    return path.join('test_sample', 'results');
-  }
-
-  static String _defaultLogsDir(ToolType toolType, AppMode mode) {
-    if (mode == AppMode.release || kIsWeb || toolType != ToolType.cts) {
-      return '';
-    }
-    return path.join('test_sample', 'logs');
   }
 
   static String _defaultCommand(ToolType toolType) {

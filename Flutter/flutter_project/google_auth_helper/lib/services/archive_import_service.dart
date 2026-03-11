@@ -25,21 +25,40 @@ class ArchiveImportService {
     required String fileName,
     required Uint8List bytes,
   }) async {
-    final archive = ZipDecoder().decodeBytes(bytes);
-    final resultFiles = archive.files.where((file) {
-      return file.isFile && file.name.endsWith('test_result.xml');
-    }).toList(growable: false);
-    if (resultFiles.isEmpty) {
-      throw StateError('zip 안에서 test_result.xml을 찾을 수 없습니다.');
+    return importSplitZipBytes(
+      resultFileName: fileName,
+      resultBytes: bytes,
+      logFileName: fileName,
+      logBytes: bytes,
+    );
+  }
+
+  Future<ImportBundle> importSplitZipBytes({
+    required String resultFileName,
+    required Uint8List resultBytes,
+    required String logFileName,
+    required Uint8List logBytes,
+  }) async {
+    final resultArchive = ZipDecoder().decodeBytes(resultBytes);
+    final logArchive = ZipDecoder().decodeBytes(logBytes);
+    final resultFile = _findLatestFile(resultArchive, 'test_result.xml');
+    if (resultFile == null) {
+      throw StateError(
+        'Result zip does not contain test_result.xml.',
+      );
     }
 
-    final tfOutputLog = _findLatestLog(archive, 'xts_tf_output.log');
+    final tfOutputLog = _findLatestFile(logArchive, 'xts_tf_output.log');
     final liveStatusLog =
-        _findLatestLog(archive, 'olc_server_session_log.txt') ??
+        _findLatestFile(logArchive, 'olc_server_session_log.txt') ??
             tfOutputLog ??
-            _findLatestLog(archive, 'command_history.txt');
-    final resultFile = resultFiles.last;
-    final resultText = _readText(resultFile.content);
+            _findLatestFile(logArchive, 'command_history.txt');
+    if (tfOutputLog == null && liveStatusLog == null) {
+      throw StateError(
+        'Log zip does not contain xts_tf_output.log or supported fallback logs.',
+      );
+    }
+
     final liveStatus = liveStatusLog == null
         ? LiveStatus.empty
         : _liveLogParser.parseText(_readText(liveStatusLog.content));
@@ -47,7 +66,7 @@ class ArchiveImportService {
         ? null
         : _tfOutputParser.parseText(_readText(tfOutputLog.content));
     final parsed = _resultParser.parseText(
-      resultText,
+      _readText(resultFile.content),
       liveStatus: liveStatus,
       tfOutput: tfOutput,
     );
@@ -57,13 +76,13 @@ class ArchiveImportService {
       testCases: parsed.testCases,
       failedTests: parsed.failedTests,
       liveStatus: liveStatus,
-      resultPath: '$fileName::${resultFile.name}',
-      logPath: tfOutputLog == null ? null : '$fileName::${tfOutputLog.name}',
+      resultPath: '$resultFileName::${resultFile.name}',
+      logPath: tfOutputLog == null ? '$logFileName::${liveStatusLog!.name}' : '$logFileName::${tfOutputLog.name}',
       previewWarnings: parsed.warnings,
     );
   }
 
-  ArchiveFile? _findLatestLog(Archive archive, String fileName) {
+  ArchiveFile? _findLatestFile(Archive archive, String fileName) {
     final matches = archive.files.where((file) {
       return file.isFile && file.name.endsWith(fileName);
     }).toList(growable: false);

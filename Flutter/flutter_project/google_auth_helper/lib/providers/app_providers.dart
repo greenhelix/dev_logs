@@ -9,6 +9,7 @@ import '../core/runtime/runtime_capabilities.dart';
 import '../data/firestore_repository.dart';
 import '../data/firestore_rest_client.dart';
 import '../models/app_settings.dart';
+import '../models/console_health.dart';
 import '../models/environment_check_status.dart';
 import '../models/failed_test_record.dart';
 import '../models/import_bundle.dart';
@@ -20,6 +21,7 @@ import '../models/run_request.dart';
 import '../models/run_session_state.dart';
 import '../models/tool_config.dart';
 import '../models/upload_target.dart';
+import '../services/adb_service.dart';
 import '../services/app_settings_store.dart';
 import '../services/archive_import_service.dart';
 import '../services/auth_header_provider.dart';
@@ -38,7 +40,19 @@ import '../services/xts_tf_output_parser.dart';
 
 enum ResultsLoadStage { idle, selectingFile, fileLoaded, parsing, ready, error }
 
+enum UploadArchiveSlot { result, log }
+
 const _unset = Object();
+
+class _PendingArchive {
+  const _PendingArchive({
+    required this.fileName,
+    required this.bytes,
+  });
+
+  final String fileName;
+  final Uint8List bytes;
+}
 
 class AppSettingsState {
   const AppSettingsState({
@@ -97,12 +111,13 @@ class ResultsState {
     this.isUploading = false,
     this.usingDemoData = false,
     this.initialized = false,
-    this.lastArchiveName,
-    this.selectedArchiveName,
+    this.resultArchiveName,
+    this.logArchiveName,
     this.selectedAt,
     this.loadStage = ResultsLoadStage.idle,
     this.loadError,
-    this.rawArchiveAvailable = false,
+    this.resultArchiveLoaded = false,
+    this.logArchiveLoaded = false,
     this.previewWarnings = const [],
     this.history = const [],
     this.message,
@@ -117,12 +132,13 @@ class ResultsState {
   final bool isUploading;
   final bool usingDemoData;
   final bool initialized;
-  final String? lastArchiveName;
-  final String? selectedArchiveName;
+  final String? resultArchiveName;
+  final String? logArchiveName;
   final DateTime? selectedAt;
   final ResultsLoadStage loadStage;
   final String? loadError;
-  final bool rawArchiveAvailable;
+  final bool resultArchiveLoaded;
+  final bool logArchiveLoaded;
   final List<String> previewWarnings;
   final List<String> history;
   final String? message;
@@ -143,12 +159,13 @@ class ResultsState {
     bool? isUploading,
     bool? usingDemoData,
     bool? initialized,
-    Object? lastArchiveName = _unset,
-    Object? selectedArchiveName = _unset,
+    Object? resultArchiveName = _unset,
+    Object? logArchiveName = _unset,
     Object? selectedAt = _unset,
     ResultsLoadStage? loadStage,
     Object? loadError = _unset,
-    bool? rawArchiveAvailable,
+    bool? resultArchiveLoaded,
+    bool? logArchiveLoaded,
     List<String>? previewWarnings,
     List<String>? history,
     Object? message = _unset,
@@ -169,19 +186,20 @@ class ResultsState {
       isUploading: isUploading ?? this.isUploading,
       usingDemoData: usingDemoData ?? this.usingDemoData,
       initialized: initialized ?? this.initialized,
-      lastArchiveName: identical(lastArchiveName, _unset)
-          ? this.lastArchiveName
-          : lastArchiveName as String?,
-      selectedArchiveName: identical(selectedArchiveName, _unset)
-          ? this.selectedArchiveName
-          : selectedArchiveName as String?,
+      resultArchiveName: identical(resultArchiveName, _unset)
+          ? this.resultArchiveName
+          : resultArchiveName as String?,
+      logArchiveName: identical(logArchiveName, _unset)
+          ? this.logArchiveName
+          : logArchiveName as String?,
       selectedAt: identical(selectedAt, _unset)
           ? this.selectedAt
           : selectedAt as DateTime?,
       loadStage: loadStage ?? this.loadStage,
       loadError:
           identical(loadError, _unset) ? this.loadError : loadError as String?,
-      rawArchiveAvailable: rawArchiveAvailable ?? this.rawArchiveAvailable,
+      resultArchiveLoaded: resultArchiveLoaded ?? this.resultArchiveLoaded,
+      logArchiveLoaded: logArchiveLoaded ?? this.logArchiveLoaded,
       previewWarnings: previewWarnings ?? this.previewWarnings,
       history: history ?? this.history,
       message: identical(message, _unset) ? this.message : message as String?,
@@ -266,174 +284,133 @@ class ResultsController extends StateNotifier<ResultsState> {
         );
 
   final Ref _ref;
+  _PendingArchive? _pendingResultArchive;
+  _PendingArchive? _pendingLogArchive;
 
   Future<void> initialize() async {
     if (state.initialized) {
       return;
     }
     final history = await _ref.read(uploadHistoryStoreProvider).load();
-    state = state.copyWith(history: history);
-    await loadPreview();
+    state = state.copyWith(
+      history: history,
+      initialized: true,
+      loadStage: ResultsLoadStage.idle,
+      message: 'Upload result and log zip files to build a preview.',
+    );
   }
 
   Future<void> selectTool(ToolType toolType) async {
+    _pendingResultArchive = null;
+    _pendingLogArchive = null;
     state = state.copyWith(
       selectedTool: toolType,
+      previewBundle: null,
+      baselineBundle: null,
+      redmineMarkdown: '',
+      resultArchiveName: null,
+      logArchiveName: null,
+      resultArchiveLoaded: false,
+      logArchiveLoaded: false,
+      loadStage: ResultsLoadStage.idle,
       message: null,
       loadError: null,
+      previewWarnings: const [],
     );
-    await loadPreview();
   }
 
   void selectUploadTarget(UploadTarget target) {
     state = state.copyWith(
       uploadTarget: target,
-      message: '${target.label} 업로드 대상으로 전환했습니다.',
+      message: '${target.label} target selected.',
     );
   }
 
-  void registerSelectedArchive(String fileName) {
+  void registerSelectedArchive(UploadArchiveSlot slot, String fileName) {
     state = state.copyWith(
-      selectedArchiveName: fileName,
+      resultArchiveName:
+          slot == UploadArchiveSlot.result ? fileName : state.resultArchiveName,
+      logArchiveName:
+          slot == UploadArchiveSlot.log ? fileName : state.logArchiveName,
       selectedAt: DateTime.now(),
       loadStage: ResultsLoadStage.selectingFile,
       loadError: null,
-      rawArchiveAvailable: false,
       previewWarnings: const [],
       message: '$fileName selected.',
     );
   }
 
-  void registerArchiveReadFailure(String fileName, Object error) {
+  void registerArchiveReadFailure(
+    UploadArchiveSlot slot,
+    String fileName,
+    Object error,
+  ) {
     state = state.copyWith(
-      selectedArchiveName: fileName,
+      resultArchiveName:
+          slot == UploadArchiveSlot.result ? fileName : state.resultArchiveName,
+      logArchiveName:
+          slot == UploadArchiveSlot.log ? fileName : state.logArchiveName,
       selectedAt: DateTime.now(),
       loadStage: ResultsLoadStage.error,
       loadError: 'Could not read the selected zip file: $error',
-      rawArchiveAvailable: false,
       previewWarnings: const [],
       message: 'zip read failed: $error',
     );
   }
 
-  Future<void> loadPreview() async {
+  Future<void> importArchivePart({
+    required UploadArchiveSlot slot,
+    required String fileName,
+    required Uint8List bytes,
+  }) async {
+    if (slot == UploadArchiveSlot.result) {
+      _pendingResultArchive = _PendingArchive(fileName: fileName, bytes: bytes);
+    } else {
+      _pendingLogArchive = _PendingArchive(fileName: fileName, bytes: bytes);
+    }
+
     state = state.copyWith(
-      isLoading: true,
+      isLoading: false,
       message: null,
+      resultArchiveName:
+          slot == UploadArchiveSlot.result ? fileName : state.resultArchiveName,
+      logArchiveName:
+          slot == UploadArchiveSlot.log ? fileName : state.logArchiveName,
+      selectedAt: DateTime.now(),
+      loadStage: ResultsLoadStage.fileLoaded,
       loadError: null,
-      loadStage: ResultsLoadStage.parsing,
+      resultArchiveLoaded:
+          slot == UploadArchiveSlot.result ? true : state.resultArchiveLoaded,
+      logArchiveLoaded:
+          slot == UploadArchiveSlot.log ? true : state.logArchiveLoaded,
       previewWarnings: const [],
     );
-    final settings = _ref.read(appSettingsControllerProvider).settings;
-    final configured = settings.toolConfigFor(state.selectedTool);
-    final fallback = AppDefaults.defaultToolConfig(state.selectedTool);
-    final resultsDir = configured.resultsDir.trim().isNotEmpty
-        ? configured.resultsDir
-        : fallback.resultsDir;
-    final logsDir =
-        configured.logsDir.trim().isNotEmpty ? configured.logsDir : fallback.logsDir;
 
-    if (resultsDir.trim().isEmpty || logsDir.trim().isEmpty) {
+    if (_pendingResultArchive == null || _pendingLogArchive == null) {
       state = state.copyWith(
-        previewBundle: null,
-        baselineBundle: null,
-        redmineMarkdown: '',
-        isLoading: false,
-        usingDemoData: false,
-        initialized: true,
-        lastArchiveName: null,
-        loadStage: ResultsLoadStage.idle,
-        loadError: null,
-        rawArchiveAvailable: false,
-        previewWarnings: const [],
-        message: 'No local preview path is configured for this tool.',
+        message: _pendingResultArchive == null
+            ? 'Upload the result zip to continue.'
+            : 'Upload the log zip to continue.',
       );
       return;
     }
 
     try {
-      final bundle = await _ref.read(importServiceProvider).importFromPaths(
-            resultsDir: resultsDir,
-            logsDir: logsDir,
-          );
-      final usedFallbackPaths =
-          configured.resultsDir.trim().isEmpty || configured.logsDir.trim().isEmpty;
       state = state.copyWith(
-        previewBundle: bundle,
-        baselineBundle: bundle,
-        redmineMarkdown:
-            _ref.read(redmineServiceProvider).buildMarkdown(bundle),
-        isLoading: false,
-        usingDemoData: false,
-        initialized: true,
-        lastArchiveName: null,
-        loadStage: ResultsLoadStage.ready,
-        loadError: null,
-        rawArchiveAvailable: true,
-        previewWarnings: bundle.previewWarnings,
-        message: usedFallbackPaths
-            ? 'Loaded preview from the bundled sample path.'
-            : 'Loaded preview from the configured local path.',
+        isLoading: true,
+        loadStage: ResultsLoadStage.parsing,
       );
-    } catch (error) {
-      final usedFallbackPaths =
-          configured.resultsDir.trim().isEmpty || configured.logsDir.trim().isEmpty;
-      if (usedFallbackPaths) {
-        state = state.copyWith(
-          previewBundle: null,
-          baselineBundle: null,
-          redmineMarkdown: '',
-          isLoading: false,
-          usingDemoData: false,
-          initialized: true,
-          lastArchiveName: null,
-          loadStage: ResultsLoadStage.idle,
-          loadError: null,
-          rawArchiveAvailable: false,
-          previewWarnings: const [],
-          message: 'Bundled sample preview is not available in this workspace.',
-        );
-        return;
-      }
-      state = state.copyWith(
-        previewBundle: null,
-        baselineBundle: null,
-        redmineMarkdown: '',
-        isLoading: false,
-        usingDemoData: false,
-        initialized: true,
-        lastArchiveName: null,
-        loadStage: ResultsLoadStage.error,
-        loadError: error.toString(),
-        rawArchiveAvailable: false,
-        previewWarnings: const [],
-        message: error.toString(),
-      );
-    }
-  }
-
-  Future<void> importArchive({
-    required String fileName,
-    required Uint8List bytes,
-  }) async {
-    state = state.copyWith(
-      isLoading: true,
-      message: null,
-      selectedArchiveName: fileName,
-      selectedAt: state.selectedAt ?? DateTime.now(),
-      loadStage: ResultsLoadStage.fileLoaded,
-      rawArchiveAvailable: true,
-      loadError: null,
-      previewWarnings: const [],
-    );
-    try {
-      state = state.copyWith(loadStage: ResultsLoadStage.parsing);
       final bundle =
-          await _ref.read(archiveImportServiceProvider).importZipBytes(
-                fileName: fileName,
-                bytes: bytes,
+          await _ref.read(archiveImportServiceProvider).importSplitZipBytes(
+                resultFileName: _pendingResultArchive!.fileName,
+                resultBytes: _pendingResultArchive!.bytes,
+                logFileName: _pendingLogArchive!.fileName,
+                logBytes: _pendingLogArchive!.bytes,
               );
-      final history = await _ref.read(uploadHistoryStoreProvider).add(fileName);
+      final historyLabel =
+          '${_pendingResultArchive!.fileName} + ${_pendingLogArchive!.fileName}';
+      final history =
+          await _ref.read(uploadHistoryStoreProvider).add(historyLabel);
       state = state.copyWith(
         previewBundle: bundle,
         baselineBundle: bundle,
@@ -442,20 +419,19 @@ class ResultsController extends StateNotifier<ResultsState> {
         isLoading: false,
         usingDemoData: false,
         initialized: true,
-        lastArchiveName: fileName,
         loadStage: ResultsLoadStage.ready,
         loadError: null,
         previewWarnings: bundle.previewWarnings,
         history: history,
-        message: '$fileName zip 파싱을 완료했습니다.',
+        message: 'Preview is ready from the uploaded zip files.',
       );
     } catch (error) {
       state = state.copyWith(
         isLoading: false,
         loadStage: ResultsLoadStage.error,
-        loadError: 'The zip file was loaded but parsing failed: $error',
+        loadError: 'The uploaded zip files could not be parsed: $error',
         previewWarnings: const [],
-        message: 'zip 파싱 실패: $error',
+        message: 'Zip parsing failed: $error',
       );
     }
   }
@@ -466,12 +442,12 @@ class ResultsController extends StateNotifier<ResultsState> {
       state = state.copyWith(
         message: state.loadError == null
             ? 'No parsed preview is ready for upload.'
-            : 'The current archive has a parsing error. Resolve it before upload.',
+            : 'The current preview has a parsing error.',
       );
       return;
     }
     if (bundle == null) {
-      state = state.copyWith(message: '업로드할 미리보기 결과가 없습니다.');
+      state = state.copyWith(message: 'There is no preview to upload.');
       return;
     }
 
@@ -482,8 +458,9 @@ class ResultsController extends StateNotifier<ResultsState> {
           await _ref.read(firestoreRepositoryProvider).syncImportBundle(bundle);
           state = state.copyWith(
             isUploading: false,
-            message: 'Firestore 업로드가 완료되었습니다.',
+            message: 'Firestore upload completed.',
           );
+          break;
         case UploadTarget.redmine:
           final settings = _ref.read(appSettingsControllerProvider).settings;
           await _ref.read(redmineServiceProvider).createIssue(
@@ -492,13 +469,14 @@ class ResultsController extends StateNotifier<ResultsState> {
               );
           state = state.copyWith(
             isUploading: false,
-            message: 'Redmine 업로드가 완료되었습니다.',
+            message: 'Redmine upload completed.',
           );
+          break;
       }
     } catch (error) {
       state = state.copyWith(
         isUploading: false,
-        message: '${state.uploadTarget.label} 업로드 실패: $error',
+        message: '${state.uploadTarget.label} upload failed: $error',
       );
     }
   }
@@ -517,7 +495,6 @@ class ResultsController extends StateNotifier<ResultsState> {
       initialized: true,
       loadStage: ResultsLoadStage.ready,
       loadError: null,
-      rawArchiveAvailable: true,
       previewWarnings: bundle.previewWarnings,
     );
   }
@@ -587,6 +564,7 @@ class RunController extends StateNotifier<RunSessionState> {
 
   final Ref _ref;
   StreamSubscription<String>? _logSubscription;
+  StreamSubscription<ConsoleHealth>? _consoleHealthSubscription;
   final StringBuffer _logBuffer = StringBuffer();
 
   void syncToolConfig() {
@@ -596,35 +574,64 @@ class RunController extends StateNotifier<RunSessionState> {
         .toolConfigFor(state.selectedTool);
     state = RunSessionState.initial(config).copyWith(
       latestLogs: state.latestLogs,
+      availableDevices: state.availableDevices,
+      selectedDeviceSerials: state.selectedDeviceSerials
+          .where(
+            (serial) => state.availableDevices.any(
+              (device) => device.serial == serial && device.isReady,
+            ),
+          )
+          .toList(growable: false),
+      consoleHealth: state.consoleHealth,
       message: state.message,
     );
   }
 
-  void selectTool(ToolType toolType) {
+  Future<void> selectTool(ToolType toolType) async {
     final config = _ref
         .read(appSettingsControllerProvider)
         .settings
         .toolConfigFor(toolType);
     state = RunSessionState.initial(config);
+    await refreshDevices();
   }
 
-  void updateCommand(String value) {
-    state = state.copyWith(command: value, message: null);
-  }
-
-  void updateSerials(String raw) {
+  void toggleDeviceSelection(String serial, bool selected) {
+    final current = [...state.selectedDeviceSerials];
+    if (selected) {
+      if (!current.contains(serial)) {
+        current.add(serial);
+      }
+    } else {
+      current.remove(serial);
+    }
     state = state.copyWith(
-      deviceSerials: raw
-          .split(RegExp(r'[\s,]+'))
-          .map((item) => item.trim())
-          .where((item) => item.isNotEmpty)
-          .toList(growable: false),
+      selectedDeviceSerials: current,
       message: null,
     );
   }
 
-  void updateShardCount(int value) {
-    state = state.copyWith(shardCount: value < 1 ? 1 : value, message: null);
+  Future<void> refreshDevices() async {
+    final adbService = _ref.read(adbServiceProvider);
+    state = state.copyWith(
+      isRefreshingDevices: true,
+      message: null,
+    );
+
+    final snapshot = await adbService.inspect();
+    final selected = state.selectedDeviceSerials
+        .where(
+          (serial) => snapshot.devices.any(
+            (device) => device.serial == serial && device.isReady,
+          ),
+        )
+        .toList(growable: false);
+    state = state.copyWith(
+      availableDevices: snapshot.devices,
+      selectedDeviceSerials: selected,
+      isRefreshingDevices: false,
+      message: snapshot.message,
+    );
   }
 
   void updateAutoUpload(bool value) {
@@ -634,13 +641,27 @@ class RunController extends StateNotifier<RunSessionState> {
   Future<void> startRun() async {
     final capabilities = _ref.read(runtimeCapabilitiesProvider);
     if (!capabilities.canRunTests) {
-      state = state.copyWith(message: '현재 플랫폼에서는 테스트 실행을 지원하지 않습니다.');
+      state = state.copyWith(
+        message: 'Test execution is not supported on this platform.',
+      );
       return;
     }
 
     final executionService = _ref.read(xtsExecutionServiceProvider);
     if (!executionService.isSupported) {
-      state = state.copyWith(message: '현재 환경에서 실행 서비스를 사용할 수 없습니다.');
+      state = state.copyWith(message: 'Execution service is not available.');
+      return;
+    }
+    if (state.selectedDeviceSerials.isEmpty) {
+      state = state.copyWith(
+        message: 'Select at least one ready ADB device before running.',
+      );
+      return;
+    }
+    if (state.generatedCommand.isEmpty) {
+      state = state.copyWith(
+        message: 'The generated run command is empty.',
+      );
       return;
     }
 
@@ -650,23 +671,26 @@ class RunController extends StateNotifier<RunSessionState> {
         .toolConfigFor(state.selectedTool);
     final runtimeConfig = savedConfig.copyWith(
       defaultCommand: state.command,
-      deviceSerials: state.deviceSerials,
-      shardCount: state.shardCount,
       autoUploadAfterRun: state.autoUploadAfterRun,
     );
 
     await _logSubscription?.cancel();
+    await _consoleHealthSubscription?.cancel();
     _logBuffer.clear();
     state = state.copyWith(
       isRunning: true,
       isUploading: false,
       stage: RunStage.starting,
       latestLogs: const [],
+      consoleHealth: const ConsoleHealth(
+        status: ConsoleHealthStatus.checking,
+        message: 'Waiting for tradefed console prompt.',
+      ),
       startedAt: DateTime.now(),
       finishedAt: null,
       detectedResultsDir: runtimeConfig.resultsDir,
       detectedLogsDir: runtimeConfig.logsDir,
-      message: '테스트 실행을 시작합니다.',
+      message: 'Starting test execution.',
       exitCode: null,
     );
 
@@ -681,14 +705,18 @@ class RunController extends StateNotifier<RunSessionState> {
         stage: executionService.deriveStage(_logBuffer.toString()),
       );
     });
+    _consoleHealthSubscription =
+        executionService.consoleHealthUpdates.listen((health) {
+      state = state.copyWith(consoleHealth: health);
+    });
 
     try {
       await executionService.startRun(
         config: runtimeConfig,
         request: RunRequest(
           toolType: state.selectedTool,
-          command: state.command,
-          deviceSerials: state.deviceSerials,
+          command: state.generatedCommand,
+          deviceSerials: state.selectedDeviceSerials,
           shardCount: state.shardCount,
         ),
       );
@@ -702,7 +730,11 @@ class RunController extends StateNotifier<RunSessionState> {
       state = state.copyWith(
         isRunning: false,
         stage: RunStage.error,
-        message: '실행 실패: $error',
+        consoleHealth: const ConsoleHealth(
+          status: ConsoleHealthStatus.failed,
+          message: 'Console start failed.',
+        ),
+        message: 'Run failed: $error',
       );
     }
   }
@@ -714,7 +746,7 @@ class RunController extends StateNotifier<RunSessionState> {
       stage: RunStage.finished,
       finishedAt: DateTime.now(),
       exitCode: exitCode,
-      message: '테스트 실행을 중지했습니다.',
+      message: 'Test run was stopped.',
     );
     await _afterRunFinished();
   }
@@ -734,7 +766,7 @@ class RunController extends StateNotifier<RunSessionState> {
   Future<void> _afterRunFinished() async {
     if (!state.autoUploadAfterRun) {
       state = state.copyWith(
-        message: '실행이 종료되었습니다. 필요하면 결과 화면에서 수동 업로드하세요.',
+        message: 'Run finished. Upload the parsed result manually if needed.',
       );
       return;
     }
@@ -745,7 +777,7 @@ class RunController extends StateNotifier<RunSessionState> {
         .toolConfigFor(state.selectedTool);
     state = state.copyWith(
       isUploading: true,
-      message: '실행 결과를 자동 업로드하는 중입니다.',
+      message: 'Importing run result from configured paths.',
     );
     try {
       final bundle = await _ref.read(importServiceProvider).importFromPaths(
@@ -755,16 +787,16 @@ class RunController extends StateNotifier<RunSessionState> {
       await _ref.read(firestoreRepositoryProvider).syncImportBundle(bundle);
       _ref.read(resultsControllerProvider.notifier).attachBundle(
             bundle,
-            message: '실행 결과를 자동 업로드했습니다.',
+            message: 'Run result imported automatically.',
           );
       state = state.copyWith(
         isUploading: false,
-        message: '실행 결과 자동 업로드가 완료되었습니다.',
+        message: 'Run result upload completed.',
       );
     } catch (error) {
       state = state.copyWith(
         isUploading: false,
-        message: '자동 업로드 실패: $error',
+        message: 'Automatic upload failed: $error',
       );
     }
   }
@@ -772,6 +804,7 @@ class RunController extends StateNotifier<RunSessionState> {
   @override
   void dispose() {
     _logSubscription?.cancel();
+    _consoleHealthSubscription?.cancel();
     super.dispose();
   }
 }
@@ -784,6 +817,7 @@ final appSettingsStoreProvider = Provider((ref) => AppSettingsStore());
 final uploadHistoryStoreProvider = Provider((ref) => UploadHistoryStore());
 final releaseWatchTargetsStoreProvider =
     Provider((ref) => ReleaseWatchTargetsStore());
+final adbServiceProvider = Provider((ref) => createAdbService());
 final localFileGatewayProvider = Provider((ref) => createLocalFileGateway());
 final authHeaderProviderProvider =
     Provider((ref) => createAuthHeaderProvider());
@@ -809,6 +843,7 @@ final archiveImportServiceProvider = Provider(
 final environmentCheckServiceProvider = Provider(
   (ref) => EnvironmentCheckService(
     authHeaderProvider: ref.read(authHeaderProviderProvider),
+    adbService: ref.read(adbServiceProvider),
   ),
 );
 final importServiceProvider = Provider(
@@ -855,7 +890,9 @@ final releaseWatchTargetsControllerProvider = StateNotifierProvider<
 
 final runControllerProvider =
     StateNotifierProvider<RunController, RunSessionState>((ref) {
-  return RunController(ref);
+  final controller = RunController(ref);
+  unawaited(controller.refreshDevices());
+  return controller;
 });
 
 final testMetricsProvider = FutureProvider((ref) async {

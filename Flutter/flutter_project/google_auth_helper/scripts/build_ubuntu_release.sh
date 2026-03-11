@@ -19,8 +19,6 @@ flutter pub get
 flutter analyze
 flutter test
 flutter build linux --release
-flutter build web
-firebase deploy --only hosting
 
 if [[ ! -d "$RELEASE_DIR" ]]; then
   echo "Linux release directory not found: $RELEASE_DIR" >&2

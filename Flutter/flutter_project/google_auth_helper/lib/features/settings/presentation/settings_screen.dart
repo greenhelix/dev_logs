@@ -46,38 +46,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('설정', style: Theme.of(context).textTheme.titleLarge),
+                Text('Settings', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 const Text(
-                  '이 화면은 공통 자격증명과 연결값만 관리합니다. 도구 경로, 명령, 샤드는 자동 테스트 메뉴에서 관리합니다.',
+                  'Use this screen for shared credentials and remote connection settings. Tool-specific paths and commands stay in the Auto Test screen.',
                 ),
                 const SizedBox(height: 14),
                 _InfoLine('App Version', AppDefaults.appVersion),
                 const SizedBox(height: 8),
-                _InfoLine('플랫폼', capabilities.platformLabel),
-                _InfoLine('권한', capabilities.badgeLabel),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<AppMode>(
-                  initialValue: _draft.mode,
-                  decoration: const InputDecoration(labelText: '모드'),
-                  items: AppMode.values
-                      .map(
-                        (mode) => DropdownMenuItem(
-                          value: mode,
-                          child: Text(mode.label),
-                        ),
-                      )
-                      .toList(growable: false),
-                  onChanged: (value) {
-                    if (value == null) {
-                      return;
-                    }
-                    setState(() {
-                      _isDirty = true;
-                      _draft = _draft.copyWith(mode: value);
-                    });
-                  },
-                ),
+                _InfoLine('Platform', capabilities.platformLabel),
+                _InfoLine('Capability', capabilities.badgeLabel),
                 const SizedBox(height: 12),
                 _Field(
                   label: 'Firebase Project ID',
@@ -100,7 +78,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 DropdownButtonFormField<CredentialMode>(
                   initialValue: _draft.credentialMode,
                   decoration:
-                      const InputDecoration(labelText: 'Firestore 자격증명 방식'),
+                      const InputDecoration(labelText: 'Firestore Auth Mode'),
                   items: CredentialMode.values
                       .map(
                         (mode) => DropdownMenuItem(
@@ -110,13 +88,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       )
                       .toList(growable: false),
                   onChanged: (value) {
-                    if (value == null) {
-                      return;
+                    if (value != null) {
+                      setState(() {
+                        _isDirty = true;
+                        _draft = _draft.copyWith(credentialMode: value);
+                      });
                     }
-                    setState(() {
-                      _isDirty = true;
-                      _draft = _draft.copyWith(credentialMode: value);
-                    });
                   },
                 ),
                 const SizedBox(height: 12),
@@ -148,11 +125,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Redmine 자격증명',
+                Text('Redmine Credentials',
                     style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 const Text(
-                  '웹과 PC 모두 이 값을 사용합니다. 사용자별 API 키를 직접 입력해 저장할 수 있습니다.',
+                  'Desktop and hosted flows use the same Redmine base URL, API key, and project ID.',
                 ),
                 const SizedBox(height: 12),
                 _Field(
@@ -294,11 +271,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     return;
                   }
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('설정을 저장했습니다.')),
+                    const SnackBar(content: Text('Settings saved.')),
                   );
                 },
           icon: const Icon(Icons.save_rounded),
-          label: Text(state.isLoading ? '저장 중...' : '설정 저장'),
+          label: Text(state.isLoading ? 'Saving...' : 'Save Settings'),
         ),
       ],
     );

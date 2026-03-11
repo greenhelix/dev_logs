@@ -5,16 +5,20 @@ import 'package:http/http.dart' as http;
 
 import '../models/app_settings.dart';
 import '../models/environment_check_status.dart';
+import 'adb_service.dart';
 import 'auth_header_provider.dart';
 
 class EnvironmentCheckService {
   EnvironmentCheckService({
     required AuthHeaderProvider authHeaderProvider,
+    required AdbService adbService,
     http.Client? httpClient,
   })  : _authHeaderProvider = authHeaderProvider,
+        _adbService = adbService,
         _httpClient = httpClient ?? http.Client();
 
   final AuthHeaderProvider _authHeaderProvider;
+  final AdbService _adbService;
   final http.Client _httpClient;
 
   Future<EnvironmentCheckStatus> check(AppSettings settings) async {
@@ -22,12 +26,14 @@ class EnvironmentCheckService {
     final hosting = await _probeHosting(baseUrl);
     final download = await _probeFirestoreDownload(baseUrl, settings);
     final upload = await _probeFirestoreUpload(baseUrl, settings);
+    final adb = await _probeAdb();
     final redmine = await _probeRedmine(baseUrl, settings);
 
     return EnvironmentCheckStatus(
       hosting: hosting,
       firestoreDownload: download,
       firestoreUpload: upload,
+      adb: adb,
       redmineConnection: redmine.connection,
       redmineCurrentUser: redmine.currentUser,
       redmineProjectAccess: redmine.projectAccess,
@@ -41,7 +47,7 @@ class EnvironmentCheckService {
         return const EnvironmentProbeResult(
           label: 'Firebase Hosting',
           isOk: true,
-          message: '응답 정상',
+          message: 'Hosting health endpoint is reachable.',
         );
       }
       return EnvironmentProbeResult(
@@ -67,13 +73,13 @@ class EnvironmentCheckService {
           .get(Uri.parse('${baseUrl}api/test-metrics?limit=1'));
       if (_isSuccess(response.statusCode)) {
         return const EnvironmentProbeResult(
-          label: 'Firestore 다운로드',
+          label: 'Firestore Download',
           isOk: true,
-          message: '조회 경로 정상',
+          message: 'Download path is reachable.',
         );
       }
       return EnvironmentProbeResult(
-        label: 'Firestore 다운로드',
+        label: 'Firestore Download',
         isOk: false,
         message: 'HTTP ${response.statusCode}',
       );
@@ -81,13 +87,13 @@ class EnvironmentCheckService {
       try {
         await _authHeaderProvider.buildHeaders(settings);
         return const EnvironmentProbeResult(
-          label: 'Firestore 다운로드',
+          label: 'Firestore Download',
           isOk: true,
-          message: '자격증명 확인 완료',
+          message: 'Credentials are available.',
         );
       } catch (error) {
         return EnvironmentProbeResult(
-          label: 'Firestore 다운로드',
+          label: 'Firestore Download',
           isOk: false,
           message: '$error',
         );
@@ -107,13 +113,13 @@ class EnvironmentCheckService {
       );
       if (_isSuccess(response.statusCode)) {
         return const EnvironmentProbeResult(
-          label: 'Firestore 업로드',
+          label: 'Firestore Upload',
           isOk: true,
-          message: '업로드 경로 정상',
+          message: 'Upload path is reachable.',
         );
       }
       return EnvironmentProbeResult(
-        label: 'Firestore 업로드',
+        label: 'Firestore Upload',
         isOk: false,
         message: 'HTTP ${response.statusCode}',
       );
@@ -121,18 +127,46 @@ class EnvironmentCheckService {
       try {
         await _authHeaderProvider.buildHeaders(settings);
         return const EnvironmentProbeResult(
-          label: 'Firestore 업로드',
+          label: 'Firestore Upload',
           isOk: true,
-          message: '자격증명 확인 완료',
+          message: 'Credentials are available.',
         );
       } catch (error) {
         return EnvironmentProbeResult(
-          label: 'Firestore 업로드',
+          label: 'Firestore Upload',
           isOk: false,
           message: '$error',
         );
       }
     }
+  }
+
+  Future<EnvironmentProbeResult> _probeAdb() async {
+    if (!_adbService.isSupported) {
+      return const EnvironmentProbeResult(
+        label: 'ADB',
+        isOk: false,
+        message: 'ADB checks are not supported on this platform.',
+      );
+    }
+
+    final snapshot = await _adbService.inspect();
+    if (!snapshot.available) {
+      return EnvironmentProbeResult(
+        label: 'ADB',
+        isOk: false,
+        message: snapshot.message,
+      );
+    }
+
+    final readyCount =
+        snapshot.devices.where((device) => device.isReady).length;
+    return EnvironmentProbeResult(
+      label: 'ADB',
+      isOk: true,
+      message:
+          'ADB ready. ${snapshot.devices.length} device(s) detected, $readyCount ready for run.',
+    );
   }
 
   Future<_RedmineProbeSet> _probeRedmine(
@@ -144,19 +178,19 @@ class EnvironmentCheckService {
     if (redmineBaseUrl.isEmpty || apiKey.isEmpty) {
       return const _RedmineProbeSet(
         connection: EnvironmentProbeResult(
-          label: 'Redmine 연결',
+          label: 'Redmine Connection',
           isOk: false,
-          message: '설정 필요',
+          message: 'Redmine settings are required.',
         ),
         currentUser: EnvironmentProbeResult(
-          label: 'Redmine 현재 사용자',
+          label: 'Redmine Current User',
           isOk: false,
-          message: '설정 필요',
+          message: 'Redmine settings are required.',
         ),
         projectAccess: EnvironmentProbeResult(
-          label: 'Redmine 프로젝트 접근',
+          label: 'Redmine Project Access',
           isOk: false,
-          message: '설정 필요',
+          message: 'Redmine settings are required.',
         ),
       );
     }
@@ -188,15 +222,15 @@ class EnvironmentCheckService {
       final results = payload['results'] as Map<String, dynamic>? ?? const {};
       return _RedmineProbeSet(
         connection: _probeFromPayload(
-          'Redmine 연결',
+          'Redmine Connection',
           results['connection'] as Map<String, dynamic>?,
         ),
         currentUser: _probeFromPayload(
-          'Redmine 현재 사용자',
+          'Redmine Current User',
           results['currentUser'] as Map<String, dynamic>?,
         ),
         projectAccess: _probeFromPayload(
-          'Redmine 프로젝트 접근',
+          'Redmine Project Access',
           results['projectAccess'] as Map<String, dynamic>?,
         ),
       );
@@ -214,17 +248,17 @@ class EnvironmentCheckService {
         : '$normalizedBase/projects/${settings.redmineProjectId.trim()}.json';
 
     final connection = await _requestProbe(
-      label: 'Redmine 연결',
+      label: 'Redmine Connection',
       uri: Uri.parse('$normalizedBase/issues.json?limit=1'),
       headers: headers,
     );
     final currentUser = await _requestProbe(
-      label: 'Redmine 현재 사용자',
+      label: 'Redmine Current User',
       uri: Uri.parse('$normalizedBase/users/current.json'),
       headers: headers,
     );
     final projectAccess = await _requestProbe(
-      label: 'Redmine 프로젝트 접근',
+      label: 'Redmine Project Access',
       uri: Uri.parse(projectPath),
       headers: headers,
     );
@@ -247,7 +281,7 @@ class EnvironmentCheckService {
         return EnvironmentProbeResult(
           label: label,
           isOk: true,
-          message: '응답 정상',
+          message: 'HTTP ${response.statusCode}',
         );
       }
       return EnvironmentProbeResult(
@@ -272,30 +306,30 @@ class EnvironmentCheckService {
       return EnvironmentProbeResult(
         label: label,
         isOk: false,
-        message: '응답 누락',
+        message: 'No response payload.',
       );
     }
     return EnvironmentProbeResult(
       label: label,
       isOk: map['ok'] as bool? ?? false,
-      message: map['message'] as String? ?? '응답 없음',
+      message: map['message'] as String? ?? 'No message.',
     );
   }
 
   _RedmineProbeSet _failedRedmineSet(String message) {
     return _RedmineProbeSet(
       connection: EnvironmentProbeResult(
-        label: 'Redmine 연결',
+        label: 'Redmine Connection',
         isOk: false,
         message: message,
       ),
       currentUser: EnvironmentProbeResult(
-        label: 'Redmine 현재 사용자',
+        label: 'Redmine Current User',
         isOk: false,
         message: message,
       ),
       projectAccess: EnvironmentProbeResult(
-        label: 'Redmine 프로젝트 접근',
+        label: 'Redmine Project Access',
         isOk: false,
         message: message,
       ),

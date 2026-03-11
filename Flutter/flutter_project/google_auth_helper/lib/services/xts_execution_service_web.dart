@@ -1,3 +1,4 @@
+import '../models/console_health.dart';
 import '../models/live_status.dart';
 import '../models/run_request.dart';
 import '../models/tool_config.dart';
@@ -11,6 +12,10 @@ class UnsupportedXtsExecutionService implements XtsExecutionService {
   Stream<String> get logLines => const Stream.empty();
 
   @override
+  Stream<ConsoleHealth> get consoleHealthUpdates =>
+      Stream.value(ConsoleHealth.idle);
+
+  @override
   RunStage deriveStage(String fullLogText) => RunStage.idle;
 
   @override
@@ -18,7 +23,7 @@ class UnsupportedXtsExecutionService implements XtsExecutionService {
     required ToolConfig config,
     required RunRequest request,
   }) async {
-    throw UnsupportedError('현재 플랫폼에서는 테스트 실행을 지원하지 않습니다.');
+    throw UnsupportedError('Test execution is not available on this platform.');
   }
 
   @override

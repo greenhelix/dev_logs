@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:file_selector/file_selector.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,9 +15,7 @@ class ResultsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(resultsControllerProvider);
-    final settings = ref.watch(appSettingsControllerProvider).settings;
     final controller = ref.read(resultsControllerProvider.notifier);
-    final config = settings.toolConfigFor(state.selectedTool);
     final bundle = state.previewBundle;
 
     return ListView(
@@ -37,7 +34,8 @@ class ResultsScreen extends ConsumerWidget {
                       width: 220,
                       child: DropdownButtonFormField<ToolType>(
                         initialValue: state.selectedTool,
-                        decoration: const InputDecoration(labelText: '도구'),
+                        decoration:
+                            const InputDecoration(labelText: 'Tool Profile'),
                         items: ToolType.values
                             .map(
                               (toolType) => DropdownMenuItem(
@@ -57,7 +55,8 @@ class ResultsScreen extends ConsumerWidget {
                       width: 220,
                       child: DropdownButtonFormField<UploadTarget>(
                         initialValue: state.uploadTarget,
-                        decoration: const InputDecoration(labelText: '업로드 대상'),
+                        decoration:
+                            const InputDecoration(labelText: 'Upload Target'),
                         items: UploadTarget.values
                             .map(
                               (target) => DropdownMenuItem(
@@ -73,12 +72,6 @@ class ResultsScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                    FilledButton.tonalIcon(
-                      onPressed:
-                          state.isLoading ? null : controller.loadPreview,
-                      icon: const Icon(Icons.preview_rounded),
-                      label: const Text('미리보기 불러오기'),
-                    ),
                     FilledButton.icon(
                       onPressed:
                           state.isUploading || !state.hasUploadablePreview
@@ -87,38 +80,56 @@ class ResultsScreen extends ConsumerWidget {
                       icon: const Icon(Icons.cloud_upload_rounded),
                       label: Text(
                         state.isUploading
-                            ? '업로드 중...'
+                            ? 'Uploading...'
                             : state.uploadTarget.actionLabel,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                _UploadDropZone(
-                  isLoading: state.isLoading,
-                  onTap: () => _pickZipAndImport(context, controller),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    _UploadCard(
+                      title: 'Result Zip',
+                      subtitle:
+                          'Upload the archive that contains test_result.xml.',
+                      fileName: state.resultArchiveName,
+                      ready: state.resultArchiveLoaded,
+                      isLoading: state.isLoading,
+                      icon: Icons.inventory_2_rounded,
+                      onTap: () => _pickZipAndImport(
+                        context,
+                        controller,
+                        UploadArchiveSlot.result,
+                      ),
+                    ),
+                    _UploadCard(
+                      title: 'Log Zip',
+                      subtitle:
+                          'Upload the archive that contains xts_tf_output.log or fallback logs.',
+                      fileName: state.logArchiveName,
+                      ready: state.logArchiveLoaded,
+                      isLoading: state.isLoading,
+                      icon: Icons.receipt_long_rounded,
+                      onTap: () => _pickZipAndImport(
+                        context,
+                        controller,
+                        UploadArchiveSlot.log,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
-                _InfoLine('도구 루트',
-                    config.toolRoot.isEmpty ? '(empty)' : config.toolRoot),
+                _InfoLine('Load Stage', state.loadStage.name),
                 _InfoLine(
-                  '결과 경로',
-                  config.resultsDir.isEmpty ? '(empty)' : config.resultsDir,
+                  'Result Zip',
+                  state.resultArchiveName ?? '(none)',
                 ),
-                _InfoLine('로그 경로',
-                    config.logsDir.isEmpty ? '(empty)' : config.logsDir),
                 _InfoLine(
-                  '선택된 zip',
-                  state.selectedArchiveName ??
-                      state.lastArchiveName ??
-                      '(none)',
-                ),
-                _InfoLine('로드 단계', state.loadStage.name),
-                _InfoLine(
-                  '웹 정책',
-                  kIsWeb
-                      ? '브라우저 제약으로 업로드가 실패할 수 있으며, 실패 시 경고창을 표시합니다.'
-                      : '데스크톱 파일 선택을 사용합니다.',
+                  'Log Zip',
+                  state.logArchiveName ?? '(none)',
                 ),
                 if (state.message != null) ...[
                   const SizedBox(height: 12),
@@ -138,8 +149,10 @@ class ResultsScreen extends ConsumerWidget {
                 ],
                 if (state.history.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  Text('업로드 기록',
-                      style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    'Upload History',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -170,6 +183,7 @@ class ResultsScreen extends ConsumerWidget {
   Future<void> _pickZipAndImport(
     BuildContext context,
     ResultsController controller,
+    UploadArchiveSlot slot,
   ) async {
     const typeGroup = XTypeGroup(
       label: 'zip',
@@ -180,22 +194,23 @@ class ResultsScreen extends ConsumerWidget {
       if (file == null) {
         return;
       }
-      controller.registerSelectedArchive(file.name);
+      controller.registerSelectedArchive(slot, file.name);
       try {
         final bytes = await file.readAsBytes();
-        await controller.importArchive(
+        await controller.importArchivePart(
+          slot: slot,
           fileName: file.name,
           bytes: bytes,
         );
       } catch (error) {
-        controller.registerArchiveReadFailure(file.name, error);
+        controller.registerArchiveReadFailure(slot, file.name, error);
         if (!context.mounted) {
           return;
         }
         await _showUploadErrorDialog(
           context,
-          title: 'zip 읽기 실패',
-          message: '파일은 선택되었지만 내용을 읽지 못했습니다.\n$error',
+          title: 'Zip Read Failed',
+          message: 'The selected file could not be read.\n$error',
         );
       }
     } catch (error) {
@@ -204,10 +219,8 @@ class ResultsScreen extends ConsumerWidget {
       }
       await _showUploadErrorDialog(
         context,
-        title: kIsWeb ? '브라우저 파일 접근 실패' : '파일 선택 실패',
-        message: kIsWeb
-            ? '브라우저가 파일 접근을 막았거나 선택기가 실패했습니다.\n$error'
-            : '파일 선택기를 열지 못했습니다.\n$error',
+        title: 'File Selection Failed',
+        message: '$error',
       );
     }
   }
@@ -226,7 +239,7 @@ class ResultsScreen extends ConsumerWidget {
           actions: [
             FilledButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('닫기'),
+              child: const Text('Close'),
             ),
           ],
         );
@@ -235,63 +248,85 @@ class ResultsScreen extends ConsumerWidget {
   }
 }
 
-class _UploadDropZone extends StatelessWidget {
-  const _UploadDropZone({
-    required this.onTap,
+class _UploadCard extends StatelessWidget {
+  const _UploadCard({
+    required this.title,
+    required this.subtitle,
+    required this.fileName,
+    required this.ready,
     required this.isLoading,
+    required this.icon,
+    required this.onTap,
   });
 
-  final Future<void> Function() onTap;
+  final String title;
+  final String subtitle;
+  final String? fileName;
+  final bool ready;
   final bool isLoading;
+  final IconData icon;
+  final Future<void> Function() onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: isLoading ? null : onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFF4F8FF), Color(0xFFE8F0FF)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+    return SizedBox(
+      width: 420,
+      child: InkWell(
+        onTap: isLoading ? null : onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFF4F8FF), Color(0xFFE8F0FF)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: const Color(0xFFB8CCF3)),
           ),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: const Color(0xFFB8CCF3)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Row(
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1459FF),
-                  borderRadius: BorderRadius.circular(18),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Row(
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: ready
+                        ? const Color(0xFF067647)
+                        : const Color(0xFF1459FF),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 28),
                 ),
-                child: const Icon(Icons.folder_zip_rounded,
-                    color: Colors.white, size: 28),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('zip 업로드',
-                        style: Theme.of(context).textTheme.titleLarge),
-                    const SizedBox(height: 6),
-                    Text(
-                      kIsWeb
-                          ? '웹은 best-effort 업로드입니다. 브라우저가 파일 접근을 막으면 경고창으로 안내합니다.'
-                          : '데스크톱은 파싱 실패여도 선택된 파일 상태를 유지합니다.',
-                    ),
-                  ],
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: Theme.of(context).textTheme.titleLarge),
+                      const SizedBox(height: 6),
+                      Text(subtitle),
+                      const SizedBox(height: 8),
+                      Text(
+                        fileName ?? '(none)',
+                        style: const TextStyle(
+                          color: Color(0xFF1459FF),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const Icon(Icons.upload_file_rounded,
-                  size: 30, color: Color(0xFF1459FF)),
-            ],
+                Icon(
+                  ready ? Icons.check_circle_rounded : Icons.upload_file_rounded,
+                  size: 30,
+                  color: ready
+                      ? const Color(0xFF067647)
+                      : const Color(0xFF1459FF),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -316,27 +351,18 @@ class _BundleStateCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('파일 상태', style: Theme.of(context).textTheme.titleLarge),
+            Text('Preview State', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 12),
-            _InfoLine('선택된 zip', state.selectedArchiveName ?? '(none)'),
+            _InfoLine('Result Zip Loaded', state.resultArchiveLoaded ? 'yes' : 'no'),
+            _InfoLine('Log Zip Loaded', state.logArchiveLoaded ? 'yes' : 'no'),
             _InfoLine(
-              '선택 시각',
+              'Selected Time',
               state.selectedAt?.toLocal().toString() ?? '(none)',
             ),
-            _InfoLine('로드 단계', state.loadStage.name),
-            _InfoLine(
-              '원본 zip 로드',
-              state.rawArchiveAvailable ? 'yes' : 'no',
-            ),
-            _InfoLine(
-              '마지막 정상 미리보기',
-              bundle?.resultPath ?? '(none)',
-            ),
-            _InfoLine(
-              '현재 빌드',
-              bundle?.metric.primaryBuildLabel ?? '(none)',
-            ),
-            _InfoLine('현재 오류', state.loadError ?? '(none)'),
+            _InfoLine('Load Stage', state.loadStage.name),
+            _InfoLine('Preview Result', bundle?.resultPath ?? '(none)'),
+            _InfoLine('Build', bundle?.metric.primaryBuildLabel ?? '(none)'),
+            _InfoLine('Current Error', state.loadError ?? '(none)'),
             if (state.previewWarnings.isNotEmpty) ...[
               const SizedBox(height: 8),
               ...state.previewWarnings.map(
@@ -381,22 +407,24 @@ class _BundleSummaryCard extends StatelessWidget {
                 _StatTile(label: 'Build', value: bundle.metric.compactBuildLabel),
                 _StatTile(label: 'FW', value: bundle.metric.fwVersion),
                 _StatTile(label: 'Device', value: bundle.metric.buildDevice),
-                _StatTile(
-                    label: 'Android', value: bundle.metric.androidVersion),
+                _StatTile(label: 'Android', value: bundle.metric.androidVersion),
                 _StatTile(label: 'Type', value: bundle.metric.buildType),
+                _StatTile(label: 'Fail (Raw)', value: '${bundle.metric.failCount}'),
                 _StatTile(
-                    label: 'Fail (Raw)', value: '${bundle.metric.failCount}'),
+                  label: 'Excluded',
+                  value: '${bundle.excludedFailedTests.length}',
+                ),
                 _StatTile(
-                    label: 'Excluded',
-                    value: '${bundle.excludedFailedTests.length}'),
-                _StatTile(
-                    label: 'Upload Fail',
-                    value: '${bundle.activeFailedTests.length}'),
+                  label: 'Upload Fail',
+                  value: '${bundle.activeFailedTests.length}',
+                ),
               ],
             ),
             const SizedBox(height: 16),
-            _InfoLine('Suite',
-                '${bundle.metric.suiteName} ${bundle.metric.suiteVersion}'),
+            _InfoLine(
+              'Suite',
+              '${bundle.metric.suiteName} ${bundle.metric.suiteVersion}',
+            ),
             _InfoLine('Devices', bundle.metric.devices.join(', ')),
             _InfoLine(
               'Fingerprint',

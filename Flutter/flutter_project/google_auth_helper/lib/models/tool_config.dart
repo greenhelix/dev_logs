@@ -52,6 +52,23 @@ extension ToolTypeX on ToolType {
     }
   }
 
+  String get consolePrompt {
+    switch (this) {
+      case ToolType.cts:
+        return 'cts-console >';
+      case ToolType.gts:
+        return 'gts-console >';
+      case ToolType.tvts:
+        return 'tvts-console >';
+      case ToolType.vts:
+        return 'vts-console >';
+      case ToolType.sts:
+        return 'sts-console >';
+      case ToolType.ctsOnGsi:
+        return 'cts-console >';
+    }
+  }
+
   String get storageKey {
     switch (this) {
       case ToolType.cts:
@@ -84,8 +101,6 @@ class ToolConfig {
     required this.resultsDir,
     required this.logsDir,
     required this.defaultCommand,
-    required this.deviceSerials,
-    required this.shardCount,
     required this.autoUploadAfterRun,
   });
 
@@ -94,8 +109,6 @@ class ToolConfig {
   final String resultsDir;
   final String logsDir;
   final String defaultCommand;
-  final List<String> deviceSerials;
-  final int shardCount;
   final bool autoUploadAfterRun;
 
   ToolConfig copyWith({
@@ -103,8 +116,6 @@ class ToolConfig {
     String? resultsDir,
     String? logsDir,
     String? defaultCommand,
-    List<String>? deviceSerials,
-    int? shardCount,
     bool? autoUploadAfterRun,
   }) {
     return ToolConfig(
@@ -113,8 +124,6 @@ class ToolConfig {
       resultsDir: resultsDir ?? this.resultsDir,
       logsDir: logsDir ?? this.logsDir,
       defaultCommand: defaultCommand ?? this.defaultCommand,
-      deviceSerials: deviceSerials ?? this.deviceSerials,
-      shardCount: shardCount ?? this.shardCount,
       autoUploadAfterRun: autoUploadAfterRun ?? this.autoUploadAfterRun,
     );
   }
@@ -126,8 +135,6 @@ class ToolConfig {
       'resultsDir': resultsDir,
       'logsDir': logsDir,
       'defaultCommand': defaultCommand,
-      'deviceSerials': deviceSerials,
-      'shardCount': shardCount,
       'autoUploadAfterRun': autoUploadAfterRun,
     };
   }
@@ -139,10 +146,6 @@ class ToolConfig {
       resultsDir: json['resultsDir'] as String? ?? '',
       logsDir: json['logsDir'] as String? ?? '',
       defaultCommand: json['defaultCommand'] as String? ?? 'run cts',
-      deviceSerials: (json['deviceSerials'] as List<dynamic>? ?? const [])
-          .map((item) => item.toString())
-          .toList(growable: false),
-      shardCount: (json['shardCount'] as num?)?.toInt() ?? 1,
       autoUploadAfterRun: json['autoUploadAfterRun'] as bool? ?? true,
     );
   }

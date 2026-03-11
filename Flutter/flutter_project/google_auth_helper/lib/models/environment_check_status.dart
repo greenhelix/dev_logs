@@ -15,6 +15,7 @@ class EnvironmentCheckStatus {
     required this.hosting,
     required this.firestoreDownload,
     required this.firestoreUpload,
+    required this.adb,
     required this.redmineConnection,
     required this.redmineCurrentUser,
     required this.redmineProjectAccess,
@@ -23,19 +24,21 @@ class EnvironmentCheckStatus {
   final EnvironmentProbeResult hosting;
   final EnvironmentProbeResult firestoreDownload;
   final EnvironmentProbeResult firestoreUpload;
+  final EnvironmentProbeResult adb;
   final EnvironmentProbeResult redmineConnection;
   final EnvironmentProbeResult redmineCurrentUser;
   final EnvironmentProbeResult redmineProjectAccess;
 
-  List<EnvironmentProbeResult> get allResults {
+  List<EnvironmentProbeResult> get firebaseResults {
     return [
       hosting,
       firestoreDownload,
       firestoreUpload,
-      redmineConnection,
-      redmineCurrentUser,
-      redmineProjectAccess,
     ];
+  }
+
+  List<EnvironmentProbeResult> get localResults {
+    return [adb];
   }
 
   List<EnvironmentProbeResult> get redmineResults {

@@ -19,16 +19,17 @@ class EnvironmentScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('환경점검', style: Theme.of(context).textTheme.titleLarge),
+                Text('Environment',
+                    style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 const Text(
-                  'Firebase Hosting, Firestore 업로드/다운로드, Redmine 연결/현재 사용자/프로젝트 접근을 점검합니다.',
+                  'Check Firebase, Firestore, ADB, and Redmine connectivity from the current runtime.',
                 ),
                 const SizedBox(height: 12),
                 FilledButton.tonalIcon(
                   onPressed: () => ref.invalidate(environmentStatusProvider),
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('상태 새로고침'),
+                  label: const Text('Refresh Status'),
                 ),
               ],
             ),
@@ -57,17 +58,19 @@ class _EnvironmentResult extends StatelessWidget {
       children: [
         _ProbeSection(
           title: 'Firebase',
-          subtitle: '호스팅과 Firestore 연결 경로를 확인합니다.',
-          probes: [
-            status.hosting,
-            status.firestoreDownload,
-            status.firestoreUpload,
-          ],
+          subtitle: 'Hosting and Firestore connectivity.',
+          probes: status.firebaseResults,
+        ),
+        const SizedBox(height: 16),
+        _ProbeSection(
+          title: 'Local Tools',
+          subtitle: 'ADB availability and detected devices.',
+          probes: status.localResults,
         ),
         const SizedBox(height: 16),
         _ProbeSection(
           title: 'Redmine',
-          subtitle: '연결 상태, 현재 사용자, 프로젝트 접근 권한을 분리해서 보여줍니다.',
+          subtitle: 'Connection, current user, and project access.',
           probes: status.redmineResults,
         ),
       ],
@@ -115,7 +118,7 @@ class _ProbeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 300,
+      width: 320,
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(18),
@@ -171,7 +174,7 @@ class _LoadingCard extends StatelessWidget {
           children: [
             CircularProgressIndicator(),
             SizedBox(width: 16),
-            Text('환경 상태를 확인하는 중입니다...'),
+            Text('Checking environment status...'),
           ],
         ),
       ),

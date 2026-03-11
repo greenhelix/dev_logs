@@ -1,26 +1,14 @@
 import 'tool_config.dart';
 
-enum AppMode { dev, release }
-
-extension AppModeX on AppMode {
-  String get label => this == AppMode.dev ? '개발' : '릴리즈';
-
-  String get storageKey => this == AppMode.dev ? 'dev' : 'release';
-
-  static AppMode fromStorageKey(String value) {
-    return value == 'release' ? AppMode.release : AppMode.dev;
-  }
-}
-
 enum CredentialMode { serviceAccountFile, localToken }
 
 extension CredentialModeX on CredentialMode {
   String get label {
     switch (this) {
       case CredentialMode.serviceAccountFile:
-        return '서비스 계정 파일';
+        return 'Service Account File';
       case CredentialMode.localToken:
-        return '로컬 Firebase 토큰';
+        return 'Local Firebase Token';
     }
   }
 
@@ -42,7 +30,6 @@ extension CredentialModeX on CredentialMode {
 
 class AppSettings {
   const AppSettings({
-    required this.mode,
     required this.firebaseProjectId,
     required this.firestoreDatabaseId,
     required this.credentialMode,
@@ -54,7 +41,6 @@ class AppSettings {
     required this.toolConfigs,
   });
 
-  final AppMode mode;
   final String firebaseProjectId;
   final String firestoreDatabaseId;
   final CredentialMode credentialMode;
@@ -70,7 +56,6 @@ class AppSettings {
   }
 
   AppSettings copyWith({
-    AppMode? mode,
     String? firebaseProjectId,
     String? firestoreDatabaseId,
     CredentialMode? credentialMode,
@@ -82,7 +67,6 @@ class AppSettings {
     List<ToolConfig>? toolConfigs,
   }) {
     return AppSettings(
-      mode: mode ?? this.mode,
       firebaseProjectId: firebaseProjectId ?? this.firebaseProjectId,
       firestoreDatabaseId: firestoreDatabaseId ?? this.firestoreDatabaseId,
       credentialMode: credentialMode ?? this.credentialMode,
@@ -97,7 +81,6 @@ class AppSettings {
 
   Map<String, dynamic> toJson() {
     return {
-      'mode': mode.storageKey,
       'firebaseProjectId': firebaseProjectId,
       'firestoreDatabaseId': firestoreDatabaseId,
       'credentialMode': credentialMode.storageKey,
@@ -112,7 +95,6 @@ class AppSettings {
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
     return AppSettings(
-      mode: AppModeX.fromStorageKey(json['mode'] as String? ?? 'dev'),
       firebaseProjectId: json['firebaseProjectId'] as String? ?? '',
       firestoreDatabaseId: json['firestoreDatabaseId'] as String? ?? '',
       credentialMode: CredentialModeX.fromStorageKey(

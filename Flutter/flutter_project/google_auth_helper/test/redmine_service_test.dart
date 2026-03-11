@@ -12,7 +12,6 @@ import 'package:http/testing.dart';
 
 AppSettings _settings() {
   return AppSettings(
-    mode: AppMode.dev,
     firebaseProjectId: 'kani-projects',
     firestoreDatabaseId: 'google-auth',
     credentialMode: CredentialMode.serviceAccountFile,
@@ -28,8 +27,6 @@ AppSettings _settings() {
         resultsDir: '',
         logsDir: '',
         defaultCommand: 'run cts',
-        deviceSerials: [],
-        shardCount: 1,
         autoUploadAfterRun: true,
       ),
     ],

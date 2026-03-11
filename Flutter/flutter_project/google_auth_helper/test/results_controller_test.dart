@@ -6,9 +6,6 @@ import 'package:google_auth_helper/models/tool_config.dart';
 import 'package:google_auth_helper/providers/app_providers.dart';
 import 'package:google_auth_helper/services/app_settings_store.dart';
 import 'package:google_auth_helper/services/upload_history_store.dart';
-
-import 'test_sample_locator.dart';
-
 class _FakeAppSettingsStore extends AppSettingsStore {
   _FakeAppSettingsStore(this.settings);
 
@@ -44,9 +41,8 @@ void main() {
               toolRoot: '',
               resultsDir: '',
               logsDir: '',
-              defaultCommand: AppDefaults.defaultToolConfig(toolType).defaultCommand,
-              deviceSerials: const [],
-              shardCount: 1,
+              defaultCommand:
+                  AppDefaults.defaultToolConfig(toolType).defaultCommand,
               autoUploadAfterRun: true,
             ),
           )
@@ -72,15 +68,12 @@ void main() {
     final state = container.read(resultsControllerProvider);
 
     expect(state.usingDemoData, isFalse);
-    if (hasSampleImportDirectories()) {
-      expect(state.previewBundle, isNotNull);
-      expect(state.loadError, isNull);
-      expect(state.previewBundle!.metric.countSource, 'xts_tf_output.log');
-      expect(state.previewBundle!.metric.primaryBuildLabel.trim(), isNotEmpty);
-    } else {
-      expect(state.previewBundle, isNull);
-      expect(state.loadError, isNull);
-      expect(state.loadStage, ResultsLoadStage.idle);
-    }
+    expect(state.previewBundle, isNull);
+    expect(state.loadError, isNull);
+    expect(state.loadStage, ResultsLoadStage.idle);
+    expect(
+      state.message,
+      'Upload result and log zip files to build a preview.',
+    );
   });
 }

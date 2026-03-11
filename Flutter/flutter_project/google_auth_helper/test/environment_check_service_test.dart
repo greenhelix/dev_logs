@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_auth_helper/models/app_settings.dart';
+import 'package:google_auth_helper/models/adb_snapshot.dart';
 import 'package:google_auth_helper/models/tool_config.dart';
 import 'package:google_auth_helper/services/auth_header_provider.dart';
+import 'package:google_auth_helper/services/adb_service.dart';
 import 'package:google_auth_helper/services/environment_check_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -12,6 +14,21 @@ class _FakeAuthHeaderProvider implements AuthHeaderProvider {
   @override
   Future<Map<String, String>> buildHeaders(AppSettings settings) async {
     return const {'Authorization': 'Bearer fake'};
+  }
+}
+
+class _FakeAdbService implements AdbService {
+  @override
+  bool get isSupported => true;
+
+  @override
+  Future<AdbSnapshot> inspect() async {
+    return const AdbSnapshot(
+      available: true,
+      version: 'Android Debug Bridge version 1.0.41',
+      devices: [],
+      message: 'ADB is ready.',
+    );
   }
 }
 
@@ -51,12 +68,12 @@ void main() {
 
     final service = EnvironmentCheckService(
       authHeaderProvider: _FakeAuthHeaderProvider(),
+      adbService: _FakeAdbService(),
       httpClient: client,
     );
 
     final status = await service.check(
       AppSettings(
-        mode: AppMode.dev,
         firebaseProjectId: 'kani-projects',
         firestoreDatabaseId: 'google-auth',
         credentialMode: CredentialMode.serviceAccountFile,
@@ -72,8 +89,6 @@ void main() {
             resultsDir: '',
             logsDir: '',
             defaultCommand: 'run cts',
-            deviceSerials: [],
-            shardCount: 1,
             autoUploadAfterRun: true,
           ),
         ],
@@ -83,6 +98,7 @@ void main() {
     expect(status.hosting.isOk, isTrue);
     expect(status.firestoreDownload.isOk, isTrue);
     expect(status.firestoreUpload.isOk, isTrue);
+    expect(status.adb.isOk, isTrue);
     expect(status.redmineConnection.isOk, isTrue);
     expect(status.redmineCurrentUser.isOk, isTrue);
     expect(status.redmineProjectAccess.isOk, isTrue);
